@@ -1,6 +1,6 @@
 export const fontSizes = {
-  '6xl': '56px', // 6xl → 7xl로 변경 (Tailwind과 혼동 방지)
-  '5xl': '40px', // 4xl → 5xl
+  '6xl': '56px',
+  '5xl': '40px',
   '4xl': '36px',
   '3xl': '28px',
   '2xl': '24px',
