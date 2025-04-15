@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-wide: 0.05em;
+
+  /* 폰트 크기 변수 */
+  --font-size-6xl: 56px;
+  --font-size-4xl: 40px;
+  --font-size-3xl: 36px;
+  --font-size-2xl: 28px;
+  --font-size-xl: 24px;
+  --font-size-lg: 22px;
+  --font-size-base: 20px;
+  --font-size-sm: 18px;
+  --font-size-xs: 17px;
+  --font-size-2xs: 16px;
+  --font-size-3xs: 15px;
+  --font-size-4xs: 14px;
+  --font-size-5xs: 13px;
+  --font-size-6xs: 12px;
+  --font-size-7xs: 11px;
+}
