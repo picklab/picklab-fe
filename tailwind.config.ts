@@ -1,4 +1,5 @@
 import { fontSizes, fontWeights, lineHeights, letterSpacings } from './src/styles/theme/text';
+import { colors } from './src/styles/theme/colors';
 import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
 
@@ -13,10 +14,7 @@ const config: Config = {
       fontFamily: {
         sans: ['Pretendard-Regular', ...defaultTheme.fontFamily.sans],
       },
-      colors: {
-        background: '#ffffff', // 원하면 여기도 직접 hex 값으로
-        foreground: '#000000',
-      },
+      colors: colors,
       fontSize: fontSizes,
       fontWeight: fontWeights,
       lineHeight: lineHeights,
