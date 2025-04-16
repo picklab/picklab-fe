@@ -65,7 +65,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
       {/* ◀️ 이전 페이지 버튼 */}
       <ChevronIconButton
         direction="left"
-        disabled={activePage === 1} // 첫 페이지일 경우 비활성화
+        disabled={activePage - 5 < 1} // 처음페이지에 가까울 경우 비활성화
         onClick={() => {
           pushPage(pathname, prevPage);
         }}
