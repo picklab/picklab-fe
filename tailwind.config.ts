@@ -1,4 +1,5 @@
 import { fontSizes, fontWeights, lineHeights, letterSpacings } from './src/styles/theme/text';
+import { spacing } from './src/styles/theme/spacing';
 import { colors } from './src/styles/theme/colors';
 import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
@@ -20,6 +21,7 @@ const config: Config = {
       fontWeight: fontWeights,
       lineHeight: lineHeights,
       letterSpacing: letterSpacings,
+      spacing: spacing,
     },
   },
   plugins: [],
