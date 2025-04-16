@@ -20,6 +20,17 @@ const config: Config = {
       fontWeight: fontWeights,
       lineHeight: lineHeights,
       letterSpacing: letterSpacings,
+      maxWidth: {
+        container: '1100px',
+      },
+      padding: {
+        layoutPadding: '170px',
+      },
+    },
+    screens: {
+      desktop: { min: '1440px' },
+      // 임시 레이아웃
+      noDesktop: { max: '1440px' },
     },
   },
   plugins: [],
