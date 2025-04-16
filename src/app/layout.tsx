@@ -14,7 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="flex justify-center h-screen">
+        <div className="w-full grid desktop:max-w-container desktop:px-5 desktop:grid-cols-12 desktop:gap-5 noDesktop:layout">
+          <div className="noDesktop:px-5">{children}</div>
+        </div>
+      </body>
     </html>
   );
 }

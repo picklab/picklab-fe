@@ -8,3 +8,9 @@
     src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
   }
 }
+
+@layer base {
+  .layout {
+    @apply max-w-container min-h-screen w-full mx-auto px-layoutPadding;
+  }
+}
