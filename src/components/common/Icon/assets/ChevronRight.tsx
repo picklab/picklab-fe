@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ChevronRight = ({ direction, width, height, className, ...props }: React.SVGProps<SVGSVGElement>) => {
+const ChevronRight = ({ width, height, className, ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       width={width}
