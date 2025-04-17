@@ -16,7 +16,7 @@ const ChevronIconButton = ({ direction, ...props }: ChevronIconButtonProps) => {
       // 그룹 클래스를 사용해 내부 아이콘에도 hover/active/disabled 상태를 전파
       // hover 시 밝은 회색 배경, active 시 좀 더 진한 회색 배경
       // disabled 상태일 경우 포인터 이벤트를 막아 클릭 차단
-      className="group size-space-32 border-[1px] border-gray-20 rounded p-[3px] hover:bg-gray-5 active:bg-gray-10 disabled:pointer-events-none"
+      className="group size-space-32 border border-gray-20 rounded p-[3px] hover:bg-gray-5 active:bg-gray-10 disabled:pointer-events-none"
       {...props}
     >
       {/* 아이콘을 버튼 가운데 정렬하기 위한 flex 컨테이너 */}
