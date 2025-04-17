@@ -13,7 +13,8 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 const Label = ({ title, optional = false, require = false, ...props }: LabelProps) => {
   // optional과 require가 동시에 true일 경우 경고 출력
   if (optional && require) {
-    console.warn('Label 컴포넌트에 optional과 require가 동시에 true입니다.');
+    const isDevMode = process.env.NODE_ENV === 'development';
+    if (isDevMode) console.warn('Label 컴포넌트에 optional과 require가 동시에 true입니다.');
   }
 
   return (
@@ -23,15 +24,21 @@ const Label = ({ title, optional = false, require = false, ...props }: LabelProp
         {title}
         {/* optional 텍스트는 스크린 리더에 읽히지 않도록 aria-hidden */}
         {optional && (
-          <Typography type="Body1Medium" tag="span" className="ml-1 text-gray-60" aria-hidden="true">
-            (optional)
-          </Typography>
+          <>
+            <span className="sr-only">선택 항목입니다.</span>
+            <Typography type="Body1Medium" tag="span" className="ml-1 text-gray-60" aria-hidden="true">
+              (optional)
+            </Typography>
+          </>
         )}
         {/* require 텍스트(*) 역시 시각적인 강조를 위한 요소로, 스크린 리더는 무시 */}
         {require && (
-          <Typography type="Body1Medium" tag="span" className="ml-1 text-danger-50" aria-hidden="true">
-            *
-          </Typography>
+          <>
+            <span className="sr-only">필수 항목입니다.</span>
+            <Typography type="Body1Medium" tag="span" className="ml-1 text-danger-50" aria-hidden="true">
+              *
+            </Typography>
+          </>
         )}
       </Typography>
     </label>
