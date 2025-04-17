@@ -12,7 +12,7 @@ interface PaginationNumberButtonProps extends ButtonHTMLAttributes<HTMLButtonEle
 const PaginationNumberButton = ({ active, className, children, ...props }: PaginationNumberButtonProps) => {
   // 🎨 버튼의 상태에 따라 클래스 동적으로 설정
   const buttonClass = clsx(
-    'flex justify-center items-center size-space-32 text-gray-40 rounded-[4px] p-2',
+    'flex justify-center items-center size-space-32 text-gray-40 rounded p-2',
     'hover:bg-gray-10 active:bg-primary-50 active:text-white',
     {
       // ✅ active일 때 스타일 오버라이드
