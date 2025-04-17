@@ -13,14 +13,24 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const maxPageToShow = 10; // 한 번에 보여줄 최대 페이지 수
+
+  //  현재 페이지를 기준으로 시작 페이지 계산
+  const getPaginationStart = (page: number) => {
+    return page - 4 > 1 ? page - 4 : 1;
+  };
+
+  //  페이지 이동 함수 - URL의 쿼리 파라미터 변경
+  const pushPage = (pathname: string, route: string | number) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('page', String(route));
+    router.push(`${pathname}?${searchParams.toString()}`);
+  };
 
   // ◀️ "이전 10페이지" 버튼 눌렀을 때 이동할 페이지 (최소 1페이지 보장)
   const prevPage = activePage - 10 > 1 ? activePage - 10 : 1;
-
   // ▶️ "다음 10페이지" 버튼 눌렀을 때 이동할 페이지 (최대 totalPage 이하 보장)
   const nextPage = activePage + 10 < totalPage ? activePage + 10 : totalPage;
-
-  const maxPageToShow = 10; // 한 번에 보여줄 최대 페이지 수
 
   // 페이지 시작 번호 계산
   let startPage = getPaginationStart(activePage);
@@ -35,7 +45,6 @@ const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
   // 페이지 숫자 버튼 생성
   const generatePagination = Array.from({ length: endPage - startPage + 1 }, (_, i) => {
     const pageNumber = startPage + i;
-
     return (
       <PaginationNumberButton
         key={pageNumber}
@@ -47,18 +56,6 @@ const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
       </PaginationNumberButton>
     );
   });
-
-  //  현재 페이지를 기준으로 시작 페이지 계산
-  function getPaginationStart(page: number): number {
-    return page - 4 > 1 ? page - 4 : 1;
-  }
-
-  //  페이지 이동 함수 - URL의 쿼리 파라미터 변경
-  function pushPage(pathname: string, route: string | number) {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('page', String(route));
-    router.push(`${pathname}?${searchParams.toString()}`);
-  }
 
   return (
     <div className="flex flex-wrap justify-center gap-3">
