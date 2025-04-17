@@ -34,7 +34,6 @@ const Badge = ({ text, variant = 'default', ...props }: BadgeProps) => {
     <Typography
       type="Caption1Medium"
       className={`${bgColor} ${textColor} w-fit px-space-8 py-space-base rounded-md inline-block cursor-default`}
-      aria-label={text} // 스크린 리더용 텍스트입니다
       {...props} // 추가적인 옵셔널 span태그의 속성들 적용합니다
     >
       {text}
