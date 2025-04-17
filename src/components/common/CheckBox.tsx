@@ -1,6 +1,7 @@
 import React, { InputHTMLAttributes, useId } from 'react';
-import Check from './Icon/assets/Check';
+
 import clsx from 'clsx';
+import Check from '@/components/common/Icon/assets/Check';
 
 interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
