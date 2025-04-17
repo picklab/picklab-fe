@@ -107,7 +107,7 @@ type TypographyTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
 type TypographyType = keyof typeof TypographyTypes;
 
 // 🎁 이 컴포넌트가 받을 수 있는 모든 속성들을 정의해요
-type TypographyProps = {
+export type TypographyProps = {
   tag?: TypographyTag; // 어떤 태그로 보여줄지 (h1, p, span 등)
   children: ReactNode; // 보여줄 내용
   type: TypographyType;
