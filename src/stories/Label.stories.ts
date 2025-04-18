@@ -8,15 +8,16 @@ const meta = {
   argTypes: {
     title: {
       control: 'text',
+      description: '라벨 텍스트',
     },
-    optional: {
-      control: 'boolean',
-    },
-    require: {
-      control: 'boolean',
+    status: {
+      control: { type: 'radio' },
+      options: ['default', 'optional', 'require'],
+      description: `'optional', 'require', 'default' 중 하나`,
     },
     htmlFor: {
       control: 'text',
+      description: '연결할 input의 id',
     },
   },
 } satisfies Meta<typeof Label>;
@@ -27,24 +28,23 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   args: {
     title: '이메일',
-    optional: false,
-    require: true,
+    status: 'default',
     htmlFor: 'email',
   },
 };
+
 export const Default: Story = {
   args: {
     title: '이메일',
-    optional: false,
-    require: false,
+    status: 'default',
     htmlFor: 'email',
   },
 };
+
 export const Optional: Story = {
   args: {
     title: '이메일',
-    optional: true,
-    require: false,
+    status: 'optional',
     htmlFor: 'email',
   },
 };
@@ -52,8 +52,7 @@ export const Optional: Story = {
 export const Require: Story = {
   args: {
     title: '이메일',
-    optional: false,
-    require: true,
+    status: 'require',
     htmlFor: 'email',
   },
 };
