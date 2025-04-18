@@ -40,7 +40,7 @@ const sizeClasses = {
   '6xs': 'text-6xs', // 초미니 사이즈
 };
 
-const TypographyTypes = {
+export const TypographyTypes = {
   Display1Regular: clsx(sizeClasses['6xl'], weightClasses['normal']),
   Display1Medium: clsx(sizeClasses['6xl'], weightClasses['medium']),
   Display1Bold: clsx(sizeClasses['6xl'], weightClasses['bold']),
