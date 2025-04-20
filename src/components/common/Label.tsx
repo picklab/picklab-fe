@@ -1,7 +1,6 @@
 import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import React, { LabelHTMLAttributes } from 'react';
-import { optional } from 'zod';
 
 const statusValue = {
   optional: { text: 'text-gray-60', title: '(optional)', screenReaderText: '선택 항목입니다.' },
@@ -20,7 +19,6 @@ const Label = ({ title, status = 'default', ...props }: LabelProps) => {
     <label {...props}>
       <Typography type="Body1Medium" className="text-gray-60">
         {title}
-        {/* optional 텍스트는 스크린 리더에 읽히지 않도록 aria-hidden */}
         {status !== 'default' && (
           <>
             <span className="sr-only">{statusValue[status].screenReaderText}</span>
@@ -34,7 +32,6 @@ const Label = ({ title, status = 'default', ...props }: LabelProps) => {
             </Typography>
           </>
         )}
-        {/* require 텍스트(*) 역시 시각적인 강조를 위한 요소로, 스크린 리더는 무시 */}
       </Typography>
     </label>
   );
