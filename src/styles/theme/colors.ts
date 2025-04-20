@@ -74,6 +74,9 @@ export const colors = {
     90: '#35530E',
   },
   interactive: {
+    primary: '#2563EB',
+    'primary-hover': '#1D4ED8',
+    'primary-press': '#1E40AF',
     secondary: '#F3F3F3',
     'secondary-hover': '#E3E5E9',
     'secondary-press': '#D1D5DB',
@@ -82,6 +85,7 @@ export const colors = {
       'secondary-hover': '#9CA3AF',
       'secondary-press': '#6B7280',
     },
+    destructive: '#DC2626',
   },
   disabled: '#D1D5DB',
   'disabled-border': '#9CA3AF',
