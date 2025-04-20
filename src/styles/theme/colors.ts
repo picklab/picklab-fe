@@ -73,4 +73,16 @@ export const colors = {
     80: '#3C6300',
     90: '#35530E',
   },
+  interactive: {
+    secondary: '#F3F3F3',
+    'secondary-hover': '#E3E5E9',
+    'secondary-press': '#D1D5DB',
+    border: {
+      secondary: '#D1D5DB',
+      'secondary-hover': '#9CA3AF',
+      'secondary-press': '#6B7280',
+    },
+  },
+  disabled: '#D1D5DB',
+  'disabled-border': '#9CA3AF',
 };
