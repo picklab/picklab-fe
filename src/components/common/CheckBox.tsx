@@ -8,6 +8,11 @@ interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const CheckBox = ({ error, ...props }: CheckBoxProps) => {
+  // 만약 disable 일때
+  if (props.disabled) {
+    // error style 꺼주기
+    error = false;
+  }
   return (
     // 그룹 클래스를 통해 자식 요소에 상태에 따라 스타일링 적용 가능
     <div className="group">
@@ -19,8 +24,8 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
            hover:border-gray-40 active:border-gray-50 
            group-has-[input:checked]:border-info-50 group-has-[input:checked]:bg-info-50 
            group-has-[input:checked]:hover:bg-info-60 group-has-[input:checked]:hover:border-info-60 
-           group-has-[input:checked]:active:bg-info-70 group-has-[input:checked]:active:border-info-70 
-           group-has-[input:disabled]:!bg-gray-30 group-has-[input:disabled]:!border-gray-40`,
+           group-has-[input:checked]:active:bg-info-70 group-has-[input:checked]:active:border-info-70,
+          group-has-[input:disabled]:!bg-gray-30 group-has-[input:disabled]:!border-gray-40`,
           error && '!border-danger-50 !bg-white', // 에러 시 스타일 오버라이드
         )}
       >

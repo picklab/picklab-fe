@@ -9,13 +9,13 @@ import clsx from 'clsx';
 // - totalDots: 도트의 총 개수
 // - activeDot: 현재 활성화된 도트 index (0부터 시작)
 // - col: true일 경우 세로 방향 정렬 (기본은 가로 정렬)
-interface DotPaginationProps extends DotProps {
+interface DotPaginationProps extends Omit<DotProps, 'active'> {
   totalDots: number;
   activeDot: number;
   col?: boolean;
 }
 
-const DotPagination: React.FC<DotPaginationProps> = ({ totalDots, activeDot, col, ...props }) => {
+const DotPagination = ({ totalDots, activeDot, col, ...props }: DotPaginationProps) => {
   // 🎯 도트를 총 개수만큼 생성
   // - 각 도트의 index가 activeDot과 같으면 active 상태로 렌더링
   const generateDotPagination = Array.from({ length: totalDots }, (_, i) => {
