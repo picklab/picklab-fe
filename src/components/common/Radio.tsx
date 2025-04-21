@@ -1,11 +1,12 @@
 import clsx from 'clsx';
 import React, { InputHTMLAttributes } from 'react';
 
-interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
+interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'name'> {
+  name: string;
   error?: boolean; // 에러 상태를 시각적으로 표시할지 여부
 }
 
-const Radio = ({ error = false, ...props }: RadioProps) => {
+const Radio = ({ name, error = false, ...props }: RadioProps) => {
   let errorVisible = error;
   // 비활성화 상태에서는 에러 '스타일'을 적용하지 않음
   if (props.disabled) {
@@ -22,7 +23,6 @@ const Radio = ({ error = false, ...props }: RadioProps) => {
       */}
       <input
         type="radio"
-        role="radio"
         aria-checked={props.checked}
         aria-disabled={props.disabled}
         data-error={error}
@@ -35,6 +35,7 @@ const Radio = ({ error = false, ...props }: RadioProps) => {
            checked:active:bg-interactive-primary-press`,
           errorVisible && '!border-danger-50 !bg-white checked:!bg-interactive-destructive',
         )}
+        name={name}
         {...props}
       />
 
