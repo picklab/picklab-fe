@@ -17,7 +17,7 @@ const Label = ({ title, status = 'default', ...props }: LabelProps) => {
   return (
     // input과 연결되는 label 태그
     <label {...props}>
-      <Typography type="Body1Medium" className="text-gray-60">
+      <Typography type="Body1Medium" className="text-gray-60 cursor-pointer">
         {title}
         {status !== 'default' && (
           <>
