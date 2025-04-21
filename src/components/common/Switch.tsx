@@ -3,7 +3,7 @@ import React, { InputHTMLAttributes } from 'react';
 // Switch 컴포넌트는 type, className을 제외한 input 속성을 그대로 받을 수 있게 처리
 const Switch = ({ ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className'>) => {
   return (
-    <label className="group inline-flex items-center" id={props.id}>
+    <label className="group inline-flex items-center">
       <input
         // 기본 checkbox input
         type="checkbox"
