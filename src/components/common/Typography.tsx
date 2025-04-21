@@ -102,26 +102,49 @@ export const TypographyTypes = {
   Caption2Semibold: clsx(sizeClasses['6xs'], weightClasses['semibold']),
 };
 
-// 🏷️ 이 컴포넌트가 사용할 수 있는 모든 종류의 태그예요
-type TypographyTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
+// // 🏷️ 이 컴포넌트가 사용할 수 있는 모든 종류의 태그예요
+// type TypographyTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'label';
+// type TypographyType = keyof typeof TypographyTypes;
+
+// // 🎁 이 컴포넌트가 받을 수 있는 모든 속성들을 정의해요
+// export type TypographyProps = {
+//   tag?: TypographyTag; // 어떤 태그로 보여줄지 (h1, p, span 등)
+//   children: ReactNode; // 보여줄 내용
+//   type: TypographyType;
+//   className?: string; // 추가 스타일
+// } & Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'className'>;
+
+// 🏷️ 해당 컴포넌트가 사용할 수 있는 모든 종류의 태그의 타입
+type TagMap = {
+  label: React.LabelHTMLAttributes<HTMLLabelElement>;
+  span: React.HTMLAttributes<HTMLSpanElement>;
+  p: React.HTMLAttributes<HTMLParagraphElement>;
+  h1: React.HTMLAttributes<HTMLHeadingElement>;
+  h2: React.HTMLAttributes<HTMLHeadingElement>;
+  h3: React.HTMLAttributes<HTMLHeadingElement>;
+  h4: React.HTMLAttributes<HTMLHeadingElement>;
+  h5: React.HTMLAttributes<HTMLHeadingElement>;
+  h6: React.HTMLAttributes<HTMLHeadingElement>;
+};
+
+type TypographyTag = keyof TagMap;
 type TypographyType = keyof typeof TypographyTypes;
 
-// 🎁 이 컴포넌트가 받을 수 있는 모든 속성들을 정의해요
-export type TypographyProps = {
-  tag?: TypographyTag; // 어떤 태그로 보여줄지 (h1, p, span 등)
-  children: ReactNode; // 보여줄 내용
+type TypographyProps<T extends TypographyTag = 'span'> = {
+  tag?: T;
   type: TypographyType;
-  className?: string; // 추가 스타일
-} & Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'className'>;
+  className?: string;
+  children: ReactNode;
+} & Omit<TagMap[T], 'className' | 'children'>;
 
 // 🎨 이제 실제로 텍스트를 보여주는 컴포넌트를 만들어요!
-const Typography = ({
-  tag = 'span', // 기본값은 span 태그
+const Typography = <T extends TypographyTag = 'span'>({
+  tag = 'span' as T, // 기본값은 span 태그
   children, // 보여줄 내용
   type,
   className = '', // 추가 스타일 (선택사항)
   ...props // 다른 HTML 속성들
-}: TypographyProps) => {
+}: TypographyProps<T>) => {
   // 선택한 태그를 컴포넌트로 변환해요
   const Component = tag as ElementType;
 

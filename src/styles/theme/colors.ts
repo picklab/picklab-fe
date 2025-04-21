@@ -89,4 +89,24 @@ export const colors = {
   },
   disabled: '#D1D5DB',
   'disabled-border': '#9CA3AF',
+  planning: {
+    bg: '#FFE8ED',
+    text: '#ED658B',
+  },
+  development: {
+    bg: '#E1EDFF',
+    text: '#2484D8',
+  },
+  marketing: {
+    bg: '#EBE8FF',
+    text: '#8F62F0',
+  },
+  design: {
+    bg: '#FDE7FF',
+    text: '#E16CD9',
+  },
+  ai: {
+    bg: '#67687D',
+    text: '#F2F2F2',
+  },
 };
