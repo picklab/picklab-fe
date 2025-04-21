@@ -8,3 +8,16 @@
     src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
   }
 }
+
+.box-tab {
+  /* box-tab의 마지막 요소는 padding 넣어주어 border 효과 살리기 */
+  &:last-child {
+    padding-right: 3px;
+  }
+  /* selected가 참이면, 다음 형제요소의 div 접근, 좌로 3px만큼 background image를 추가했습니다! */
+  &[aria-selected='true'] {
+    & + div {
+      background-image: linear-gradient(to right, black 3px, transparent 2px);
+    }
+  }
+}
