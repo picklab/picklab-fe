@@ -2,7 +2,7 @@ name: Storybook Deployment
 on:
   pull_request:
     branches:
-      - develop
+      - dev
 jobs:
   storybook-accessibility-test:
     timeout-minutes: 60
