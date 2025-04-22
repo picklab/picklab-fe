@@ -16,7 +16,7 @@
   }
   /* selected가 참이면, 다음 형제요소의 div 접근, 좌로 3px만큼 background image를 추가했습니다! */
   &[aria-selected='true'] {
-    & + div {
+    & + a {
       background-image: linear-gradient(to right, black 3px, transparent 2px);
     }
   }
