@@ -2,8 +2,9 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
-import ChevronIconButton from './ChevronIconButton';
-import PaginationNumberButton from './PaginationNumberButton';
+
+import PaginationNumberButton from '@/components/common/Pagination/PaginationNumberButton';
+import ChevronIconButton from '@/components/common/Pagination/ChevronIconButton';
 
 interface PaginationProps {
   totalPage: number; // 전체 페이지 수
