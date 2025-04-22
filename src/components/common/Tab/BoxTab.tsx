@@ -1,18 +1,14 @@
 'use client';
 
-// import { TabProps } from '@/components/common/Tab/Tab';
+import { TabProps } from '@/components/common/Tab/Tab';
 import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
-import Link, { LinkProps } from 'next/link';
+import Link from 'next/link';
 import React from 'react';
 
-interface BoxTabProps extends LinkProps {
+interface BoxTabProps extends Omit<TabProps, 'children'> {
   label: string;
   notiNumber: string;
-  href: string;
-  id: string;
-  active: boolean;
-  panelId: string;
 }
 
 const BoxTab = ({ label, notiNumber, href, id, panelId, active, ...props }: BoxTabProps) => {
