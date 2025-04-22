@@ -1,4 +1,4 @@
-import Pagination from '@/components/common/pagination/Pagination';
+import Pagination from '@/components/common/Pagination/Pagination';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Pagination> = {

@@ -1,4 +1,4 @@
-import PaginationNumberButton from '@/components/common/pagination/PaginationNumberButton';
+import PaginationNumberButton from '@/components/common/Pagination/PaginationNumberButton';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
