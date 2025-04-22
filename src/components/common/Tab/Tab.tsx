@@ -28,9 +28,7 @@ const Tab = ({ children, href, active, id, panelId, ...props }: TabProps) => {
       )}
       {...props}
     >
-      <span>
-        <Typography type="Title3Medium">{children}</Typography>
-      </span>
+      <Typography type="Title3Medium">{children}</Typography>
     </Link>
   );
 };
