@@ -1,63 +1,99 @@
-'use client';
-import React, { useState } from 'react';
-import Tab from './Tab';
+import React from 'react';
+
 import BoxTab from '@/components/common/Tab/BoxTab';
+import Tab from '@/components/common/Tab/Tab';
+import { PageProps } from '../../../../.next/types/app/page';
+import { redirect } from 'next/navigation';
 
-// 개별 탭 아이템의 타입 정의
+// 개별 탭 아이템의 타입 정의 (기본 탭)
 interface TabItem {
-  type?: 'default'; // 기본 탭
-  label: React.ReactNode; // 탭에 표시될 라벨 텍스트 또는 노드
-  id: string; // 탭 요소의 고유 ID (aria-labelledby 연결용)
-  panelId: string; // 패널 요소의 고유 ID (aria-controls 연결용)
-  panelComponent: React.ReactNode; // 탭 클릭 시 렌더링할 콘텐츠 영역
+  type?: 'default';
+  label: React.ReactNode;
+  id: string;
+  panelId: string;
+  panelComponent: React.ReactNode;
 }
 
+// 박스형 탭 아이템의 타입 정의
 interface BoxTabItem {
-  type: 'box'; // 박스형 탭임을 명시
-  label: string; // 라벨
-  notiNumber: string; // 알림 갯수
-  id: string; // 탭 요소의 고유 ID (aria-labelledby 연결용)
-  panelId: string; // 패널 요소의 고유 ID (aria-controls 연결용)
-  panelComponent: React.ReactNode; // 탭 클릭 시 렌더링할 콘텐츠 영역
+  type: 'box';
+  label: string;
+  notiNumber: string;
+  id: string;
+  panelId: string;
+  panelComponent: React.ReactNode;
 }
 
+// 두 타입을 합친 공통 타입
 export type CombinedTabItem = TabItem | BoxTabItem;
 
 // TabView 컴포넌트 props 정의
 interface TabViewProps {
-  items: CombinedTabItem[]; // 탭 목록 배열
-  defaultIndex?: number; // 초기 활성화할 탭 인덱스 (기본값: 0)
+  items: CombinedTabItem[];
+  searchParams: PageProps['searchParams'];
 }
 
-// TabView: 탭 버튼과 해당 콘텐츠 패널을 함께 렌더링하는 컴포넌트
-const TabView = ({ items, defaultIndex = 0 }: TabViewProps) => {
-  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+// 탭 뷰 렌더링 컴포넌트
+const TabView = ({ items, searchParams }: TabViewProps) => {
+  // 해당 panelId를 가진 아이템을 찾음
+  const activeItem = items.find((item) => item.panelId === searchParams?.tab);
+
+  // 주어진 key의 query param을 업데이트한 새 URL 생성(Util화 가능)
+  const getUpdatedHref = (keyParam: string, panelId: string) => {
+    const params = new URLSearchParams();
+
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          params.set(key, value);
+        }
+      });
+    }
+    params.set(keyParam, panelId);
+    return `?${params.toString()}`;
+  };
+
+  // activeItem이 없다면 ?tab=edu로 강제 이동
+  if (!activeItem) {
+    redirect(getUpdatedHref('tab', 'edu'));
+  }
 
   return (
     <>
+      {/* 탭 리스트 렌더링 */}
       <div role="tablist" aria-orientation="horizontal" className="flex cursor-pointer">
-        {items.map((item, index) => {
+        {items.map((item) => {
           const commonProps = {
-            key: item.id,
             id: item.id,
             panelId: item.panelId,
-            active: index === activeIndex,
-            onClick: () => setActiveIndex(index),
+            active: item.panelId === searchParams?.tab,
           };
 
-          // BoxTab 렌더링
+          // 박스형 탭일 경우 BoxTab 렌더링
           if (item.type === 'box') {
-            return <BoxTab {...commonProps} label={item.label} notiNumber={item.notiNumber} />;
+            return (
+              <BoxTab
+                href={getUpdatedHref('tab', item.panelId)}
+                key={item.id}
+                {...commonProps}
+                label={item.label}
+                notiNumber={item.notiNumber}
+              />
+            );
           }
 
-          // 기본 Tab 렌더링
-          return <Tab {...commonProps}>{item.label}</Tab>;
+          // 기본 탭 렌더링
+          return (
+            <Tab href={getUpdatedHref('tab', item.panelId)} key={item.id} {...commonProps}>
+              {item.label}
+            </Tab>
+          );
         })}
       </div>
 
-      {/* 컴포넌트 렌더링 */}
-      <div role="tabpanel" id={items[activeIndex].panelId} aria-labelledby={items[activeIndex].id}>
-        {items[activeIndex].panelComponent}
+      {/* 활성화된 탭의 콘텐츠 렌더링 */}
+      <div role="tabpanel" id={`panel-${activeItem?.panelId}`} aria-labelledby={activeItem?.id}>
+        {activeItem?.panelComponent}
       </div>
     </>
   );
