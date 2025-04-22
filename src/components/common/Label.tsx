@@ -13,11 +13,11 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   status?: keyof typeof statusValue | 'default';
 }
 
-const Label = ({ title, status = 'default', ...props }: LabelProps) => {
+const Label = ({ title, status = 'default', className, ...props }: LabelProps) => {
   return (
     // input과 연결되는 label 태그
-    <label {...props}>
-      <Typography type="Body1Medium" className="text-gray-60 cursor-pointer">
+    <label {...props} className={clsx('w-fit cursor-pointer', className)}>
+      <Typography type="Body1Medium" className="text-gray-60 ">
         {title}
         {status !== 'default' && (
           <>
