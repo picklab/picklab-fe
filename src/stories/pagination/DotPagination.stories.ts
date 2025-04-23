@@ -1,4 +1,4 @@
-import DotPagination from '@/components/common/pagination/DotPagination';
+import DotPagination from '@/components/common/Pagination/DotPagination';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
