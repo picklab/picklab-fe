@@ -1,6 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
-import Typography from '../Typography';
+
 import clsx from 'clsx';
+import Typography from '@/components/common/Typography';
 
 // PaginationNumberButtonProps
 // - ButtonHTMLAttributes를 확장하여 button 요소의 기본 속성을 모두 포함
