@@ -1,6 +1,6 @@
 import React from 'react';
 import CheckBox from './CheckBox';
-import Label from '@/components/common/Filed/LabelType';
+import Label from '@/components/common/Field/LabelType';
 
 interface CheckLabelProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string; // 우측에 표시할 텍스트

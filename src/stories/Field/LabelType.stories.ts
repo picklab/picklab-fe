@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import LabelType from '@/components/common/Filed/LabelType';
+import LabelType from '@/components/common/Field/LabelType';
 
 const meta = {
   title: 'Components/Field/LabelType',

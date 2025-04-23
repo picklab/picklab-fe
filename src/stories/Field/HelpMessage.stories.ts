@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import HelpMessage from '@/components/common/Filed/HelpMessage';
+import HelpMessage from '@/components/common/Field/HelpMessage';
 
 const meta = {
   title: 'Components/Field/HelpMessage',
