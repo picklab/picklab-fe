@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import Dot, { DotProps } from './Dot';
+
 import clsx from 'clsx';
+import Dot, { DotProps } from '@/components/common/Pagination/Dot';
 
 // DotPaginationProps
 // - DotProps: 각 도트에 전달할 공통 속성 (예: onClick 등)
