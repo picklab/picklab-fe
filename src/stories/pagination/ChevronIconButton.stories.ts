@@ -1,4 +1,4 @@
-import ChevronIconButton from '@/components/common/pagination/ChevronIconButton';
+import ChevronIconButton from '@/components/common/Pagination/ChevronIconButton';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
