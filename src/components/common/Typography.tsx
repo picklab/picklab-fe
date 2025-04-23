@@ -130,7 +130,7 @@ type TagMap = {
 type TypographyTag = keyof TagMap;
 type TypographyType = keyof typeof TypographyTypes;
 
-type TypographyProps<T extends TypographyTag = 'span'> = {
+export type TypographyProps<T extends TypographyTag = 'span'> = {
   tag?: T;
   type: TypographyType;
   className?: string;

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import HelpMessage from '@/components/common/HelpMessage';
+import HelpMessage from '@/components/common/Field/HelpMessage';
 
 const meta = {
-  title: 'Components/HelpMessage',
+  title: 'Components/Field/HelpMessage',
   component: HelpMessage,
   tags: ['autodocs'],
   argTypes: {
