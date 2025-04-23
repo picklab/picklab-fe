@@ -22,6 +22,9 @@ const config: Config = {
       lineHeight: lineHeights,
       letterSpacing: letterSpacings,
       spacing: spacing,
+      boxShadow: {
+        optionGroup: '1px 4px 4.8px 0px #00000021',
+      },
     },
   },
   plugins: [],
