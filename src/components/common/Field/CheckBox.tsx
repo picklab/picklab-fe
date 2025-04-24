@@ -46,7 +46,7 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
           icon="check"
           aria-hidden="true"
           className={clsx(
-            'hidden peer-checked:inline-block text-white peer-disabled:text-gray-50 scale-150',
+            'hidden peer-checked:inline-block text-white peer-disabled:text-gray-50',
             error && '!text-danger-50', // 에러일 경우 아이콘 색상 변경
           )}
         />
