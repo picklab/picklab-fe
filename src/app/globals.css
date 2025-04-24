@@ -8,6 +8,10 @@
     src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
   }
 }
+html,
+body {
+  font-family: 'Pretendard', sans-serif;
+}
 
 .box-tab {
   /* box-tab의 마지막 요소는 padding 넣어주어 border 효과 살리기 */
