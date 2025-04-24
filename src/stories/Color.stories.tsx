@@ -1,5 +1,7 @@
-import { Meta, ColorPalette, ColorItem } from '@storybook/blocks';
-import { colors } from './theme/colors'
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { colors } from '@/styles/theme/colors';
+import ColorItem from '@/styles/ColorItem';
 
 const primaryColors = {
   5: colors.primary[5],
@@ -123,20 +125,30 @@ const aiColors = {
   text: colors.ai.text,
 };
 
-<Meta title="foundations/Colors" />
+const meta: Meta = {
+  title: 'Design System/Colors',
+  component: ColorItem,
+};
 
-<ColorPalette>
-  <ColorItem title="PRIMARY" subtitle="emerald" colors={primaryColors} />
-  <ColorItem title="GRAY" subtitle="gray" colors={grayColors} />
-  <ColorItem title="DANGER" subtitle="system/red" colors={dangerColors} />
-  <ColorItem title="WARNING" subtitle="system/yellow" colors={warningColors} />
-  <ColorItem title="INFO" subtitle="system/blue" colors={infoColors} />
-  <ColorItem title="SUCCESS" subtitle="system/lime" colors={successColors} />
-  <ColorItem title="INTERACTIVE" colors={interactiveColors} />
-  <ColorItem title="DISABLED" colors={disabledColors} />
-  <ColorItem title="PLANNING" subtitle="jobchip/planning" colors={planningColors} />
-  <ColorItem title="DEVELOPMENT" subtitle="jobchip/development" colors={developmentColors} />
-  <ColorItem title="MARKETING" subtitle="jobchip/marketing" colors={marketingColors} />
-  <ColorItem title="DESIGN" subtitle="jobchip/design" colors={designColors} />
-  <ColorItem title="AI" subtitle="jobchip/ai" colors={aiColors} />
-</ColorPalette>
+export default meta;
+type Story = StoryObj;
+
+export const AllColors: Story = {
+  render: () => (
+    <>
+      <ColorItem title="PRIMARY" subtitle="emerald" colors={primaryColors} />
+      <ColorItem title="GRAY" subtitle="gray" colors={grayColors} />
+      <ColorItem title="DANGER" subtitle="system/red" colors={dangerColors} />
+      <ColorItem title="WARNING" subtitle="system/yellow" colors={warningColors} />
+      <ColorItem title="INFO" subtitle="system/blue" colors={infoColors} />
+      <ColorItem title="SUCCESS" subtitle="system/lime" colors={successColors} />
+      <ColorItem title="INTERACTIVE" colors={interactiveColors} />
+      <ColorItem title="DISABLED" colors={disabledColors} />
+      <ColorItem title="PLANNING" subtitle="jobchip/planning" colors={planningColors} />
+      <ColorItem title="DEVELOPMENT" subtitle="jobchip/development" colors={developmentColors} />
+      <ColorItem title="MARKETING" subtitle="jobchip/marketing" colors={marketingColors} />
+      <ColorItem title="DESIGN" subtitle="jobchip/design" colors={designColors} />
+      <ColorItem title="AI" subtitle="jobchip/ai" colors={aiColors} />
+    </>
+  ),
+};
