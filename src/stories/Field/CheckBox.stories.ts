@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import CheckBox from '@/components/common/Option/CheckBox';
+import CheckBox from '@/components/common/Field/CheckBox';
 
 const meta = {
-  title: 'Components/Option/CheckBox',
+  title: 'Components/Field/CheckBox',
   component: CheckBox,
   tags: ['autodocs'],
   argTypes: {
