@@ -80,7 +80,7 @@ const Label = <T extends LabelTag = 'label'>({
               `flex justify-center items-center w-[59px] h-9 px-space-12 py-space-8 cursor-pointer 
           hover:bg-gray-5 hover:text-gray-60 rounded
           active:bg-info-10 active:text-info-70`,
-              isSelected && '!bg-info-10 !text-info-70',
+              isSelected && 'bg-info-10 text-info-70',
               className,
             )}
             onClick={() => {

@@ -43,9 +43,7 @@ const CheckBoxLabel = <T extends LabelTag = 'label'>({
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       const nextIndex = (index + 1) % options.length; // 아래 방향키: 다음 인덱스로 이동
-      console.log(nextIndex);
       setFocusedIndex(nextIndex);
-      console.log(itemRefs.current);
       itemRefs.current[nextIndex]?.focus();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
@@ -68,7 +66,7 @@ const CheckBoxLabel = <T extends LabelTag = 'label'>({
           active:bg-info-10 active:text-info-70
           `,
               className,
-              isSelected && '!bg-info-10 !text-info-70',
+              isSelected && 'bg-info-10 text-info-70',
             )}
             onClick={() => {
               onClickHandler(option.value);

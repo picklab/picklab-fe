@@ -22,7 +22,7 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
         // label 요소를 input과 연결
         htmlFor={props.id}
         className={clsx(
-          `flex items-center size-[16px] cursor-pointer p-[1px] border-[1.5px] rounded
+          `flex items-center size-space-16 cursor-pointer p-[1px] border-[1.5px] rounded
            hover:border-gray-40 active:border-gray-50 
            group-has-[input:checked]:border-info-50 group-has-[input:checked]:bg-info-50 
            group-has-[input:checked]:hover:bg-info-60 group-has-[input:checked]:hover:border-info-60 
