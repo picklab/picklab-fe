@@ -1,8 +1,9 @@
-import React, { InputHTMLAttributes } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 
-export interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface CheckBoxProps
+  extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   // 에러 상태일 경우 스타일을 다르게 표시
   error?: boolean;
 }
@@ -13,6 +14,7 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
     // error style 꺼주기
     error = false;
   }
+
   return (
     // 그룹 클래스를 통해 자식 요소에 상태에 따라 스타일링 적용 가능
     <div className="group">
