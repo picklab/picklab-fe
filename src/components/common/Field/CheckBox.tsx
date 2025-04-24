@@ -2,7 +2,7 @@ import React, { InputHTMLAttributes } from 'react';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 
-interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   // 에러 상태일 경우 스타일을 다르게 표시
   error?: boolean;
 }
@@ -20,7 +20,7 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
         // label 요소를 input과 연결
         htmlFor={props.id}
         className={clsx(
-          `flex items-center size-[18px] cursor-pointer p-[1px] border-2 rounded-sm 
+          `flex items-center size-[16px] cursor-pointer p-[1px] border-[1.5px] rounded
            hover:border-gray-40 active:border-gray-50 
            group-has-[input:checked]:border-info-50 group-has-[input:checked]:bg-info-50 
            group-has-[input:checked]:hover:bg-info-60 group-has-[input:checked]:hover:border-info-60 
@@ -43,7 +43,7 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
           icon="check"
           aria-hidden="true"
           className={clsx(
-            'hidden peer-checked:inline-block size-full text-white peer-disabled:text-gray-50',
+            'hidden peer-checked:inline-block text-white peer-disabled:text-gray-50 scale-150',
             error && '!text-danger-50', // 에러일 경우 아이콘 색상 변경
           )}
         />
