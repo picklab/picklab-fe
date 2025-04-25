@@ -2,7 +2,7 @@ import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import React, { LabelHTMLAttributes } from 'react';
 
-const statusValue = {
+export const statusValue = {
   optional: { text: 'text-gray-60', title: '(optional)', screenReaderText: '선택 항목입니다.' },
   require: { text: 'text-danger-50', title: '*', screenReaderText: '필수 항목입니다.' },
 };
