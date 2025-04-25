@@ -2,7 +2,7 @@ import type { StorybookConfig } from '@storybook/nextjs';
 import path from 'path';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-onboarding',
@@ -21,6 +21,9 @@ const config: StorybookConfig = {
       'next/navigation': path.resolve(__dirname, '../src/__mocks__/next/navigation.ts'),
     };
     return config;
+  },
+  docs: {
+    autodocs: true,
   },
   staticDirs: ['../public'],
 };
