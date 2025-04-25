@@ -36,6 +36,7 @@ export const colors = {
     70: '#C10007',
     80: '#9F0712',
     90: '#82181A',
+    border: '#DC2626',
   },
   warning: {
     5: '#FEFCE8',

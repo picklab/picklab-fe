@@ -16,8 +16,8 @@ interface LabelTypeProps extends LabelHTMLAttributes<HTMLLabelElement> {
 const LabelType = ({ title, status = 'default', ...props }: LabelTypeProps) => {
   return (
     // input과 연결되는 label 태그
-    <label {...props}>
-      <Typography type="Body1Medium" className="text-gray-60 cursor-pointer">
+    <label {...props} className={clsx('w-fit cursor-pointer', className)}>
+      <Typography type="Body1Medium" className="text-gray-60 ">
         {title}
         {status !== 'default' && (
           <>
