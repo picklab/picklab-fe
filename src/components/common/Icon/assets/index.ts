@@ -17,11 +17,15 @@ import LargeHuman from '@/components/common/Icon/assets/Large/LargeHuman';
 import LargeNote from '@/components/common/Icon/assets/Large/LargeNote';
 import LargeRefresh from '@/components/common/Icon/assets/Large/LargeRefresh';
 import LargeSearch from '@/components/common/Icon/assets/Large/LargeSearch';
+import ChevronDown from '@/components/common/Icon/assets/ChevronDown';
+import ChevronUp from '@/components/common/Icon/assets/ChevronUp';
 
 export const iconMap = {
   alertCircle: AlertCircle,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
+  chevronDown: ChevronDown,
+  chevronUp: ChevronUp,
   check: Check,
   human: Human,
   search: Search,
