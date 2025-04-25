@@ -3,8 +3,8 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/common/Icon/Icon';
-import HelpMessage from '@/components/common/Field/HelpMessage';
-import LabelType, { statusValue } from '@/components/common/Field/LabelType';
+import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
+import LabelType, { LabelTypeProps } from '@/components/common/Field/LabelType';
 import { OptionGroup } from '@/components/common/Field/OptionGroup';
 
 interface Option {
@@ -14,9 +14,9 @@ interface Option {
 
 interface SelectFieldProps {
   label?: string;
-  labelStatus?: keyof typeof statusValue | 'default';
+  labelStatus?: LabelTypeProps['status'];
   helpMessage?: string;
-  helpMessageStatus?: 'default' | 'error' | 'success';
+  helpMessageStatus?: HelpMessageProps['status'];
   options: Option[];
   value: string;
   onChange: (value: string) => void;
@@ -26,7 +26,7 @@ interface SelectFieldProps {
 }
 
 export const widthClassMap = {
-  default: 'w-[240px]',
+  default: 'w-60',
   large: 'w-[426px]',
   small: 'w-[136px]',
 };
@@ -106,7 +106,7 @@ const SelectField = ({
         >
           {displayText}
         </span>
-        <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} width={24} height={24} className="text-gray-90" />
+        <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} size={24} className="text-gray-90" />
       </button>
 
       {isOpen && (
