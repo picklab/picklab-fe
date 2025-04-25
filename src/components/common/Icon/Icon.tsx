@@ -1,5 +1,4 @@
 import { iconMap, IconType } from '@/components/common/Icon/assets';
-import clsx from 'clsx';
 
 export type Props = {
   icon: IconType;
@@ -9,12 +8,9 @@ export type Props = {
   role?: string;
 } & React.SVGProps<SVGSVGElement>;
 
-/**
- * 참고: check Icon은 크기가 작아 scale을 1.5배 키웠습니다!
- */
 const Icon = ({ icon, size, className, ariaLabel, role, ...props }: Props) => {
   const IconSVGComponent = iconMap[icon];
-  const checkStyle = icon === 'check' && 'scale-150';
+
   {
     /* 🔤 아무런 인터랙션없이 단지 이미지식의 아이콘일 경우만
     ariaLabel, role을 prop으로 주시면 됩니다
@@ -41,15 +37,7 @@ const Icon = ({ icon, size, className, ariaLabel, role, ...props }: Props) => {
     color를 prop으로 받지 않고, className으로 전달
     (아이콘 컴포넌트에 color가 들어가는 부분을 currentColor로 변경해주세요.) */
   }
-  return (
-    <IconSVGComponent
-      width={size}
-      height={size}
-      className={clsx(checkStyle, className)}
-      {...accessibilityProps}
-      {...props}
-    />
-  );
+  return <IconSVGComponent width={size} height={size} className={className} {...accessibilityProps} {...props} />;
 };
 
 export default Icon;

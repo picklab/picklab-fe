@@ -37,7 +37,7 @@ const HelpMessage = ({ title, status = 'default', ...props }: HelpMessageProps) 
       {/* 성공 상태일 때 아이콘 렌더링, 역시 시각적 표시만 하고 스크린리더는 무시 */}
       {status === 'success' && (
         <div className="size-space-20 p-1">
-          <Icon aria-hidden="true" icon="check" size={14} className={statusClasses[status]} />
+          <Icon aria-hidden="true" icon="largeCheck" size={14} className={statusClasses[status]} />
         </div>
       )}
 

@@ -43,7 +43,7 @@ const CheckBox = ({ error, ...props }: CheckBoxProps) => {
         {/* 체크 아이콘. 체크되었을 때만 표시되며, 시각적 요소이므로 스크린 리더는 무시 */}
         <Icon
           size={24}
-          icon="check"
+          icon="largeCheck"
           aria-hidden="true"
           className={clsx(
             'hidden peer-checked:inline-block text-white peer-disabled:text-gray-50',
