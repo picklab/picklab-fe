@@ -1,20 +1,12 @@
 import React from 'react';
 
-const ChevronDown = ({ width, height, className, ...props }: React.SVGProps<SVGSVGElement>) => {
+const ChevronDown = ({ width, height, ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
+    <svg width={width} height={height} viewBox="0 0 15 9" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M5.74311 9.6435C6.036 9.3506 6.51087 9.3506 6.80377 9.6435L12.2734 15.1132L17.7431 9.6435C18.036 9.3506 18.5109 9.3506 18.8038 9.6435C19.0967 9.93639 19.0967 10.4113 18.8038 10.7042L12.8038 16.7042C12.5109 16.9971 12.036 16.9971 11.7431 16.7042L5.74311 10.7042C5.45021 10.4113 5.45021 9.93639 5.74311 9.6435Z"
+        d="M0.789982 1.03412C1.08288 0.74123 1.55775 0.74123 1.85064 1.03412L7.32031 6.50379L12.79 1.03412C13.0829 0.74123 13.5577 0.74123 13.8506 1.03412C14.1435 1.32702 14.1435 1.80189 13.8506 2.09478L7.85064 8.09478C7.55775 8.38768 7.08288 8.38768 6.78998 8.09478L0.789982 2.09478C0.497089 1.80189 0.497089 1.32702 0.789982 1.03412Z"
         fill="currentColor"
       />
     </svg>
