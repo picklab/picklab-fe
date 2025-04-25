@@ -5,7 +5,7 @@ import React from 'react';
 
 // props 정의: Typography에서 type과 children은 제외하고,
 // title(텍스트)과 상태(status)를 추가로 받음
-interface HelpMessageProps extends Omit<TypographyProps, 'type' | 'children'> {
+export interface HelpMessageProps extends Omit<TypographyProps, 'type' | 'children'> {
   title: string;
   status?: 'default' | 'error' | 'success';
 }
