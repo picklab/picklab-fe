@@ -10,12 +10,20 @@ const meta: Meta<typeof CheckBoxLabel> = {
   args: {
     tag: 'label',
     className: '',
-    checkBoxProps: {},
+    checkBoxProps: {
+      disabled: false,
+    },
     options: [
       { label: 'Label1', value: 'A' },
       { label: 'Label2', value: 'B' },
       { label: 'Label3', value: 'C' },
     ],
+  },
+  argTypes: {
+    checkBoxProps: {
+      control: 'object',
+      description: 'Props passed to each checkbox input',
+    },
   },
 };
 
