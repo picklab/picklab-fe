@@ -84,7 +84,7 @@ const SelectField = ({
         type="button"
         id="select-button"
         className={clsx(
-          'px-space-12 py-space-12 rounded-md border text-left text-gray-90 flex justify-between items-center transition-colors',
+          'h-space-48 box-border px-space-12 py-space-12 rounded-md border text-left text-gray-90 flex justify-between items-center transition-colors',
           'border-interactive-secondary bg-gray-0',
           'hover:border-gray-50 hover:text-gray-60',
           'active:border-gray-50',
