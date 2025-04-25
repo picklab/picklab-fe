@@ -13,7 +13,7 @@ interface LabelTypeProps extends LabelHTMLAttributes<HTMLLabelElement> {
   status?: keyof typeof statusValue | 'default';
 }
 
-const LabelType = ({ title, status = 'default', ...props }: LabelTypeProps) => {
+const LabelType = ({ title, status = 'default', className, ...props }: LabelTypeProps) => {
   return (
     // input과 연결되는 label 태그
     <label {...props} className={clsx('w-fit cursor-pointer', className)}>
