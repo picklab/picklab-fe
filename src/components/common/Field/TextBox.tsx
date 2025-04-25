@@ -15,7 +15,7 @@ const TextBox = ({ error = false, ...props }: TextBoxProps) => {
     <input
       type="text"
       className={clsx(
-        `box-border w-[240px] h-[48px] rounded-md border px-space-12 py-space-8 text-gray-90
+        `box-border w-60 h-space-48 rounded-md border px-space-12 py-space-8 text-gray-90
           border-interactive-secondary  
           hover:border-gray-50 hover:placeholder:text-gray-50
           active:border-gray-50 

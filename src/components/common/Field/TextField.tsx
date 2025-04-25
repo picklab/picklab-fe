@@ -1,6 +1,6 @@
 import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
 import LabelType from '@/components/common/Field/LabelType';
-import TextBox, { TextBoxProps } from '@/components/common/Filed/TextBox';
+import TextBox, { TextBoxProps } from '@/components/common/Field/TextBox';
 import clsx from 'clsx';
 import React from 'react';
 interface BaseProps extends Omit<TextBoxProps, 'error'> {
@@ -13,14 +13,11 @@ type WithLabel = {
   id: string;
 };
 
-type WithoutLabel = {
-  label?: undefined;
-  id?: string;
-};
+type WithoutLabel = Partial<WithLabel>;
 
-type TextFiledProps = BaseProps & (WithLabel | WithoutLabel);
+type TextFieldProps = BaseProps & (WithLabel | WithoutLabel);
 
-const TextFiled = ({ label, id, status, helpMessage, ...props }: TextFiledProps) => {
+const TextField = ({ label, id, status, helpMessage, ...props }: TextFieldProps) => {
   if (props.disabled) {
     status = 'default';
   }
@@ -34,4 +31,4 @@ const TextFiled = ({ label, id, status, helpMessage, ...props }: TextFiledProps)
   );
 };
 
-export default TextFiled;
+export default TextField;
