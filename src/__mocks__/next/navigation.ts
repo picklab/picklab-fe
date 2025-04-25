@@ -65,3 +65,9 @@ export const useRouter = () => ({
     notify();
   },
 });
+
+export const usePathname = () => {
+  // 단순히 현재 경로를 반환
+  // (현재까지 스토리북에서 해당 훅으로 어떤 작업을 하고있지 않아서 기본 리턴값 반환)
+  return '/mock-path';
+};
