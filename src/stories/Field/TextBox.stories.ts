@@ -8,10 +8,8 @@ const meta: Meta<typeof TextBox> = {
   tags: ['autodocs'],
   args: {
     placeholder: '텍스트를 입력하세요',
-  },
-  argTypes: {
-    error: { control: 'boolean' },
-    disabled: { control: 'boolean' },
+    error: false,
+    disabled: false,
   },
 };
 

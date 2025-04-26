@@ -9,53 +9,40 @@ const meta: Meta<typeof TextField> = {
   args: {
     placeholder: '텍스트를 입력하세요',
     status: 'default',
+    label: '',
+    id: '',
+    helpMessage: '',
+    disabled: false,
   },
   argTypes: {
-    label: { control: 'text' },
-    id: { control: 'text' },
-    helpMessage: { control: 'text' },
     status: {
-      control: 'select',
+      control: 'radio',
+      description: 'success 일 경우 Help Message의 스타일만 변합니다',
       options: ['default', 'error', 'success'],
     },
-    disabled: { control: 'boolean' },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof TextField>;
 
-export const Default: Story = {
+export const Default: Story = {};
+
+export const WithLabel: Story = {
   args: {
-    label: '이름',
-    id: 'name',
-    placeholder: '이름을 입력하세요.',
+    label: '라벨',
   },
 };
 
 export const WithHelpMessage: Story = {
   args: {
-    label: '이메일',
-    id: 'email',
-    helpMessage: '이메일 형식을 확인하세요.',
-    status: 'error',
+    helpMessage: 'help~~',
   },
 };
 
-export const SuccessState: Story = {
-  args: {
-    label: '닉네임',
-    id: 'nickname',
-    helpMessage: '좋은 닉네임이에요!',
-    status: 'success',
-  },
-};
-
-export const Disabled: Story = {
+export const WithLabelAndHelpMessage: Story = {
   args: {
     label: '전화번호',
-    id: 'phone',
-    disabled: true,
     helpMessage: '입력할 수 없는 상태입니다.',
   },
 };
