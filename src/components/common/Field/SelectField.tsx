@@ -12,7 +12,7 @@ interface Option {
   value: string;
 }
 
-interface SelectFieldProps {
+export interface SelectFieldProps {
   label?: string;
   labelStatus?: LabelTypeProps['status'];
   helpMessage?: string;
