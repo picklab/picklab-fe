@@ -7,11 +7,12 @@ const meta: Meta<typeof TextField> = {
   component: TextField,
   tags: ['autodocs'],
   args: {
+    label: '',
+    labelStatus: 'default',
     placeholder: '텍스트를 입력하세요',
     status: 'default',
-    label: '',
-    id: '',
     helpMessage: '',
+    id: '',
     disabled: false,
   },
   argTypes: {
@@ -19,6 +20,10 @@ const meta: Meta<typeof TextField> = {
       control: 'radio',
       description: 'success 일 경우 Help Message의 스타일만 변합니다',
       options: ['default', 'error', 'success'],
+    },
+    labelStatus: {
+      control: 'radio',
+      options: ['default', 'optional', 'require'],
     },
   },
 };
@@ -42,7 +47,7 @@ export const WithHelpMessage: Story = {
 
 export const WithLabelAndHelpMessage: Story = {
   args: {
-    label: '전화번호',
-    helpMessage: '입력할 수 없는 상태입니다.',
+    label: '아이디',
+    helpMessage: '아이디를 입력하세요',
   },
 };
