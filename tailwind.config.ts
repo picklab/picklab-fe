@@ -3,6 +3,8 @@ import { spacing } from './src/styles/theme/spacing';
 import { colors } from './src/styles/theme/colors';
 import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
+import { radius } from './src/styles/theme/radius';
+import { elevation } from './src/styles/theme/elevation';
 
 const config: Config = {
   content: [
@@ -23,9 +25,8 @@ const config: Config = {
       lineHeight: lineHeights,
       letterSpacing: letterSpacings,
       spacing: spacing,
-      boxShadow: {
-        optionGroup: '1px 4px 4.8px 0px #00000021',
-      },
+      borderRadius: radius,
+      boxShadow: elevation,
     },
   },
   plugins: [],
