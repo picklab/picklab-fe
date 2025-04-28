@@ -11,12 +11,16 @@ interface ChartProps {
 
 const Chart = ({ rank, title, type, value }: ChartProps) => {
   return (
-    <div className="flex items-center gap-space-6 h-[21px] w-[106px]">
-      <Typography type="Body3Semibold" className="w-[21px] h-[21px] flex items-center justify-center">
+    <div className="flex items-center gap-space-6 h-[21px] w-full">
+      <Typography type="Body3Semibold" className="min-w-[21px] flex items-center justify-center">
         {rank}
       </Typography>
-      <Typography type="Caption1Medium">{title}</Typography>
-      <ChartBadge type={type} value={value} />
+      <div className="flex items-center gap-space-6 min-w-0">
+        <Typography type="Caption1Medium" className="truncate">
+          {title}
+        </Typography>
+        <ChartBadge type={type} value={value} />
+      </div>
     </div>
   );
 };
