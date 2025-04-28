@@ -19,6 +19,12 @@ body {
   font-family: 'Pretendard', sans-serif;
 }
 
+/* 기본 스타일링 1.5 해제 */
+html,
+:host {
+  line-height: normal;
+}
+
 .box-tab {
   /* box-tab의 마지막 요소는 padding 넣어주어 border 효과 살리기 */
   &:last-child {
