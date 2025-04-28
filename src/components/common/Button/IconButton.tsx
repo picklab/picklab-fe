@@ -52,7 +52,7 @@ const IconButton = ({ status, icon, id, disabled, readonly = false, ...props }: 
       htmlFor={buttonId} // label이 연결될 button id
       className={clsx(
         'flex items-center justify-center size-space-48 rounded-full', // 기본 스타일
-        disabled && 'cursor-not-allowed', // 비활성화 시 커서 스타일 변경
+        !readonly && disabled && 'cursor-not-allowed', // 비활성화 시 커서 스타일 변경
       )}
     >
       <div
