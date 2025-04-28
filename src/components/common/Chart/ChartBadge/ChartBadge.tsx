@@ -35,12 +35,12 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
   return (
     <span
       className={clsx(
-        'inline-flex items-center justify-center rounded-full gap-space-2 flex-1',
+        'inline-flex items-center justify-center rounded-full gap-space-2 flex-1 h-space-16',
         {
-          'bg-danger-5 text-danger-50 min-w-space-16 h-space-16': type === 'new',
-          'bg-gray-10 text-gray-60 min-w-space-16 h-space-16': type === 'default',
-          'bg-info-5 text-info-50 min-w-7 h-space-16': type === 'down',
-          'bg-danger-5 text-danger-50 min-w-7 h-space-16': type === 'up',
+          'bg-danger-5 text-danger-50 min-w-space-16': type === 'new',
+          'bg-gray-10 text-gray-60 min-w-space-16': type === 'default',
+          'bg-info-5 text-info-50 min-w-7': type === 'down',
+          'bg-danger-5 text-danger-50 min-w-7': type === 'up',
         },
         className,
       )}
