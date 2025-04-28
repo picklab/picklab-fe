@@ -26,7 +26,7 @@ const FunnelStep = ({
         {showLine && <div className="absolute top-1/2 left-full w-[44px] h-px bg-gray-30 -translate-y-1/2 -z-10" />}
         <IconButton
           aria-current={isActive ? 'step' : undefined}
-          status={isActive || isPast ? 'filled' : 'standard'}
+          buttonStyles={isActive || isPast ? 'filled' : 'standard'}
           disabled={isPast}
           readonly
           icon={step.icon}
