@@ -1,3 +1,5 @@
+'use client';
+
 import Typography from '@/components/common/Typography';
 import Link from 'next/link';
 import React from 'react';
@@ -11,9 +13,12 @@ const TextLink = ({ text, href }: TextLinkProps) => {
   return (
     <Link
       href={href}
-      className="w-fit text-gray-50 py-space-2 border-b border-gray-40 hover:text-gray-60 hover:border-gray-50 active:text-gray-70 active:border-gray-60"
+      className="inline-flex w-fit items-center border-b border-gray-40 py-space-2 text-gray-50 hover:border-gray-50 hover:text-gray-60 active:border-gray-60 active:text-gray-70"
+      aria-label={text}
     >
-      <Typography type="Body3Medium">{text}</Typography>
+      <Typography tag="span" type="Body3Medium" className="text-inherit">
+        {text}
+      </Typography>
     </Link>
   );
 };
