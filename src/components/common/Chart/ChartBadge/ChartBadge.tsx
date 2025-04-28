@@ -35,12 +35,12 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
   return (
     <span
       className={clsx(
-        'inline-flex items-center justify-center rounded-full gap-space-2 flex-1 h-space-16',
+        'flex justify-center items-center rounded-full h-space-16',
         {
           'bg-danger-5 text-danger-50 min-w-space-16': type === 'new',
           'bg-gray-10 text-gray-60 min-w-space-16': type === 'default',
-          'bg-info-5 text-info-50 min-w-7': type === 'down',
-          'bg-danger-5 text-danger-50 min-w-7': type === 'up',
+          'bg-info-5 text-info-50 min-w-[31px]': type === 'down',
+          'bg-danger-5 text-danger-50 min-w-[31px]': type === 'up',
         },
         className,
       )}
@@ -51,14 +51,14 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
       {type === 'default' && <Typography type="Caption2Medium">-</Typography>}
       {isUpOrDown && hasValue && (
         <>
-          <Typography type="Caption2Medium" className="flex items-center justify-center">
+          {type === 'up' ? (
+            <FillChevronUp width={15} height={15} className="text-danger-50" />
+          ) : (
+            <FillChevronDown width={15} height={15} className="text-info-50" />
+          )}
+          <Typography type="Caption2Medium" className="mr-[3px]">
             {value}
           </Typography>
-          {type === 'up' ? (
-            <FillChevronUp width={10} height={10} className="text-danger-50" />
-          ) : (
-            <FillChevronDown width={10} height={10} className="text-info-50" />
-          )}
         </>
       )}
     </span>
