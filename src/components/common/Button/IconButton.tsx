@@ -30,21 +30,21 @@ const iconStyleClass = {
 
 // IconButton 컴포넌트 props 타입 정의
 interface IconButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
-  status: keyof typeof styleClass; // 버튼 스타일 타입 (filled | outlined | standard)
+  buttonStyles: keyof typeof styleClass; // 버튼 스타일 타입 (filled | outlined | standard)
   icon: IconProps['icon'];
   readonly?: boolean;
 }
 
 // IconButton 컴포넌트 정의
-const IconButton = ({ status, icon, id, disabled, readonly = false, ...props }: IconButtonProps) => {
+const IconButton = ({ buttonStyles, icon, id, disabled, readonly = false, ...props }: IconButtonProps) => {
   // 버튼과 label을 연결하기 위한 id 설정 (없으면 기본값 사용)
   const buttonId = id || 'icon-button';
 
   const getStyleClass = () => {
     if (disabled) {
-      return styleClass[status].disable;
+      return styleClass[buttonStyles]?.disable;
     } else {
-      return readonly ? styleClass[status].readonly : styleClass[status].active;
+      return readonly ? styleClass[buttonStyles]?.readonly : styleClass[buttonStyles]?.active;
     }
   };
   return (
@@ -66,7 +66,7 @@ const IconButton = ({ status, icon, id, disabled, readonly = false, ...props }: 
           icon={icon} // 현재 하드코딩된 아이콘 ("human")
           size={24}
           className={clsx(
-            iconStyleClass[status], // 스타일에 따라 색상 변경
+            iconStyleClass[buttonStyles], // 스타일에 따라 색상 변경
             disabled && '!text-gray-40', // 비활성화 시 색상 회색으로
           )}
         />
