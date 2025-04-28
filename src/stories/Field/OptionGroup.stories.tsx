@@ -20,18 +20,18 @@ const meta: Meta<typeof OptionGroup> = {
 export default meta;
 type Story = StoryObj<typeof OptionGroup>;
 
+const OptionGroupWithState = (args: React.ComponentProps<typeof OptionGroup>) => {
+  const [selected, setSelected] = useState('option1');
+  return <OptionGroup {...args} selectedValue={selected} onClickHandler={(value) => setSelected(value)} />;
+};
+
 export const Default: Story = {
-  render: (args) => {
-    const [selected, setSelected] = useState('option1');
-    return <OptionGroup {...args} selectedValue={selected} onClickHandler={(value) => setSelected(value)} />;
-  },
+  render: (args) => <OptionGroupWithState {...args} />,
 };
 
 export const WithCheckBox: Story = {
-  render: (args) => {
-    const [selected, setSelected] = useState('option1');
-    return (
-      <OptionGroup {...args} type="checkBox" selectedValue={selected} onClickHandler={(value) => setSelected(value)} />
-    );
+  args: {
+    type: 'checkBox',
   },
+  render: (args) => <OptionGroupWithState {...args} />,
 };
