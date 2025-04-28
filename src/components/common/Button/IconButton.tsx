@@ -36,10 +36,7 @@ interface IconButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLBut
 }
 
 // IconButton 컴포넌트 정의
-const IconButton = ({ buttonStyles, icon, id, disabled, readonly = false, ...props }: IconButtonProps) => {
-  // 버튼과 label을 연결하기 위한 id 설정 (없으면 기본값 사용)
-  const buttonId = id || 'icon-button';
-
+const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }: IconButtonProps) => {
   const getStyleClass = () => {
     if (disabled) {
       return styleClass[buttonStyles]?.disable;
@@ -48,12 +45,15 @@ const IconButton = ({ buttonStyles, icon, id, disabled, readonly = false, ...pro
     }
   };
   return (
-    <label
-      htmlFor={buttonId} // label이 연결될 button id
+    <button
+      type={props.type || 'button'}
+      aria-disabled={disabled || readonly} // 비활성화 또는 읽기 전용 상태일 때 속성 추가
       className={clsx(
         'flex items-center justify-center size-space-48 rounded-full', // 기본 스타일
-        !readonly && disabled && 'cursor-not-allowed', // 비활성화 시 커서 스타일 변경
+        readonly && 'cursor-default',
+        disabled && 'cursor-not-allowed', // 비활성화 시 커서 스타일 변경
       )}
+      {...props}
     >
       <div
         className={clsx(
@@ -63,7 +63,7 @@ const IconButton = ({ buttonStyles, icon, id, disabled, readonly = false, ...pro
       >
         {/* 아이콘 렌더링 */}
         <Icon
-          icon={icon} // 현재 하드코딩된 아이콘 ("human")
+          icon={icon}
           size={24}
           className={clsx(
             iconStyleClass[buttonStyles], // 스타일에 따라 색상 변경
@@ -71,14 +71,7 @@ const IconButton = ({ buttonStyles, icon, id, disabled, readonly = false, ...pro
           )}
         />
       </div>
-      {/* 스크린 리더를 위한 실제 버튼 (화면에는 안 보임) */}
-      <button
-        id={buttonId}
-        className="sr-only" // 화면에 보이지 않게 숨김
-        aria-label={props['aria-label'] ?? '아이콘 버튼'} // 접근성 향상을 위한 라벨 (props에서 받아오거나 기본값)
-        {...props} // 나머지 버튼 속성 전달
-      />
-    </label>
+    </button>
   );
 };
 
