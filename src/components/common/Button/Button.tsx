@@ -1,19 +1,24 @@
 import Icon, { IconProps } from '@/components/common/Icon/Icon';
 import Typography, { TypographyProps } from '@/components/common/Typography';
 import clsx from 'clsx';
-import React, { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
-const sizeStyleClass: {
-  [key: string]: {
+// 버튼 사이즈 타입 정의
+type SizeType = 'xl' | 'lg' | 'base' | 'sm';
+
+// 버튼 사이즈별 스타일 정의
+const sizeStyleClass: Record<
+  SizeType,
+  {
     label: string;
     labelIconLeft: string;
     labelIconRight: string;
     typographyType: TypographyProps['type'];
     iconSize: number;
-  };
-} = {
+  }
+> = {
   xl: {
-    label: 'px-space-24 py-space-16 h-space-56 min-w-[90px]',
+    label: 'px-space-24 py-space-16 h-space-56 min-w-[90px] gap-space-10',
     labelIconLeft: 'pl-space-20',
     labelIconRight: 'pr-space-20',
     typographyType: 'Heading2Medium',
@@ -42,87 +47,110 @@ const sizeStyleClass: {
   },
 };
 
-const buttonStyleClass = {
+// 버튼 스타일 타입 정의
+type buttonStyle = 'filled' | 'outlined' | 'outline-filled';
+
+// 버튼 스타일별 스타일 클래스 정의
+const buttonStyleClass: Record<
+  buttonStyle,
+  {
+    active: {
+      // 활성화 상태
+      label: string;
+      textColor: string;
+    };
+    disabled: {
+      // 비활성화 상태
+      label: string;
+      textColor: string;
+    };
+  }
+> = {
   filled: {
     active: {
       label: 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70 cursor-pointer',
       textColor: 'text-white',
-      iconColor: 'text-white',
     },
     disabled: {
       label: 'bg-gray-10 cursor-not-allowed',
       textColor: 'text-gray-50',
-      iconColor: 'text-gray-50',
     },
   },
-  // outline: {
-  //   active: 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70',
-  //   disabled: '',
-  // },
-  // standard: {
-  //   active: 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70',
-  //   disabled: '',
-  // },
+  outlined: {
+    active: {
+      label: 'group bg-gray-0 border border-gray-40 hover:bg-gray-5 active:bg-gray-20 cursor-pointer',
+      textColor: 'text-gray-90 group-hover:text-gray-70 group-active:text-gray-60',
+    },
+    disabled: {
+      label: 'border border-gray-40 cursor-not-allowed',
+      textColor: 'text-gray-50',
+    },
+  },
+  ['outline-filled']: {
+    active: {
+      label: 'group bg-gray-0 border border-primary-60 hover:bg-primary-5 active:bg-primary-10 cursor-pointer',
+      textColor: 'text-primary-60',
+    },
+    disabled: {
+      label: 'border border-gray-40 cursor-not-allowed',
+      textColor: 'text-gray-50',
+    },
+  },
 };
 
-interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
-  label: string;
-  size: keyof typeof sizeStyleClass;
-  buttonStyle: keyof typeof buttonStyleClass;
+// Button 컴포넌트 props 타입 정의
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  label: string; // 버튼에 표시할 텍스트
+  size: keyof typeof sizeStyleClass; // 버튼 사이즈
+  buttonStyle: keyof typeof buttonStyleClass; // 버튼 스타일
+  disabled?: boolean; // 비활성화 여부
   icon?: {
+    // 아이콘 설정
     icon: IconProps['icon'];
-    position: 'left' | 'right';
+    position: 'left' | 'right'; // 아이콘 위치 (왼쪽 or 오른쪽)
   };
-  //   status: keyof typeof styleClass; // 버튼 스타일 타입 (filled | outlined | standard)
+  rounded?: boolean; // 버튼을 완전 둥글게 만들지 여부
 }
 
-const Button = ({ label, id, disabled, icon, size, buttonStyle, ...props }: ButtonProps) => {
-  // 버튼과 label을 연결하기 위한 id 설정 (없으면 기본값 사용)
-  const buttonId = id || 'icon-button';
-  // console.log(icon?.position === 'left' && sizeStyleClass[size].labelIconLeft);
-  // console.log(sizeStyleClass[size].label);
+// Button 컴포넌트 정의
+const Button = ({ label, disabled = false, icon, size, buttonStyle, rounded = false, ...props }: ButtonProps) => {
+  // 아이콘 스타일 클래스 설정 (활성/비활성 상태에 따라 다름)
+  const iconStyleClass = disabled
+    ? buttonStyleClass[buttonStyle].disabled.textColor
+    : buttonStyleClass[buttonStyle].active.textColor;
+
   return (
-    <label
-      htmlFor={buttonId} // label이 연결될 button id
+    <button
       className={clsx(
-        'flex justify-center items-center rounded-small transition-all gap-1 ',
-        sizeStyleClass[size].label,
-        icon?.position === 'left' && sizeStyleClass[size].labelIconLeft,
-        icon?.position === 'right' && sizeStyleClass[size].labelIconRight,
-        disabled ? buttonStyleClass[buttonStyle].disabled.label : buttonStyleClass[buttonStyle].active.label,
+        'flex justify-center items-center rounded-small transition-all gap-1', // 기본 버튼 스타일
+        sizeStyleClass[size].label, // 사이즈별 버튼 스타일
+        icon?.position === 'left' && sizeStyleClass[size].labelIconLeft, // 아이콘이 왼쪽일 때 패딩 조정
+        icon?.position === 'right' && sizeStyleClass[size].labelIconRight, // 아이콘이 오른쪽일 때 패딩 조정
+        disabled ? buttonStyleClass[buttonStyle].disabled.label : buttonStyleClass[buttonStyle].active.label, // 상태별 스타일
+        rounded && '!rounded-full', // rounded 옵션이 true면 완전 둥근 버튼
       )}
+      {...props}
     >
+      {/* 왼쪽 아이콘 렌더링 */}
       {icon?.position === 'left' && (
-        <Icon
-          icon={icon.icon}
-          size={sizeStyleClass[size].iconSize}
-          className={
-            disabled ? buttonStyleClass[buttonStyle].disabled.iconColor : buttonStyleClass[buttonStyle].active.iconColor
-          }
-        />
+        <Icon icon={icon.icon} size={sizeStyleClass[size].iconSize} className={iconStyleClass} />
       )}
+
+      {/* 버튼 텍스트 */}
       <Typography
         type={sizeStyleClass[size].typographyType}
         className={
-          disabled ? buttonStyleClass[buttonStyle].disabled.iconColor : buttonStyleClass[buttonStyle].active.textColor
+          disabled ? buttonStyleClass[buttonStyle].disabled.textColor : buttonStyleClass[buttonStyle].active.textColor
         }
       >
         {label}
       </Typography>
-      {/* 스크린 리더를 위한 실제 버튼 (화면에는 안 보임) */}
-      <button
-        id={buttonId}
-        className="sr-only" // 화면에 보이지 않게 숨김
-        {...props} // 나머지 버튼 속성 전달
-      />
+
+      {/* 오른쪽 아이콘 렌더링 */}
       {icon?.position === 'right' && (
-        <Icon
-          icon={icon.icon}
-          size={sizeStyleClass[size].iconSize}
-          className={buttonStyleClass[buttonStyle].active.iconColor}
-        />
+        <Icon icon={icon.icon} size={sizeStyleClass[size].iconSize} className={iconStyleClass} />
       )}
-    </label>
+    </button>
   );
 };
 
