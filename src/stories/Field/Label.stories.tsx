@@ -19,15 +19,15 @@ const meta: Meta<typeof Label> = {
 
 export default meta;
 type Story = StoryObj<typeof Label>;
+const LabelWithState = (args: React.ComponentProps<typeof Label>) => {
+  const [selected, setSelected] = useState('option1');
+  return (
+    <div className="flex gap-2">
+      <Label {...args} selectedValue={selected} onClickHandler={(value) => setSelected(value)} />
+    </div>
+  );
+};
 
 export const Default: Story = {
-  render: (args) => {
-    const [selected, setSelected] = useState('A');
-
-    return (
-      <div className="flex gap-2">
-        <Label {...args} selectedValue={selected} onClickHandler={(value) => setSelected(value)} />
-      </div>
-    );
-  },
+  render: (args) => <LabelWithState {...args} />,
 };
