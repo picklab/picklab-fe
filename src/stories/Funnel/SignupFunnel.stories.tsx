@@ -1,12 +1,12 @@
 import { StepType } from '@/components/common/Funnel/FunnelStep';
 import SignupFunnel from '@/components/common/Funnel/SignupFunnel';
-import Icon from '@/components/common/Icon/Icon';
+
 import type { Meta, StoryObj } from '@storybook/react';
 
 const steps: StepType[] = [
-  { label: '회원정보', icon: <Icon icon="human" size={24} /> },
-  { label: '관심직무', icon: <Icon icon="search" size={24} /> },
-  { label: '가입완료', icon: <Icon icon="check" size={24} /> },
+  { label: '회원정보', icon: 'human' },
+  { label: '관심직무', icon: 'search' },
+  { label: '가입완료', icon: 'check' },
 ];
 
 const meta: Meta<typeof SignupFunnel> = {

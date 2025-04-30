@@ -1,6 +1,6 @@
 import { iconMap, IconType } from '@/components/common/Icon/assets';
 
-export type Props = {
+export type IconProps = {
   icon: IconType;
   size?: number;
   className?: string;
@@ -8,7 +8,7 @@ export type Props = {
   role?: string;
 } & React.SVGProps<SVGSVGElement>;
 
-const Icon = ({ icon, size, className, ariaLabel, role, ...props }: Props) => {
+const Icon = ({ icon, size, className, ariaLabel, role, ...props }: IconProps) => {
   const IconSVGComponent = iconMap[icon];
 
   {

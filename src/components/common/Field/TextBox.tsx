@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import React, { InputHTMLAttributes } from 'react';
 
-export interface TextBoxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface TextBoxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
   error?: boolean;
 }
 const TextBox = ({ error = false, ...props }: TextBoxProps) => {
