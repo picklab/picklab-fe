@@ -1,5 +1,4 @@
-import FillChevronDown from '@/components/common/Icon/assets/FillChevronDown';
-import FillChevronUp from '@/components/common/Icon/assets/FillChevronUp';
+import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import React from 'react';
@@ -52,9 +51,9 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
       {isUpOrDown && hasValue && (
         <>
           {type === 'up' ? (
-            <FillChevronUp width={15} height={15} className="text-danger-50" />
+            <Icon icon="fillChevronUp" size={15} className="text-danger-50" />
           ) : (
-            <FillChevronDown width={15} height={15} className="text-info-50" />
+            <Icon icon="fillChevronDown" size={15} className="text-info-50" />
           )}
           <Typography type="Caption2Medium" className="mr-[3px]">
             {value}
