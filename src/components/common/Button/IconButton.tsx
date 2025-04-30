@@ -41,20 +41,15 @@ interface IconButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLBut
 
 // IconButton 컴포넌트 정의
 const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }: IconButtonProps) => {
-  const getStyleClass = () => {
+  const getStyleClass = (type: 'button' | 'icon') => {
+    const style = type === 'button' ? styleClass[buttonStyles] : iconStyleClass[buttonStyles];
     if (disabled) {
-      return styleClass[buttonStyles]?.disable;
+      return style?.disable;
     } else {
-      return readonly ? styleClass[buttonStyles]?.readonly : styleClass[buttonStyles]?.active;
+      return readonly ? style?.readonly : style?.active;
     }
   };
-  const getIconStyleClass = () => {
-    if (disabled) {
-      return iconStyleClass[buttonStyles]?.disable;
-    } else {
-      return readonly ? iconStyleClass[buttonStyles]?.readonly : iconStyleClass[buttonStyles]?.active;
-    }
-  };
+
   return (
     <button
       type={props.type || 'button'}
@@ -69,11 +64,11 @@ const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }
       <div
         className={clsx(
           'flex items-center justify-center size-space-40 rounded-full', // 버튼 안쪽 스타일
-          getStyleClass(),
+          getStyleClass('button'),
         )}
       >
         {/* 아이콘 렌더링 */}
-        <Icon icon={icon} size={24} className={clsx(getIconStyleClass())} />
+        <Icon icon={icon} size={24} className={clsx(getStyleClass('icon'))} />
       </div>
     </button>
   );
