@@ -19,6 +19,8 @@ import LargeRefresh from '@/components/common/Icon/assets/Large/LargeRefresh';
 import LargeSearch from '@/components/common/Icon/assets/Large/LargeSearch';
 import ChevronDown from '@/components/common/Icon/assets/ChevronDown';
 import ChevronUp from '@/components/common/Icon/assets/ChevronUp';
+import BookmarkLine from '@/components/common/Icon/assets/BookmarkLine';
+import BookmarkFill from '@/components/common/Icon/assets/BookmarkFill';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -29,6 +31,8 @@ export const iconMap = {
   check: Check,
   human: Human,
   search: Search,
+  bookmarkLine: BookmarkLine,
+  bookmarkFill: BookmarkFill,
 
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
