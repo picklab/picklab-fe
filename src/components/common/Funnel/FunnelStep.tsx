@@ -26,8 +26,8 @@ const FunnelStep = ({
         {showLine && <div className="absolute top-1/2 left-full w-[44px] h-px bg-gray-30 -translate-y-1/2 -z-10" />}
         <IconButton
           aria-current={isActive ? 'step' : undefined}
-          buttonStyles={isActive || isPast ? 'filled' : 'standard'}
-          disabled={isPast}
+          buttonStyles={isActive || isPast ? 'filled' : 'outlined'}
+          disabled={isPast || !isActive}
           readonly
           icon={step.icon}
         />
@@ -36,7 +36,7 @@ const FunnelStep = ({
         type="Body2Medium"
         className={clsx({
           'text-gray-90': isActive,
-          'text-gray-40': !isActive,
+          'text-gray-30': !isActive,
         })}
       >
         {step.label}

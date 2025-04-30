@@ -6,7 +6,7 @@ import React, { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
 const styleClass = {
   filled: {
     active: 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70',
-    disable: 'bg-gray-20',
+    disable: 'bg-gray-10',
     readonly: 'bg-primary-50',
   },
   outlined: {
@@ -23,9 +23,13 @@ const styleClass = {
 
 // 아이콘 색상 클래스 (상태별)
 const iconStyleClass = {
-  filled: 'text-white',
-  outlined: 'text-black',
-  standard: 'text-black',
+  filled: {
+    active: 'text-gray-0 group-active:text-primary-90',
+    readonly: 'text-gray-0',
+    disable: 'text-gray-30',
+  },
+  outlined: { active: 'text-gray-90 group-active:text-gray-50 ', readonly: 'text-gray-90', disable: 'text-gray-40' },
+  standard: { active: 'text-gray-90 group-active:text-gray-50', readonly: 'text-gray-90', disable: 'text-gray-40' },
 };
 
 // IconButton 컴포넌트 props 타입 정의
@@ -44,12 +48,19 @@ const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }
       return readonly ? styleClass[buttonStyles]?.readonly : styleClass[buttonStyles]?.active;
     }
   };
+  const getIconStyleClass = () => {
+    if (disabled) {
+      return iconStyleClass[buttonStyles]?.disable;
+    } else {
+      return readonly ? iconStyleClass[buttonStyles]?.readonly : iconStyleClass[buttonStyles]?.active;
+    }
+  };
   return (
     <button
       type={props.type || 'button'}
       aria-disabled={disabled || readonly} // 비활성화 또는 읽기 전용 상태일 때 속성 추가
       className={clsx(
-        'flex items-center justify-center size-space-48 rounded-full', // 기본 스타일
+        'group flex items-center justify-center size-space-48 rounded-full', // 기본 스타일
         readonly && 'cursor-default',
         disabled && 'cursor-not-allowed', // 비활성화 시 커서 스타일 변경
       )}
@@ -62,14 +73,7 @@ const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }
         )}
       >
         {/* 아이콘 렌더링 */}
-        <Icon
-          icon={icon}
-          size={24}
-          className={clsx(
-            iconStyleClass[buttonStyles], // 스타일에 따라 색상 변경
-            disabled && '!text-gray-40', // 비활성화 시 색상 회색으로
-          )}
-        />
+        <Icon icon={icon} size={24} className={clsx(getIconStyleClass())} />
       </div>
     </button>
   );
