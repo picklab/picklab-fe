@@ -24,6 +24,9 @@ export interface ListItemProps {
   endDate?: Date | null;
 }
 
+const grayText = 'text-gray-50 group-active:text-gray-40';
+const grayTextStrong = 'text-gray-90 group-active:text-gray-40';
+
 const ListItem = ({
   thumbnail,
   label,
@@ -39,8 +42,9 @@ const ListItem = ({
   startDate,
   endDate,
 }: ListItemProps) => {
-  const formattedStartDate = startDate ? dayjs(startDate).format('YY.MM.DD') : '';
-  const formattedEndDate = endDate ? dayjs(endDate).format('YY.MM.DD') : '';
+  const getFormatDate = (date: Date) => {
+    return date ? dayjs(date).format('YY.MM.DD') : '';
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -59,10 +63,10 @@ const ListItem = ({
         <div className="flex flex-col gap-space-6">
           <Chip text={chipTitle} className="cursor-pointer" />
           <div className="flex flex-col">
-            <Typography type="Body2Semibold" className="text-gray-90 group-active:text-gray-40 truncate">
+            <Typography type="Body2Semibold" className={`${grayTextStrong} truncate`}>
               {title}
             </Typography>
-            <Typography type="Body4Medium" className="text-gray-50 group-active:text-gray-40 truncate">
+            <Typography type="Body4Medium" className={`${grayText} truncate`}>
               {organization}
             </Typography>
           </div>
@@ -72,7 +76,7 @@ const ListItem = ({
             활동기간
           </Typography>
           <Typography type="Caption1Regular" className="text-gray-90">
-            {`${formattedStartDate}~${formattedEndDate}`}
+            {`${getFormatDate(startDate)}~${getFormatDate(endDate)}`}
           </Typography>
         </div>
       </div>
@@ -85,27 +89,27 @@ const ListItem = ({
     viewCount && (
       <div className="flex flex-col gap-space-base py-space-base max-w-[268px]">
         <div className="flex flex-col gap-space-2">
-          <Typography type="Body4Medium" className="text-gray-50 group-active:text-gray-40 truncate">
+          <Typography type="Body4Medium" className={`${grayText} truncate`}>
             {label}
           </Typography>
-          <Typography type="Body1Semibold" className="text-gray-90 group-active:text-gray-40 truncate">
+          <Typography type="Body1Semibold" className={`${grayTextStrong} truncate`}>
             {title}
           </Typography>
         </div>
         <div className="flex gap-space-14 items-center">
           <div className="flex gap-space-2 items-center">
-            <Typography type="Caption1Medium" className="text-gray-50 group-active:text-gray-40">
+            <Typography type="Caption1Medium" className={grayText}>
               저장수
             </Typography>
-            <Typography type="Caption1Medium" className="text-gray-50 group-active:text-gray-40">
+            <Typography type="Caption1Medium" className={grayText}>
               {saveCount}
             </Typography>
           </div>
           <div className="flex gap-space-2 items-center">
-            <Typography type="Caption1Medium" className="text-gray-50 group-active:text-gray-40">
+            <Typography type="Caption1Medium" className={grayText}>
               조회수
             </Typography>
-            <Typography type="Caption1Medium" className="text-gray-50 group-active:text-gray-40">
+            <Typography type="Caption1Medium" className={grayText}>
               {viewCount}
             </Typography>
           </div>
