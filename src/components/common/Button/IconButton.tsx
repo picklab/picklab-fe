@@ -6,17 +6,17 @@ import React, { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
 const styleClass = {
   filled: {
     active: 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70',
-    disable: 'bg-gray-10',
+    disabled: 'bg-gray-10',
     readonly: 'bg-primary-50',
   },
   outlined: {
     active: 'border border-gray-40 hover:bg-gray-10 active:bg-gray-20',
-    disable: 'border border-gray-30',
+    disabled: 'border border-gray-30',
     readonly: 'border border-gray-40',
   },
   standard: {
     active: 'hover:bg-gray-10 active:bg-gray-20',
-    disable: '',
+    disabled: '',
     readonly: '',
   },
 };
@@ -26,10 +26,10 @@ const iconStyleClass = {
   filled: {
     active: 'text-gray-0 group-active:text-primary-90',
     readonly: 'text-gray-0',
-    disable: 'text-gray-30',
+    disabled: 'text-gray-30',
   },
-  outlined: { active: 'text-gray-90 group-active:text-gray-50 ', readonly: 'text-gray-90', disable: 'text-gray-40' },
-  standard: { active: 'text-gray-90 group-active:text-gray-50', readonly: 'text-gray-90', disable: 'text-gray-40' },
+  outlined: { active: 'text-gray-90 group-active:text-gray-50 ', readonly: 'text-gray-90', disabled: 'text-gray-40' },
+  standard: { active: 'text-gray-90 group-active:text-gray-50', readonly: 'text-gray-90', disabled: 'text-gray-40' },
 };
 
 // IconButton 컴포넌트 props 타입 정의
@@ -44,7 +44,7 @@ const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }
   const getStyleClass = (type: 'button' | 'icon') => {
     const style = type === 'button' ? styleClass[buttonStyles] : iconStyleClass[buttonStyles];
     if (disabled) {
-      return style?.disable;
+      return style?.disabled;
     } else {
       return readonly ? style?.readonly : style?.active;
     }

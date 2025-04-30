@@ -69,7 +69,7 @@ const buttonStyleClass: Record<
   filled: {
     active: {
       label: 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70 cursor-pointer',
-      textColor: 'text-white',
+      textColor: 'text-gray-0',
     },
     disabled: {
       label: 'bg-gray-10 cursor-not-allowed',
@@ -109,11 +109,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     icon: IconProps['icon'];
     position: 'left' | 'right'; // 아이콘 위치 (왼쪽 or 오른쪽)
   };
-  rounded?: boolean; // 버튼을 완전 둥글게 만들지 여부
+  isFullRounded?: boolean; // 버튼을 완전 둥글게 만들지 여부
 }
 
 // Button 컴포넌트 정의
-const Button = ({ label, disabled = false, icon, size, buttonStyle, rounded = false, ...props }: ButtonProps) => {
+const Button = ({ label, disabled = false, icon, size, buttonStyle, isFullRounded = false, ...props }: ButtonProps) => {
   // 아이콘 스타일 클래스 설정 (활성/비활성 상태에 따라 다름)
   const iconStyleClass = disabled
     ? buttonStyleClass[buttonStyle].disabled.textColor
@@ -127,7 +127,7 @@ const Button = ({ label, disabled = false, icon, size, buttonStyle, rounded = fa
         icon?.position === 'left' && sizeStyleClass[size].labelIconLeft, // 아이콘이 왼쪽일 때 패딩 조정
         icon?.position === 'right' && sizeStyleClass[size].labelIconRight, // 아이콘이 오른쪽일 때 패딩 조정
         disabled ? buttonStyleClass[buttonStyle].disabled.label : buttonStyleClass[buttonStyle].active.label, // 상태별 스타일
-        rounded && '!rounded-full', // rounded 옵션이 true면 완전 둥근 버튼
+        isFullRounded && '!rounded-full', // rounded 옵션이 true면 완전 둥근 버튼
       )}
       {...props}
     >
