@@ -30,10 +30,12 @@ const meta: Meta<typeof CheckBoxLabel> = {
 export default meta;
 type Story = StoryObj<typeof CheckBoxLabel>;
 
-export const Default: Story = {
-  render: (args) => {
-    const [selected, setSelected] = useState<string>('A');
+const CheckBoxLabelWithState = (args: React.ComponentProps<typeof CheckBoxLabel>) => {
+  const [selected, setSelected] = useState('option1');
 
-    return <CheckBoxLabel {...args} selectedValue={selected} onClickHandler={(val) => setSelected(val)} />;
-  },
+  return <CheckBoxLabel {...args} selectedValue={selected} onClickHandler={(val) => setSelected(val)} />;
+};
+
+export const Default: Story = {
+  render: (args) => <CheckBoxLabelWithState {...args} />,
 };
