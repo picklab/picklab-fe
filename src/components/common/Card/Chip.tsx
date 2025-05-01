@@ -1,16 +1,21 @@
 import Typography from '@/components/common/Typography';
+import clsx from 'clsx';
 import React from 'react';
 
 interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   // Chip에 표시할 텍스트
   text: string;
+  className?: string;
 }
 
-const Chip = ({ text, ...props }: ChipProps) => {
+const Chip = ({ text, className, ...props }: ChipProps) => {
   return (
     <Typography
       type="Caption2Medium"
-      className={`w-fit rounded-full px-space-6 py-[3px] inline-block cursor-default text-gray-60 bg-gray-20`}
+      className={clsx(
+        `w-fit flex justify-center items-center rounded-full px-space-6 py-[3px] max-h-[20px] cursor-default text-gray-60 bg-gray-20`,
+        className,
+      )}
       {...props}
     >
       {text}
