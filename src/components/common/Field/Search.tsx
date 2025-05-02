@@ -2,17 +2,18 @@
 
 import { Option } from '@/components/common/Field/Label';
 import { OptionGroup, OptionGroupProps } from '@/components/common/Field/OptionGroup';
-import TextBox from '@/components/common/Field/TextBox';
+import TextBox, { TextBoxProps } from '@/components/common/Field/TextBox';
+import TextField, { TextFieldProps } from '@/components/common/Field/TextField';
 import Icon from '@/components/common/Icon/Icon';
 import { debounce } from '@/utils/debounce';
 import clsx from 'clsx';
-import React, { ChangeEvent, InputHTMLAttributes, useMemo, useState } from 'react';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 
-export interface SelectTextBoxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
+export type SelectTextBoxProps = TextFieldProps & {
   error?: boolean;
   optionGroupProps?: OptionGroupProps;
-}
-const SelectTextBox = ({ error = false, optionGroupProps, ...props }: SelectTextBoxProps) => {
+};
+const Search = ({ error = false, optionGroupProps, ...props }: SelectTextBoxProps) => {
   // error style 제거
   if (props.disabled) {
     error = false;
@@ -60,14 +61,13 @@ const SelectTextBox = ({ error = false, optionGroupProps, ...props }: SelectText
 
   return (
     <div className="w-fit relative">
-      <TextBox
-        className={clsx(optionGroupProps && 'pr-space-32')}
-        error={error}
-        value={input}
+      <TextField
         {...props}
+        className={clsx(optionGroupProps && 'pr-[44px]')}
+        value={input}
         onChange={onChange}
+        icon="search"
       />
-      {optionGroupProps && <Icon className="absolute top-1/2 -translate-y-1/2 right-2" icon="search" size={24} />}
       {isOpen && optionGroupProps && (
         <OptionGroup
           {...optionGroupProps}
@@ -81,4 +81,4 @@ const SelectTextBox = ({ error = false, optionGroupProps, ...props }: SelectText
   );
 };
 
-export default SelectTextBox;
+export default Search;
