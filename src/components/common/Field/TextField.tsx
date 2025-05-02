@@ -18,7 +18,7 @@ type WithoutLabel = {
 
 type WithOptionalLabel = WithLabel | WithoutLabel;
 
-type TextFieldProps = Omit<TextBoxProps, 'error'> &
+export type TextFieldProps = Omit<TextBoxProps, 'error'> &
   WithOptionalLabel & {
     helpMessage?: string;
     status: HelpMessageProps['status'];
