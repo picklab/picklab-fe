@@ -9,6 +9,8 @@ const meta: Meta<typeof IconButton> = {
   args: {
     buttonStyles: 'filled',
     icon: 'bookmarkLine',
+    disabled: false,
+    readonly: false,
   },
   argTypes: {
     buttonStyles: {
