@@ -99,7 +99,7 @@ const buttonStyleClass: Record<
 };
 
 // Button 컴포넌트 props 타입 정의
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string; // 버튼에 표시할 텍스트
   size: keyof typeof sizeStyleClass; // 버튼 사이즈
   buttonStyle: keyof typeof buttonStyleClass; // 버튼 스타일
