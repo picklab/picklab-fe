@@ -24,7 +24,13 @@ const PaginationNumberButton = ({ active, className, children, ...props }: Pagin
 
   return (
     <button className={buttonClass} {...props}>
-      <Typography type="Heading2Medium">{children}</Typography>
+      {/* 💬 숫자 텍스트를 가운데 정렬하기 위해 absolute 래퍼 사용 */}
+      <div className="absolute">
+        {/* 숫자 폰트 스타일 지정 및 약간의 위치 보정 */}
+        <Typography type="Heading2Medium" className="relative top-[.5px]">
+          {children}
+        </Typography>
+      </div>
     </button>
   );
 };
