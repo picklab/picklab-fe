@@ -22,11 +22,9 @@ const FunnelStep = ({
   showLine: boolean;
 }) => {
   return (
-    <div className="flex flex-col items-center justify-between w-[48px] h-[52px] transition-all">
+    <div className="flex flex-col items-center justify-between w-12 h-[52px] transition-all">
       <div className="relative flex items-center justify-center size-9">
-        {showLine && (
-          <Divider className="absolute top-1/2 left-full -translate-x-[4px] -translate-y-1/2 -z-10 !w-[45px]" />
-        )}
+        {showLine && <Divider className="absolute top-1/2 left-full -translate-x-1 -translate-y-1/2 -z-10 !w-[45px]" />}
         <IconButton
           size="sm"
           aria-current={isActive ? 'step' : undefined}
