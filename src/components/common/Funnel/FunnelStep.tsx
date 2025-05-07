@@ -1,6 +1,7 @@
 import IconButton from '@/components/common/Button/IconButton';
 import { IconProps } from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
+import { Divider } from '@/components/Divider/Divider';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -21,22 +22,25 @@ const FunnelStep = ({
   showLine: boolean;
 }) => {
   return (
-    <div className="flex flex-col items-center justify-between w-[60px] transition-all">
-      <div className="relative flex items-center justify-center w-space-40 h-space-40">
-        {showLine && <div className="absolute top-1/2 left-full w-[44px] h-px bg-gray-30 -translate-y-1/2 -z-10" />}
+    <div className="flex flex-col items-center justify-between w-[48px] h-[52px] transition-all">
+      <div className="relative flex items-center justify-center size-9">
+        {showLine && (
+          <Divider className="absolute top-1/2 left-full -translate-x-[4px] -translate-y-1/2 -z-10 !w-[45px]" />
+        )}
         <IconButton
+          size="sm"
           aria-current={isActive ? 'step' : undefined}
-          buttonStyles={isActive || isPast ? 'filled' : 'outlined'}
+          buttonStyles={isActive ? 'filled' : 'outlined'}
           disabled={isPast || !isActive}
           readonly
           icon={step.icon}
         />
       </div>
       <Typography
-        type="Body2Medium"
+        type={isActive ? 'Caption2Medium' : 'Caption2Regular'}
         className={clsx({
-          'text-gray-90': isActive,
-          'text-gray-30': !isActive,
+          'text-gray-60': isActive,
+          'text-gray-40': !isActive,
         })}
       >
         {step.label}
