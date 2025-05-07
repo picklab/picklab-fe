@@ -32,15 +32,29 @@ const iconStyleClass = {
   standard: { active: 'text-gray-90 group-active:text-gray-50', readonly: 'text-gray-90', disabled: 'text-gray-40' },
 };
 
+const sizeStyleClass = {
+  base: {
+    box: 'size-space-48',
+    wrapper: 'size-space-40 ',
+    iconSize: 24,
+  },
+  sm: {
+    box: 'size-9',
+    wrapper: 'size-7 ',
+    iconSize: 20,
+  },
+};
+
 // IconButton 컴포넌트 props 타입 정의
 interface IconButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   buttonStyles: keyof typeof styleClass; // 버튼 스타일 타입 (filled | outlined | standard)
+  size?: keyof typeof sizeStyleClass;
   icon: IconProps['icon'];
   readonly?: boolean;
 }
 
 // IconButton 컴포넌트 정의
-const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }: IconButtonProps) => {
+const IconButton = ({ buttonStyles, icon, disabled, size = 'base', readonly = false, ...props }: IconButtonProps) => {
   const getStyleClass = (type: 'button' | 'icon') => {
     const style = type === 'button' ? styleClass[buttonStyles] : iconStyleClass[buttonStyles];
     if (disabled) {
@@ -55,7 +69,8 @@ const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }
       type={props.type || 'button'}
       aria-disabled={disabled || readonly} // 비활성화 또는 읽기 전용 상태일 때 속성 추가
       className={clsx(
-        'group flex items-center justify-center size-space-48 rounded-full', // 기본 스타일
+        'group flex items-center justify-center rounded-full', // 기본 스타일
+        sizeStyleClass[size].box,
         readonly && 'cursor-default',
         disabled && 'cursor-not-allowed', // 비활성화 시 커서 스타일 변경
       )}
@@ -63,12 +78,13 @@ const IconButton = ({ buttonStyles, icon, disabled, readonly = false, ...props }
     >
       <div
         className={clsx(
-          'flex items-center justify-center size-space-40 rounded-full', // 버튼 안쪽 스타일
+          'flex items-center justify-center  rounded-full', // 버튼 안쪽 스타일
+          sizeStyleClass[size].wrapper,
           getStyleClass('button'),
         )}
       >
         {/* 아이콘 렌더링 */}
-        <Icon icon={icon} size={24} className={clsx(getStyleClass('icon'))} />
+        <Icon icon={icon} size={sizeStyleClass[size].iconSize} className={clsx(getStyleClass('icon'))} />
       </div>
     </button>
   );
