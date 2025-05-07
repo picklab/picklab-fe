@@ -41,7 +41,7 @@ const TextBox = ({ error = false, rounded = false, scale = 'base', icon, classNa
         placeholder="placeholder"
         {...props}
       />
-      {icon && <Icon className={clsx('absolute top-1/2 -translate-y-1/2 right-[16px]')} icon={icon} size={24} />}
+      {icon && <Icon className={clsx('absolute top-1/2 -translate-y-1/2 right-4')} icon={icon} size={24} />}
     </div>
   );
 };

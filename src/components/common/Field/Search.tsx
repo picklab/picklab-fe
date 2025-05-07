@@ -2,22 +2,15 @@
 
 import { Option } from '@/components/common/Field/Label';
 import { OptionGroup, OptionGroupProps } from '@/components/common/Field/OptionGroup';
-import TextBox, { TextBoxProps } from '@/components/common/Field/TextBox';
 import TextField, { TextFieldProps } from '@/components/common/Field/TextField';
-import Icon from '@/components/common/Icon/Icon';
 import { debounce } from '@/utils/debounce';
 import clsx from 'clsx';
 import React, { ChangeEvent, useMemo, useState } from 'react';
 
 export type SelectTextBoxProps = TextFieldProps & {
-  error?: boolean;
   optionGroupProps?: OptionGroupProps;
 };
-const Search = ({ error = false, optionGroupProps, ...props }: SelectTextBoxProps) => {
-  // error style 제거
-  if (props.disabled) {
-    error = false;
-  }
+const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
   const [input, setInput] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [filtered, setFiltered] = useState<Option[]>([]);
@@ -63,7 +56,7 @@ const Search = ({ error = false, optionGroupProps, ...props }: SelectTextBoxProp
     <div className="w-fit relative">
       <TextField
         {...props}
-        className={clsx(optionGroupProps && 'pr-[44px]')}
+        className={clsx(optionGroupProps && 'pr-11')}
         value={input}
         onChange={onChange}
         icon="search"
