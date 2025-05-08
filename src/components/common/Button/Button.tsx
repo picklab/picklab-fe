@@ -104,6 +104,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size: keyof typeof sizeStyleClass; // 버튼 사이즈
   buttonStyle: keyof typeof buttonStyleClass; // 버튼 스타일
   disabled?: boolean; // 비활성화 여부
+  className?: string;
   icon?: {
     // 아이콘 설정
     icon: IconProps['icon'];
@@ -113,7 +114,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 // Button 컴포넌트 정의
-const Button = ({ label, disabled = false, icon, size, buttonStyle, isFullRounded = false, ...props }: ButtonProps) => {
+const Button = ({
+  label,
+  disabled = false,
+  icon,
+  size,
+  buttonStyle,
+  isFullRounded = false,
+  className,
+  ...props
+}: ButtonProps) => {
   // 아이콘 스타일 클래스 설정 (활성/비활성 상태에 따라 다름)
   const iconStyleClass = disabled
     ? buttonStyleClass[buttonStyle].disabled.textColor
@@ -128,6 +138,7 @@ const Button = ({ label, disabled = false, icon, size, buttonStyle, isFullRounde
         icon?.position === 'right' && sizeStyleClass[size].labelIconRight, // 아이콘이 오른쪽일 때 패딩 조정
         disabled ? buttonStyleClass[buttonStyle].disabled.label : buttonStyleClass[buttonStyle].active.label, // 상태별 스타일
         isFullRounded && '!rounded-full', // rounded 옵션이 true면 완전 둥근 버튼
+        className && className,
       )}
       {...props}
     >
