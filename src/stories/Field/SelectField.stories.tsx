@@ -1,10 +1,10 @@
-import SelectField, { SelectFieldProps } from '@/components/common/Field/SelectField';
+import Select, { SelectProps } from '@/components/common/Field/Select';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-const meta: Meta<typeof SelectField> = {
+const meta: Meta<typeof Select> = {
   title: 'components/field/SelectField',
-  component: SelectField,
+  component: Select,
   tags: ['autodocs'],
   argTypes: {
     label: {
@@ -63,13 +63,13 @@ const meta: Meta<typeof SelectField> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SelectField>;
+type Story = StoryObj<typeof Select>;
 
-const PlaygroundComponent = (args: SelectFieldProps) => {
+const PlaygroundComponent = (args: SelectProps) => {
   const [selected, setSelected] = useState('');
   return (
     <div className="h-72">
-      <SelectField {...args} value={selected} onChange={setSelected} />
+      <Select {...args} value={selected} onChange={setSelected} />
     </div>
   );
 };

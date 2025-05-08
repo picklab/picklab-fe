@@ -1,6 +1,6 @@
 import CheckBoxLabel from '@/components/common/Field/CheckBoxLabel';
 import Label, { Option } from '@/components/common/Field/Label';
-import { widthClassMap } from '@/components/common/Field/SelectField';
+import { widthClassMap } from '@/components/common/Field/Select';
 import clsx from 'clsx';
 import React from 'react';
 
