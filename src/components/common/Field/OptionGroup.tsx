@@ -28,6 +28,7 @@ export const OptionGroup = ({
       role="listbox"
       className={clsx(
         'flex flex-col mt-1 rounded border border-gray-30 bg-gray-0 p-space-2 focus:outline-none',
+        'max-h-[248px] overflow-y-auto scrollbar-thin',
         widthClassMap[width],
         className,
       )}
