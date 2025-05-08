@@ -12,7 +12,7 @@ interface Option {
   value: string;
 }
 
-export interface SelectFieldProps {
+export interface SelectProps {
   label?: string;
   labelStatus?: LabelTypeProps['status'];
   helpMessage?: string;
@@ -23,6 +23,7 @@ export interface SelectFieldProps {
   type?: 'checkBox' | 'default';
   disabled?: boolean;
   width?: 'default' | 'large' | 'small';
+  size?: 'default' | 'small';
 }
 
 export const widthClassMap = {
@@ -31,7 +32,12 @@ export const widthClassMap = {
   small: 'w-[136px]',
 };
 
-const SelectField = ({
+export const sizeClassMap = {
+  default: 'h-space-48',
+  small: 'h-space-40',
+};
+
+const Select = ({
   label,
   labelStatus,
   helpMessage,
@@ -42,7 +48,8 @@ const SelectField = ({
   disabled = false,
   type = 'default',
   width = 'default',
-}: SelectFieldProps) => {
+  size = 'default',
+}: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -50,6 +57,7 @@ const SelectField = ({
   const displayText = selectedLabel || '선택해주세요';
 
   const widthClass = widthClassMap[width];
+  const sizeClass = sizeClassMap[size];
 
   const toggleDropdown = () => {
     if (!disabled) setIsOpen((prev) => !prev);
@@ -84,13 +92,15 @@ const SelectField = ({
         type="button"
         id="select-button"
         className={clsx(
-          'h-space-48 box-border px-space-12 py-space-12 rounded-md border text-left text-gray-90 flex justify-between items-center transition-colors',
-          'border-interactive-secondary bg-gray-0',
-          'hover:border-gray-50 hover:text-gray-60',
-          'active:border-gray-50',
-          'disabled:border-gray-40 disabled:bg-disabled disabled:text-gray-50 disabled:cursor-not-allowed',
+          'box-border px-space-12 py-space-12 rounded-md border text-left text-gray-90 flex justify-between items-center transition-colors',
+          'border-gray-30 bg-gray-0',
+          'hover:border-gray-40 hover:text-gray-60',
+          'focus:border-primary-50 focus:bg-gray-0',
+          'disabled:border-gray-30 disabled:bg-gray-5 disabled:text-gray-40 disabled:cursor-not-allowed',
           helpMessageStatus === 'error' && 'border-danger-border',
+          value !== '' && 'border-gray-50',
           widthClass,
+          sizeClass,
         )}
         onClick={toggleDropdown}
         disabled={disabled}
@@ -110,7 +120,11 @@ const SelectField = ({
       </button>
 
       {isOpen && (
-        <div id="select-options" role="listbox" className={clsx('absolute top-[72px] z-10', widthClass)}>
+        <div
+          id="select-options"
+          role="listbox"
+          className={clsx('absolute z-10', widthClass, size === 'small' ? 'top-[64px]' : 'top-[72px]')}
+        >
           <OptionGroup
             options={options}
             selectedValue={value}
@@ -126,4 +140,4 @@ const SelectField = ({
   );
 };
 
-export default SelectField;
+export default Select;
