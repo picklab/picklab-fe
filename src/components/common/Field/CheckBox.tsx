@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 
 const scaleClass = {
-  md: { wrapper: 'size-space-24 ', iconSize: 12 },
-  sm: { wrapper: 'size-space-20 ', iconSize: 9 },
-  xs: { wrapper: 'size-space-16 ', iconSize: 8 },
+  md: { wrapper: 'size-space-24 ', iconSize: 14 },
+  sm: { wrapper: 'size-space-20 ', iconSize: 12 },
+  xs: { wrapper: 'size-space-16 ', iconSize: 10 },
 };
 
 export interface CheckBoxProps
