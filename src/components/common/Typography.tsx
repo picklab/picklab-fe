@@ -128,7 +128,7 @@ type TagMap = {
 };
 
 type TypographyTag = keyof TagMap;
-type TypographyType = keyof typeof TypographyTypes;
+export type TypographyType = keyof typeof TypographyTypes;
 
 export type TypographyProps<T extends TypographyTag = 'span'> = {
   tag?: T;
