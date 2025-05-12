@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import Image from 'next/image';
 import React from 'react';
 
 const scaleClass = {
@@ -15,17 +16,9 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Avatar = ({ scale = 'base', className, ...props }: AvatarProps) => {
   return (
-    <div
-      role="img"
-      aria-label="아바타"
-      className={clsx(
-        'rounded-full border border-gray-30 bg-center bg-no-repeat bg-cover',
-        scaleClass[scale],
-        className,
-      )}
-      style={{ backgroundImage: 'url("/imgs/avatar.jpg")' }}
-      {...props}
-    />
+    <div className={clsx('relative rounded-full border border-gray-30 ', scaleClass[scale], className)} {...props}>
+      <Image src={'/imgs/avatar.jpg'} alt="아바타" fill className="absolute rounded-full" />
+    </div>
   );
 };
 
