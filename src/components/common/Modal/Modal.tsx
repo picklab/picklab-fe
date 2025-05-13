@@ -6,7 +6,7 @@ import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import React, { useEffect, useRef } from 'react';
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   title: string;
   description: string;

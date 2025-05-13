@@ -6,7 +6,7 @@ const scaleStyle = {
   sm: 'w-[39px] h-space-24 after:top-[3px] after:start-[3px] after:size-[18px] peer-checked:after:translate-x-[85%] ',
 };
 
-interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className'> {
+export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className'> {
   scale?: keyof typeof scaleStyle;
 }
 
