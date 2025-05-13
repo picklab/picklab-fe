@@ -61,7 +61,7 @@ const CheckBoxLabel = <T extends LabelTag = 'label'>({
           <Component
             key={`${option.value}_${index}`}
             className={clsx(
-              `flex justify-center items-center w-[83px] h-9 px-space-12 py-space-10 gap-2 cursor-pointer rounded
+              `flex items-center w-32 h-10 px-space-12 py-space-10 gap-2 cursor-pointer rounded
           hover:bg-gray-5 hover:text-gray-60
           active:bg-info-10 active:text-info-70
           `,
