@@ -7,15 +7,24 @@ const scaleClass = {
   sm: { wrapper: 'size-space-20 ', iconSize: 12 },
   xs: { wrapper: 'size-space-16 ', iconSize: 10 },
 };
+const colorClass = {
+  info: `group-has-[input:checked]:border-info-50 group-has-[input:checked]:bg-info-50 
+           group-has-[input:checked]:hover:bg-info-60 group-has-[input:checked]:hover:border-info-60 
+           group-has-[input:checked]:active:bg-info-70 group-has-[input:checked]:active:border-info-70`,
+  primary: `group-has-[input:checked]:border-primary-50 group-has-[input:checked]:bg-primary-50 
+  group-has-[input:checked]:hover:bg-primary-60 group-has-[input:checked]:hover:border-primary-60 
+  group-has-[input:checked]:active:bg-primary-70 group-has-[input:checked]:active:border-primary-70`,
+};
 
 export interface CheckBoxProps
   extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   scale?: keyof typeof scaleClass;
   // 에러 상태일 경우 스타일을 다르게 표시
   error?: boolean;
+  color?: keyof typeof colorClass;
 }
 
-const CheckBox = ({ error, scale = 'sm', ...props }: CheckBoxProps) => {
+const CheckBox = ({ error, scale = 'sm', color = 'info', ...props }: CheckBoxProps) => {
   const { wrapper, iconSize } = scaleClass[scale];
   // 만약 disable 일때
   if (props.disabled) {
@@ -32,10 +41,8 @@ const CheckBox = ({ error, scale = 'sm', ...props }: CheckBoxProps) => {
         className={clsx(
           `flex items-center justify-center cursor-pointer border-[1.5px] rounded
            hover:border-gray-40 active:border-gray-50 
-           group-has-[input:checked]:border-info-50 group-has-[input:checked]:bg-info-50 
-           group-has-[input:checked]:hover:bg-info-60 group-has-[input:checked]:hover:border-info-60 
-           group-has-[input:checked]:active:bg-info-70 group-has-[input:checked]:active:border-info-70,
           group-has-[input:disabled]:!bg-gray-5 group-has-[input:disabled]:!border-gray-30`,
+          colorClass[color],
           error && '!border-danger-50 !bg-white', // 에러 시 스타일 오버라이드
           props.disabled && '!cursor-not-allowed',
           wrapper,
