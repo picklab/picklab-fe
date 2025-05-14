@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Badge from '@/components/common/Card/Badge';
@@ -34,42 +34,57 @@ const Card = ({
   onBookmarkClick,
   onCardClick,
 }: CardProps) => {
+  const titleRef = useRef<HTMLDivElement | null>(null);
+  const [isClamped, setIsClamped] = useState(false);
+
+  useEffect(() => {
+    if (titleRef.current) {
+      const isOverflowing = titleRef.current.scrollHeight > titleRef.current.clientHeight;
+      setIsClamped(isOverflowing);
+    }
+  }, [title]);
+
   return (
     <div
       onClick={onCardClick}
-      className="flex flex-col gap-[15px] w-[250px] h-[321px] rounded-[10px] bg-white shadow-md group cursor-pointer"
+      className={clsx(
+        'flex flex-col w-[250px] rounded-[10px] bg-white cursor-pointer',
+        isClamped ? 'h-[358px]' : 'h-[334px]',
+      )}
     >
       {/* 이미지 영역 */}
-      <div className="relative w-full h-[200px] overflow-hidden transition-transform duration-300 group-hover:-translate-y-space-10">
+      <div className="relative w-full h-[180px] overflow-hidden">
         <Image
           src={imageUrl}
           alt={title}
           width={250}
-          height={200}
+          height={180}
           className="w-full h-full object-cover rounded-[10px]"
         />
-        <Badge text={badgeText} variant={badgeVariant} className="absolute top-[18px] left-5" />
-        <button onClick={onBookmarkClick} className="absolute top-[18px] right-5">
+        <Badge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4" />
+        <button onClick={onBookmarkClick} className="absolute top-4 right-4">
           <Icon
             icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}
-            className={clsx('w-6 h-6', isBookmarked ? 'text-primary-50' : 'text-gray-0')}
+            className={clsx('w-6 h-6', isBookmarked ? 'text-primary-50' : 'text-gray-10')}
           />
         </button>
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="flex flex-col px-1 gap-space-6">
+      <div className="flex flex-col px-space-8 py-space-20 gap-space-6">
         <Chip text={chipText} />
-        <div className="flex flex-col gap-space-12">
-          <div className="flex flex-col">
-            <Typography type="Body4Medium" className="text-gray-50 overflow-hidden text-ellipsis whitespace-nowrap">
+        <div className="flex flex-col gap-space-16">
+          <div className="flex flex-col gap-space-6">
+            <div ref={titleRef} className="text-gray-90 overflow-hidden line-clamp-2 max-w-[222px]">
+              <Typography type="Body1Semibold">{title}</Typography>
+            </div>
+            <Typography
+              type="Body4Regular"
+              className="text-gray-50 overflow-hidden text-ellipsis whitespace-nowrap max-w-[222px]"
+            >
               {companyName}
             </Typography>
-            <Typography type="Body1Semibold" className="text-gray-90 overflow-hidden line-clamp-2">
-              {title}
-            </Typography>
           </div>
-
           <JobChip job={job} />
         </div>
       </div>
