@@ -79,12 +79,13 @@ const Label = <T extends LabelTag = 'label'>({
           <Component
             key={`${option.value}_${index}`}
             className={clsx(
-              `flex justify-center items-center w-[59px] h-9 px-space-12 py-space-8 cursor-pointer 
+              `flex items-center w-32 h-10 px-space-12 py-space-10 cursor-pointer 
               hover:bg-gray-5 hover:text-gray-60 rounded
           active:bg-info-10 active:text-info-70
           focus:bg-gray-0 focus:text-primary-60 focus:hover:bg-gray-5 focus:active:bg-gray-10 focus:active:text-primary-60
           `,
-              isSelected && '!bg-info-10 !text-info-70',
+              !focus && isSelected && '!bg-info-10 !text-info-70',
+              focus && isSelected && '!bg-gray-10',
               focus && '!text-primary-60 !bg-gray-0 hover:!bg-gray-5 active:!bg-gray-10 active:!text-primary-60', // focus 스타일 강제 추가
               className,
             )}

@@ -1,7 +1,7 @@
 // Divider.stories.tsx
 import React from 'react';
 import type { Meta, StoryFn, StoryObj } from '@storybook/react';
-import { Divider } from '@/components/Divider/Divider';
+import { Divider } from '@/components/common/Divider/Divider';
 
 const meta: Meta<typeof Divider> = {
   title: 'Components/Divider/Divider',
