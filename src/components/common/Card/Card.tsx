@@ -17,7 +17,7 @@ interface CardProps {
   chipText: string;
   companyName: string;
   title: string;
-  job: '기획' | '개발' | '마케팅' | '디자인' | 'AI';
+  jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI')[];
   onBookmarkClick?: () => void;
   onCardClick: () => void;
 }
@@ -30,7 +30,7 @@ const Card = ({
   chipText,
   companyName,
   title,
-  job,
+  jobs,
   onBookmarkClick,
   onCardClick,
 }: CardProps) => {
@@ -72,7 +72,11 @@ const Card = ({
               {companyName}
             </Typography>
           </div>
-          <JobChip job={job} />
+          <div className="flex gap-1">
+            {jobs.map((job) => (
+              <JobChip key={job} job={job} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
