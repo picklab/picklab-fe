@@ -18,7 +18,7 @@ interface CardProps {
   companyName: string;
   title: string;
   jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI')[];
-  onBookmarkClick?: () => void;
+  onBookmarkClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onCardClick: () => void;
 }
 
@@ -35,10 +35,7 @@ const Card = ({
   onCardClick,
 }: CardProps) => {
   return (
-    <div
-      onClick={onCardClick}
-      className="flex flex-col w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer active:bg-opacity-60"
-    >
+    <div onClick={onCardClick} className="flex flex-col w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer">
       {/* 이미지 영역 */}
       <div className="relative w-full h-[180px] overflow-hidden">
         <Image
@@ -49,7 +46,14 @@ const Card = ({
           className="w-full h-full object-cover rounded-[10px]"
         />
         <Badge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4" />
-        <button onClick={onBookmarkClick} className="absolute top-4 right-4">
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onBookmarkClick?.(e);
+          }}
+          className="absolute top-4 right-4 z-20"
+        >
           <Icon
             icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}
             className={clsx('w-6 h-6', isBookmarked ? 'text-primary-50' : 'text-gray-10')}
