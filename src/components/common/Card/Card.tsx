@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Badge from '@/components/common/Card/Badge';
@@ -34,23 +34,10 @@ const Card = ({
   onBookmarkClick,
   onCardClick,
 }: CardProps) => {
-  const titleRef = useRef<HTMLDivElement | null>(null);
-  const [isClamped, setIsClamped] = useState(false);
-
-  useEffect(() => {
-    if (titleRef.current) {
-      const isOverflowing = titleRef.current.scrollHeight > titleRef.current.clientHeight;
-      setIsClamped(isOverflowing);
-    }
-  }, [title]);
-
   return (
     <div
       onClick={onCardClick}
-      className={clsx(
-        'flex flex-col w-[250px] rounded-[10px] bg-white cursor-pointer',
-        isClamped ? 'h-[358px]' : 'h-[334px]',
-      )}
+      className="flex flex-col w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer active:bg-opacity-60"
     >
       {/* 이미지 영역 */}
       <div className="relative w-full h-[180px] overflow-hidden">
@@ -75,7 +62,7 @@ const Card = ({
         <Chip text={chipText} />
         <div className="flex flex-col gap-space-16">
           <div className="flex flex-col gap-space-6">
-            <div ref={titleRef} className="text-gray-90 overflow-hidden line-clamp-2 max-w-[222px]">
+            <div className="text-gray-90 overflow-hidden line-clamp-2 max-w-[222px]">
               <Typography type="Body1Semibold">{title}</Typography>
             </div>
             <Typography
