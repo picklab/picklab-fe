@@ -31,7 +31,7 @@ const JobChip = ({ job, className = '', ...props }: JobChipProps) => {
       type="Caption2Medium"
       role="listitem" // 해당 컴포넌트는 리스트 내부에 사용되므로 role 추가
       className={clsx(
-        'w-fit rounded px-space-6 py-space-base inline-block cursor-default',
+        'w-fit rounded px-space-6 h-[22px] flex justify-center items-center py-space-base cursor-default',
         selected?.bg,
         selected?.text,
         className,
