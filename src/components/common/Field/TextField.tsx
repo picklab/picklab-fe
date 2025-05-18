@@ -27,9 +27,10 @@ const TextField = (props: TextFieldProps) => {
   const { label, id, helpMessage, status, labelStatus, ...rest } = props;
 
   return (
-    <div className="flex flex-col w-fit h-fit">
+    <div className="flex flex-col w-fit h-fit gap-1">
       {label && (
         <LabelType
+          disable={props.disabled}
           status={labelStatus}
           htmlFor={id}
           title={label}

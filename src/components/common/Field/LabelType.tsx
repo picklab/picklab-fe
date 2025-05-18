@@ -11,13 +11,15 @@ export interface LabelTypeProps extends LabelHTMLAttributes<HTMLLabelElement> {
   title: string;
   // 선택 사항 여부 (선택적으로 표시)
   status?: keyof typeof statusValue | 'default';
+  disable?: boolean;
 }
 
-const LabelType = ({ title, status = 'default', className, ...props }: LabelTypeProps) => {
+const LabelType = ({ title, status = 'default', className, disable = false, ...props }: LabelTypeProps) => {
+  const disableStyle = disable ? '!text-gray-40' : '';
   return (
     // input과 연결되는 label 태그
-    <label {...props} className={clsx('w-fit cursor-pointer', className)}>
-      <Typography type="Body1Medium" className="text-gray-60 ">
+    <label {...props} className={clsx('w-fit cursor-pointer h-space-24', className)}>
+      <Typography type="Body1Medium" className={clsx('text-gray-60', disableStyle)}>
         {title}
         {status !== 'default' && (
           <>
@@ -25,7 +27,7 @@ const LabelType = ({ title, status = 'default', className, ...props }: LabelType
             <Typography
               type="Body1Medium"
               tag="span"
-              className={clsx('ml-1', statusValue[status].text)}
+              className={clsx('ml-1', statusValue[status].text, disableStyle)}
               aria-hidden="true"
             >
               {statusValue[status].title}
