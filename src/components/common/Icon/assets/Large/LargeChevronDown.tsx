@@ -5,7 +5,7 @@ const LargeChevronDown = ({ width, height, className, ...props }: React.SVGProps
     <svg
       width={width}
       height={height}
-      viewBox="0 0 11 19"
+      viewBox="0 0 19 11"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
