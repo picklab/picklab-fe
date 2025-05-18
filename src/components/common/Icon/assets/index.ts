@@ -24,6 +24,9 @@ import FillChevronUp from '@/components/common/Icon/assets/FillChevronUp';
 import BookmarkLine from '@/components/common/Icon/assets/BookmarkLine';
 import BookmarkFill from '@/components/common/Icon/assets/BookmarkFill';
 import Exit from '@/components/common/Icon/assets/Exit';
+import ArrowUp from '@/components/common/Icon/assets/ArrowUp';
+import ArrowDown from '@/components/common/Icon/assets/ArrowDown';
+import Ellipse from '@/components/common/Icon/assets/Ellipse';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -39,6 +42,9 @@ export const iconMap = {
   bookmarkLine: BookmarkLine,
   bookmarkFill: BookmarkFill,
   exit: Exit,
+  arrowUp: ArrowUp,
+  arrowDown: ArrowDown,
+  ellipse: Ellipse,
 
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
