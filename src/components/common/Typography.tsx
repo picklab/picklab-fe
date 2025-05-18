@@ -71,11 +71,11 @@ export const TypographyTypes = {
 
   Headline1Regular: clsx(sizeClasses['base'], weightClasses['normal']),
   Headline1Medium: clsx(sizeClasses['base'], weightClasses['medium']),
-  Headline1Bold: clsx(sizeClasses['base'], weightClasses['bold']),
+  Headline1SemiBold: clsx(sizeClasses['base'], weightClasses['semibold']),
 
   Headline2Regular: clsx(sizeClasses['sm'], weightClasses['normal']),
   Headline2Medium: clsx(sizeClasses['sm'], weightClasses['medium']),
-  Headline2Bold: clsx(sizeClasses['sm'], weightClasses['bold']),
+  Headline2SemiBold: clsx(sizeClasses['sm'], weightClasses['semibold']),
 
   Body1Regular: clsx(sizeClasses['xs'], weightClasses['normal']),
   Body1Medium: clsx(sizeClasses['xs'], weightClasses['medium']),
