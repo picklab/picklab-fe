@@ -1,7 +1,7 @@
 import IconButton from '@/components/common/Button/IconButton';
 import { IconProps } from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
-import { Divider } from '@/components/Divider/Divider';
+import { Divider } from '@/components/common/Divider/Divider';
 import clsx from 'clsx';
 import React from 'react';
 
