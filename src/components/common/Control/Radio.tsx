@@ -66,9 +66,9 @@ const Radio = ({ name, scale = 'base', ...props }: RadioProps) => {
       */}
       <div
         className={clsx(
-          `hidden peer-checked:block  bg-white absolute rounded-full
-                   top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                   peer-disabled:cursor-not-allowed peer-disabled:bg-gray-30`,
+          `hidden peer-checked:blockbg-white absolute rounded-full 
+          top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+          peer-disabled:cursor-not-allowed peer-disabled:bg-gray-30`,
           scaleClass[scale].dot,
         )}
       />

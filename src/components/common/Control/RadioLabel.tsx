@@ -11,7 +11,7 @@ const scaleClass = {
     typoStyle: 'h-5',
   },
   sm: {
-    wrapper: 'h-[24px]',
+    wrapper: 'h-6',
     typography: 'Body1Regular' as TypographyType,
     typoStyle: 'h-4',
   },
