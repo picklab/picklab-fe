@@ -13,8 +13,8 @@ type Story = StoryObj<typeof Icon>;
 
 export const Basic: Story = {
   args: {
-    color: '#000000',
-    size: 20,
+    color: '#101828',
+    size: 24,
   },
   argTypes: {
     icon: { table: { disable: true } },
