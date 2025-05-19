@@ -11,7 +11,7 @@ const meta: Meta<typeof Avatar> = {
   },
   argTypes: {
     scale: {
-      control: { type: 'select' },
+      control: { type: 'radio' },
       options: ['base', 'lg'],
     },
     className: {

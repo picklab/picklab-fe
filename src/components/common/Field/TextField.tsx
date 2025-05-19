@@ -24,20 +24,20 @@ export type TextFieldProps = Omit<TextBoxProps, 'error'> &
     status: HelpMessageProps['status'];
   };
 const TextField = (props: TextFieldProps) => {
-  const { label, id, helpMessage, status, labelStatus, ...rest } = props;
+  const { label, id, helpMessage, status, labelStatus, disabled, ...rest } = props;
 
   return (
     <div className="flex flex-col w-fit h-fit gap-1">
       {label && (
         <LabelType
-          disable={props.disabled}
+          disable={disabled}
           status={labelStatus}
           htmlFor={id}
           title={label}
-          className={clsx(rest.disabled && '!cursor-not-allowed')}
+          className={clsx(disabled && '!cursor-not-allowed')}
         />
       )}
-      <TextBox id={id} {...rest} error={status === 'error'} />
+      <TextBox id={id} disabled={disabled} {...rest} error={status === 'error'} />
       {helpMessage && <HelpMessage title={helpMessage} status={status} />}
     </div>
   );
