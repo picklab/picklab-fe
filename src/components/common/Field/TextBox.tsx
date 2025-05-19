@@ -29,14 +29,15 @@ const TextBox = ({ error = false, rounded = false, scale = 'base', icon, classNa
         className={clsx(
           `box-border w-60  rounded-md border text-gray-90
           border-interactive-secondary  
-          hover:border-gray-50 hover:placeholder:text-gray-50
+          hover:border-gray-40 hover:placeholder:text-gray-50
           active:border-gray-50 
-          disabled:bg-disabled disabled:border-gray-40 disabled:placeholder:text-gray-50 disabled:cursor-not-allowed
+          disabled:bg-gray-5 disabled:border-gray-30 disabled:placeholder:text-gray-40 disabled:cursor-not-allowed
           focus:outline-none
           text-[15px]`,
-          error && '!border-danger-border placeholder:!text-gray-90',
+          error && '!border-danger-50 placeholder:!text-gray-90',
           rounded && '!rounded-full',
           scale && scaleStyleClass[scale],
+          className,
         )}
         placeholder="placeholder"
         {...props}

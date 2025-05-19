@@ -2,14 +2,14 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Button, { ButtonProps } from '@/components/common/Button/Button';
-import { iconList, IconType } from '@/components/common/Icon/assets';
+import { iconList } from '@/components/common/Icon/assets';
 
 type CustomArgs = {
   iconPosition?: 'left' | 'right';
   iconSelect?: string;
 };
 
-const meta: Meta<typeof Button> & { args: CustomArgs; argTypes: any } = {
+const meta: Meta<ButtonProps & CustomArgs> = {
   title: 'Components/Button/Button',
   component: Button,
   tags: ['autodocs'],
@@ -55,10 +55,14 @@ export default meta;
 type Story = StoryObj<typeof Button> & CustomArgs;
 
 const ButtonWithArgs = (args: React.ComponentProps<typeof Button> & CustomArgs) => {
-  const icon = {
-    position: args.iconPosition,
-    icon: args.iconSelect,
-  } as ButtonProps['icon'];
+  let icon: ButtonProps['icon'];
+  if ((args.iconPosition, args.iconSelect)) {
+    icon = {
+      position: args.iconPosition,
+      icon: args.iconSelect,
+    } as ButtonProps['icon'];
+  }
+
   return <Button {...args} icon={icon} />;
 };
 // 기본 버튼
