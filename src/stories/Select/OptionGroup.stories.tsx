@@ -1,10 +1,10 @@
-import { OptionGroup } from '@/components/common/Field/OptionGroup';
+import { OptionGroup } from '@/components/common/Select/OptionGroup';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { useState } from 'react';
 
 const meta: Meta<typeof OptionGroup> = {
-  title: 'Components/Field/OptionGroup',
+  title: 'Components/Select/OptionGroup',
   component: OptionGroup,
   tags: ['autodocs'],
   args: {

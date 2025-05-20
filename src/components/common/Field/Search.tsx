@@ -1,7 +1,7 @@
 'use client';
 
 import { Option } from '@/components/common/Field/Label';
-import { OptionGroup, OptionGroupProps } from '@/components/common/Field/OptionGroup';
+import { OptionGroup, OptionGroupProps } from '@/components/common/Select/OptionGroup';
 import TextField, { TextFieldProps } from '@/components/common/Field/TextField';
 import { debounce } from '@/utils/debounce';
 import clsx from 'clsx';
