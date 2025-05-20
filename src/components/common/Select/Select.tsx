@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/common/Icon/Icon';
 import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
 import LabelType, { LabelTypeProps } from '@/components/common/Field/LabelType';
-import { OptionGroup } from '@/components/common/Field/OptionGroup';
+import { OptionGroup } from '@/components/common/Select/OptionGroup';
 
 interface Option {
   label: string;
@@ -92,13 +92,13 @@ const Select = ({
         type="button"
         id="select-button"
         className={clsx(
-          'box-border px-space-12 py-space-12 rounded-md border text-left text-gray-90 flex justify-between items-center transition-colors',
+          'px-space-12 py-space-12 rounded-md border text-left text-gray-40 flex justify-between items-center transition-colors group',
           'border-gray-30 bg-gray-0',
-          'hover:border-gray-40 hover:text-gray-60',
+          'hover:border-gray-40 hover:text-gray-60 hover:placeholder:text-gray-60',
           'focus:border-primary-50 focus:bg-gray-0',
-          'disabled:border-gray-30 disabled:bg-gray-5 disabled:text-gray-40 disabled:cursor-not-allowed',
-          helpMessageStatus === 'error' && 'border-danger-border',
-          value !== '' && 'border-gray-50',
+          'disabled:border-gray-30 disabled:bg-gray-5 disabled:text-gray-40 disabled:cursor-not-allowed disabled:group-hover:text-gray-40',
+          helpMessageStatus === 'error' && 'border-danger-50',
+          selectedLabel && 'border-gray-50 text-gray-90',
           widthClass,
           sizeClass,
         )}
@@ -112,6 +112,7 @@ const Select = ({
           className={clsx(
             'overflow-hidden whitespace-nowrap text-ellipsis break-words',
             !selectedLabel && 'text-gray-40',
+            !disabled && 'group-hover:text-gray-60',
           )}
         >
           {displayText}
