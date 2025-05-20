@@ -3,11 +3,11 @@
 import React from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
-import Badge from '@/components/common/Card/Badge';
 import Icon from '@/components/common/Icon/Icon';
 import Chip from '@/components/common/Card/Chip';
 import JobChip from '@/components/common/Card/JobChip';
 import Typography from '@/components/common/Typography';
+import CardDayBadge from '@/components/common/Card/CardDayBadge';
 
 interface CardProps {
   imageUrl: string;
@@ -49,7 +49,7 @@ const Card = ({
           height={180}
           className="w-full h-full object-cover rounded-[10px]"
         />
-        <Badge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4" />
+        <CardDayBadge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4" />
 
         <button
           onClick={(e) => {
