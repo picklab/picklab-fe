@@ -1,9 +1,9 @@
-import Badge from '@/components/common/Card/Badge';
+import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta<typeof Badge> = {
-  title: 'components/Card/Badge',
-  component: Badge,
+const meta: Meta<typeof CardDayBadge> = {
+  title: 'components/Card/CardDayBadge',
+  component: CardDayBadge,
   tags: ['autodocs'],
   argTypes: {
     text: {
@@ -18,11 +18,11 @@ const meta: Meta<typeof Badge> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Badge>;
+type Story = StoryObj<typeof CardDayBadge>;
 
 export const Default: Story = {
   args: {
-    text: '기본',
+    text: 'D-00',
     variant: 'default',
   },
 };
