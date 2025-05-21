@@ -22,7 +22,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
   const [selected, setSelected] = useState(options[0].value);
 
   return (
-    <header className="w-full border">
+    <header className="w-full">
       <div className="max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[46px]">
         {/* 로고 및 메뉴 */}
         <div className="flex items-center gap-[54px]">
