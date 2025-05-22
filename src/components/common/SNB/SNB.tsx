@@ -67,7 +67,7 @@ const SNB = ({ Jobs }: SNBProps) => {
           <Typography type="Headline2SemiBold">나의 관심직무</Typography>
         </div>
         {/* 관심 직무 리스트 렌더링 */}
-        <ul className="flex flex-wrap w-[200px] gap-1 justify-center items-center px-[11.5px]">
+        <ul className="flex flex-wrap w-[200px] gap-1 justify-center items-center">
           {Jobs.map((item, index) => (
             <li key={item} className="flex items-center gap-1 h-[19px]">
               <Typography type="Caption1Regular" className="text-primary-60">
