@@ -68,10 +68,10 @@ const Card = ({
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="flex flex-col px-space-8 py-space-20 gap-space-6">
+      <div className="flex flex-col px-space-8 py-space-20 gap-space-8">
         <Chip text={chipText} />
         <div className="flex flex-col gap-space-16">
-          <div className="flex flex-col gap-space-6">
+          <div className="flex flex-col gap-space-8">
             <div className="text-gray-90 overflow-hidden line-clamp-2 max-w-[222px]">
               <Typography type="Body1Semibold">{title}</Typography>
             </div>

@@ -62,7 +62,7 @@ const ListItem = ({
       <div className="flex flex-col justify-center max-w-[268px] gap-space-8">
         <div className="flex flex-col gap-space-6">
           <Chip text={chipTitle} className="cursor-pointer" />
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-space-2">
             <Typography type="Body2Semibold" className={`${grayTextStrong} truncate`}>
               {title}
             </Typography>
@@ -88,7 +88,7 @@ const ListItem = ({
     saveCount &&
     viewCount && (
       <div className="flex flex-col gap-space-base py-space-base max-w-[268px]">
-        <div className="flex flex-col gap-space-2">
+        <div className="flex flex-col gap-space-base">
           <Typography type="Body4Medium" className={`${grayText} truncate`}>
             {label}
           </Typography>
