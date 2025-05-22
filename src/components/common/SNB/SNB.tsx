@@ -11,9 +11,23 @@ import React from 'react';
 
 // const likeJobs = ['서비스 기획', 'PM/PO', '프론트엔드', '사업 개발', '데이터 분석'];
 
-const navItems = [
-  { label: 'MY 활동', href: '/my' },
-  { label: '작성 글', href: '/my/posts' },
+const navSections = [
+  {
+    label: 'MY 활동',
+    href: '/my',
+  },
+  {
+    label: '작성 글',
+    href: '/my/posts',
+  },
+  {
+    label: '계정',
+    href: '/my/account/profile', // 대표 메뉴는 계정관리
+    children: [
+      { label: '계정관리', href: '/my/account/profile' },
+      { label: '알림관리', href: '/my/account/notification' },
+    ],
+  },
 ];
 
 interface SNBProps {
@@ -28,7 +42,7 @@ const SNB = ({ Jobs }: SNBProps) => {
       {/* 프로필 영역 */}
       <section className="flex flex-col h-[202px] pt-space-10 border-b" aria-labelledby="profile-heading">
         <div className="flex flex-col h-30 gap-space-14 items-center">
-          <Avatar className="size-20" />
+          <Avatar className="!size-20" />
           <h2 id="profile-heading" className="sr-only">
             사용자 프로필
           </h2>
@@ -58,7 +72,7 @@ const SNB = ({ Jobs }: SNBProps) => {
               <Typography type="Caption1Regular" className="text-primary-60">
                 {item}
               </Typography>
-              {index < Jobs.length - 1 && <Divider vertical className="h-3" />}
+              {index < Jobs.length - 1 && <Divider vertical className="!h-3" />}
             </li>
           ))}
         </ul>
@@ -67,18 +81,52 @@ const SNB = ({ Jobs }: SNBProps) => {
       {/* 메뉴 영역 */}
       <nav className="flex flex-col flex-1 pt-[26px]" aria-label="내 메뉴">
         <ul className="flex flex-col gap-3">
-          {navItems.map(({ label, href }) => {
-            const isActive = pathname === href;
+          {navSections.map(({ label, href, children }) => {
+            // 현재 경로가 해당 섹션이거나, 자식 라우트 중 하나일 경우 활성화로 판단
+            const isActive =
+              pathname === href || (children && children.some((child) => pathname.startsWith(child.href)));
+
+            // 자식 메뉴 개수 (없으면 0)
+            const numberOfChildren = children?.length ?? 0;
+
+            // 활성화되었고 자식이 있을 경우 전체 높이 계산 (상단 34px + gap 4px + 자식당 30px씩)
+            // 비활성화거나 자식이 없으면 기본 높이 34px
+            const liHeight = isActive && numberOfChildren > 0 ? 34 + 4 + numberOfChildren * 30 : 34;
             return (
-              <li key={href} className="flex flex-col justify-center h-[34px] px-2 py-1">
+              <li
+                key={href}
+                className={clsx('flex flex-col justify-center h-[34px] px-2 py-1', isActive && `gap-1`)}
+                style={{ height: liHeight }}
+              >
                 <Link href={href} aria-current={isActive ? 'page' : undefined}>
                   <Typography
                     type="Headline1SemiBold"
-                    className={clsx(isActive ? 'text-gray-90' : 'text-gray-40', 'hover:text-gray-90')}
+                    className={clsx(isActive ? 'text-gray-90 h-[34px]' : 'text-gray-40', 'hover:text-gray-90')}
                   >
                     {label}
                   </Typography>
                 </Link>
+
+                {/* 소분류 렌더링 */}
+                {children && isActive && (
+                  <ul className="flex flex-col">
+                    {children.map(({ label: subLabel, href: subHref }) => {
+                      const isSubActive = pathname === subHref;
+                      return (
+                        <li key={subHref} className="flex flex-col h-[30px] justify-center">
+                          <Link href={subHref}>
+                            <Typography
+                              type="Body2Semibold"
+                              className={clsx(isSubActive ? 'text-gray-90' : 'text-gray-40', 'hover:text-gray-90')}
+                            >
+                              {subLabel}
+                            </Typography>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </li>
             );
           })}
