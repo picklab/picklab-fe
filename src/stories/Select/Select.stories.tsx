@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Select, { SelectProps } from '@/components/common/Field/Select';
+import Select, { SelectProps } from '@/components/common/Select/Select';
 
 const meta: Meta<typeof Select> = {
-  title: 'Components/Select',
+  title: 'Components/Select/Select',
   component: Select,
   tags: ['autodocs'],
   args: {
@@ -18,7 +18,7 @@ const meta: Meta<typeof Select> = {
     size: 'default',
     disabled: false,
     type: 'default',
-    helpMessage: '헬프메세지',
+    helpMessage: '',
     helpMessageStatus: 'default',
   },
   argTypes: {

@@ -13,7 +13,7 @@ const Chip = ({ text, className, ...props }: ChipProps) => {
     <Typography
       type="Caption2Medium"
       className={clsx(
-        `w-fit flex justify-center items-center rounded-full px-space-6 py-[3px] max-h-[22px] cursor-default text-gray-60 bg-gray-20`,
+        `w-fit flex justify-center items-center h-[22px] rounded-full px-space-8 py-space-base cursor-default text-gray-50 bg-gray-20 `,
         className,
       )}
       {...props}

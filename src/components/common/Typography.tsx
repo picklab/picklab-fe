@@ -40,66 +40,83 @@ const sizeClasses = {
   '6xs': 'text-6xs', // 초미니 사이즈
 };
 
+// 📏 텍스트 줄의 높이를 정해요 (줄 간격)
+const lineHeightClasses = {
+  lh128: 'leading-[128.6%]',
+  lh130: 'leading-[130%]',
+  lh133: 'leading-[133.4%]',
+  lh135: 'leading-[135.8%]',
+  lh136: 'leading-[136.4%]',
+  lh138: 'leading-[138.5%]',
+  lh140: 'leading-[140%]',
+  lh141: 'leading-[141.2%]',
+  lh144: 'leading-[144.5%]',
+  lh146: 'leading-[146.7%]',
+  lh150: 'leading-[150%]',
+  lh142: 'leading-[142.9%]',
+  lh127: 'leading-[127.3%]',
+};
+
 export const TypographyTypes = {
-  Display1Regular: clsx(sizeClasses['6xl'], weightClasses['normal']),
-  Display1Medium: clsx(sizeClasses['6xl'], weightClasses['medium']),
-  Display1Bold: clsx(sizeClasses['6xl'], weightClasses['bold']),
+  Display1Regular: clsx(sizeClasses['6xl'], weightClasses['normal'], lineHeightClasses['lh128']),
+  Display1Medium: clsx(sizeClasses['6xl'], weightClasses['medium'], lineHeightClasses['lh128']),
+  Display1Bold: clsx(sizeClasses['6xl'], weightClasses['bold'], lineHeightClasses['lh128']),
 
-  Display2Regular: clsx(sizeClasses['5xl'], weightClasses['normal']),
-  Display2Medium: clsx(sizeClasses['5xl'], weightClasses['medium']),
-  Display2Bold: clsx(sizeClasses['5xl'], weightClasses['bold']),
+  Display2Regular: clsx(sizeClasses['5xl'], weightClasses['normal'], lineHeightClasses['lh130']),
+  Display2Medium: clsx(sizeClasses['5xl'], weightClasses['medium'], lineHeightClasses['lh130']),
+  Display2Bold: clsx(sizeClasses['5xl'], weightClasses['bold'], lineHeightClasses['lh130']),
 
-  Title1Regular: clsx(sizeClasses['4xl'], weightClasses['normal']),
-  Title1Medium: clsx(sizeClasses['4xl'], weightClasses['medium']),
-  Title1Bold: clsx(sizeClasses['4xl'], weightClasses['bold']),
+  Title1Regular: clsx(sizeClasses['4xl'], weightClasses['normal'], lineHeightClasses['lh133']),
+  Title1Medium: clsx(sizeClasses['4xl'], weightClasses['medium'], lineHeightClasses['lh133']),
+  Title1Bold: clsx(sizeClasses['4xl'], weightClasses['bold'], lineHeightClasses['lh133']),
 
-  Title2Regular: clsx(sizeClasses['3xl'], weightClasses['normal']),
-  Title2Medium: clsx(sizeClasses['3xl'], weightClasses['medium']),
-  Title2Bold: clsx(sizeClasses['3xl'], weightClasses['bold']),
+  Title2Regular: clsx(sizeClasses['3xl'], weightClasses['normal'], lineHeightClasses['lh135']),
+  Title2Medium: clsx(sizeClasses['3xl'], weightClasses['medium'], lineHeightClasses['lh135']),
+  Title2Bold: clsx(sizeClasses['3xl'], weightClasses['bold'], lineHeightClasses['lh135']),
 
-  Title3Regular: clsx(sizeClasses['2xl'], weightClasses['normal']),
-  Title3Medium: clsx(sizeClasses['2xl'], weightClasses['medium']),
-  Title3Bold: clsx(sizeClasses['2xl'], weightClasses['bold']),
+  Title3Regular: clsx(sizeClasses['2xl'], weightClasses['normal'], lineHeightClasses['lh133']),
+  Title3Medium: clsx(sizeClasses['2xl'], weightClasses['medium'], lineHeightClasses['lh133']),
+  Title3Bold: clsx(sizeClasses['2xl'], weightClasses['bold'], lineHeightClasses['lh133']),
 
-  Heading1Regular: clsx(sizeClasses['xl'], weightClasses['normal']),
-  Heading1Medium: clsx(sizeClasses['xl'], weightClasses['medium']),
-  Heading1Semibold: clsx(sizeClasses['xl'], weightClasses['semibold']),
+  Heading1Regular: clsx(sizeClasses['xl'], weightClasses['normal'], lineHeightClasses['lh136']),
+  Heading1Medium: clsx(sizeClasses['xl'], weightClasses['medium'], lineHeightClasses['lh136']),
+  Heading1Semibold: clsx(sizeClasses['xl'], weightClasses['semibold'], lineHeightClasses['lh136']),
 
-  Heading2Regular: clsx(sizeClasses['lg'], weightClasses['normal']),
-  Heading2Medium: clsx(sizeClasses['lg'], weightClasses['medium']),
-  Heading2Semibold: clsx(sizeClasses['lg'], weightClasses['semibold']),
+  Heading2Regular: clsx(sizeClasses['lg'], weightClasses['normal'], lineHeightClasses['lh140']),
+  Heading2Medium: clsx(sizeClasses['lg'], weightClasses['medium'], lineHeightClasses['lh140']),
+  Heading2Semibold: clsx(sizeClasses['lg'], weightClasses['semibold'], lineHeightClasses['lh140']),
 
-  Headline1Regular: clsx(sizeClasses['base'], weightClasses['normal']),
-  Headline1Medium: clsx(sizeClasses['base'], weightClasses['medium']),
-  Headline1SemiBold: clsx(sizeClasses['base'], weightClasses['semibold']),
+  Headline1Regular: clsx(sizeClasses['base'], weightClasses['normal'], lineHeightClasses['lh144']),
+  Headline1Medium: clsx(sizeClasses['base'], weightClasses['medium'], lineHeightClasses['lh144']),
+  Headline1SemiBold: clsx(sizeClasses['base'], weightClasses['semibold'], lineHeightClasses['lh144']),
 
-  Headline2Regular: clsx(sizeClasses['sm'], weightClasses['normal']),
-  Headline2Medium: clsx(sizeClasses['sm'], weightClasses['medium']),
-  Headline2SemiBold: clsx(sizeClasses['sm'], weightClasses['semibold']),
+  Headline2Regular: clsx(sizeClasses['sm'], weightClasses['normal'], lineHeightClasses['lh141']),
+  Headline2Medium: clsx(sizeClasses['sm'], weightClasses['medium'], lineHeightClasses['lh141']),
+  Headline2SemiBold: clsx(sizeClasses['sm'], weightClasses['semibold'], lineHeightClasses['lh141']),
 
-  Body1Regular: clsx(sizeClasses['xs'], weightClasses['normal']),
-  Body1Medium: clsx(sizeClasses['xs'], weightClasses['medium']),
-  Body1Semibold: clsx(sizeClasses['xs'], weightClasses['semibold']),
+  Body1Regular: clsx(sizeClasses['xs'], weightClasses['normal'], lineHeightClasses['lh150']),
+  Body1Medium: clsx(sizeClasses['xs'], weightClasses['medium'], lineHeightClasses['lh150']),
+  Body1Semibold: clsx(sizeClasses['xs'], weightClasses['semibold'], lineHeightClasses['lh150']),
 
-  Body2Regular: clsx(sizeClasses['2xs'], weightClasses['normal']),
-  Body2Medium: clsx(sizeClasses['2xs'], weightClasses['medium']),
-  Body2Semibold: clsx(sizeClasses['2xs'], weightClasses['semibold']),
+  Body2Regular: clsx(sizeClasses['2xs'], weightClasses['normal'], lineHeightClasses['lh146']),
+  Body2Medium: clsx(sizeClasses['2xs'], weightClasses['medium'], lineHeightClasses['lh146']),
+  Body2Semibold: clsx(sizeClasses['2xs'], weightClasses['semibold'], lineHeightClasses['lh146']),
 
-  Body3Regular: clsx(sizeClasses['3xs'], weightClasses['normal']),
-  Body3Medium: clsx(sizeClasses['3xs'], weightClasses['medium']),
-  Body3Semibold: clsx(sizeClasses['3xs'], weightClasses['semibold']),
+  Body3Regular: clsx(sizeClasses['3xs'], weightClasses['normal'], lineHeightClasses['lh142']),
+  Body3Medium: clsx(sizeClasses['3xs'], weightClasses['medium'], lineHeightClasses['lh142']),
+  Body3Semibold: clsx(sizeClasses['3xs'], weightClasses['semibold'], lineHeightClasses['lh142']),
 
-  Body4Regular: clsx(sizeClasses['4xs'], weightClasses['normal']),
-  Body4Medium: clsx(sizeClasses['4xs'], weightClasses['medium']),
-  Body4Semibold: clsx(sizeClasses['4xs'], weightClasses['semibold']),
+  Body4Regular: clsx(sizeClasses['4xs'], weightClasses['normal'], lineHeightClasses['lh138']),
+  Body4Medium: clsx(sizeClasses['4xs'], weightClasses['medium'], lineHeightClasses['lh138']),
+  Body4Semibold: clsx(sizeClasses['4xs'], weightClasses['semibold'], lineHeightClasses['lh138']),
 
-  Caption1Regular: clsx(sizeClasses['5xs'], weightClasses['normal']),
-  Caption1Medium: clsx(sizeClasses['5xs'], weightClasses['medium']),
-  Caption1Semibold: clsx(sizeClasses['5xs'], weightClasses['semibold']),
+  Caption1Regular: clsx(sizeClasses['5xs'], weightClasses['normal'], lineHeightClasses['lh133']),
+  Caption1Medium: clsx(sizeClasses['5xs'], weightClasses['medium'], lineHeightClasses['lh133']),
+  Caption1Semibold: clsx(sizeClasses['5xs'], weightClasses['semibold'], lineHeightClasses['lh133']),
 
-  Caption2Regular: clsx(sizeClasses['6xs'], weightClasses['normal']),
-  Caption2Medium: clsx(sizeClasses['6xs'], weightClasses['medium']),
-  Caption2Semibold: clsx(sizeClasses['6xs'], weightClasses['semibold']),
+  Caption2Regular: clsx(sizeClasses['6xs'], weightClasses['normal'], lineHeightClasses['lh127']),
+  Caption2Medium: clsx(sizeClasses['6xs'], weightClasses['medium'], lineHeightClasses['lh127']),
+  Caption2Semibold: clsx(sizeClasses['6xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
 };
 
 // // 🏷️ 이 컴포넌트가 사용할 수 있는 모든 종류의 태그예요
