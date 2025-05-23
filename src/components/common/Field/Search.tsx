@@ -56,7 +56,7 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
     <div className="w-fit relative">
       <TextField
         {...props}
-        className={clsx(optionGroupProps && 'pr-11')}
+        className={clsx(props.className, optionGroupProps && 'pr-11')}
         value={input}
         onChange={onChange}
         icon="search"
@@ -66,7 +66,7 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
           {...optionGroupProps}
           options={filtered}
           onClickHandler={onSelect}
-          className="absolute -bottom-30 z-10 left-0"
+          className={clsx(optionGroupProps.className, 'absolute -bottom-30 z-10 left-0')}
           manualInputField={input}
         />
       )}
