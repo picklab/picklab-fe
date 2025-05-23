@@ -4,6 +4,7 @@ import Search from '@/components/common/Field/Search';
 import Avatar from '@/components/common/GNB/Avatar';
 import GNBMenu from '@/components/common/GNB/GNBMenu';
 import Icon from '@/components/common/Icon/Icon';
+import { GNBNavigationMenus } from '@/constants/menus';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -31,18 +32,11 @@ const GNB = ({ isLogin = false }: GNBProps) => {
           </Link>
           <nav aria-label="메인 메뉴">
             <ul className="flex gap-9">
-              <li>
-                <GNBMenu href="/activity">대외활동</GNBMenu>
-              </li>
-              <li>
-                <GNBMenu href="/seminar">강연/세미나</GNBMenu>
-              </li>
-              <li>
-                <GNBMenu href="/education">교육</GNBMenu>
-              </li>
-              <li>
-                <GNBMenu href="/contest">공모전/해커톤</GNBMenu>
-              </li>
+              {GNBNavigationMenus.map((menu) => (
+                <li key={menu.label}>
+                  <GNBMenu href={menu.href}>{menu.label}</GNBMenu>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>
