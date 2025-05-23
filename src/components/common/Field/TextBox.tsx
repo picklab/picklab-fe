@@ -27,8 +27,8 @@ const TextBox = ({ error = false, rounded = false, scale = 'base', icon, classNa
       <input
         type="text"
         className={clsx(
-          `box-border w-60  rounded-md border text-gray-90
-          border-interactive-secondary  
+          `w-60 rounded-md border text-gray-90
+          border-gray-30  
           hover:border-gray-40 hover:placeholder:text-gray-50
           active:border-gray-50 
           disabled:bg-gray-5 disabled:border-gray-30 disabled:placeholder:text-gray-40 disabled:cursor-not-allowed
