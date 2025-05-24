@@ -34,15 +34,17 @@ body {
   }
 }
 
-.scrollbar-thin::-webkit-scrollbar {
+/* 맥은 브라우저 킷을 따로 쓰고 있고, (-webkit)
+ 그 기본설정이 윈도우랑 달라서 일단 스타일로 맞췄습니다! */
+::-webkit-scrollbar {
   width: 7px;
+  height: 7px;
 }
 
-.scrollbar-thin::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background-color: #d1d5dc;
   border-radius: 9999px;
 }
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background-color: #d1d5dc;
 }
