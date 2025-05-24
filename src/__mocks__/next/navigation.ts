@@ -4,6 +4,7 @@ import React from 'react';
 
 // URLSearchParams의 상태를 추적하기 위한 변수
 let currentSearchParams = new URLSearchParams();
+let currentPathname = '/'; // 초기 pathname 설정
 
 // 초기 searchParams를 설정하는 함수
 export const setInitialSearchParams = (params: Record<string, string>) => {
@@ -69,5 +70,12 @@ export const useRouter = () => ({
 export const usePathname = () => {
   // 단순히 현재 경로를 반환
   // (현재까지 스토리북에서 해당 훅으로 어떤 작업을 하고있지 않아서 기본 리턴값 반환)
-  return '/mock-path';
+  return currentPathname;
+};
+
+// 초기 searchParams를 설정하는 함수
+export const setInitialPathname = (pathname: string) => {
+  // searchParams를 새로 초기화
+  currentPathname = pathname;
+  notify(); // params 설정 후 상태 변경을 리스너들에게 알림
 };

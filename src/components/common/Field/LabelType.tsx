@@ -19,7 +19,7 @@ const LabelType = ({ title, status = 'default', className, disable = false, ...p
   return (
     // input과 연결되는 label 태그
     <label {...props} className={clsx('w-fit cursor-pointer h-space-24', className)}>
-      <Typography type="Body1Medium" className={clsx('text-gray-60', disableStyle)}>
+      <Typography type="Body3Medium" className={clsx('text-gray-90', disableStyle)}>
         {title}
         {status !== 'default' && (
           <>
