@@ -2,13 +2,13 @@ import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import React from 'react';
 
-interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface CardChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   // Chip에 표시할 텍스트
-  text: string;
+  text: '대외활동' | '교육' | '공모전/해커톤' | '강연/세미나' | string;
   className?: string;
 }
 
-const Chip = ({ text, className, ...props }: ChipProps) => {
+const CardChip = ({ text, className, ...props }: CardChipProps) => {
   return (
     <Typography
       type="Caption2Medium"
@@ -23,4 +23,4 @@ const Chip = ({ text, className, ...props }: ChipProps) => {
   );
 };
 
-export default Chip;
+export default CardChip;
