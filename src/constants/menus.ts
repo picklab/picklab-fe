@@ -33,3 +33,11 @@ export const SNBNavigationMenus: SNBNavigationMenusType[] = [
     ],
   },
 ] as const;
+
+export const FOOTER_MENUS = [
+  { label: '서비스 소개', href: '/' },
+  { label: '광고 상품', href: '/' },
+  { label: '이용약관', href: '/' },
+  { label: '개인정보처리방침', href: '/' },
+  { label: '사용자 피드백', href: '/' },
+];
