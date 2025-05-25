@@ -1,9 +1,9 @@
-import Chip from '@/components/common/Card/Chip';
+import CardChip from '@/components/common/Card/CardChip';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta<typeof Chip> = {
-  title: 'components/Card/Chip',
-  component: Chip,
+const meta: Meta<typeof CardChip> = {
+  title: 'components/Card/CardChip',
+  component: CardChip,
   tags: ['autodocs'],
   argTypes: {
     text: {
@@ -14,7 +14,7 @@ const meta: Meta<typeof Chip> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Chip>;
+type Story = StoryObj<typeof CardChip>;
 
 export const Playground: Story = {
   args: {

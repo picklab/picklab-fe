@@ -1,9 +1,9 @@
-import JobChip from '@/components/common/Card/JobChip';
+import CardJobChip from '@/components/common/Card/CardJobChip';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta<typeof JobChip> = {
-  title: 'components/Card/JobChip',
-  component: JobChip,
+const meta: Meta<typeof CardJobChip> = {
+  title: 'components/Card/CardJobChip',
+  component: CardJobChip,
   tags: ['autodocs'],
   argTypes: {
     job: {
@@ -22,7 +22,7 @@ const meta: Meta<typeof JobChip> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof JobChip>;
+type Story = StoryObj<typeof CardJobChip>;
 
 export const Playground: Story = {
   args: {
@@ -34,11 +34,11 @@ export const Playground: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="flex gap-2">
-      <JobChip job="기획" />
-      <JobChip job="개발" />
-      <JobChip job="마케팅" />
-      <JobChip job="디자인" />
-      <JobChip job="AI" />
+      <CardJobChip job="기획" />
+      <CardJobChip job="개발" />
+      <CardJobChip job="마케팅" />
+      <CardJobChip job="디자인" />
+      <CardJobChip job="AI" />
     </div>
   ),
 };
