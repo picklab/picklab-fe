@@ -26,19 +26,15 @@ const HelpMessage = ({ title, status = 'default', ...props }: HelpMessageProps) 
       role={status === 'error' ? 'alert' : undefined}
       aria-live={status === 'error' ? 'assertive' : status === 'success' ? 'polite' : undefined}
       // 상태에 따라 텍스트 색상과 레이아웃 클래스 적용
-      className={clsx('flex h-space-24 w-fit gap-1 items-center', statusClasses[status])}
+      className={clsx('flex h-[18px] w-fit gap-1 items-center', statusClasses[status])}
       {...props}
     >
       {/* 에러 상태일 때 아이콘 렌더링, 시각적 표시만 하고 스크린리더는 무시 */}
-      {status === 'error' && (
-        <Icon icon="alertCircle" width={20} className={statusClasses[status]} aria-hidden="true" />
-      )}
+      {status === 'error' && <Icon icon="alertCircle" size={18} className={statusClasses[status]} aria-hidden="true" />}
 
       {/* 성공 상태일 때 아이콘 렌더링, 역시 시각적 표시만 하고 스크린리더는 무시 */}
       {status === 'success' && (
-        <div className="size-space-20 p-1">
-          <Icon aria-hidden="true" icon="largeCheck" size={14} className={statusClasses[status]} />
-        </div>
+        <Icon aria-hidden="true" icon="largeCheck" size={18} className={statusClasses[status]} />
       )}
 
       {/* 텍스트 메시지 출력 */}

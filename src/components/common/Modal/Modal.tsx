@@ -68,7 +68,7 @@ const Modal = ({ isOpen, onClose, onSuccess, title, description }: ModalProps) =
 
         <div className="flex flex-col gap-space-32">
           {/* Body */}
-          <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-space-6">
             <Typography tag="h1" type="Heading1Semibold" id="modal-title" className="text-gray-90">
               {title}
             </Typography>
@@ -78,7 +78,7 @@ const Modal = ({ isOpen, onClose, onSuccess, title, description }: ModalProps) =
           </div>
 
           {/* Footer */}
-          <div className="mt-6 flex gap-2">
+          <div className="flex gap-2">
             <Button className="w-full" buttonStyle="filled" size="base" label="취소" onClick={onClose} />
 
             <Button className="w-full" buttonStyle="outlined" size="base" label="확인" onClick={onSuccessHandler} />
