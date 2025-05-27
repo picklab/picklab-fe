@@ -7,16 +7,14 @@ import React from 'react';
 interface ReviewCardProps {
   title: string;
   subtitle: string;
-  activityPeriod: {
-    startDate: Date | string | number;
-    endDate: Date | string | number;
-  };
+  startDate: Date | string | number;
+  endDate: Date | string | number;
   category: CardChipProps['text'];
   buttonLabel: string;
   onButtonClick?: () => void;
 }
 
-const ReviewCard = ({ title, subtitle, activityPeriod, category, buttonLabel, onButtonClick }: ReviewCardProps) => {
+const ReviewCard = ({ title, subtitle, startDate, endDate, category, buttonLabel, onButtonClick }: ReviewCardProps) => {
   return (
     <div className="flex flex-col px-[18px] pt-[18px] pb-[16px] w-[250px] h-[190px] border border-gray-20 rounded-lg gap-space-16">
       {/* contents */}
@@ -34,9 +32,9 @@ const ReviewCard = ({ title, subtitle, activityPeriod, category, buttonLabel, on
           <Typography type="Caption1Regular" className="text-gray-50">
             활동기간
           </Typography>
-          <Divider vertical className="h-space-10 mx-space-6 self-center" />
+          <Divider vertical className="!h-space-10 mx-space-6 self-center" />
           <Typography type="Caption1Regular" className="text-gray-50">
-            {`${activityPeriod?.startDate}`} ~ {`${activityPeriod?.endDate}`}
+            {`${startDate}`} ~ {`${endDate}`}
           </Typography>
         </div>
       </div>
