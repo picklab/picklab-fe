@@ -4,7 +4,7 @@ import React from 'react';
 
 export interface CardChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   // Chip에 표시할 텍스트
-  text: '대외활동' | '교육' | '공모전/해커톤' | '강연/세미나' | string;
+  text: '대외활동' | '교육' | '공모전/해커톤' | '강연/세미나';
   className?: string;
 }
 
