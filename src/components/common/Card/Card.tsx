@@ -4,7 +4,7 @@ import React from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Icon from '@/components/common/Icon/Icon';
-import CardChip from '@/components/common/Card/CardChip';
+import CardChip, { CardChipProps } from '@/components/common/Card/CardChip';
 import CardJobChip from '@/components/common/Card/CardJobChip';
 import Typography from '@/components/common/Typography';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
@@ -14,7 +14,7 @@ interface CardProps {
   badgeText: string;
   badgeVariant: 'default' | 'deadline' | 'intended';
   isBookmarked: boolean;
-  chipText: string;
+  chipText: CardChipProps['text'];
   companyName: string;
   title: string;
   jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI')[];

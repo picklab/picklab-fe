@@ -7,8 +7,8 @@ const meta: Meta<typeof CardChip> = {
   tags: ['autodocs'],
   argTypes: {
     text: {
-      control: 'text',
-      defaultValue: '칩 텍스트',
+      control: 'select',
+      options: ['대외활동', '교육', '공모전/해커톤', '강연/세미나'],
     },
   },
 };
@@ -18,6 +18,6 @@ type Story = StoryObj<typeof CardChip>;
 
 export const Playground: Story = {
   args: {
-    text: '칩 텍스트',
+    text: '강연/세미나',
   },
 };

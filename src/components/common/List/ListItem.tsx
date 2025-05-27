@@ -1,6 +1,6 @@
 'use client';
 
-import CardChip from '@/components/common/Card/CardChip';
+import CardChip, { CardChipProps } from '@/components/common/Card/CardChip';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { getFormatDate } from '@/utils/day';
@@ -18,7 +18,7 @@ export interface ListItemProps {
   isFinished: boolean;
   onListClick: () => void;
   onBookmarkClick?: () => void;
-  chipTitle?: string;
+  chipTitle?: CardChipProps['text'];
   organization?: string;
   startDate?: Date | null;
   endDate?: Date | null;
