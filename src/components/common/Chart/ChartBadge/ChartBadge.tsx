@@ -38,8 +38,8 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
         {
           'bg-danger-5 text-danger-50 min-w-space-16': type === 'new',
           'bg-gray-10 text-gray-60 min-w-space-16': type === 'default',
-          'bg-info-5 text-info-50 min-w-[31px]': type === 'down',
-          'bg-danger-5 text-danger-50 min-w-[31px]': type === 'up',
+          'bg-info-5 text-info-50 min-w-[34px]': type === 'down',
+          'bg-danger-5 text-danger-50 min-w-[34px]': type === 'up',
         },
         className,
       )}
@@ -51,9 +51,9 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
       {isUpOrDown && hasValue && (
         <>
           {type === 'up' ? (
-            <Icon icon="fillChevronUp" size={15} className="text-danger-50" />
+            <Icon icon="arrowUp" size={14} className="text-danger-50" />
           ) : (
-            <Icon icon="fillChevronDown" size={15} className="text-info-50" />
+            <Icon icon="arrowDown" size={14} className="text-info-50" />
           )}
           <Typography type="Caption2Medium" className="mr-[3px]">
             {value}
