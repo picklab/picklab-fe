@@ -34,7 +34,7 @@ const ChartBadge = ({ type, value, className }: ChartBadgeProps) => {
   return (
     <span
       className={clsx(
-        'flex justify-center items-center rounded-full h-space-16',
+        'flex justify-center items-center rounded-full h-space-16 w-fit',
         {
           'bg-danger-5 text-danger-50 min-w-space-16': type === 'new',
           'bg-gray-10 text-gray-60 min-w-space-16': type === 'default',
