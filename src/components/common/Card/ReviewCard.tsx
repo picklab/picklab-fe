@@ -16,7 +16,7 @@ interface ReviewCardProps {
 
 const ReviewCard = ({ title, subtitle, startDate, endDate, category, buttonLabel, onButtonClick }: ReviewCardProps) => {
   return (
-    <div className="flex flex-col px-[18px] pt-[18px] pb-[16px] w-[250px] h-[190px] border border-gray-20 rounded-lg gap-space-16">
+    <div className="flex flex-col px-[18px] pt-[18px] pb-space-16 w-[250px] h-[190px] border border-gray-20 rounded-lg gap-space-16">
       {/* contents */}
       <div className="flex flex-col h-[100px] gap-space-10">
         <CardChip text={category} />
@@ -34,7 +34,7 @@ const ReviewCard = ({ title, subtitle, startDate, endDate, category, buttonLabel
           </Typography>
           <Divider vertical className="!h-space-10 mx-space-6 self-center" />
           <Typography type="Caption1Regular" className="text-gray-50">
-            {`${startDate}`} ~ {`${endDate}`}
+            {`${startDate} ~ ${endDate}`}
           </Typography>
         </div>
       </div>
