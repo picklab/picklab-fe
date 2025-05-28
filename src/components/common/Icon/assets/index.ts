@@ -19,14 +19,13 @@ import LargeRefresh from '@/components/common/Icon/assets/Large/LargeRefresh';
 import LargeSearch from '@/components/common/Icon/assets/Large/LargeSearch';
 import ChevronDown from '@/components/common/Icon/assets/ChevronDown';
 import ChevronUp from '@/components/common/Icon/assets/ChevronUp';
-import FillChevronDown from '@/components/common/Icon/assets/FillChevronDown';
-import FillChevronUp from '@/components/common/Icon/assets/FillChevronUp';
 import BookmarkLine from '@/components/common/Icon/assets/BookmarkLine';
 import BookmarkFill from '@/components/common/Icon/assets/BookmarkFill';
 import Exit from '@/components/common/Icon/assets/Exit';
 import ArrowUp from '@/components/common/Icon/assets/ArrowUp';
 import ArrowDown from '@/components/common/Icon/assets/ArrowDown';
 import Ellipse from '@/components/common/Icon/assets/Ellipse';
+import Xmark from '@/components/common/Icon/assets/Xmark';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -37,14 +36,13 @@ export const iconMap = {
   check: Check,
   human: Human,
   search: Search,
-  fillChevronDown: FillChevronDown,
-  fillChevronUp: FillChevronUp,
   bookmarkLine: BookmarkLine,
   bookmarkFill: BookmarkFill,
   exit: Exit,
   arrowUp: ArrowUp,
   arrowDown: ArrowDown,
   ellipse: Ellipse,
+  xMark: Xmark,
 
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
