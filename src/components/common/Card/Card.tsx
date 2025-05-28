@@ -4,8 +4,8 @@ import React from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Icon from '@/components/common/Icon/Icon';
-import Chip from '@/components/common/Card/Chip';
-import JobChip from '@/components/common/Card/JobChip';
+import CardChip, { CardChipProps } from '@/components/common/Card/CardChip';
+import CardJobChip from '@/components/common/Card/CardJobChip';
 import Typography from '@/components/common/Typography';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
 
@@ -14,7 +14,7 @@ interface CardProps {
   badgeText: string;
   badgeVariant: 'default' | 'deadline' | 'intended';
   isBookmarked: boolean;
-  chipText: string;
+  chipText: CardChipProps['text'];
   companyName: string;
   title: string;
   jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI')[];
@@ -69,7 +69,7 @@ const Card = ({
 
       {/* 콘텐츠 영역 */}
       <div className="flex flex-col px-space-8 py-space-20 gap-space-8">
-        <Chip text={chipText} />
+        <CardChip text={chipText} />
         <div className="flex flex-col gap-space-16">
           <div className="flex flex-col gap-space-8">
             <div className="text-gray-90 overflow-hidden line-clamp-2 max-w-[222px]">
@@ -84,7 +84,7 @@ const Card = ({
           </div>
           <div className="flex gap-1">
             {jobs.map((job) => (
-              <JobChip key={job} job={job} />
+              <CardJobChip key={job} job={job} />
             ))}
           </div>
         </div>

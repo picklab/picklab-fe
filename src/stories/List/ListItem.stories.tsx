@@ -14,7 +14,7 @@ const meta: Meta<typeof ListItem> = {
     viewCount: 100,
     isBookmarked: false,
     isFinished: false,
-    chipTitle: '채용',
+    chipTitle: '강연/세미나',
     organization: '회사명',
     startDate: new Date('2025-05-01'),
     endDate: new Date('2025-05-15'),
@@ -28,7 +28,11 @@ const meta: Meta<typeof ListItem> = {
     viewCount: { control: 'number', description: '진행 중 리스트 필수 값' },
     isBookmarked: { control: { disable: true }, description: '진행 중 리스트 필수 값' }, // 북마크 여부는 Template 내의 state로 관리
     isFinished: { control: 'boolean', description: '공통 필수 값' },
-    chipTitle: { description: '종료된 리스트 필수 값' },
+    chipTitle: {
+      control: 'select',
+      options: ['대외활동', '교육', '공모전/해커톤', '강연/세미나'],
+      description: '종료된 리스트 필수 값',
+    },
     organization: { description: '종료된 리스트 필수 값' },
     startDate: { description: '종료된 리스트 필수 값' },
     endDate: { description: '종료된 리스트 필수 값' },
@@ -59,7 +63,7 @@ export const Ongoing: Story = {
 export const Finished: Story = {
   render: (args) => <Template {...args} />,
   args: {
-    chipTitle: '대외활동',
+    chipTitle: '공모전/해커톤',
     organization: '기관명',
     startDate: new Date('2025-01-01'),
     endDate: new Date('2025-03-01'),

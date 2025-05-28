@@ -5,11 +5,11 @@ import Typography from '@/components/common/Typography';
 // 🏷️ 해당 컴포넌트에서 job prop으로 받을 수 있는 종류
 type JobType = '기획' | '개발' | '마케팅' | '디자인' | 'AI';
 
-interface JobChipProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface CardJopChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   job: JobType;
 }
 
-const JobChip = ({ job, className = '', ...props }: JobChipProps) => {
+const CardJobChip = ({ job, className = '', ...props }: CardJopChipProps) => {
   // variant별 클래스 맵
   const jobClasses: Record<JobType, { bg: string; text: string }> = {
     기획: { bg: 'bg-planning-bg', text: 'text-planning-text' },
@@ -23,7 +23,7 @@ const JobChip = ({ job, className = '', ...props }: JobChipProps) => {
 
   // 개발모드일때만 5개의 job중에 없는 값 입력시 콘솔에러 출력
   if (!selected && process.env.NODE_ENV === 'development') {
-    console.error(`JobChip: 알 수 없는 job 값 "${job}"이 전달되었습니다.`);
+    console.error(`CardJobChip: 알 수 없는 job 값 "${job}"이 전달되었습니다.`);
   }
 
   return (
@@ -44,4 +44,4 @@ const JobChip = ({ job, className = '', ...props }: JobChipProps) => {
   );
 };
 
-export default JobChip;
+export default CardJobChip;
