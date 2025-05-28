@@ -1,10 +1,10 @@
 'use client';
 
-import Chip from '@/components/common/Card/Chip';
+import CardChip, { CardChipProps } from '@/components/common/Card/CardChip';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
+import { getFormatDate } from '@/utils/day';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import Image from 'next/image';
 import React from 'react';
 
@@ -18,7 +18,7 @@ export interface ListItemProps {
   isFinished: boolean;
   onListClick: () => void;
   onBookmarkClick?: () => void;
-  chipTitle?: string;
+  chipTitle?: CardChipProps['text'];
   organization?: string;
   startDate?: Date | null;
   endDate?: Date | null;
@@ -42,10 +42,6 @@ const ListItem = ({
   startDate,
   endDate,
 }: ListItemProps) => {
-  const getFormatDate = (date: Date) => {
-    return date ? dayjs(date).format('YY.MM.DD') : '';
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -61,7 +57,7 @@ const ListItem = ({
     endDate && (
       <div className="flex flex-col justify-center max-w-[268px] gap-space-8">
         <div className="flex flex-col gap-space-6">
-          <Chip text={chipTitle} className="cursor-pointer" />
+          <CardChip text={chipTitle} className="cursor-pointer" />
           <div className="flex flex-col gap-space-2">
             <Typography type="Body2Semibold" className={`${grayTextStrong} truncate`}>
               {title}

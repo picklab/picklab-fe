@@ -14,7 +14,7 @@ const Footer = () => {
     <footer className="w-full flex flex-col items-center gap-[64px] max-w-[1440px] mx-auto px-[140px] py-space-40">
       <div className="flex items-start gap-[120px] w-full">
         <Link href="/" aria-label="홈으로 가기">
-          <Image src="/imgs/FooterLogo.png" width={120} height={60} alt="Picklab 로고" />
+          <Image src="/imgs/footerLogo.png" width={166} height={40} alt="Picklab 로고" />
         </Link>
 
         <section className="flex gap-[240px]" aria-label="푸터 네비게이션">
