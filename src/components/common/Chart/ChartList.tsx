@@ -9,10 +9,10 @@ interface ChartProps {
   value?: number;
 }
 
-const Chart = ({ rank, title, type, value }: ChartProps) => {
+const ChartList = ({ rank, title, type, value }: ChartProps) => {
   return (
     <div className="flex items-center gap-space-6 h-[21px] w-full">
-      <Typography type="Body3Semibold" className="min-w-[21px] flex items-center justify-center">
+      <Typography type="Body3Semibold" className="min-w-[21px] h-full flex items-center justify-center">
         {rank}
       </Typography>
       <div className="flex items-center gap-space-6 min-w-0">
@@ -25,4 +25,4 @@ const Chart = ({ rank, title, type, value }: ChartProps) => {
   );
 };
 
-export default Chart;
+export default ChartList;
