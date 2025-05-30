@@ -18,7 +18,7 @@ const LabelType = ({ title, status = 'default', className, disable = false, ...p
   const disableStyle = disable ? '!text-gray-40' : '';
   return (
     // input과 연결되는 label 태그
-    <label {...props} className={clsx('w-fit cursor-pointer h-space-24', className)}>
+    <label {...props} className={clsx('flex items-center w-fit cursor-pointer h-space-24', className)}>
       <Typography type="Body3Medium" className={clsx('text-gray-90', disableStyle)}>
         {title}
         {status !== 'default' && (
