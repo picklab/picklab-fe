@@ -9,7 +9,7 @@ import React from 'react';
 export type OptionGroupProps = {
   options: OptionType[]; // 렌더링할 옵션 리스트
   selectedValue: OptionProps['selectedValue']; // 현재 선택된 값
-  onClickHandler: (value: OptionProps['selectedValue']) => void;
+  onClickHandler: OptionProps['onClickHandler'];
   type?: OptionProps['type'];
   icon?: OptionProps['icon'];
   width?: 'default' | 'large' | 'small';

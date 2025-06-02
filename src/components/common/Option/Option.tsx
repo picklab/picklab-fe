@@ -20,9 +20,9 @@ export type OptionType = {
 // type LabelTag = keyof TagMap;
 
 export interface OptionProps extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> {
-  selectedValue: OptionType['value'];
+  selectedValue: OptionType['value'] | OptionType['value'][];
   options: OptionType[];
-  onClickHandler: (value: string) => void;
+  onClickHandler: (value: string | string[]) => void;
   className?: string;
   focus?: boolean;
   icon?: IconType;
@@ -46,7 +46,7 @@ const OptionType = ({
 }: OptionProps) => {
   const [focusedIndex, setFocusedIndex] = useState(0); // 현재 키보드 포커스된 아이템의 인덱스
   const itemRefs = useRef<(HTMLElement | null)[]>([]); // 각 <li>에 접근하기 위한 ref 리스트
-
+  console.log(selectedValue);
   // 선택된 값으로 초기 포커스 인덱스를 설정
   useEffect(() => {
     const initialIndex = options.findIndex((opt) => opt.value === selectedValue);
@@ -57,7 +57,8 @@ const OptionType = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>, index: number, value: string) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onClickHandler(value);
+      // 체크박스일 경우에만 배열로 리턴
+      handleOptionSelect(value);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       const nextIndex = (index + 1) % options.length; // 아래 방향키: 다음 인덱스로 이동
@@ -71,10 +72,30 @@ const OptionType = ({
     }
   };
 
+  const handleOptionSelect = (value: string) => {
+    // 체크박스일 경우에만 배열로 리턴
+    if (type === 'checkbox') {
+      if (Array.isArray(selectedValue)) {
+        if (selectedValue.includes(value)) {
+          const checkOutValue = selectedValue.filter((item) => item !== value);
+          onClickHandler(checkOutValue);
+        } else {
+          onClickHandler([...selectedValue, value]);
+        }
+      }
+    } else {
+      onClickHandler(value);
+    }
+  };
+
   return (
     <>
       {options.map((option, index) => {
-        const isSelected = option.value === selectedValue;
+        // 배열일 경우와 아닐 경우 조건문 달라짐
+        const isSelected = Array.isArray(selectedValue)
+          ? selectedValue.includes(option.value)
+          : option.value === selectedValue;
+
         const isFocused = index === focusedIndex;
         return (
           <li
@@ -87,7 +108,7 @@ const OptionType = ({
               className,
             )}
             onClick={() => {
-              onClickHandler(option.value);
+              handleOptionSelect(option.value);
             }}
             // 각 항목의 DOM 노드를 ref 배열에 저장
             ref={(el: HTMLElement | null) => {
