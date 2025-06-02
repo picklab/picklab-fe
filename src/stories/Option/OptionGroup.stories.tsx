@@ -1,10 +1,11 @@
-import { OptionGroup } from '@/components/common/Select/OptionGroup';
+import { iconList } from '@/components/common/Icon/assets';
+import { OptionGroup } from '@/components/common/Option/OptionGroup';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { useState } from 'react';
 
 const meta: Meta<typeof OptionGroup> = {
-  title: 'Components/Select/OptionGroup',
+  title: 'Components/Option/OptionGroup',
   component: OptionGroup,
   tags: ['autodocs'],
   args: {
@@ -13,7 +14,21 @@ const meta: Meta<typeof OptionGroup> = {
       { value: 'option2', label: '옵션 2' },
       { value: 'option3', label: '옵션 3' },
     ],
-    type: 'default',
+  },
+  argTypes: {
+    type: {
+      control: 'radio',
+      description: 'iconWithText는 아이콘을 선택해야합니다!',
+      options: ['text', 'checkbox', 'iconWithText'],
+    },
+    functionOptionType: {
+      control: 'radio',
+      options: ['selfplus', 'reset'],
+    },
+    icon: {
+      control: 'select',
+      options: iconList,
+    },
   },
 };
 
@@ -22,6 +37,7 @@ type Story = StoryObj<typeof OptionGroup>;
 
 const OptionGroupWithState = (args: React.ComponentProps<typeof OptionGroup>) => {
   const [selected, setSelected] = useState('option1');
+
   return <OptionGroup {...args} selectedValue={selected} onClickHandler={(value) => setSelected(value)} />;
 };
 
@@ -31,7 +47,14 @@ export const Default: Story = {
 
 export const WithCheckBox: Story = {
   args: {
-    type: 'checkBox',
+    type: 'checkbox',
   },
   render: (args) => <OptionGroupWithState {...args} />,
+};
+
+export const WithIcon: Story = {
+  args: {
+    type: 'iconWithText',
+  },
+  render: (args) => <OptionGroupWithState {...args} icon="alertCircle" />,
 };
