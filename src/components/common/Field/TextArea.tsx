@@ -1,7 +1,7 @@
 'use client';
 
 import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
-import LabelType from '@/components/common/Field/LabelType';
+import Label from '@/components/common/Field/Label';
 import TextBox, { TextareaTextBoxProps } from '@/components/common/Field/TextBox';
 import { WithOptionalLabel } from '@/components/common/Field/TextField';
 import Typography from '@/components/common/Typography';
@@ -36,7 +36,7 @@ const TextArea = (props: TextAreaProps) => {
     <div className="flex flex-col w-fit h-fit gap-1">
       {/* 라벨 영역 */}
       {label && (
-        <LabelType
+        <Label
           disable={disabled}
           status={labelStatus}
           htmlFor={id}
