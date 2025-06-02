@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 import Option, { OptionProps, OptionType } from '@/components/common/Option/Option';
@@ -36,11 +36,19 @@ const optionList: OptionType[] = [
 ];
 
 const Template = (args: OptionProps) => {
-  const [selectedValue, setSelectedValue] = useState('opt1');
+  const [selectedValue, setSelectedValue] = useState<string | string[]>('opt1');
 
+  useEffect(() => {
+    if (args.type === 'checkbox') {
+      setSelectedValue(['opt1']);
+    } else {
+      setSelectedValue('opt1');
+    }
+  }, [args.type]);
+  const icon = args.type === 'iconWithText' ? 'alertCircle' : undefined;
   return (
     <ul role="listbox" className="space-y-2 w-40">
-      <Option {...args} selectedValue={selectedValue} onClickHandler={(value) => setSelectedValue(value)} />
+      <Option icon={icon} {...args} selectedValue={selectedValue} onClickHandler={(value) => setSelectedValue(value)} />
     </ul>
   );
 };

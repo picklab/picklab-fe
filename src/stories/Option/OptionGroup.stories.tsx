@@ -2,7 +2,7 @@ import { iconList } from '@/components/common/Icon/assets';
 import { OptionGroup } from '@/components/common/Option/OptionGroup';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const meta: Meta<typeof OptionGroup> = {
   title: 'Components/Option/OptionGroup',
@@ -36,9 +36,26 @@ export default meta;
 type Story = StoryObj<typeof OptionGroup>;
 
 const OptionGroupWithState = (args: React.ComponentProps<typeof OptionGroup>) => {
-  const [selected, setSelected] = useState('option1');
+  const [selected, setSelectedValue] = useState<string | string[]>(['option1']);
 
-  return <OptionGroup {...args} selectedValue={selected} onClickHandler={(value) => setSelected(value)} />;
+  useEffect(() => {
+    if (args.type === 'checkbox') {
+      setSelectedValue(['opt1']);
+    } else {
+      setSelectedValue('opt1');
+    }
+  }, [args.type]);
+  const icon = args.type === 'iconWithText' ? 'alertCircle' : undefined;
+  return (
+    <OptionGroup
+      icon={icon}
+      {...args}
+      selectedValue={selected}
+      onClickHandler={(value) => {
+        setSelectedValue(value);
+      }}
+    />
+  );
 };
 
 export const Default: Story = {
