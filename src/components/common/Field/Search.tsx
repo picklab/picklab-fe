@@ -1,11 +1,11 @@
 'use client';
 
-import { Option } from '@/components/common/Field/Label';
-import { OptionGroup, OptionGroupProps } from '@/components/common/Select/OptionGroup';
+import { OptionGroup, OptionGroupProps } from '@/components/common/Option/OptionGroup';
 import TextField, { TextFieldProps } from '@/components/common/Field/TextField';
 import { debounce } from '@/utils/debounce';
 import clsx from 'clsx';
 import React, { ChangeEvent, useMemo, useState } from 'react';
+import { OptionProps, OptionType } from '@/components/common/Option/Option';
 
 export type SelectTextBoxProps = TextFieldProps & {
   optionGroupProps?: OptionGroupProps;
@@ -13,9 +13,9 @@ export type SelectTextBoxProps = TextFieldProps & {
 const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
   const [input, setInput] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [filtered, setFiltered] = useState<Option[]>([]);
+  const [filtered, setFiltered] = useState<OptionType[]>([]);
 
-  const onSelect = (value: string) => {
+  const onSelect = (value: OptionProps['selectedValue']) => {
     const label = optionGroupProps?.options.find((o) => o.value === value)?.label;
     setInput(label || value);
     optionGroupProps?.onClickHandler(value);
@@ -67,7 +67,6 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
           options={filtered}
           onClickHandler={onSelect}
           className={clsx(optionGroupProps.className, 'absolute -bottom-30 z-10 left-0')}
-          manualInputField={input}
         />
       )}
     </div>

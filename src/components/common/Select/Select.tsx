@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/common/Icon/Icon';
 import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
-import LabelType, { LabelTypeProps } from '@/components/common/Field/LabelType';
-import { OptionGroup } from '@/components/common/Select/OptionGroup';
+import Label, { LabelProps } from '@/components/common/Field/Label';
+import { OptionGroup } from '@/components/common/Option/OptionGroup';
 
 interface Option {
   label: string;
@@ -14,7 +14,7 @@ interface Option {
 
 export interface SelectProps {
   label?: string;
-  labelStatus?: LabelTypeProps['status'];
+  labelStatus?: LabelProps['status'];
   helpMessage?: string;
   helpMessageStatus?: HelpMessageProps['status'];
   options: Option[];
@@ -85,7 +85,7 @@ const Select = ({
 
   return (
     <div ref={selectRef} className={clsx('relative flex flex-col gap-space-4', widthClass)}>
-      {label && <LabelType title={label} status={labelStatus} />}
+      {label && <Label title={label} status={labelStatus} />}
 
       <button
         ref={buttonRef}
