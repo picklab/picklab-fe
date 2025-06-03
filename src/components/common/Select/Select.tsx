@@ -102,7 +102,7 @@ const Select = ({
   }, [isOpen]);
 
   return (
-    <div ref={selectRef} className={clsx('relative flex flex-col gap-space-4', widthClass)}>
+    <div ref={selectRef} className={clsx('relative flex flex-col gap-1', widthClass)}>
       {label && <Label title={label} status={labelStatus} htmlFor={buttonId} />}
 
       <button
