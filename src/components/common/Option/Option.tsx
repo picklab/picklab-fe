@@ -101,7 +101,7 @@ const OptionType = ({
           <li
             key={`${option.value}_${index}`}
             className={clsx(
-              `flex items-center w-32 h-10 px-space-12 py-space-10 cursor-pointer rounded
+              `flex items-center w-full h-10 px-space-12 py-space-10 cursor-pointer rounded
               hover:bg-gray-5 
           `,
               isSelected && styleClass[type],

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Select, { SelectProps } from '@/components/common/Select/Select';
 
@@ -17,7 +17,7 @@ const meta: Meta<typeof Select> = {
     width: 'default',
     size: 'default',
     disabled: false,
-    type: 'default',
+    type: 'text',
     helpMessage: '',
     helpMessageStatus: 'default',
   },
@@ -42,7 +42,7 @@ const meta: Meta<typeof Select> = {
     },
     type: {
       control: 'radio',
-      options: ['default', 'checkBox'],
+      options: ['text', 'checkbox', 'iconWithText'],
     },
     disabled: { control: 'boolean' },
     helpMessageStatus: {
@@ -56,7 +56,14 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 const Template = (args: SelectProps) => {
-  const [selectedValue, setSelectedValue] = useState<string>(args.value);
+  const [selectedValue, setSelectedValue] = useState<string | string[]>(args.value);
+  useEffect(() => {
+    if (args.type === 'checkbox') {
+      setSelectedValue(['option1']);
+    } else {
+      setSelectedValue('option1');
+    }
+  }, [args.type]);
 
   return (
     <div className="min-h-[230px] p-4">
@@ -102,6 +109,6 @@ export const ErrorState: Story = {
 export const CheckBoxType: Story = {
   render: (args) => <Template {...args} />,
   args: {
-    type: 'checkBox',
+    type: 'checkbox',
   },
 };

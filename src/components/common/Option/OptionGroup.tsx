@@ -1,5 +1,5 @@
 import FunctionOption, { FunctionOptionProps } from '@/components/common/Option/FunctionOption';
-import OptionComponent, { OptionProps, OptionType } from '@/components/common/Option/Option';
+import Option, { OptionProps, OptionType } from '@/components/common/Option/Option';
 
 import { widthClassMap } from '@/components/common/Select/Select';
 import clsx from 'clsx';
@@ -12,7 +12,7 @@ export type OptionGroupProps = {
   onClickHandler: OptionProps['onClickHandler'];
   type?: OptionProps['type'];
   icon?: OptionProps['icon'];
-  width?: 'default' | 'large' | 'small';
+  width?: keyof typeof widthClassMap;
   className?: string;
   functionOptionType?: FunctionOptionProps['type'];
 };
@@ -32,19 +32,12 @@ export const OptionGroup = ({
       role="listbox"
       className={clsx(
         'flex flex-col mt-1 rounded border border-gray-30 bg-gray-0 p-space-2 focus:outline-none',
-        'max-h-[248px] overflow-y-auto',
+        'overflow-y-auto',
         widthClassMap[width],
         className,
       )}
     >
-      <OptionComponent
-        type={type}
-        icon={icon}
-        options={options}
-        selectedValue={selectedValue}
-        onClickHandler={onClickHandler}
-        className="!w-full !justify-start"
-      />
+      <Option type={type} icon={icon} options={options} selectedValue={selectedValue} onClickHandler={onClickHandler} />
       {functionOptionType && <FunctionOption type={functionOptionType} />}
     </ul>
   );

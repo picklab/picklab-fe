@@ -1,5 +1,6 @@
 import { iconList } from '@/components/common/Icon/assets';
 import { OptionGroup } from '@/components/common/Option/OptionGroup';
+import { widthClassMap } from '@/components/common/Select/Select';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { useEffect, useState } from 'react';
@@ -28,6 +29,10 @@ const meta: Meta<typeof OptionGroup> = {
     icon: {
       control: 'select',
       options: iconList,
+    },
+    width: {
+      control: 'select',
+      options: Object.keys(widthClassMap),
     },
   },
 };
