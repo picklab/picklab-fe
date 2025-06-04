@@ -8,7 +8,7 @@ import React from 'react';
 
 export type OptionGroupProps = {
   options: OptionType[]; // 렌더링할 옵션 리스트
-  selectedValue: OptionProps['selectedValue']; // 현재 선택된 값
+  selectedValue?: OptionProps['selectedValue']; // 현재 선택된 값
   onClickHandler: OptionProps['onClickHandler'];
   type?: OptionProps['type'];
   icon?: OptionProps['icon'];
@@ -27,18 +27,45 @@ export const OptionGroup = ({
   className,
   functionOptionType,
 }: OptionGroupProps) => {
+  const functionOptionOnClickHandler = () => {
+    // 초기화 버튼 시
+    if (functionOptionType === 'reset') {
+      // 체크박스이면
+      if (type === 'checkbox') {
+        onClickHandler([]);
+      } else {
+        onClickHandler(undefined);
+      }
+    }
+  };
+
   return (
-    <ul
-      role="listbox"
-      className={clsx(
-        'flex flex-col mt-1 rounded border border-gray-30 bg-gray-0 p-space-2 focus:outline-none',
-        'overflow-y-auto',
-        widthClassMap[width],
-        className,
-      )}
-    >
-      <Option type={type} icon={icon} options={options} selectedValue={selectedValue} onClickHandler={onClickHandler} />
-      {functionOptionType && <FunctionOption type={functionOptionType} />}
-    </ul>
+    <div className="relative">
+      <ul
+        role="listbox"
+        className={clsx(
+          'flex flex-col mt-1 rounded border border-gray-30 bg-gray-0 p-space-2 focus:outline-none',
+          'overflow-y-auto max-h-60 ',
+          functionOptionType && 'pb-10',
+          widthClassMap[width],
+          className,
+        )}
+      >
+        <Option
+          type={type}
+          icon={icon}
+          options={options}
+          selectedValue={selectedValue}
+          onClickHandler={onClickHandler}
+        />
+        {functionOptionType && (
+          <FunctionOption
+            type={functionOptionType}
+            onClick={functionOptionOnClickHandler}
+            className="absolute bottom-[1px] w-[calc(100%-12px)] bg-white"
+          />
+        )}
+      </ul>
+    </div>
   );
 };
