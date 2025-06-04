@@ -20,9 +20,9 @@ export type OptionType = {
 // type LabelTag = keyof TagMap;
 
 export interface OptionProps extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> {
-  selectedValue: OptionType['value'] | OptionType['value'][];
+  selectedValue?: OptionType['value'] | OptionType['value'][];
   options: OptionType[];
-  onClickHandler: (value: string | string[]) => void;
+  onClickHandler: (value?: string | string[]) => void;
   className?: string;
   focus?: boolean;
   icon?: IconType;
@@ -46,7 +46,7 @@ const OptionType = ({
 }: OptionProps) => {
   const [focusedIndex, setFocusedIndex] = useState(0); // 현재 키보드 포커스된 아이템의 인덱스
   const itemRefs = useRef<(HTMLElement | null)[]>([]); // 각 <li>에 접근하기 위한 ref 리스트
-  console.log(selectedValue);
+
   // 선택된 값으로 초기 포커스 인덱스를 설정
   useEffect(() => {
     const initialIndex = options.findIndex((opt) => opt.value === selectedValue);
