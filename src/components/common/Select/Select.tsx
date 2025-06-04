@@ -7,6 +7,7 @@ import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMes
 import Label, { LabelProps } from '@/components/common/Field/Label';
 import { OptionGroup, OptionGroupProps } from '@/components/common/Option/OptionGroup';
 import { IconType } from '@/components/common/Icon/assets';
+import { FunctionOptionProps } from '@/components/common/Option/FunctionOption';
 
 interface Option {
   label: string;
@@ -20,13 +21,14 @@ export interface SelectProps {
   helpMessage?: string;
   helpMessageStatus?: HelpMessageProps['status'];
   options: Option[];
-  value: string | string[];
-  onChange: (value: string | string[]) => void;
+  value?: string | string[];
+  onChange: (value?: string | string[]) => void;
   type?: OptionGroupProps['type'];
   disabled?: boolean;
   width?: 'default' | 'large' | 'small';
   size?: 'default' | 'small';
   icon?: IconType;
+  functionOptionType?: FunctionOptionProps['type'];
 }
 
 export const widthClassMap = {
@@ -36,8 +38,14 @@ export const widthClassMap = {
 };
 
 export const sizeClassMap = {
-  default: 'h-space-48',
-  small: 'h-space-40',
+  default: {
+    button: 'h-space-48',
+    optionGroup: 'top-12',
+  },
+  small: {
+    button: 'h-space-40',
+    optionGroup: 'top-10',
+  },
 };
 
 const Select = ({
@@ -53,6 +61,7 @@ const Select = ({
   type = 'text',
   width = 'default',
   size = 'default',
+  functionOptionType,
   icon,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,7 +77,7 @@ const Select = ({
     if (!disabled) setIsOpen((prev) => !prev);
   };
 
-  const handleSelect = (val: string | string[]) => {
+  const handleSelect = (val?: string | string[]) => {
     onChange(val);
     if (!isCheckBox) setIsOpen(false);
     buttonRef.current?.focus(); // 접근성을 위해 button에 포커싱 유지
@@ -76,7 +85,7 @@ const Select = ({
 
   const findOption = () => {
     if (isCheckBox) {
-      if (value.length > 0) {
+      if (value && value.length > 0) {
         return `${options.find((opt) => opt.value === value[0])?.label} ${value.length}`;
       }
     } else {
@@ -118,7 +127,7 @@ const Select = ({
           helpMessageStatus === 'error' && '!border-danger-50',
           selectedLabel && 'border-gray-50 text-gray-90',
           widthClass,
-          sizeClass,
+          sizeClass['button'],
         )}
         onClick={toggleDropdown}
         disabled={disabled}
@@ -142,7 +151,12 @@ const Select = ({
         <div
           id="select-options"
           role="listbox"
-          className={clsx('absolute z-10', widthClass, size === 'small' ? 'top-[64px]' : 'top-[72px]')}
+          className={clsx(
+            'absolute z-10 bottom-4',
+            widthClass,
+            sizeClass['optionGroup'],
+            label ? (size === 'small' ? 'top-[68px]' : 'top-[76px]') : '',
+          )}
         >
           <OptionGroup
             icon={icon}
@@ -151,6 +165,7 @@ const Select = ({
             onClickHandler={handleSelect}
             type={type}
             width={width}
+            functionOptionType={functionOptionType}
           />
         </div>
       )}
