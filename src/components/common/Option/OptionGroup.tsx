@@ -40,12 +40,12 @@ export const OptionGroup = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <ul
         role="listbox"
         className={clsx(
-          'flex flex-col mt-1 rounded border border-gray-30 bg-gray-0 p-space-2 focus:outline-none',
-          'overflow-y-auto max-h-60 ',
+          'flex flex-col mt-1 rounded  bg-gray-0 p-space-2 focus:outline-none',
+          'overflow-y-auto max-h-60 shadow-optionGroup',
           functionOptionType && 'pb-10',
           widthClassMap[width],
           className,

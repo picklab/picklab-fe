@@ -82,6 +82,8 @@ const OptionType = ({
         } else {
           onClickHandler([...selectedValue, value]);
         }
+      } else {
+        onClickHandler([value]);
       }
     } else {
       onClickHandler(value);
