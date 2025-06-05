@@ -1,10 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import LabelType from '@/components/common/Field/LabelType';
+import Label from '@/components/common/Field/Label';
 
 const meta = {
-  title: 'Components/Field/LabelType',
-  component: LabelType,
+  title: 'Components/Field/Label',
+  component: Label,
   tags: ['autodocs'],
+  args: {
+    disable: false,
+  },
   argTypes: {
     title: {
       control: 'text',
@@ -20,7 +23,7 @@ const meta = {
       description: '연결할 input의 id',
     },
   },
-} satisfies Meta<typeof LabelType>;
+} satisfies Meta<typeof Label>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -26,6 +26,7 @@ import ArrowUp from '@/components/common/Icon/assets/ArrowUp';
 import ArrowDown from '@/components/common/Icon/assets/ArrowDown';
 import Ellipse from '@/components/common/Icon/assets/Ellipse';
 import Xmark from '@/components/common/Icon/assets/Xmark';
+import Plus from '@/components/common/Icon/assets/Plus';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -43,6 +44,7 @@ export const iconMap = {
   arrowDown: ArrowDown,
   ellipse: Ellipse,
   xMark: Xmark,
+  plus: Plus,
 
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
