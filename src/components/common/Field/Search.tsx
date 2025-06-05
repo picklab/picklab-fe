@@ -11,12 +11,17 @@ export type SelectTextBoxProps = TextFieldProps & {
   optionGroupProps?: OptionGroupProps;
 };
 const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState<OptionProps['selectedValue']>();
   const [isOpen, setIsOpen] = useState(false);
   const [filtered, setFiltered] = useState<OptionType[]>([]);
 
   const onSelect = (value: OptionProps['selectedValue']) => {
-    const label = optionGroupProps?.options.find((o) => o.value === value)?.label;
+    let label;
+    if (Array.isArray(value)) {
+      label = optionGroupProps?.options.find((o) => o.value === value[0])?.label;
+    } else {
+      label = optionGroupProps?.options.find((o) => o.value === value)?.label;
+    }
     setInput(label || value);
     optionGroupProps?.onClickHandler(value);
     setIsOpen(false);
