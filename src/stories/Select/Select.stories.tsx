@@ -49,6 +49,18 @@ const meta: Meta<typeof Select> = {
       control: 'radio',
       options: ['default', 'error', 'success'],
     },
+    functionOptionType: {
+      control: 'radio',
+      options: ['none', 'reset'], // 표시될 라벨 키
+      mapping: {
+        none: undefined, // 'none'이라는 선택지를 undefined로 매핑
+        reset: 'reset',
+      },
+      labels: {
+        none: 'None', // Storybook UI에 보일 라벨
+        reset: 'Reset',
+      },
+    },
   },
 };
 
@@ -56,12 +68,12 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 const Template = (args: SelectProps) => {
-  const [selectedValue, setSelectedValue] = useState<string | string[]>(args.value);
+  const [selectedValue, setSelectedValue] = useState<string | string[] | undefined>();
   useEffect(() => {
     if (args.type === 'checkbox') {
-      setSelectedValue(['option1']);
+      setSelectedValue([]);
     } else {
-      setSelectedValue('option1');
+      setSelectedValue(undefined);
     }
   }, [args.type]);
 

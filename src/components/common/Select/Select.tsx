@@ -28,7 +28,7 @@ export interface SelectProps {
   width?: 'default' | 'large' | 'small';
   size?: 'default' | 'small';
   icon?: IconType;
-  functionOptionType?: FunctionOptionProps['type'];
+  functionOptionType?: Exclude<FunctionOptionProps['type'], 'selfplus'>;
 }
 
 export const widthClassMap = {
