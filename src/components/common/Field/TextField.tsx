@@ -1,5 +1,5 @@
 import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
-import LabelType, { LabelTypeProps } from '@/components/common/Field/LabelType';
+import Label, { LabelProps } from '@/components/common/Field/Label';
 import TextBox, { InputTextBoxProps } from '@/components/common/Field/TextBox';
 import clsx from 'clsx';
 import React from 'react';
@@ -7,7 +7,7 @@ import React from 'react';
 export type WithLabel = {
   label: string;
   id: string;
-  labelStatus: LabelTypeProps['status'];
+  labelStatus: LabelProps['status'];
 };
 
 export type WithoutLabel = {
@@ -29,7 +29,7 @@ const TextField = (props: TextFieldProps) => {
   return (
     <div className="flex flex-col w-fit h-fit gap-1">
       {label && (
-        <LabelType
+        <Label
           disable={disabled}
           status={labelStatus}
           htmlFor={id}

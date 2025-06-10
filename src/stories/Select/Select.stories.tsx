@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Select, { SelectProps } from '@/components/common/Select/Select';
 
@@ -17,7 +17,7 @@ const meta: Meta<typeof Select> = {
     width: 'default',
     size: 'default',
     disabled: false,
-    type: 'default',
+    type: 'text',
     helpMessage: '',
     helpMessageStatus: 'default',
   },
@@ -42,12 +42,24 @@ const meta: Meta<typeof Select> = {
     },
     type: {
       control: 'radio',
-      options: ['default', 'checkBox'],
+      options: ['text', 'checkbox', 'iconWithText'],
     },
     disabled: { control: 'boolean' },
     helpMessageStatus: {
       control: 'radio',
       options: ['default', 'error', 'success'],
+    },
+    functionOptionType: {
+      control: 'radio',
+      options: ['none', 'reset'], // 표시될 라벨 키
+      mapping: {
+        none: undefined, // 'none'이라는 선택지를 undefined로 매핑
+        reset: 'reset',
+      },
+      labels: {
+        none: 'None', // Storybook UI에 보일 라벨
+        reset: 'Reset',
+      },
     },
   },
 };
@@ -56,7 +68,14 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 const Template = (args: SelectProps) => {
-  const [selectedValue, setSelectedValue] = useState<string>(args.value);
+  const [selectedValue, setSelectedValue] = useState<string | string[] | undefined>();
+  useEffect(() => {
+    if (args.type === 'checkbox') {
+      setSelectedValue([]);
+    } else {
+      setSelectedValue(undefined);
+    }
+  }, [args.type]);
 
   return (
     <div className="min-h-[230px] p-4">
@@ -102,6 +121,6 @@ export const ErrorState: Story = {
 export const CheckBoxType: Story = {
   render: (args) => <Template {...args} />,
   args: {
-    type: 'checkBox',
+    type: 'checkbox',
   },
 };

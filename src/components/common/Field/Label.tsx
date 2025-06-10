@@ -1,113 +1,41 @@
 import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
-import React, {
-  DetailedHTMLProps,
-  ElementType,
-  HTMLAttributes,
-  LabelHTMLAttributes,
-  LiHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { LabelHTMLAttributes } from 'react';
 
-export type Option = {
-  value: string;
-  label: string;
+export const statusValue = {
+  optional: { text: 'text-gray-60', title: '(optional)', screenReaderText: '선택 항목입니다.' },
+  require: { text: 'text-danger-50', title: '*', screenReaderText: '필수 항목입니다.' },
 };
-
-export type TagMap = {
-  label: DetailedHTMLProps<LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>;
-  div: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-  li: DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>;
-};
-
-type LabelTag = keyof TagMap;
-
-export interface LabelProps<T extends LabelTag = 'label'> {
-  tag?: T;
-  selectedValue: Option['value'];
-  options: Option[];
-  onClickHandler: (value: string) => void;
-  className?: string;
-  focus?: boolean;
+export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  // 표시할 라벨 텍스트
+  title: string;
+  // 선택 사항 여부 (선택적으로 표시)
+  status?: keyof typeof statusValue | 'default';
+  disable?: boolean;
 }
 
-const Label = <T extends LabelTag = 'label'>({
-  tag = 'label' as T,
-  selectedValue,
-  options,
-  focus = false,
-  onClickHandler,
-  className,
-  ...props
-}: LabelProps<T> & TagMap[T]) => {
-  const Component = tag as ElementType;
-  const [focusedIndex, setFocusedIndex] = useState(0); // 현재 키보드 포커스된 아이템의 인덱스
-  const itemRefs = useRef<(HTMLElement | null)[]>([]); // 각 <li>에 접근하기 위한 ref 리스트
-
-  // 선택된 값으로 초기 포커스 인덱스를 설정
-  useEffect(() => {
-    const initialIndex = options.findIndex((opt) => opt.value === selectedValue);
-    setFocusedIndex(initialIndex >= 0 ? initialIndex : 0);
-  }, [selectedValue, options]);
-
-  // 키보드 이벤트 핸들러 (Enter, Space, ↑, ↓)
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>, index: number, value: string) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClickHandler(value);
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const nextIndex = (index + 1) % options.length; // 아래 방향키: 다음 인덱스로 이동
-      setFocusedIndex(nextIndex);
-      itemRefs.current[nextIndex]?.focus();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const prevIndex = (index - 1 + options.length) % options.length; // 위 방향키: 이전 인덱스로 이동
-      setFocusedIndex(prevIndex);
-      itemRefs.current[prevIndex]?.focus();
-    }
-  };
-
+const Label = ({ title, status = 'default', className, disable = false, ...props }: LabelProps) => {
+  const disableStyle = disable ? '!text-gray-40' : '';
   return (
-    <>
-      {options.map((option, index) => {
-        const isSelected = option.value === selectedValue;
-        const isFocused = index === focusedIndex;
-        return (
-          <Component
-            key={`${option.value}_${index}`}
-            className={clsx(
-              `flex items-center w-32 h-10 px-space-12 py-space-10 cursor-pointer 
-              hover:bg-gray-5 hover:text-gray-60 rounded
-          active:bg-info-10 active:text-info-70
-          focus:bg-gray-0 focus:text-primary-60 focus:hover:bg-gray-5 focus:active:bg-gray-10 focus:active:text-primary-60
-          `,
-              !focus && isSelected && '!bg-info-10 !text-info-70',
-              focus && isSelected && '!bg-gray-10',
-              focus && '!text-primary-60 !bg-gray-0 hover:!bg-gray-5 active:!bg-gray-10 active:!text-primary-60', // focus 스타일 강제 추가
-              className,
-            )}
-            onClick={() => {
-              onClickHandler(option.value);
-            }}
-            tag="li"
-            // 각 항목의 DOM 노드를 ref 배열에 저장
-            ref={(el: HTMLElement | null) => {
-              itemRefs.current[index] = el;
-            }}
-            role="option"
-            aria-selected={isSelected} // 접근성: 현재 항목이 선택되었는지 여부
-            tabIndex={isFocused ? 0 : -1} // 포커스 이동 제어
-            onKeyDown={(e: React.KeyboardEvent<HTMLLIElement>) => handleKeyDown(e, index, option.value)} // 키보드 이벤트 핸들링
-            {...props}
-          >
-            <Typography type="Body3Medium">{option.label}</Typography>
-          </Component>
-        );
-      })}
-    </>
+    // input과 연결되는 label 태그
+    <label {...props} className={clsx('flex items-center w-fit cursor-pointer h-space-24', className)}>
+      <Typography type="Body3Medium" className={clsx('text-gray-90', disableStyle)}>
+        {title}
+        {status !== 'default' && (
+          <>
+            <span className="sr-only">{statusValue[status].screenReaderText}</span>
+            <Typography
+              type="Body1Medium"
+              tag="span"
+              className={clsx('ml-1', statusValue[status].text, disableStyle)}
+              aria-hidden="true"
+            >
+              {statusValue[status].title}
+            </Typography>
+          </>
+        )}
+      </Typography>
+    </label>
   );
 };
 
