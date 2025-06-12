@@ -41,18 +41,23 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
   const handleInput = useMemo(
     () =>
       debounce((event: ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
+        const value = event.target.value.toLowerCase();
 
         if (value.trim() !== '') {
           // 입력값을 포함하는 옵션 필터링
-          const match = optionGroupProps?.options.filter((item) => item.label.includes(value)) || [];
-
+          const match = optionGroupProps?.options.filter((item) => item.label.toLowerCase().includes(value)) || [];
           if (match.length > 0) {
             setIsOpen(true);
             setFiltered(match);
+            setSearchHelpMessage(props.helpMessage);
           } else {
             // 결과 없을 경우 헬프 메시지 출력
-            setSearchHelpMessage('검색 결과가 없습니다!');
+            if (optionGroupProps?.functionOptionType === 'selfplus') {
+              setIsOpen(true);
+              // 결과 없을 경우 헬프 메시지 출력
+            } else {
+              setSearchHelpMessage('검색 결과가 없습니다!');
+            }
           }
         }
       }, 300),
