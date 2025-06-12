@@ -3,7 +3,7 @@ import TextBox, { InputTextBoxProps, TextareaTextBoxProps } from '@/components/c
 import { iconList } from '@/components/common/Icon/assets';
 
 const meta: Meta<typeof TextBox> = {
-  title: 'Components/Field/TextBox',
+  title: 'Components/TextField/TextBox',
   component: TextBox,
   tags: ['autodocs'],
   args: {
