@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import HelpMessage from '@/components/common/Field/HelpMessage';
 
 const meta = {
-  title: 'Components/Field/HelpMessage',
+  title: 'Components/TextField/HelpMessage',
   component: HelpMessage,
   tags: ['autodocs'],
   argTypes: {

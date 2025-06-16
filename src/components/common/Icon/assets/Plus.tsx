@@ -14,9 +14,9 @@ const Plus = ({ width, height, className, ...props }: React.SVGProps<SVGSVGEleme
       <path
         d="M19.9812 12.0008H5.83909M12.9102 4.92969V19.0718"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

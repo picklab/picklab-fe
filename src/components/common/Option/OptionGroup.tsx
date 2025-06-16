@@ -15,6 +15,7 @@ export type OptionGroupProps = {
   width?: keyof typeof widthClassMap;
   className?: string;
   functionOptionType?: FunctionOptionProps['type'];
+  textFieldValue?: string;
 };
 
 export const OptionGroup = ({
@@ -25,9 +26,10 @@ export const OptionGroup = ({
   width = 'default',
   icon,
   className,
+  textFieldValue,
   functionOptionType,
 }: OptionGroupProps) => {
-  const functionOptionOnClickHandler = () => {
+  const defaultFunctionOptionOnClickHandler = () => {
     // 초기화 버튼 시
     if (functionOptionType === 'reset') {
       // 체크박스이면
@@ -36,6 +38,9 @@ export const OptionGroup = ({
       } else {
         onClickHandler(undefined);
       }
+      // selfplus 시
+    } else {
+      onClickHandler(textFieldValue);
     }
   };
 
@@ -61,7 +66,7 @@ export const OptionGroup = ({
         {functionOptionType && (
           <FunctionOption
             type={functionOptionType}
-            onClick={functionOptionOnClickHandler}
+            onClick={defaultFunctionOptionOnClickHandler}
             className="absolute bottom-[1px] w-[calc(100%-12px)] bg-white"
           />
         )}

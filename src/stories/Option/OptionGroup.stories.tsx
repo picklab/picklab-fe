@@ -41,7 +41,7 @@ export default meta;
 type Story = StoryObj<typeof OptionGroup>;
 
 const OptionGroupWithState = (args: React.ComponentProps<typeof OptionGroup>) => {
-  const [selected, setSelectedValue] = useState<string | string[]>(['option1']);
+  const [selected, setSelectedValue] = useState<string | string[] | undefined>(['option1']);
 
   useEffect(() => {
     if (args.type === 'checkbox') {
