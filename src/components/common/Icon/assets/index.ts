@@ -27,6 +27,10 @@ import ArrowDown from '@/components/common/Icon/assets/ArrowDown';
 import Ellipse from '@/components/common/Icon/assets/Ellipse';
 import Xmark from '@/components/common/Icon/assets/Xmark';
 import Plus from '@/components/common/Icon/assets/Plus';
+import Pencil from '@/components/common/Icon/assets/Pencil';
+import Camera from '@/components/common/Icon/assets/Camera';
+import Calendar from '@/components/common/Icon/assets/Calendar';
+import StarFill from '@/components/common/Icon/assets/StarFill';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -45,6 +49,10 @@ export const iconMap = {
   ellipse: Ellipse,
   xMark: Xmark,
   plus: Plus,
+  pencil: Pencil,
+  camera: Camera,
+  calendar: Calendar,
+  starFill: StarFill,
 
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
