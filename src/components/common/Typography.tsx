@@ -38,6 +38,8 @@ const sizeClasses = {
   '4xs': 'text-4xs', // 엄청 작게
   '5xs': 'text-5xs', // 미니 사이즈
   '6xs': 'text-6xs', // 초미니 사이즈
+  '7xs': 'text-7xs', // 초초미니 사이즈
+  '8xs': 'text-8xs', // 초초초미니 사이즈
 };
 
 // 📏 텍스트 줄의 높이를 정해요 (줄 간격)
@@ -81,10 +83,12 @@ export const TypographyTypes = {
   Heading1Regular: clsx(sizeClasses['xl'], weightClasses['normal'], lineHeightClasses['lh136']),
   Heading1Medium: clsx(sizeClasses['xl'], weightClasses['medium'], lineHeightClasses['lh136']),
   Heading1Semibold: clsx(sizeClasses['xl'], weightClasses['semibold'], lineHeightClasses['lh136']),
+  Heading1Bold: clsx(sizeClasses['xl'], weightClasses['bold'], lineHeightClasses['lh136']),
 
   Heading2Regular: clsx(sizeClasses['lg'], weightClasses['normal'], lineHeightClasses['lh140']),
   Heading2Medium: clsx(sizeClasses['lg'], weightClasses['medium'], lineHeightClasses['lh140']),
   Heading2Semibold: clsx(sizeClasses['lg'], weightClasses['semibold'], lineHeightClasses['lh140']),
+  Heading2Bold: clsx(sizeClasses['lg'], weightClasses['bold'], lineHeightClasses['lh140']),
 
   Headline1Regular: clsx(sizeClasses['base'], weightClasses['normal'], lineHeightClasses['lh144']),
   Headline1Medium: clsx(sizeClasses['base'], weightClasses['medium'], lineHeightClasses['lh144']),
@@ -117,6 +121,14 @@ export const TypographyTypes = {
   Caption2Regular: clsx(sizeClasses['6xs'], weightClasses['normal'], lineHeightClasses['lh127']),
   Caption2Medium: clsx(sizeClasses['6xs'], weightClasses['medium'], lineHeightClasses['lh127']),
   Caption2Semibold: clsx(sizeClasses['6xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
+
+  Caption3Regular: clsx(sizeClasses['7xs'], weightClasses['normal'], lineHeightClasses['lh127']),
+  Caption3Medium: clsx(sizeClasses['7xs'], weightClasses['medium'], lineHeightClasses['lh127']),
+  Caption3Semibold: clsx(sizeClasses['7xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
+
+  Caption4Regular: clsx(sizeClasses['8xs'], weightClasses['normal'], lineHeightClasses['lh127']),
+  Caption4Medium: clsx(sizeClasses['8xs'], weightClasses['medium'], lineHeightClasses['lh127']),
+  Caption4Semibold: clsx(sizeClasses['8xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
 };
 
 // // 🏷️ 이 컴포넌트가 사용할 수 있는 모든 종류의 태그예요
