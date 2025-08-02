@@ -31,6 +31,8 @@ import Pencil from '@/components/common/Icon/assets/Pencil';
 import Camera from '@/components/common/Icon/assets/Camera';
 import Calendar from '@/components/common/Icon/assets/Calendar';
 import StarFill from '@/components/common/Icon/assets/StarFill';
+import ThreeDots from '@/components/common/Icon/assets/ThreeDots';
+import Eye from '@/components/common/Icon/assets/Eye';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -53,7 +55,8 @@ export const iconMap = {
   camera: Camera,
   calendar: Calendar,
   starFill: StarFill,
-
+  threeDots: ThreeDots,
+  eye: Eye,
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
   largeChevronDown: LargeChevronDown,
