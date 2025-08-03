@@ -2,7 +2,7 @@ import GNBMenu from '@/components/common/GNB/pc/GNBMenu';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof GNBMenu> = {
-  title: 'Components/GNB/GNBMenu',
+  title: 'Components/GNB/pc/GNBMenu',
   component: GNBMenu,
   argTypes: {
     href: {
