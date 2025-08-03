@@ -1,4 +1,4 @@
-import GNBMenu from '@/components/common/GNB/GNBMenu';
+import GNBMenu from '@/components/common/GNB/pc/GNBMenu';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof GNBMenu> = {

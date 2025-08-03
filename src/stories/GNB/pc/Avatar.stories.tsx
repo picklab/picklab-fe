@@ -1,4 +1,4 @@
-import Avatar from '@/components/common/GNB/Avatar';
+import Avatar from '@/components/common/GNB/pc/Avatar';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Avatar> = {

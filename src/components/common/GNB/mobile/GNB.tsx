@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '../../Icon/Icon';
-import Avatar from '../Avatar';
+import Avatar from '../pc/Avatar';
 import Button from '../../Button/Button';
 
 interface GNBProps {
