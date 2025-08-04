@@ -31,6 +31,7 @@ import Pencil from '@/components/common/Icon/assets/Pencil';
 import Camera from '@/components/common/Icon/assets/Camera';
 import Calendar from '@/components/common/Icon/assets/Calendar';
 import StarFill from '@/components/common/Icon/assets/StarFill';
+import CowBell from '@/components/common/Icon/assets/CowBell';
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -53,6 +54,7 @@ export const iconMap = {
   camera: Camera,
   calendar: Calendar,
   starFill: StarFill,
+  cowBell: CowBell,
 
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,

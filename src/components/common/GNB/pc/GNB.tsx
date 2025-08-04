@@ -1,8 +1,8 @@
 'use client';
 import Button from '@/components/common/Button/Button';
 import Search from '@/components/common/Field/Search';
-import Avatar from '@/components/common/GNB/Avatar';
-import GNBMenu from '@/components/common/GNB/GNBMenu';
+import Avatar from '@/components/common/GNB/pc/Avatar';
+import GNBMenu from '@/components/common/GNB/pc/GNBMenu';
 import Icon from '@/components/common/Icon/Icon';
 import { GNBNavigationMenus } from '@/constants/menus';
 import clsx from 'clsx';

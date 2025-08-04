@@ -2,7 +2,7 @@
 
 import Button from '@/components/common/Button/Button';
 import { Divider } from '@/components/common/Divider/Divider';
-import Avatar from '@/components/common/GNB/Avatar';
+import Avatar from '@/components/common/GNB/pc/Avatar';
 import Typography from '@/components/common/Typography';
 import { SNBNavigationMenus, SNBNavigationMenusType } from '@/constants/menus';
 import clsx from 'clsx';
