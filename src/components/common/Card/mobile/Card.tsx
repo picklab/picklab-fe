@@ -38,7 +38,7 @@ const Card = ({
       className="flex flex-col w-[158px] h-[301px] rounded-[10px] bg-white cursor-pointer"
     >
       {/* 이미지 영역 */}
-      <div className="relative w-full h-[160px] overflow-hidden">
+      <div className="relative w-full h-40 overflow-hidden">
         <Image
           src={imageUrl}
           alt={title}
@@ -55,7 +55,7 @@ const Card = ({
           }}
           aria-pressed={isBookmarked}
           aria-label={isBookmarked ? '북마크 취소' : '북마크 추가'}
-          className="absolute top-[0.625rem] right-3 z-20"
+          className="absolute top-[10px] right-3 z-20"
         >
           <Icon
             icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}
@@ -80,9 +80,9 @@ const Card = ({
               {companyName}
             </Typography>
           </div>
-          <div className="flex gap-0.5">
+          <div className="flex gap-[0.125rem]">
             {jobs.map((job) => (
-              <CardJobChip className="px-[0.3125rem] text-[0.625rem] font-medium" key={job} job={job} />
+              <CardJobChip typoType="Caption3Medium" className="px-[5px]" key={job} job={job} />
             ))}
           </div>
         </div>
