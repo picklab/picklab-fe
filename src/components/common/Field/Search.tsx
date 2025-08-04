@@ -56,7 +56,7 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
               setIsOpen(true);
               // 결과 없을 경우 헬프 메시지 출력
             } else {
-              setSearchHelpMessage('검색 결과가 없습니다!');
+              // setSearchHelpMessage('검색 결과가 없습니다!');
             }
           }
         }

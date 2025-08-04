@@ -1,10 +1,11 @@
 'use client';
 import Button from '@/components/common/Button/Button';
 import Search from '@/components/common/Field/Search';
-import Avatar from '@/components/common/GNB/Avatar';
-import GNBMenu from '@/components/common/GNB/GNBMenu';
+import Avatar from '@/components/common/GNB/pc/Avatar';
+import GNBMenu from '@/components/common/GNB/pc/GNBMenu';
 import Icon from '@/components/common/Icon/Icon';
 import { GNBNavigationMenus } from '@/constants/menus';
+import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -20,11 +21,16 @@ const GNB = ({ isLogin = false }: GNBProps) => {
     { value: 'label3', label: '아주초등학교' },
     { value: 'label4', label: '아주중학교' },
   ];
-  const [selected, setSelected] = useState(options[0].value);
+  const [selected, setSelected] = useState<string>(options[0].value);
 
   return (
     <header className="w-full">
-      <div className="max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[46px]">
+      <div
+        className={clsx(
+          'max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[44.5px]',
+          !isLogin && '!gap-12',
+        )}
+      >
         {/* 로고 및 메뉴 */}
         <div className="flex items-center gap-[54px]">
           <Link href="/" aria-label="PickLab 홈">
@@ -47,7 +53,9 @@ const GNB = ({ isLogin = false }: GNBProps) => {
             status="default"
             optionGroupProps={{
               selectedValue: selected,
-              onClickHandler: setSelected,
+              onClickHandler: (value) => {
+                setSelected(value as string);
+              },
               options: options,
               className: 'w-[368px]',
             }}
@@ -58,20 +66,25 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         </div>
         {isLogin ? (
           <nav aria-label="유저 메뉴">
-            <ul className="flex items-center gap-5">
+            <ul className="flex items-center gap-4">
               <li>
-                <Link href="/notes" aria-label="메모">
-                  <Icon size={24} icon="largeNote" />
+                <Link href="/calendar" aria-label="일정">
+                  <Icon size={24} icon="calendar" />
+                </Link>
+              </li>
+              <li>
+                <Link href="/write" aria-label="글쓰기">
+                  <Icon size={24} icon="pencil" />
                 </Link>
               </li>
               <li>
                 <Link href="/notifications" aria-label="알림">
-                  <Icon size={24} icon="largeCowBell" />
+                  <Icon size={20} icon="largeCowBell" />
                 </Link>
               </li>
               <li>
                 <Link href="/profile" aria-label="프로필">
-                  <Avatar />
+                  <Avatar className="size-6" />
                 </Link>
               </li>
             </ul>
