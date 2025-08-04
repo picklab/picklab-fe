@@ -1,15 +1,17 @@
 import React from 'react';
 import clsx from 'clsx';
-import Typography from '@/components/common/Typography';
+import Typography, { TypographyTypes } from '@/components/common/Typography';
 
 // 🏷️ 해당 컴포넌트에서 job prop으로 받을 수 있는 종류
 type JobType = '기획' | '개발' | '마케팅' | '디자인' | 'AI';
+type Keys = keyof typeof TypographyTypes;
 
-interface CardJopChipProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface CardJobChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   job: JobType;
+  typoType?: Extract<Keys, 'Caption2Medium' | 'Caption3Medium'>;
 }
 
-const CardJobChip = ({ job, className = '', ...props }: CardJopChipProps) => {
+const CardJobChip = ({ job, typoType = 'Caption2Medium', className = '', ...props }: CardJobChipProps) => {
   // variant별 클래스 맵
   const jobClasses: Record<JobType, { bg: string; text: string }> = {
     기획: { bg: 'bg-planning-bg', text: 'text-planning-text' },
@@ -28,7 +30,7 @@ const CardJobChip = ({ job, className = '', ...props }: CardJopChipProps) => {
 
   return (
     <Typography
-      type="Caption2Medium"
+      type={typoType} // Typography 타입을 prop으로 받아서 사용
       role="listitem" // 해당 컴포넌트는 리스트 내부에 사용되므로 role 추가
       className={clsx(
         'w-fit rounded px-space-8 h-[22px] flex justify-center items-center cursor-default',
