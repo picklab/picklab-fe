@@ -4,11 +4,11 @@ import Typography, { TypographyTypes } from '@/components/common/Typography';
 
 // 🏷️ 해당 컴포넌트에서 job prop으로 받을 수 있는 종류
 type JobType = '기획' | '개발' | '마케팅' | '디자인' | 'AI';
-type Keys = keyof typeof TypographyTypes;
+type TypographyKeys = keyof typeof TypographyTypes;
 
 interface CardJobChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   job: JobType;
-  typoType?: Extract<Keys, 'Caption2Medium' | 'Caption3Medium'>;
+  typoType?: Extract<TypographyKeys, 'Caption2Medium' | 'Caption3Medium'>;
 }
 
 const CardJobChip = ({ job, typoType = 'Caption2Medium', className = '', ...props }: CardJobChipProps) => {
