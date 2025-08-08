@@ -33,11 +33,13 @@ const sizeClasses = {
   base: 'text-base', // 보통 크기
   sm: 'text-sm', // 약간 작게
   xs: 'text-xs', // 작게
-  '2xs': 'text-2xs', // 아주 작게
-  '3xs': 'text-3xs', // 매우 작게
-  '4xs': 'text-4xs', // 엄청 작게
-  '5xs': 'text-5xs', // 미니 사이즈
-  '6xs': 'text-6xs', // 초미니 사이즈
+  '2xs': 'text-2xs', // 
+  '3xs': 'text-3xs', // 
+  '4xs': 'text-4xs', // 
+  '5xs': 'text-5xs', // 
+  '6xs': 'text-6xs', // 
+  '7xs': 'text-7xs', // 
+  '8xs': 'text-8xs', // 
 };
 
 // 📏 텍스트 줄의 높이를 정해요 (줄 간격)
@@ -117,6 +119,14 @@ export const TypographyTypes = {
   Caption2Regular: clsx(sizeClasses['6xs'], weightClasses['normal'], lineHeightClasses['lh127']),
   Caption2Medium: clsx(sizeClasses['6xs'], weightClasses['medium'], lineHeightClasses['lh127']),
   Caption2Semibold: clsx(sizeClasses['6xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
+
+  Caption3Regular: clsx(sizeClasses['7xs'], weightClasses['normal'], lineHeightClasses['lh127']),
+  Caption3Medium: clsx(sizeClasses['7xs'], weightClasses['medium'], lineHeightClasses['lh127']),
+  Caption3Semibold: clsx(sizeClasses['7xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
+
+  Caption4Regular: clsx(sizeClasses['8xs'], weightClasses['normal'], lineHeightClasses['lh127']),
+  Caption4Medium: clsx(sizeClasses['8xs'], weightClasses['medium'], lineHeightClasses['lh127']),
+  Caption4Semibold: clsx(sizeClasses['8xs'], weightClasses['semibold'], lineHeightClasses['lh127']),
 };
 
 // // 🏷️ 이 컴포넌트가 사용할 수 있는 모든 종류의 태그예요

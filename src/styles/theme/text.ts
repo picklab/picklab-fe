@@ -14,6 +14,8 @@ export const fontSizes = {
   '4xs': '13px',
   '5xs': '12px',
   '6xs': '11px',
+  '7xs': '10px',
+  '8xs': '9px',
 };
 
 export const fontWeights = {
