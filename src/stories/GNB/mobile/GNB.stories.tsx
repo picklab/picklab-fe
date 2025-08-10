@@ -1,19 +1,13 @@
-import GNB from '@/components/common/GNB/GNB';
+import GNB from '@/components/common/GNB/mobile/GNB';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof GNB> = {
-  title: 'Components/GNB/GNB',
+  title: 'Components/GNB/mobile/GNB',
   component: GNB,
   parameters: {
     layout: 'fullscreen', // centered 대신 fullscreen 사용
   },
-  decorators: [
-    (Story) => (
-      <div className="scale-[0.85] w-[1440px] -translate-x-[230px]">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [(Story) => <Story />],
 };
 
 export default meta;

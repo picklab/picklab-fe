@@ -33,6 +33,8 @@ import Calendar from '@/components/common/Icon/assets/Calendar';
 import StarFill from '@/components/common/Icon/assets/StarFill';
 import ThreeDots from '@/components/common/Icon/assets/ThreeDots';
 import Eye from '@/components/common/Icon/assets/Eye';
+import CowBell from '@/components/common/Icon/assets/CowBell';
+
 
 export const iconMap = {
   alertCircle: AlertCircle,
@@ -57,6 +59,7 @@ export const iconMap = {
   starFill: StarFill,
   threeDots: ThreeDots,
   eye: Eye,
+  cowBell: CowBell,
   largeCheck: LargeCheck,
   largeAlertCircle: LargeAlertCircle,
   largeChevronDown: LargeChevronDown,
