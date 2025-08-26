@@ -51,7 +51,7 @@ const MoScheduleList: React.FC<MoScheduleListProps> = ({ schedule, onApply, onBo
   };
 
   return (
-    <div className={`flex flex-col w-[375px] h-[164px] rounded-[10px] p-5 pt-[18px] border gap-3 ${className}`}>
+    <div className={`flex flex-col w-[375px] rounded-[10px] px-5 py-[18px] border gap-3 ${className}`}>
       <div className="flex justify-between h-6 flex-1">
         <div className="flex gap-2.5">
           <Chip text={schedule.period === 'start' ? '시작' : '마감'} period={schedule.period} />
@@ -68,14 +68,16 @@ const MoScheduleList: React.FC<MoScheduleListProps> = ({ schedule, onApply, onBo
           />
         </div>
       </div>
-      <div className="flex flex-col gap-2 py-[3px] flex-2">
-        <Typography type="Body2Semibold">{schedule.title}</Typography>
+      <div className="flex flex-col gap-1 py-[3px] flex-2">
+        <Typography type="Body2Semibold" className="overflow-hidden text-ellipsis whitespace-nowrap">
+          {schedule.title}
+        </Typography>
         <Typography type="Caption2Medium" className="text-gray-50">
           {schedule.companyName}
         </Typography>
       </div>
-      <div className="flex justify-between gap-2">
-        <div className="flex flex-col gap-2 flex-1">
+      <div className="flex">
+        <div className="flex flex-col gap-1 flex-1">
           <Typography type="Caption2Regular" className="text-gray-50">
             지원기간
           </Typography>
