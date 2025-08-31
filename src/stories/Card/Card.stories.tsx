@@ -24,7 +24,7 @@ const Template: StoryObj<typeof Card> = {
     badgeText: '마감 임박',
     badgeVariant: 'deadline',
     isBookmarked: false,
-    chipText: '채용 중',
+    chipText: '대외활동',
     companyName: '스타트업 A',
     title: 'Frontend 개발자 모집',
     onBookmarkClick: () => alert('북마크 클릭!'),
