@@ -37,7 +37,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
             <Image src="/imgs/logo.png" width={93} height={22} alt="PickLab 로고" />
           </Link>
           <nav aria-label="메인 메뉴">
-            <ul className="flex gap-9">
+            <ul className="flex gap-7">
               {GNBNavigationMenus.map((menu) => (
                 <li key={menu.label}>
                   <GNBMenu href={menu.href}>{menu.label}</GNBMenu>
