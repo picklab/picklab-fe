@@ -37,7 +37,7 @@ const SOCIAL_LOGIN_LIST = [
 ];
 export default function Login() {
   return (
-    <div className="pt-[120px] flex flex-col items-center w-[388px]">
+    <div className="pt-[120px] flex flex-col items-center pc:w-[388px] mobile:w-[335px]">
       <Image className="mb-4" src={'/imgs/logo.png'} width={86} height={22} alt="PickLab 로고" />
       <p className=" font-bold text-[28px] text-gray-90 mb-2.5">간편 회원가입</p>
       <p className="font-[400] text-[15px] text-gray-50 mb-[60px]">소셜 로그인으로 간편하게 로그인할 수 있습니다.</p>
