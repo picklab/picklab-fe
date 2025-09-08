@@ -41,7 +41,9 @@ const GNB = ({ isLogin = false }: GNBProps) => {
           </ul>
         </nav>
       ) : (
-        <Button label="로그인" buttonStyle="outlined" size="sm" className="w-[3.125rem] h-[1.625rem] !px-2" />
+        <Link href={'/login'}>
+          <Button label="로그인" buttonStyle="outlined" size="sm" className="w-[3.125rem] h-[1.625rem] !px-2" />
+        </Link>
       )}
     </header>
   );

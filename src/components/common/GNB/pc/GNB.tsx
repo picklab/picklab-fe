@@ -9,7 +9,6 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
-
 interface GNBProps {
   isLogin: boolean;
 }
@@ -22,7 +21,6 @@ const GNB = ({ isLogin = false }: GNBProps) => {
     { value: 'label4', label: '아주중학교' },
   ];
   const [selected, setSelected] = useState<string>(options[0].value);
-
   return (
     <header className="w-full">
       <div
@@ -91,8 +89,12 @@ const GNB = ({ isLogin = false }: GNBProps) => {
           </nav>
         ) : (
           <div className="flex gap-space-10">
-            <Button label="로그인" buttonStyle="outlined" size="sm" />
-            <Button label="회원가입" buttonStyle="filled" size="sm" />
+            <Link href={'/login'}>
+              <Button label="로그인" buttonStyle="outlined" size="sm" />
+            </Link>
+            <Link href={'/signup'}>
+              <Button label="회원가입" buttonStyle="filled" size="sm" />
+            </Link>
           </div>
         )}
       </div>
