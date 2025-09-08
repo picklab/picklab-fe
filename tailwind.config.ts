@@ -19,6 +19,10 @@ const config: Config = {
       fontFamily: {
         sans: ['Pretendard-Regular', ...defaultTheme.fontFamily.sans],
       },
+      screens: {
+        mobile: { max: '375px' },
+        pc: { min: '376px', max: '1920px' },
+      },
       colors: colors,
       fontSize: fontSizes,
       fontWeight: fontWeights,
