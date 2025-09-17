@@ -1,22 +1,28 @@
 import FooterMenuGroup from '@/components/common/Footer/FooterMenuGroup';
 import Typography from '@/components/common/Typography';
 import { FOOTER_MENUS } from '@/constants/menus';
+import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const Footer = () => {
+const Footer = ({ className }: { className: string }) => {
   const firstColMenus = FOOTER_MENUS.slice(0, 2);
   const secondColMenus = FOOTER_MENUS.slice(2, 4);
   const thirdColMenus = FOOTER_MENUS.slice(4, 5);
 
   return (
-    <footer className="w-full max-w-[1440px] mx-auto pt-[23px] pb-[53px] flex flex-col items-center gap-[64px]">
+    <footer
+      className={clsx(
+        'w-full max-w-[1440px] mx-auto pt-[23px] pb-[53px] flex flex-col items-center gap-[64px]',
+        className,
+      )}
+    >
       <div className="w-[1040px] flex justify-between items-start">
         {/* Logo + Navigation */}
         <div className="flex gap-[70px]">
           <Link href="/" aria-label="홈으로 가기">
-            <Image src="/imgs/footerLogo.png" width={90} height={40} alt="Picklab 로고" />
+            <Image src="/imgs/footer_Logo.png" width={90} height={40} alt="Picklab 로고" />
           </Link>
 
           {/* Navigation Groups */}
