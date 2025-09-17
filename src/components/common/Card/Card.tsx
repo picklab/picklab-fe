@@ -38,7 +38,7 @@ const Card = ({
     <div
       onClick={onCardClick}
       aria-label={`카드: ${title}`}
-      className="flex flex-col w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer"
+      className="flex flex-col min-w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer"
     >
       {/* 이미지 영역 */}
       <div className="relative w-full h-[180px] overflow-hidden">
