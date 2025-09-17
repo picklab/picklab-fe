@@ -48,14 +48,11 @@ const MoList = ({
     >
       <div className="flex gap-3 w-[250px] h-full items-center">
         {/* image */}
-        <Image
-          placeholder="empty"
-          src={imageSrc}
-          alt="리스트 썸네일"
-          width={57}
-          height={64}
-          className="rounded-lg object-cover"
-        />
+        {/* 이미지 width height 뚫고 나와 왜그래? */}
+        <div className="relative w-[57px] h-[64px]">
+          <Image placeholder="empty" src={imageSrc} alt="리스트 썸네일" fill className="rounded-lg" />
+        </div>
+
         <div className="flex flex-col gap-1 h-full justify-center min-w-0 flex-1">
           {/* Caption3Regular로 수정 */}
           <Typography type="Caption2Regular" className="text-gray-90 truncate">

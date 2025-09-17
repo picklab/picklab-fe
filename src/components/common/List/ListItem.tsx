@@ -83,12 +83,12 @@ const ListItem = ({
     label &&
     saveCount &&
     viewCount && (
-      <div className="flex flex-col gap-space-base py-space-base max-w-[268px]">
+      <div className="flex flex-col justify-between h-full py-space-base max-w-[240px]">
         <div className="flex flex-col gap-space-base">
           <Typography type="Body4Medium" className={`${grayText} truncate`}>
             {label}
           </Typography>
-          <Typography type="Body1Semibold" className={`${grayTextStrong} truncate`}>
+          <Typography type="Body1Semibold" className={`${grayTextStrong} line-clamp-2 break-keep`}>
             {title}
           </Typography>
         </div>
@@ -116,16 +116,17 @@ const ListItem = ({
   return (
     <div
       className={clsx(
-        'flex justify-between items-center cursor-pointer border-b border-gray-20 focus:outline-none',
-        isFinished ? 'py-space-base' : 'py-space-14',
+        'flex justify-between cursor-pointer border rounded-lg border-gray-20 focus:outline-none ',
+        isFinished ? 'p-space-base' : 'py-space-10 px-3',
+        'min-w-[414px]',
       )}
       role="button"
       tabIndex={0}
       onClick={onListClick}
       onKeyDown={handleKeyDown}
     >
-      <div className={clsx('flex gap-space-14 items-start group', isFinished ? 'min-w-[368px]' : 'min-w-[488px]')}>
-        <div className={clsx('w-[86px] relative overflow-hidden', isFinished ? 'h-[94px]' : 'h-[86px]')}>
+      <div className={clsx('flex gap-space-14 items-start group')}>
+        <div className={clsx('w-[86px] relative overflow-hidden', isFinished ? 'h-[94px]' : 'h-[110px]')}>
           <Image src={thumbnail} alt="리스트 썸네일" sizes="86" fill className="object-cover rounded-lg" />
         </div>
         {isFinished ? renderFinishedContent() : renderOngoingContent()}
@@ -134,7 +135,7 @@ const ListItem = ({
         <Icon
           icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}
           size={24}
-          className={clsx('cursor-pointer outline-none', isBookmarked ? 'text-primary-50' : 'text-gray-40')}
+          className={clsx('cursor-pointer outline-none mt-1', isBookmarked ? 'text-primary-50' : 'text-gray-40')}
           onClick={(e) => {
             e.stopPropagation();
             onBookmarkClick?.();
