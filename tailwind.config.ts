@@ -16,6 +16,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        mobile: { max: '1439px' },
+        pc: { min: '1440px' },
+      },
       fontFamily: {
         sans: ['Pretendard-Regular', ...defaultTheme.fontFamily.sans],
       },
