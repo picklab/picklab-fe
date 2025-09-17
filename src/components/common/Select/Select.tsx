@@ -25,16 +25,18 @@ export interface SelectProps {
   onChange: (value?: string | string[]) => void;
   type?: OptionGroupProps['type'];
   disabled?: boolean;
-  width?: 'default' | 'large' | 'small';
-  size?: 'default' | 'small';
+  width?: 'default' | 'large' | 'small' | 'xsmall';
+  size?: 'default' | 'small' | 'xsmall';
   icon?: IconType;
   functionOptionType?: Exclude<FunctionOptionProps['type'], 'selfplus'>;
+  className?: string;
 }
 
 export const widthClassMap = {
   default: 'w-60',
   large: 'w-[420px]',
   small: 'w-[140px]',
+  xsmall: 'w-[98px]',
 };
 
 export const sizeClassMap = {
@@ -45,6 +47,10 @@ export const sizeClassMap = {
   small: {
     button: 'h-space-40',
     optionGroup: 'top-10',
+  },
+  xsmall: {
+    button: 'h-space-34',
+    optionGroup: 'top-8',
   },
 };
 
@@ -63,6 +69,7 @@ const Select = ({
   size = 'default',
   functionOptionType,
   icon,
+  className,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isCheckBox = type === 'checkbox';
@@ -128,6 +135,7 @@ const Select = ({
           selectedLabel && 'border-gray-50 text-gray-90',
           widthClass,
           sizeClass['button'],
+          className,
         )}
         onClick={toggleDropdown}
         disabled={disabled}
@@ -155,7 +163,7 @@ const Select = ({
             'absolute z-10 bottom-4',
             widthClass,
             sizeClass['optionGroup'],
-            label ? (size === 'small' ? 'top-[68px]' : 'top-[76px]') : '',
+            label ? (size === 'small' ? 'top-[68px]' : size === 'xsmall' ? 'top-[60px]' : 'top-[76px]') : '',
           )}
         >
           <OptionGroup
