@@ -17,15 +17,15 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
     <>
       <TitleTypography title="회원관련 정보를 입력해주세요!" description="필수가 아닌 것은 넘어가셔도 됩니다." />
 
-      <div className="w-full flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-4 px-[4.5px]">
         <TextField
-          label="이름"
+          label="닉네임"
           id="signup-name"
           placeholder="최대 20자까지 입력"
           status="default"
           labelStatus="require"
           scale="base"
-          className="pc:w-[420px] mobile:w-[336px]"
+          className="w-full"
           value={signupData.userInfo.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
         />
@@ -34,10 +34,10 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             label="최종학력"
             id="signup-education"
             options={EDUCATION_OPTIONS}
-            className="w-full"
             value={signupData.userInfo.education}
             onChange={(value) => handleInputChange('education', value)}
             labelStatus="require"
+            width="small"
           />
           <TextField
             label=" "
@@ -47,7 +47,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             status="default"
             scale="base"
             icon="search"
-            className="pc:w-[270px] mobile:w-[188px]"
+            className="w-full"
             value={signupData.userInfo.schoolName}
             onChange={(e) => handleInputChange('schoolName', e.target.value)}
           />
@@ -60,7 +60,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
           status="default"
           labelStatus="default"
           scale="base"
-          className="pc:w-[420px] mobile:w-[336px]"
+          className="w-full"
           value={signupData.userInfo.major}
           onChange={(e) => handleInputChange('major', e.target.value)}
         />
@@ -68,11 +68,12 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
         <Select
           label="졸업여부"
           id="signup-graduation"
-          className="pc:w-[420px] mobile:w-[336px]"
+          className="w-full"
           options={GRADUATION_OPTIONS}
           value={signupData.userInfo.graduationStatus}
           onChange={(value) => handleInputChange('graduationStatus', value)}
           labelStatus="require"
+          width="large"
         />
 
         <div className="flex gap-2">
@@ -83,7 +84,8 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             value={signupData.userInfo.employmentStatus}
             onChange={(value) => handleInputChange('employmentStatus', value)}
             labelStatus="default"
-            className="w-full"
+            width="small"
+            // className="w-full"
           />
           <TextField
             label=" "
@@ -92,7 +94,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             placeholder="현재소속 및 재직명"
             status="default"
             scale="base"
-            className="pc:w-[270px] mobile:w-[188px]"
+            className="!w-full"
             value={signupData.userInfo.companyName}
             onChange={(e) => handleInputChange('companyName', e.target.value)}
           />

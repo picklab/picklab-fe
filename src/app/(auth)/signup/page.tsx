@@ -109,7 +109,7 @@ export default function SignupPage() {
       {renderStep()}
 
       {/* Navigation Buttons */}
-      <div className="flex gap-2 max-w-[420px] w-full mx-auto">
+      <div className="flex gap-2 w-full mx-auto">
         <Button
           buttonStyle="filled"
           label={currentStep === 1 ? '나가기' : '이전'}
