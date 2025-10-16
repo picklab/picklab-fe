@@ -8,7 +8,7 @@ interface TitleTypographyProps {
 export default function TitleTypography({ title, description }: TitleTypographyProps) {
   return (
     <>
-      <div className="flex flex-col gap-2 items-center text-center pc:block mobile:hidden">
+      <div className="flex flex-col gap-2 items-center text-center sm:block xl:hidden">
         <Typography tag="h1" type="Title2Bold" id="signup-title" className="break-keep">
           {title}
         </Typography>
@@ -16,7 +16,7 @@ export default function TitleTypography({ title, description }: TitleTypographyP
           {description}
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 items-center justify-center text-center pc:hidden mobile:block">
+      <div className="flex flex-col gap-1 items-center justify-center text-center sm:hidden xl:block">
         <Typography tag="h1" type="Heading2Bold" id="signup-title">
           {title}
         </Typography>
