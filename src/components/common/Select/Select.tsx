@@ -17,6 +17,7 @@ interface Option {
 export interface SelectProps {
   label?: string;
   labelStatus?: LabelProps['status'];
+  placeholder?: string;
   id?: string;
   helpMessage?: string;
   helpMessageStatus?: HelpMessageProps['status'];
@@ -35,8 +36,8 @@ export interface SelectProps {
 export const widthClassMap = {
   default: 'w-60',
   large: 'w-[420px]',
-  small: 'w-[140px]',
-  xsmall: 'w-[98px]',
+  small: 'w-[140px] py-space-9',
+  xsmall: 'w-[98px] py-space-7',
 };
 
 export const sizeClassMap = {
@@ -57,6 +58,7 @@ export const sizeClassMap = {
 const Select = ({
   label,
   labelStatus,
+  placeholder = '선택',
   id = '',
   helpMessage,
   helpMessageStatus = 'default',
@@ -101,7 +103,7 @@ const Select = ({
   };
 
   const selectedLabel = findOption();
-  const displayText = selectedLabel || '선택해주세요';
+  const displayText = selectedLabel || placeholder;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -126,7 +128,7 @@ const Select = ({
         type="button"
         id={buttonId}
         className={clsx(
-          'px-space-12 py-space-12 rounded-md border text-left text-gray-40 flex justify-between items-center transition-colors group',
+          'px-[18px] py-space-[13px] rounded-md border text-left text-gray-40 flex justify-between items-center transition-colors group',
           'border-gray-30 bg-gray-0',
           'hover:border-gray-40 hover:text-gray-60 hover:placeholder:text-gray-60',
           'focus:border-primary-50 focus:bg-gray-0',
@@ -145,7 +147,7 @@ const Select = ({
       >
         <span
           className={clsx(
-            'overflow-hidden whitespace-nowrap text-ellipsis break-words',
+            'overflow-hidden whitespace-nowrap text-ellipsis break-words text-[15px]',
             !selectedLabel && 'text-gray-40',
             !disabled && 'group-hover:text-gray-60',
           )}

@@ -73,7 +73,7 @@ const TextBox = (props: TextBoxProps) => {
     );
 
     return (
-      <div className="flex relative w-fit">
+      <div className="flex relative">
         {/* input 요소 렌더링 */}
         <input type="text" className={clsx(baseClass, inputClass)} disabled={disabled} {...inputRest} />
         {/* 아이콘이 있을 경우 렌더링 */}
@@ -91,7 +91,7 @@ const TextBox = (props: TextBoxProps) => {
   );
 
   return (
-    <div className="flex relative w-fit">
+    <div className="flex relative">
       {/* textarea 요소 렌더링 */}
       <textarea className={clsx(baseClass, textareaClass)} disabled={disabled} {...(rest as TextareaTextBoxProps)} />
     </div>

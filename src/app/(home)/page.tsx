@@ -38,7 +38,7 @@ interface ResponsiveLayoutProps {
   className: string;
 }
 
-export default function Home() {
+export default function HomePage() {
   return (
     <>
       <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} />
