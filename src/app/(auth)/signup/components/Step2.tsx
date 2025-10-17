@@ -68,12 +68,11 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
         <Select
           label="졸업여부"
           id="signup-graduation"
-          className="w-full"
+          className="mobile:w-[327px] pc:w-[420px]"
           options={GRADUATION_OPTIONS}
           value={signupData.userInfo.graduationStatus}
           onChange={(value) => handleInputChange('graduationStatus', value)}
           labelStatus="require"
-          width="large"
         />
 
         <div className="flex gap-2">

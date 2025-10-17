@@ -85,7 +85,7 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
             직무 분야
           </Typography>
 
-          <div className="flex flex-wrap xl:gap-[7.5px] sm:gap-3 justify-center">
+          <div className="flex flex-wrap pc:gap-[7.5px] mobile:gap-3 justify-center">
             {JOB_AREAS.map((job, index) => {
               const isSelected = selectedCategory === job.alt;
 
