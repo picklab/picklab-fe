@@ -38,7 +38,7 @@ const SNB = ({ Jobs }: SNBProps) => {
   const isSubActive = (pathname: string, subHref: string) => pathname === subHref;
 
   return (
-    <aside className="w-[260px] h-[960px] px-6 flex flex-col" aria-label="사이드 내비게이션">
+    <aside className="w-[260px] h-[960px] px-6 flex flex-col border-r border-gray-20" aria-label="사이드 내비게이션">
       {/* 프로필 영역 */}
       <section className="flex flex-col h-[202px] pt-space-10 border-b" aria-labelledby="profile-heading">
         <div className="flex flex-col h-30 gap-[18px] items-center">
