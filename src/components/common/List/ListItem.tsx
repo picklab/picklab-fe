@@ -22,6 +22,7 @@ export interface ListItemProps {
   organization?: string;
   startDate?: Date | null;
   endDate?: Date | null;
+  className?: string;
 }
 
 const grayText = 'text-gray-50 group-active:text-gray-40';
@@ -41,6 +42,7 @@ const ListItem = ({
   organization,
   startDate,
   endDate,
+  className,
 }: ListItemProps) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -119,6 +121,7 @@ const ListItem = ({
         'flex justify-between cursor-pointer border rounded-lg border-gray-20 focus:outline-none ',
         isFinished ? 'p-space-base' : 'py-space-10 px-3',
         'min-w-[414px]',
+        className,
       )}
       role="button"
       tabIndex={0}

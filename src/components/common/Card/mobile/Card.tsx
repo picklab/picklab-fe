@@ -55,7 +55,7 @@ const Card = ({
           }}
           aria-pressed={isBookmarked}
           aria-label={isBookmarked ? '북마크 취소' : '북마크 추가'}
-          className="absolute top-[10px] right-3 z-20"
+          className="absolute top-[10px] right-3"
         >
           <Icon
             icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}
