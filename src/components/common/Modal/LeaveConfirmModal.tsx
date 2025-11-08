@@ -23,5 +23,3 @@ const LeaveConfirmModal = ({
 };
 
 export default LeaveConfirmModal;
-
-
