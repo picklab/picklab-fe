@@ -18,7 +18,7 @@ const BoxTab = ({ label, notiNumber, href, id, panelId, active, ...props }: BoxT
     <Link
       href={href}
       className={clsx(
-        'box-tab flex flex-col justify-center items-center box-border w-60 h-[120px] p-[3px] pr-0 bg-gray-40',
+        'box-tab flex flex-col justify-center items-center box-border w-[212px] h-[90px] p-[3px] pr-0 bg-gray-40',
         active && '!bg-black',
       )}
       role="tab"

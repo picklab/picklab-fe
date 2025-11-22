@@ -12,12 +12,19 @@ interface ActivityListProps {
   type?: 'card' | 'list';
   className?: string;
   isSelect?: boolean;
+  typoType?: 'Headline1SemiBold' | 'Body1Medium';
 }
 
-export default function ActivityList({ title, type = 'card', className, isSelect }: ActivityListProps) {
+export default function ActivityList({
+  title,
+  type = 'card',
+  className,
+  isSelect,
+  typoType = 'Headline1SemiBold',
+}: ActivityListProps) {
   return (
     <div className={clsx('w-full flex flex-col gap-3', className)}>
-      <Typography type="Headline1SemiBold">{title}</Typography>
+      <Typography type={typoType}>{title}</Typography>
       {isSelect && (
         <div className="flex gap-2">
           <Select
