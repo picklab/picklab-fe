@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import DefaultModalPage from '@/app/@modal/default-modal/page';
-import { ModalProvider } from '@/contexts/ModalContext';
 
 const meta: Meta = {
   title: 'Pages/Modal',
@@ -11,13 +10,7 @@ const meta: Meta = {
       values: [{ name: 'white', value: '#ffffff' }],
     },
   },
-  decorators: [
-    (Story) => (
-      <ModalProvider>
-        <Story />
-      </ModalProvider>
-    ),
-  ],
+  decorators: [(Story) => <Story />],
 };
 
 export default meta;
