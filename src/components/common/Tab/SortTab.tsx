@@ -12,18 +12,24 @@ type SortOption = {
 type SortTabProps = {
   options: SortOption[];
   paramKey?: string;
+  onTabClick?: (value: string) => void;
+  currentValue?: string;
 };
 
-const SortTab = ({ options, paramKey = 'sort' }: SortTabProps) => {
+const SortTab = ({ options, paramKey = 'sort', onTabClick, currentValue }: SortTabProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const currentTab = searchParams.get(paramKey) || options[0].value;
+  const currentTab = currentValue || searchParams.get(paramKey) || options[0].value;
 
   // 🔤 정렬뿐 아니라 다른 곳에서도 쓰일 수 있기에 paramKey도 prop으로 받고,
   // url query parameter로 새로고침시에도 currentTab이 유지될 수 있도록 하였습니다
   // ⚠️ 기획단에서 새로고침시 정렬 초기화 시키는거로 변경시 searchParams 대신 state로 관리예정
   const handleClick = (value: string) => {
+    if (onTabClick) {
+      onTabClick(value);
+      return;
+    }
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set(paramKey, value);
     router.push(`?${newParams.toString()}`);

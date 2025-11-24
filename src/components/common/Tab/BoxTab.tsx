@@ -9,9 +9,10 @@ import React from 'react';
 interface BoxTabProps extends Omit<TabProps, 'children'> {
   label: string;
   notiNumber: string;
+  className?: string;
 }
 
-const BoxTab = ({ label, notiNumber, href, id, panelId, active, ...props }: BoxTabProps) => {
+const BoxTab = ({ label, notiNumber, href, id, panelId, active, className, ...props }: BoxTabProps) => {
   const activeTypoType = active ? 'Title3Bold' : 'Title3Medium';
 
   return (
@@ -20,6 +21,7 @@ const BoxTab = ({ label, notiNumber, href, id, panelId, active, ...props }: BoxT
       className={clsx(
         'box-tab flex flex-col justify-center items-center box-border w-[212px] h-[90px] p-[3px] pr-0 bg-gray-40',
         active && '!bg-black',
+        className,
       )}
       role="tab"
       aria-selected={active}
