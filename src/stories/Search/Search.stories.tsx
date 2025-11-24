@@ -22,7 +22,6 @@ export default meta;
 export const Default: StoryObj<typeof SearchPage> = {
   render: (args) => (
     <main className="mx-auto pc:max-w-[1100px] mobile:max-w-[335px] mb-10">
-      {/* @ts-ignore */}
       <SearchPage {...args} />
     </main>
   ),

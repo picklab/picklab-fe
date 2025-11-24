@@ -1,8 +1,10 @@
 import type { Preview } from '@storybook/react';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import '../src/app/globals.css';
 
 const preview: Preview = {
+  decorators: [withRouter],
   parameters: {
     controls: {
       matchers: {
