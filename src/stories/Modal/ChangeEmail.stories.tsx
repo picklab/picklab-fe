@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import ChangeEmailPage from '@/app/@modal/change-email/page';
-import { ModalProvider } from '@/contexts/ModalContext';
-import { Button } from '@storybook/react-day-picker';
 
 const meta: Meta = {
   title: 'Pages/Modal',
@@ -12,13 +10,7 @@ const meta: Meta = {
       values: [{ name: 'white', value: '#ffffff' }],
     },
   },
-  decorators: [
-    (Story) => (
-      <ModalProvider>
-        <Story />
-      </ModalProvider>
-    ),
-  ],
+  decorators: [(Story) => <Story />],
 };
 
 export default meta;
