@@ -45,7 +45,7 @@ export default function AuthPage() {
 
 function AuthHeader() {
   return (
-    <div className="flex flex-col gap-4 items-center">
+    <div className="flex flex-col gap-4 items-center mt-[120px]">
       <Image src="/imgs/logo_mobile.png" alt="Auth Header" width={86} height={22} />
       <div className="flex flex-col gap-[10px] items-center">
         <Typography tag="h1" type="Title2Bold" id="auth-header-title">

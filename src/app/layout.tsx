@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 
 import './globals.css';
+import GNBPC from '@/components/common/GNB/pc/GNB';
+import GNBMobile from '@/components/common/GNB/mobile/GNB';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,6 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <div className="mobile:hidden pc:flex  justify-center">
+          <GNBPC isLogin={false} />
+        </div>
+        <div className="pc:hidden mobile:flex  justify-center">
+          <GNBMobile isLogin={false} />
+        </div>
         {children}
         {modal}
       </body>
