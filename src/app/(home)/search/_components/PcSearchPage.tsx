@@ -4,6 +4,7 @@ import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 import BoxTab from '@/components/common/Tab/BoxTab';
 import Typography from '@/components/common/Typography';
 import { useState } from 'react';
+import clsx from 'clsx';
 
 const TAB_LIST = [
   { label: '전체', value: 'all' },
@@ -13,7 +14,7 @@ const TAB_LIST = [
   { label: '공모전/해커톤', value: 'contest' },
 ];
 
-export default function PcSearchPage({ search }: { search: string }) {
+export default function PcSearchPage({ search, isStorybook = false }: { search: string; isStorybook?: boolean }) {
   const [activeTab, setActiveTab] = useState('all');
   const handleTabClick = (value: string) => {
     setActiveTab(value);
@@ -21,7 +22,7 @@ export default function PcSearchPage({ search }: { search: string }) {
   console.log(search);
 
   return (
-    <div className="hidden pc:flex w-[1100px] px-5  flex-col gap-10">
+    <div className={clsx('w-[1100px] px-5  flex-col gap-10', isStorybook ? 'flex' : 'hidden pc:flex')}>
       <div role="tablist" className="flex">
         {TAB_LIST.map((tab) => (
           <BoxTab

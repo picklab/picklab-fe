@@ -4,10 +4,11 @@ import CardChip from '@/components/common/Card/CardChip';
 import TextArea from '@/components/common/Field/TextArea';
 import Select from '@/components/common/Select/Select';
 import Typography from '@/components/common/Typography';
+import clsx from 'clsx';
 
-export default function PcArchiveDetailPage() {
+export default function PcArchiveDetailPage({ isStorybook = false }: { isStorybook?: boolean }) {
   return (
-    <div className="pc:flex mobile:hidden max-w-[640px] mx-auto">
+    <div className={clsx('max-w-[640px] mx-auto', isStorybook ? 'flex' : 'pc:flex mobile:hidden')}>
       <form action="" className="flex flex-col gap-8 w-full">
         <div className="flex flex-col gap-3 p-6 border rounded-lg">
           <div className="flex flex-col gap-1.5 p-1">
