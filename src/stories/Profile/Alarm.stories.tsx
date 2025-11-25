@@ -2,7 +2,8 @@ import { Meta, StoryObj } from '@storybook/react';
 import AlarmPage from '@/app/(home)/profile/alarm/page';
 
 const meta: Meta = {
-  title: 'Pages/Profile',
+  title: 'Pages/Profile/Alarm',
+  component: AlarmPage,
   parameters: {
     layout: 'fullscreen',
     backgrounds: {
@@ -14,16 +15,13 @@ const meta: Meta = {
 
 export default meta;
 
-export const Alarm: StoryObj<typeof AlarmPage> = {
-  render: () => (
-    <main className="mx-auto pc:max-w-[1100px] mobile:max-w-[335px] mb-10">
-      <AlarmPage />
-    </main>
-  ),
+export const Default: StoryObj<typeof AlarmPage> = {
+  name: 'PC Only',
+  render: () => <AlarmPage isStorybook />,
   parameters: {
     docs: {
       description: {
-        story: '알림 관리 페이지입니다. (반응형)',
+        story: '알림 관리 페이지입니다. 현재 PC 버전만 존재합니다.',
       },
     },
   },

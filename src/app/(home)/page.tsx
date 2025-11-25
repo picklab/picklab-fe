@@ -36,6 +36,7 @@ const PC_STYLES = {
 // 타입 정의
 interface ResponsiveLayoutProps {
   className: string;
+  isStorybook?: boolean;
 }
 
 export default function HomePage() {
@@ -47,7 +48,7 @@ export default function HomePage() {
   );
 }
 
-function MobileLayout({ className }: ResponsiveLayoutProps) {
+export function MobileLayout({ className }: ResponsiveLayoutProps) {
   return (
     <div className={clsx(MOBILE_STYLES.CONTAINER, className)}>
       <Banner />
@@ -58,9 +59,9 @@ function MobileLayout({ className }: ResponsiveLayoutProps) {
   );
 }
 
-function PcLayout({ className }: ResponsiveLayoutProps) {
+export function PcLayout({ className, isStorybook }: ResponsiveLayoutProps) {
   return (
-    <div className={clsx(PC_STYLES.CONTAINER, className)}>
+    <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? 'flex' : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
         <Banner />
         <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} />

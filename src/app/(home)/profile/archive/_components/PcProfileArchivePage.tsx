@@ -84,7 +84,7 @@ const MOCK_ITEMS: ArchiveItem[] = [
   },
 ];
 
-export default function PcProfileArchivePage() {
+export default function PcProfileArchivePage({ isStorybook = false }: { isStorybook?: boolean }) {
   const [snbMenu, setSnbMenu] = useState<MenuId>('archive');
   const [sortType, setSortType] = useState<'latest' | 'oldest'>('latest');
   const isLatest = sortType === 'latest';
@@ -99,7 +99,7 @@ export default function PcProfileArchivePage() {
   }, [snbMenu, isLatest]);
 
   return (
-    <>
+    <div className={clsx('w-full', isStorybook ? '' : 'mobile:hidden')}>
       <section className="flex flex-row items-center gap-1 mobile:w-[335px] mobile:relative mobile:py-4 mobile:border-b mobile:border-gray-20 pc:gap-2 pc:pb-0 pc:border-0 pc:w-full">
         <Icon icon="chevronLeft" size={16} />
         <Typography
@@ -150,7 +150,7 @@ export default function PcProfileArchivePage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

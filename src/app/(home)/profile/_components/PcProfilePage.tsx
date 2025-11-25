@@ -4,10 +4,11 @@ import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 
 import ListItem from '@/components/common/List/ListItem';
 import Card from '@/components/common/Card/Card';
+import clsx from 'clsx';
 
-export default function PcProfile() {
+export default function PcProfile({ isStorybook = false }: { isStorybook?: boolean }) {
   return (
-    <div className="hidden pc:flex gap-[62px] w-[1100px] px-5">
+    <div className={clsx('gap-[62px] w-[1100px] px-5', isStorybook ? 'flex' : 'hidden pc:flex')}>
       <SNB Jobs={[]} />
       <section className="max-w-[758px] w-full flex flex-col gap-[58px]">
         <div className="flex flex-col gap-4">

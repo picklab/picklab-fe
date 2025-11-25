@@ -1,10 +1,11 @@
 import Switch from '@/components/common/Control/Switch';
 import SNB from '@/components/common/SNB/SNB';
 import Typography from '@/components/common/Typography';
+import clsx from 'clsx';
 
-export default function AlarmPage() {
+export default function AlarmPage({ isStorybook = false }: { isStorybook?: boolean }) {
   return (
-    <div className="hidden pc:flex gap-12.5 flex-row w-[1100px] px-5">
+    <div className={clsx('gap-12.5 flex-row w-[1100px] px-5', isStorybook ? 'flex' : 'hidden pc:flex')}>
       <SNB Jobs={[]} />
 
       {/* 알림 관리 섹션 */}
