@@ -36,3 +36,13 @@ yarn-error.log*
 next-env.d.ts
 
 *storybook.log
+
+
+# Yarn PnP
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
