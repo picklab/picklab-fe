@@ -2,9 +2,7 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+
 
 # testing
 /coverage
@@ -38,11 +36,10 @@ next-env.d.ts
 *storybook.log
 
 
-# Yarn PnP
-.pnp.*
-.yarn/*
+### yarn ###
+/.yarn/*
 !.yarn/patches
-!.yarn/releases
 !.yarn/plugins
+!.yarn/releases
 !.yarn/sdks
 !.yarn/versions

@@ -1,36 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Yarn Berry
 
-## Getting Started
+- 오프라인 설치 및 빠른 재설치
+- 일관된 개발 환경
+- 디스크 공간 효율성
 
-First, run the development server:
+[통신 구조 - Backend for Frontend(BFF)]
+Client(브라우저) -> Next Api Route -> 백엔드 API 서버 흐름
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- BFF 프론트엔드 전용 백엔드를 위한 Next Api Route 서버 레이어 추가
+- 필요한 데이터만 추려 클라이언트에서 사용하기 좋은 구조로 받기 위함 (응답 포맷 통일 / 데이터 가공)
+- 브라우저에 노출되면 안되는 auth 처리 용이
