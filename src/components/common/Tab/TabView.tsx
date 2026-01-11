@@ -2,7 +2,6 @@ import React from 'react';
 
 import BoxTab from '@/components/common/Tab/BoxTab';
 import Tab from '@/components/common/Tab/Tab';
-import { PageProps } from '../../../../.next/types/app/page';
 import { redirect } from 'next/navigation';
 
 // 개별 탭 아이템의 타입 정의 (기본 탭)
@@ -30,7 +29,7 @@ export type CombinedTabItem = TabItem | BoxTabItem;
 // TabView 컴포넌트 props 정의
 interface TabViewProps {
   items: CombinedTabItem[];
-  searchParams: PageProps['searchParams'];
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 // 탭 뷰 렌더링 컴포넌트

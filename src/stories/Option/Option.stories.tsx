@@ -48,7 +48,12 @@ const Template = (args: OptionProps) => {
   const icon = args.type === 'iconWithText' ? 'alertCircle' : undefined;
   return (
     <ul role="listbox" className="space-y-2 w-40">
-      <Option icon={icon} {...args} selectedValue={selectedValue} onClickHandler={(value) => setSelectedValue(value)} />
+      <Option
+        icon={icon}
+        {...args}
+        selectedValue={selectedValue}
+        onClickHandler={(value) => setSelectedValue(value as string | string[])}
+      />
     </ul>
   );
 };

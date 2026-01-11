@@ -32,7 +32,9 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
     }
 
     // 선택된 값을 부모로 전달
-    optionGroupProps?.onClickHandler(value);
+    if (optionGroupProps?.onClickHandler) {
+      optionGroupProps.onClickHandler(value);
+    }
     // 드롭다운 닫기
     setIsOpen(false);
   };
@@ -85,7 +87,9 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
     // 상태 업데이트 및 선택 초기화
     if (optionGroupProps) {
       setInput(value);
-      optionGroupProps?.onClickHandler(''); // 선택 해제 처리
+      if (optionGroupProps?.onClickHandler) {
+        optionGroupProps.onClickHandler(''); // 선택 해제 처리
+      }
       handleInput(e); // debounce된 필터 함수 호출
     }
   };

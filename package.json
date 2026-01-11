@@ -13,7 +13,8 @@
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_fe4b5c4ff730a40"
+    "chromatic": "npx chromatic --project-token=chpt_fe4b5c4ff730a40",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
