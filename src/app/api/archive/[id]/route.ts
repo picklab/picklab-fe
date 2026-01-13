@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
-export async function PATCH(request: Request, { params }: { params: { archiveId: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: { archiveId: string } }) {
   const archiveId = params.archiveId;
   // 아카이브 정보 수정
   // 비즈니스 로직 구현 예정
