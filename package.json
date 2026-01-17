@@ -21,6 +21,7 @@
     "@tanstack/react-query": "^5.69.0",
     "@tanstack/react-query-devtools": "^5.69.0",
     "clsx": "^2.1.1",
+    "cookie": "^1.1.1",
     "dayjs": "^1.11.13",
     "ky": "^1.14.2",
     "next": "^16.1.1",
