@@ -8,7 +8,7 @@ import { GNBNavigationMenus } from '@/constants/menus';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import  { useState } from 'react';
 
 interface GNBProps {
   isLogin: boolean;
@@ -23,6 +23,8 @@ const GNB = ({ isLogin = false }: GNBProps) => {
   ];
   const [selected, setSelected] = useState<string>(options[0].value);
 
+
+  
   return (
     <header className="w-full">
       <div
@@ -91,8 +93,10 @@ const GNB = ({ isLogin = false }: GNBProps) => {
           </nav>
         ) : (
           <div className="flex gap-space-10">
-            <Button label="로그인" buttonStyle="outlined" size="sm" />
-            <Button label="회원가입" buttonStyle="filled" size="sm" />
+            <Link href="/signin" aria-label="로그인"> 
+                <Button label="로그인" buttonStyle="outlined" size="sm" /> 
+                </Link>
+            <Link href="/signup" aria-label="회원가입">  <Button label="회원가입" buttonStyle="filled" size="sm" /></Link>
           </div>
         )}
       </div>

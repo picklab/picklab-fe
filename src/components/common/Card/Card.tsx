@@ -49,7 +49,7 @@ const Card = ({
           height={180}
           className="w-full h-full object-cover rounded-[10px]"
         />
-        <CardDayBadge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4" />
+        <CardDayBadge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4 text-sm" />
 
         <button
           onClick={(e) => {

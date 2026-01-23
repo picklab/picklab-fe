@@ -10,7 +10,7 @@ interface NewActivityListProps {
 
 export default function NewActivityList({ title }: NewActivityListProps) {
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-[2rem]">
       <div className="flex flex-col gap-4">
         <Typography type="Heading1Bold">{title}</Typography>
 
