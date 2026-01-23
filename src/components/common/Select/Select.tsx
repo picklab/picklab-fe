@@ -1,0 +1,189 @@
+'use client';
+
+import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
+import Icon from '@/components/common/Icon/Icon';
+import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
+import Label, { LabelProps } from '@/components/common/Field/Label';
+import { OptionGroup, OptionGroupProps } from '@/components/common/Option/OptionGroup';
+import { IconType } from '@/components/common/Icon/assets';
+import { FunctionOptionProps } from '@/components/common/Option/FunctionOption';
+
+interface Option {
+  label: string;
+  value: string;
+}
+
+export interface SelectProps {
+  label?: string;
+  labelStatus?: LabelProps['status'];
+  placeholder?: string;
+  id?: string;
+  helpMessage?: string;
+  helpMessageStatus?: HelpMessageProps['status'];
+  options: Option[];
+  value?: string | string[];
+  onChange: (value?: string | string[]) => void;
+  type?: OptionGroupProps['type'];
+  disabled?: boolean;
+  width?: 'default' | 'large' | 'small' | 'xsmall' | 'full';
+  size?: 'default' | 'small' | 'xsmall';
+  icon?: IconType;
+  functionOptionType?: Exclude<FunctionOptionProps['type'], 'selfplus'>;
+  className?: string;
+}
+
+export const widthClassMap = {
+  default: 'w-60',
+  large: 'w-[420px]',
+  small: 'w-[140px] py-space-9',
+  xsmall: 'w-[98px] py-space-7',
+  full: 'w-full',
+};
+
+export const sizeClassMap = {
+  default: {
+    button: 'h-space-48',
+    optionGroup: 'top-12',
+  },
+  small: {
+    button: 'h-space-40',
+    optionGroup: 'top-10',
+  },
+  xsmall: {
+    button: 'h-space-34',
+    optionGroup: 'top-8',
+  },
+};
+
+const Select = ({
+  label,
+  labelStatus,
+  placeholder = '선택',
+  id = '',
+  helpMessage,
+  helpMessageStatus = 'default',
+  options,
+  value,
+  onChange,
+  disabled = false,
+  type = 'text',
+  width = 'default',
+  size = 'default',
+  functionOptionType,
+  icon,
+  className,
+}: SelectProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const isCheckBox = type === 'checkbox';
+  const selectRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const widthClass = widthClassMap[width];
+  const sizeClass = sizeClassMap[size];
+  const buttonId = `select-button${id ? `_${id}` : ''}`;
+
+  const toggleDropdown = () => {
+    if (!disabled) setIsOpen((prev) => !prev);
+  };
+
+  const handleSelect = (val?: string | string[]) => {
+    onChange(val);
+    if (!isCheckBox) setIsOpen(false);
+    buttonRef.current?.focus(); // 접근성을 위해 button에 포커싱 유지
+  };
+
+  const findOption = () => {
+    if (isCheckBox) {
+      if (value && value.length > 0) {
+        return `${options.find((opt) => opt.value === value[0])?.label} ${value.length}`;
+      }
+    } else {
+      return options.find((opt) => opt.value === value)?.label;
+    }
+  };
+
+  const selectedLabel = findOption();
+  const displayText = selectedLabel || placeholder;
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (selectRef.current && !selectRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <div ref={selectRef} className={clsx('relative flex flex-col gap-1', widthClass)}>
+      {label && <Label title={label} status={labelStatus} htmlFor={buttonId} />}
+
+      <button
+        ref={buttonRef}
+        type="button"
+        id={buttonId}
+        className={clsx(
+          'px-[18px] py-space-[13px] rounded-md border text-left text-gray-40 flex justify-between items-center transition-colors group',
+          'border-gray-30 bg-gray-0',
+          'hover:border-gray-40 hover:text-gray-60 hover:placeholder:text-gray-60',
+          'focus:border-primary-50 focus:bg-gray-0',
+          'disabled:border-gray-30 disabled:bg-gray-5 disabled:text-gray-40 disabled:cursor-not-allowed disabled:group-hover:text-gray-40',
+          helpMessageStatus === 'error' && '!border-danger-50',
+          selectedLabel && 'border-gray-50 text-gray-90',
+          widthClass,
+          sizeClass['button'],
+          className,
+        )}
+        onClick={toggleDropdown}
+        disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls="select-options"
+      >
+        <span
+          className={clsx(
+            'overflow-hidden whitespace-nowrap text-ellipsis break-words text-[15px]',
+            !selectedLabel && 'text-gray-40',
+            !disabled && 'group-hover:text-gray-60',
+          )}
+        >
+          {displayText}
+        </span>
+        <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} size={24} className="text-gray-90" />
+      </button>
+
+      {isOpen && (
+        <div
+          id="select-options"
+          role="listbox"
+          className={clsx(
+            'absolute z-10 bottom-4',
+            widthClass,
+            sizeClass['optionGroup'],
+            label ? (size === 'small' ? 'top-[68px]' : size === 'xsmall' ? 'top-[60px]' : 'top-[76px]') : '',
+          )}
+        >
+          <OptionGroup
+            icon={icon}
+            options={options}
+            selectedValue={value}
+            onClickHandler={handleSelect}
+            type={type}
+            width={width}
+            functionOptionType={functionOptionType}
+          />
+        </div>
+      )}
+
+      {helpMessage && <HelpMessage title={helpMessage} status={helpMessageStatus} />}
+    </div>
+  );
+};
+
+export default Select;
