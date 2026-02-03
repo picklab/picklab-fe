@@ -1,12 +1,14 @@
-import React from 'react';
+/** @format */
 
-import BoxTab from '@/components/common/Tab/BoxTab';
-import Tab from '@/components/common/Tab/Tab';
-import { redirect } from 'next/navigation';
+import React from "react";
+
+import BoxTab from "@/components/common/Tab/BoxTab";
+import Tab from "@/components/common/Tab/Tab";
+import { redirect } from "next/navigation";
 
 // 개별 탭 아이템의 타입 정의 (기본 탭)
 interface TabItem {
-  type?: 'default';
+  type?: "default";
   label: React.ReactNode;
   id: string;
   panelId: string;
@@ -15,7 +17,7 @@ interface TabItem {
 
 // 박스형 탭 아이템의 타입 정의
 interface BoxTabItem {
-  type: 'box';
+  type: "box";
   label: string;
   notiNumber: string;
   id: string;
@@ -43,7 +45,7 @@ const TabView = ({ items, searchParams }: TabViewProps) => {
 
     if (searchParams) {
       Object.entries(searchParams).forEach(([key, value]) => {
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
           params.set(key, value);
         }
       });
@@ -54,7 +56,7 @@ const TabView = ({ items, searchParams }: TabViewProps) => {
 
   // activeItem이 없다면 ?tab=edu로 강제 이동
   if (!activeItem) {
-    redirect(getUpdatedHref('tab', 'edu'));
+    redirect(getUpdatedHref("tab", "edu"));
   }
 
   return (
@@ -69,13 +71,13 @@ const TabView = ({ items, searchParams }: TabViewProps) => {
           };
 
           // 박스형 탭일 경우 BoxTab 렌더링
-          if (item.type === 'box') {
+          if (item.type === "box") {
             return (
               <BoxTab
-                href={getUpdatedHref('tab', item.panelId)}
+                href={getUpdatedHref("tab", item.panelId)}
                 key={item.id}
                 {...commonProps}
-                label={item.label}
+                label={item.label as "전체" | "대외활동" | "강연/세미나" | "교육" | "공모전/해커톤"}
                 notiNumber={item.notiNumber}
               />
             );
@@ -83,7 +85,7 @@ const TabView = ({ items, searchParams }: TabViewProps) => {
 
           // 기본 탭 렌더링
           return (
-            <Tab href={getUpdatedHref('tab', item.panelId)} key={item.id} {...commonProps}>
+            <Tab href={getUpdatedHref("tab", item.panelId)} key={item.id} {...commonProps}>
               {item.label}
             </Tab>
           );
