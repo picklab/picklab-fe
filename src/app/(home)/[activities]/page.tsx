@@ -11,7 +11,7 @@ async function ActivitiesPage({ params }: { params: Promise<{ activities: string
   return (
     <>
       <PcActivites activities={activityTitle} />
-      <MobileActivites activities={activityTitle} />
+      <MobileActivites />
     </>
   );
 }
