@@ -1,11 +1,13 @@
-'use client';
+/** @format */
 
-import Button from '@/components/common/Button/Button';
-import SortTab from '@/components/common/Tab/SortTab';
-import { ACTIVITY_FILTERS } from '../constants';
-import { Dispatch, SetStateAction, useState } from 'react';
-import Typography from '@/components/common/Typography';
-import Icon from '@/components/common/Icon/Icon';
+"use client";
+
+import Button from "@/components/common/Button/Button";
+import SortTab from "@/components/common/Tab/SortTab";
+import { ACTIVITY_FILTERS } from "../constants";
+import { Dispatch, SetStateAction, useState } from "react";
+import Typography from "@/components/common/Typography";
+import Icon from "@/components/common/Icon/Icon";
 
 interface FilterSectionProps {
   selectedFilters: Record<string, string[]>;
@@ -14,7 +16,7 @@ interface FilterSectionProps {
 
 const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionProps) => {
   const [currentTab, setCurrentTab] = useState(ACTIVITY_FILTERS[0].title);
-  
+
   const handleSelectFilter = (category: string, option: string) => {
     setSelectedFilters((prev) => {
       const newFilters = { ...prev };
@@ -22,10 +24,10 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
         newFilters[category] = [];
       }
 
-      if (option === '전체') {
-        newFilters[category] = ['전체'];
+      if (option === "전체") {
+        newFilters[category] = ["전체"];
       } else {
-        const filtered = newFilters[category].filter((item) => item !== '전체');
+        const filtered = newFilters[category].filter((item) => item !== "전체");
         if (filtered.includes(option)) {
           newFilters[category] = filtered.filter((item) => item !== option);
         } else {
@@ -34,7 +36,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
       }
 
       if (newFilters[category].length === 0) {
-        newFilters[category] = ['전체'];
+        newFilters[category] = ["전체"];
       }
 
       return newFilters;
@@ -46,7 +48,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
   const tabOptions = ACTIVITY_FILTERS.map((filter) => ({ label: filter.title, value: filter.title }));
 
   const selectedFilterEntries = Object.entries(selectedFilters).flatMap(([category, options]) =>
-    options.map((option) => ({ category, option })),
+    options.map((option) => ({ category, option }))
   );
 
   return (
@@ -55,13 +57,13 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
       <div className="flex flex-wrap gap-2.5">
         {currentOptions.map((option) => {
           const isSelected =
-            selectedFilters[currentTab]?.includes(option) ?? (option === '전체' && !selectedFilters[currentTab]);
+            selectedFilters[currentTab]?.includes(option) ?? (option === "전체" && !selectedFilters[currentTab]);
           return (
             <Button
               key={option}
               label={option}
               size="base"
-              buttonStyle={isSelected ? 'filled' : 'outlined'}
+              buttonStyle={isSelected ? "filled" : "outlined"}
               isFullRounded={true}
               className="rounded-full"
               onClick={() => handleSelectFilter(currentTab, option)}
@@ -70,7 +72,8 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
         })}
       </div>
       <div className="h-[1px] bg-gray-20" />
-      <div className="flex items-center gap-1">
+      {/* 한줄 넘어가면 다음줄로 갈 수 있게 처리 */}
+      <div className="flex items-center gap-1 flex-wrap">
         {selectedFilterEntries.map(({ category, option }) => (
           <div
             key={`${category}-${option}`}

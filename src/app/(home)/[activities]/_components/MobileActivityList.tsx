@@ -1,32 +1,34 @@
-'use client';
+/** @format */
 
-import Typography from '@/components/common/Typography';
-import Card from '@/components/common/Card/mobile/Card';
-import MoList from '@/components/common/List/mobile/MoList';
-import clsx from 'clsx';
+"use client";
 
-import Select from '@/components/common/Select/Select';
+import Typography from "@/components/common/Typography";
+import Card from "@/components/common/Card/mobile/Card";
+import MoList from "@/components/common/List/mobile/MoList";
+import clsx from "clsx";
 
-import Icon from '@/components/common/Icon/Icon';
+import Select from "@/components/common/Select/Select";
+
+import Icon from "@/components/common/Icon/Icon";
 
 interface ActivityListProps {
   title?: string;
-  type?: 'card' | 'list';
+  type?: "card" | "list";
   className?: string;
   isSelect?: boolean;
-  typoType?: 'Headline1SemiBold' | 'Body1Medium';
+  typoType?: "Headline1SemiBold" | "Body1Medium";
   onFilterClick?: () => void;
 }
 
 export default function MobileActivityList({
   title,
-  type = 'card',
+  type = "card",
   className,
-  typoType = 'Headline1SemiBold',
+  typoType = "Headline1SemiBold",
   onFilterClick,
 }: ActivityListProps) {
   return (
-    <div className={clsx('w-full flex flex-col gap-3', className)}>
+    <div className={clsx("w-full flex flex-col gap-5", className)}>
       <Typography type={typoType}>{title}</Typography>
 
       <div className="flex gap-2 overflow-x-auto hide-scrollbar">
@@ -47,10 +49,10 @@ export default function MobileActivityList({
           className="!rounded-full !w-[98px] !h-[34px]"
           placeholder="주최기관"
           options={[
-            { label: '대외활동', value: 'external_activity' },
-            { label: '강연/세미나', value: 'seminar' },
-            { label: '교육', value: 'education' },
-            { label: '공모전/해커톤', value: 'contest' },
+            { label: "대외활동", value: "external_activity" },
+            { label: "강연/세미나", value: "seminar" },
+            { label: "교육", value: "education" },
+            { label: "공모전/해커톤", value: "contest" },
           ]}
           onChange={() => {}}
         />
@@ -62,11 +64,11 @@ export default function MobileActivityList({
           placeholder="참여대상"
           className="!rounded-full !w-[98px] !h-[34px]"
           options={[
-            { label: '기획', value: 'planning' },
-            { label: '디자인', value: 'design' },
-            { label: '개발', value: 'development' },
-            { label: '마케팅', value: 'marketing' },
-            { label: 'AI', value: 'ai' },
+            { label: "기획", value: "planning" },
+            { label: "디자인", value: "design" },
+            { label: "개발", value: "development" },
+            { label: "마케팅", value: "marketing" },
+            { label: "AI", value: "ai" },
           ]}
           onChange={() => {}}
         />
@@ -78,11 +80,11 @@ export default function MobileActivityList({
           placeholder="활동분야"
           className="!rounded-full !w-[98px] !h-[34px]"
           options={[
-            { label: '기획', value: 'planning' },
-            { label: '디자인', value: 'design' },
-            { label: '개발', value: 'development' },
-            { label: '마케팅', value: 'marketing' },
-            { label: 'AI', value: 'ai' },
+            { label: "기획", value: "planning" },
+            { label: "디자인", value: "design" },
+            { label: "개발", value: "development" },
+            { label: "마케팅", value: "marketing" },
+            { label: "AI", value: "ai" },
           ]}
           onChange={() => {}}
         />
@@ -94,11 +96,11 @@ export default function MobileActivityList({
           placeholder="지역"
           className="!rounded-full !w-[98px] !h-[34px]"
           options={[
-            { label: '기획', value: 'planning' },
-            { label: '디자인', value: 'design' },
-            { label: '개발', value: 'development' },
-            { label: '마케팅', value: 'marketing' },
-            { label: 'AI', value: 'ai' },
+            { label: "기획", value: "planning" },
+            { label: "디자인", value: "design" },
+            { label: "개발", value: "development" },
+            { label: "마케팅", value: "marketing" },
+            { label: "AI", value: "ai" },
           ]}
           onChange={() => {}}
         />
@@ -110,38 +112,38 @@ export default function MobileActivityList({
           placeholder="직무"
           className="!rounded-full !w-[98px] !h-[34px]"
           options={[
-            { label: '기획', value: 'planning' },
-            { label: '디자인', value: 'design' },
-            { label: '개발', value: 'development' },
-            { label: '마케팅', value: 'marketing' },
-            { label: 'AI', value: 'ai' },
+            { label: "기획", value: "planning" },
+            { label: "디자인", value: "design" },
+            { label: "개발", value: "development" },
+            { label: "마케팅", value: "marketing" },
+            { label: "AI", value: "ai" },
           ]}
           onChange={() => {}}
         />
       </div>
 
       <div
-        className={clsx('flex overflow-x-scroll hide-scrollbar w-full', type === 'card' ? 'gap-4' : 'flex-col gap-2')}
+        className={clsx("flex overflow-x-scroll hide-scrollbar w-full", type === "card" ? "gap-4" : "flex-col gap-2")}
       >
-        {Array.from({ length: type === 'card' ? 10 : 3 }).map((_, index) =>
-          type === 'card' ? (
+        {Array.from({ length: type === "card" ? 10 : 3 }).map((_, index) =>
+          type === "card" ? (
             <Card
               key={index}
-              imageUrl={'/imgs/cat.jpg'}
+              imageUrl={"/imgs/cat.jpg"}
               chipText="공모전/해커톤"
               badgeText="D-01"
               badgeVariant="default"
               isBookmarked={false}
               companyName="삼양 그룹"
               title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
-              jobs={['개발']}
+              jobs={["개발"]}
               onBookmarkClick={() => {}}
               onCardClick={() => {}}
             />
           ) : (
             <MoList
               key={index}
-              imageSrc={'/imgs/cat.jpg'}
+              imageSrc={"/imgs/cat.jpg"}
               company="삼양 그룹"
               title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
               viewCount={10}
@@ -150,7 +152,7 @@ export default function MobileActivityList({
               onListClick={() => {}}
               onBookmarkClick={() => {}}
             />
-          ),
+          )
         )}
       </div>
     </div>

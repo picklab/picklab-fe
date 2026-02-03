@@ -1,8 +1,10 @@
-import PcSearchPage from '../_components/PcSearchPage';
-import MobileSearchPage from '../_components/MobileSearchPage';
+/** @format */
 
-export default function SearchPage({ params }: { params: { search: string } }) {
-  const { search } = params;
+import PcSearchPage from "../_components/PcSearchPage";
+import MobileSearchPage from "../_components/MobileSearchPage";
+
+export default async function SearchPage({ params }: { params: Promise<{ search: string }> }) {
+  const { search } = await params;
   return (
     <>
       <PcSearchPage search={search} />

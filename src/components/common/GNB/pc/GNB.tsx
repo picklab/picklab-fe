@@ -1,14 +1,16 @@
-'use client';
-import Button from '@/components/common/Button/Button';
-import Search from '@/components/common/Field/Search';
-import Avatar from '@/components/common/GNB/pc/Avatar';
-import GNBMenu from '@/components/common/GNB/pc/GNBMenu';
-import Icon from '@/components/common/Icon/Icon';
-import { GNBNavigationMenus } from '@/constants/menus';
-import clsx from 'clsx';
-import Image from 'next/image';
-import Link from 'next/link';
-import  { useState } from 'react';
+/** @format */
+
+"use client";
+import Button from "@/components/common/Button/Button";
+import Search from "@/components/common/Field/Search";
+import Avatar from "@/components/common/GNB/pc/Avatar";
+import GNBMenu from "@/components/common/GNB/pc/GNBMenu";
+import Icon from "@/components/common/Icon/Icon";
+import { GNBNavigationMenus } from "@/constants/menus";
+import clsx from "clsx";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 
 interface GNBProps {
   isLogin: boolean;
@@ -16,21 +18,19 @@ interface GNBProps {
 
 const GNB = ({ isLogin = false }: GNBProps) => {
   const options = [
-    { value: 'label1', label: '아주대학교' },
-    { value: 'label2', label: '아주아주대학교' },
-    { value: 'label3', label: '아주초등학교' },
-    { value: 'label4', label: '아주중학교' },
+    { value: "label1", label: "아주대학교" },
+    { value: "label2", label: "아주아주대학교" },
+    { value: "label3", label: "아주초등학교" },
+    { value: "label4", label: "아주중학교" },
   ];
   const [selected, setSelected] = useState<string>(options[0].value);
 
-
-  
   return (
     <header className="w-full">
       <div
         className={clsx(
-          'max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[44.5px]',
-          !isLogin && '!gap-12',
+          "max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[44.5px]",
+          !isLogin && "!gap-12"
         )}
       >
         {/* 로고 및 메뉴 */}
@@ -59,7 +59,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
                 setSelected(value as string);
               },
               options: options,
-              className: 'w-[368px]',
+              className: "w-[368px]",
             }}
             rounded
             scale="sm"
@@ -93,10 +93,13 @@ const GNB = ({ isLogin = false }: GNBProps) => {
           </nav>
         ) : (
           <div className="flex gap-space-10">
-            <Link href="/signin" aria-label="로그인"> 
-                <Button label="로그인" buttonStyle="outlined" size="sm" /> 
-                </Link>
-            <Link href="/signup" aria-label="회원가입">  <Button label="회원가입" buttonStyle="filled" size="sm" /></Link>
+            <Link href="/signin" aria-label="로그인">
+              <Button label="로그인" buttonStyle="outlined" size="sm" />
+            </Link>
+            <Link href="/signup" aria-label="회원가입">
+              {" "}
+              <Button label="회원가입" buttonStyle="filled" size="sm" />
+            </Link>
           </div>
         )}
       </div>

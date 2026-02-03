@@ -1,16 +1,19 @@
-import Banner from './_components/Banner';
-import PcActivityList from './_components/pc/ActivityList';
-import NewActivityList from './_components/pc/NewActivityList';
-import Pagination from '@/components/common/Pagination/Pagination';
-import clsx from 'clsx';
-import MobileActivityList from './_components/mobile/ActivityList';
+/** @format */
+
+import Banner from "./_components/Banner";
+import PcActivityList from "./_components/pc/ActivityList";
+import NewActivityList from "./_components/pc/NewActivityList";
+import Pagination from "@/components/common/Pagination/Pagination";
+import clsx from "clsx";
+import MobileActivityList from "./_components/mobile/ActivityList";
+import { fetchWithAuth } from "@/lib/api";
 
 // 상수 정의
 const ACTIVITY_TITLES = {
-  RECOMMENDED: '00 직무를 위한 추천 활동',
-  POPULAR: '이번주 인기 대외활동',
-  RECENT: '최근에 본 활동',
-  NEW: '방금 올라온 따끈따끈한 활동!',
+  RECOMMENDED: "00 직무를 위한 추천 활동",
+  POPULAR: "이번주 인기 대외활동",
+  RECENT: "최근에 본 활동",
+  NEW: "방금 올라온 따끈따끈한 활동!",
 } as const;
 
 const PAGINATION_CONFIG = {
@@ -20,17 +23,17 @@ const PAGINATION_CONFIG = {
 
 // 스타일 상수
 const MOBILE_STYLES = {
-  CONTAINER: 'flex flex-col pb-[113px]',
-  FIRST_SECTION: 'mt-5',
-  SECOND_SECTION: 'mt-10',
-  THIRD_SECTION: 'mt-[60px]',
+  CONTAINER: "flex flex-col pb-[113px]",
+  FIRST_SECTION: "mt-5",
+  SECOND_SECTION: "mt-10",
+  THIRD_SECTION: "mt-[60px]",
 } as const;
 
 const PC_STYLES = {
-  CONTAINER: 'flex flex-col gap-10 px-5 pb-20',
-  CONTENT_WRAPPER: 'flex flex-col items-center justify-center gap-[60px]',
-  HIDDEN_ON_MOBILE: 'mobile:hidden',
-  HIDDEN_ON_PC: 'pc:hidden',
+  CONTAINER: "flex flex-col gap-[5rem] px-5 pb-20",
+  CONTENT_WRAPPER: "flex flex-col items-center justify-center gap-[100px]",
+  HIDDEN_ON_MOBILE: "mobile:hidden",
+  HIDDEN_ON_PC: "pc:hidden",
 } as const;
 
 // 타입 정의
@@ -39,7 +42,30 @@ interface ResponsiveLayoutProps {
   isStorybook?: boolean;
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const response = await fetchWithAuth(
+    "http://localhost:3000/api/activities?category=EXTRACURRICULAR&sort=LATEST&size=20&page=1"
+  ).then((res) => res.json());
+
+  const popularResponse = await fetchWithAuth("http://localhost:3000/api/activities/popular?size=20&page=1").then(
+    (res) => res.json()
+  );
+
+  const recentlyViewedResponse = await fetchWithAuth(
+    "http://localhost:3000/api/activities/recently-viewed?size=20&page=1"
+  ).then((res) => res.json());
+
+  const recommendationsResponse = await fetchWithAuth(
+    "http://localhost:3000/api/activities/recommendations?size=20&page=1"
+  ).then((res) => res.json());
+
+  console.log("================");
+  console.log(response);
+  console.log(popularResponse);
+  console.log(recentlyViewedResponse);
+  console.log(recommendationsResponse);
+  console.log("================");
+
   return (
     <>
       <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} />
@@ -61,12 +87,16 @@ export function MobileLayout({ className }: ResponsiveLayoutProps) {
 
 export function PcLayout({ className, isStorybook }: ResponsiveLayoutProps) {
   return (
-    <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? 'flex' : className)}>
+    <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? "flex" : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
         <Banner />
+        {/* 직무를 위한 추천 활동 */}
         <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} />
+        {/* 이번주 인기 대외활동 */}
         <PcActivityList title={ACTIVITY_TITLES.POPULAR} type="list" />
+        {/* 최근에 본 활동 */}
         <PcActivityList title={ACTIVITY_TITLES.RECENT} />
+        {/* 방금 올라온 따끈따끈한 활동! */}
         <NewActivityList title={ACTIVITY_TITLES.NEW} />
       </div>
       <Pagination totalPage={PAGINATION_CONFIG.TOTAL_PAGE} activePage={PAGINATION_CONFIG.ACTIVE_PAGE} />

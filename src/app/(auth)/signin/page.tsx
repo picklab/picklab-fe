@@ -1,3 +1,5 @@
+'use client';
+
 import Typography from '@/components/common/Typography';
 import { clsx } from 'clsx';
 import Image from 'next/image';
@@ -64,18 +66,21 @@ function AuthContent() {
     <div className="flex flex-col gap-12 items-center">
       <div className="flex flex-col gap-3">
         {SOCIAL_LOGIN_IMAGES.map((image) => (
-          <div
+          <button
             key={image.alt}
             className={clsx(
               'flex gap-[10px] items-center justify-center w-[335px] h-[56px] rounded-md',
               image.className,
             )}
+            onClick={() => {
+              window.location.href = `http://161.153.21.86:8080/v1/auth/login/KAKAO`;
+            }}
           >
             <Image src={image.src} alt={image.alt} width={24} height={24} />
             <Typography tag="p" type="Headline2Medium" id="auth-content-description" className={image.color}>
               {image.text}
             </Typography>
-          </div>
+          </button>
         ))}
       </div>
       <Link href="/auth/signup" className="underline underline-offset-4 decoration-[#A5ADBB]">

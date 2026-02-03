@@ -1,36 +1,37 @@
-'use client';
-import Card from '@/components/common/Card/Card';
-import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
-import BoxTab from '@/components/common/Tab/BoxTab';
-import Typography from '@/components/common/Typography';
-import { useState } from 'react';
-import clsx from 'clsx';
+/** @format */
+
+"use client";
+import Card from "@/components/common/Card/Card";
+import ChevronRight from "@/components/common/Icon/assets/ChevronRight";
+import BoxTab from "@/components/common/Tab/BoxTab";
+import Typography from "@/components/common/Typography";
+import { useState } from "react";
+import clsx from "clsx";
 
 const TAB_LIST = [
-  { label: '전체', value: 'all' },
-  { label: '대외활동', value: 'external_activity' },
-  { label: '강연/세미나', value: 'seminar' },
-  { label: '교육', value: 'education' },
-  { label: '공모전/해커톤', value: 'contest' },
+  { label: "전체", value: "all" },
+  { label: "대외활동", value: "activities" },
+  { label: "강연/세미나", value: "seminar" },
+  { label: "교육", value: "education" },
+  { label: "공모전/해커톤", value: "contest" },
 ];
 
 export default function PcSearchPage({ search, isStorybook = false }: { search: string; isStorybook?: boolean }) {
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
   const handleTabClick = (value: string) => {
     setActiveTab(value);
   };
-  console.log(search);
 
   return (
-    <div className={clsx('w-[1100px] px-5  flex-col gap-10', isStorybook ? 'flex' : 'hidden pc:flex')}>
+    <div className={clsx("w-[1100px] px-5  flex-col gap-10", isStorybook ? "flex" : "hidden pc:flex")}>
       <div role="tablist" className="flex">
         {TAB_LIST.map((tab) => (
           <BoxTab
             key={tab.value}
             active={activeTab === tab.value}
-            label={tab.label}
+            label={tab.label as "전체" | "대외활동" | "강연/세미나" | "교육" | "공모전/해커톤"}
             notiNumber="0"
-            href="#"
+            href={`/search/${search}?tab=${tab.value}`}
             id={tab.value}
             panelId={tab.value}
             onClick={() => handleTabClick(tab.value)}
@@ -58,14 +59,14 @@ function ActivityList({ title, count }: { title: string; count: number }) {
         {Array.from({ length: 4 }).map((_, index) => (
           <Card
             key={index}
-            imageUrl={'/imgs/cat.jpg'}
+            imageUrl={"/imgs/cat.jpg"}
             chipText="공모전/해커톤"
             badgeText="D-01"
             badgeVariant="default"
             isBookmarked={false}
             companyName="삼양 그룹"
             title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
-            jobs={['개발']}
+            jobs={["개발"]}
             onBookmarkClick={() => {}}
             onCardClick={() => {}}
           />

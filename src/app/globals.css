@@ -1,3 +1,5 @@
+/** @format */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,15 +12,15 @@
 
 @layer base {
   html {
-    font-family: 'Pretendard-Regular';
+    font-family: "Pretendard-Regular";
     -webkit-font-smoothing: antialiased;
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff") format("woff");
   }
 }
 
 html,
 body {
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 .box-tab {
@@ -27,9 +29,9 @@ body {
     padding-right: 3px;
   }
   /* selected가 참이면, 다음 형제요소의 div 접근, 좌로 3px만큼 background image를 추가했습니다! */
-  &[aria-selected='true'] {
+  &[aria-selected="true"] {
     & + a {
-      background-image: linear-gradient(to right, black 3px, transparent 2px);
+      background-image: linear-gradient(to right, #00bc7d 3px, transparent 2px);
     }
   }
 }

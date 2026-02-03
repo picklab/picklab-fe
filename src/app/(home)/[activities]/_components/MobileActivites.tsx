@@ -1,15 +1,17 @@
-'use client';
-import { useState } from 'react';
-import MobileFilterSheet from './MobileFilterSheet';
+/** @format */
 
-import clsx from 'clsx';
-import Typography from '@/components/common/Typography';
-import Link from 'next/link';
-import MobileActivityList from './MobileActivityList';
+"use client";
+import { useState } from "react";
+import MobileFilterSheet from "./MobileFilterSheet";
+
+import clsx from "clsx";
+import Typography from "@/components/common/Typography";
+import Link from "next/link";
+import MobileActivityList from "./MobileActivityList";
 
 export default function MobileActivites() {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
-  const [snbMenu, setSnbMenu] = useState<MenuId>('all');
+  const [snbMenu, setSnbMenu] = useState<MenuId>("all");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const openSheet = () => setIsSheetOpen(true);
@@ -30,14 +32,14 @@ export default function MobileActivites() {
 }
 
 const MENU_ITEMS = [
-  { id: 'all', label: '전체', href: '#all' },
-  { id: 'external-activity', label: '대외활동', href: '#external-activity' },
-  { id: 'seminar', label: '강연/세미나', href: '#seminar' },
-  { id: 'education', label: '교육', href: '#education' },
-  { id: 'contest', label: '공모전/해커톤', href: '#contest' },
+  { id: "all", label: "전체", href: "#all" },
+  { id: "external-activity", label: "대외활동", href: "#external-activity" },
+  { id: "seminar", label: "강연/세미나", href: "#seminar" },
+  { id: "education", label: "교육", href: "#education" },
+  { id: "contest", label: "공모전/해커톤", href: "#contest" },
 ] as const;
 
-type MenuId = (typeof MENU_ITEMS)[number]['id'];
+type MenuId = (typeof MENU_ITEMS)[number]["id"];
 
 interface ArchiveMenuProps {
   snbMenu: MenuId;
@@ -53,8 +55,8 @@ function ArchiveMenu({ snbMenu, setSnbMenu }: ArchiveMenuProps) {
           href={item.href}
           id={item.id}
           className={clsx(
-            'box-border flex justify-center items-center border-b-[1.5px] border-gray-30',
-            snbMenu === item.id && '!border-primary-50 !border-b-[3px]',
+            "box-border flex justify-center items-center border-b-[1.5px] border-gray-30",
+            snbMenu === item.id && "!border-primary-50 !border-b-[3px]"
           )}
           onClick={() => setSnbMenu(item.id)}
         >
