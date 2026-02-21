@@ -1,22 +1,80 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import ky from 'ky';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const reviewId = params.id;
-  // 내가 작성한 리뷰 단건 조회
-  // 비즈니스 로직 구현 예정
-  return NextResponse.json({ message: `GET /v1/reviews/${reviewId} endpoint` });
+const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  try {
+    const accessToken = request.cookies.get('accessToken')?.value;
+    if (!accessToken) {
+      return NextResponse.json({ error: '인증 토큰이 없습니다.' }, { status: 401 });
+    }
+
+    const response = await ky.get(`${BACKEND_URL}/v1/reviews/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      throwHttpErrors: false,
+    });
+
+    const data = await response.json();
+
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error(`리뷰 상세 조회(${id}) 중 오류 발생:`, error);
+    return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });
+  }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const reviewId = params.id;
-  // 리뷰 수정
-  // 비즈니스 로직 구현 예정
-  return NextResponse.json({ message: `PUT /v1/reviews/${reviewId} endpoint` });
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  try {
+    const accessToken = request.cookies.get('accessToken')?.value;
+    if (!accessToken) {
+      return NextResponse.json({ error: '인증 토큰이 없습니다.' }, { status: 401 });
+    }
+
+    const body = await request.json();
+
+    const response = await ky.put(`${BACKEND_URL}/v1/reviews/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      json: body,
+      throwHttpErrors: false,
+    });
+
+    const data = await response.json();
+
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error(`리뷰 수정(${id}) 중 오류 발생:`, error);
+    return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });
+  }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const reviewId = params.id;
-  // 리뷰 삭제
-  // 비즈니스 로직 구현 예정
-  return NextResponse.json({ message: `DELETE /v1/reviews/${reviewId} endpoint` });
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  try {
+    const accessToken = request.cookies.get('accessToken')?.value;
+    if (!accessToken) {
+      return NextResponse.json({ error: '인증 토큰이 없습니다.' }, { status: 401 });
+    }
+
+    const response = await ky.delete(`${BACKEND_URL}/v1/reviews/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      throwHttpErrors: false,
+    });
+
+    const data = await response.json();
+
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error(`리뷰 삭제(${id}) 중 오류 발생:`, error);
+    return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });
+  }
 }

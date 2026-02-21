@@ -7,9 +7,12 @@ import Avatar from "@/components/common/GNB/pc/Avatar";
 import GNBMenu from "@/components/common/GNB/pc/GNBMenu";
 import Icon from "@/components/common/Icon/Icon";
 import { GNBNavigationMenus } from "@/constants/menus";
+import { useAuthClient } from "@/contexts/AuthContext";
+
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+
 import { useState } from "react";
 
 interface GNBProps {
@@ -17,6 +20,8 @@ interface GNBProps {
 }
 
 const GNB = ({ isLogin = false }: GNBProps) => {
+  const { isAuthenticated } = useAuthClient();
+
   const options = [
     { value: "label1", label: "아주대학교" },
     { value: "label2", label: "아주아주대학교" },
@@ -66,7 +71,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
             className="w-[368px]"
           />
         </div>
-        {isLogin ? (
+        {isAuthenticated ? (
           <nav aria-label="유저 메뉴">
             <ul className="flex items-center gap-4">
               <li>
@@ -84,7 +89,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
                   <Icon size={20} icon="largeCowBell" />
                 </Link>
               </li>
-              <li>
+              <li className="flex items-center gap-4">
                 <Link href="/profile" aria-label="프로필">
                   <Avatar className="size-6" />
                 </Link>

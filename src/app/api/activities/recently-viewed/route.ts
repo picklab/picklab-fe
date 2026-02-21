@@ -1,8 +1,25 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import ky from 'ky';
+import { getForwardedHeaders } from '@/utils/apiRouteUtils';
 
-export async function GET(request: Request) {
-  // 최근 본 활동 조회
-  // 비즈니스 로직 구현 예정
-  return NextResponse.json({ message: 'GET /v1/activities/recently-viewed endpoint' });
+const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const headers = getForwardedHeaders(request);
+
+    const response = await ky.get(`${BACKEND_URL}/v1/activities/recently-viewed`, {
+      headers,
+      searchParams,
+      throwHttpErrors: false,
+    });
+
+    const data = await response.json();
+
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error('최근 본 활동 조회 중 오류 발생:', error);
+    return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });
+  }
 }
-

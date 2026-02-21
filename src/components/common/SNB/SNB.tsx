@@ -1,14 +1,17 @@
-'use client';
+/** @format */
 
-import Button from '@/components/common/Button/Button';
-import { Divider } from '@/components/common/Divider/Divider';
-import Avatar from '@/components/common/GNB/pc/Avatar';
-import Typography from '@/components/common/Typography';
-import { SNBNavigationMenus, SNBNavigationMenusType } from '@/constants/menus';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+"use client";
+
+import Button from "@/components/common/Button/Button";
+import { Divider } from "@/components/common/Divider/Divider";
+import Avatar from "@/components/common/GNB/pc/Avatar";
+import Typography from "@/components/common/Typography";
+import { SNBNavigationMenus, SNBNavigationMenusType } from "@/constants/menus";
+import { useAuthClient } from "@/contexts/AuthContext";
+import clsx from "clsx";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
 
 // SNB 컴포넌트 props 타입
 interface SNBProps {
@@ -17,13 +20,15 @@ interface SNBProps {
 
 const SNB = ({ Jobs }: SNBProps) => {
   const pathname = usePathname(); // 현재 경로 가져오기
+  const router = useRouter();
+  const { clientLogout } = useAuthClient();
 
   // 섹션 활성화 여부 계산 함수
   const isSectionActive = (
     pathname: string,
     href: string,
     activeHref?: string,
-    children?: SNBNavigationMenusType[],
+    children?: SNBNavigationMenusType[]
   ) => {
     // activeHref가 있고, 현재 경로가 activeHref로 시작하면 활성화
     if (activeHref && pathname.startsWith(activeHref)) return true;
@@ -36,6 +41,20 @@ const SNB = ({ Jobs }: SNBProps) => {
 
   // 서브 메뉴 활성화 여부 계산 함수
   const isSubActive = (pathname: string, subHref: string) => pathname === subHref;
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+      if (response.ok) {
+        clientLogout();
+        router.push("/signin");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <aside className="w-[260px] h-[960px] px-6 flex flex-col border-r border-gray-20" aria-label="사이드 내비게이션">
@@ -87,16 +106,16 @@ const SNB = ({ Jobs }: SNBProps) => {
             const active = isSectionActive(pathname, href, activeHref, children);
 
             return (
-              <li key={href} className={clsx('flex flex-col px-2 py-space-10', active && 'gap-space-10')}>
+              <li key={href} className={clsx("flex flex-col px-2 py-space-10", active && "gap-space-10")}>
                 {/* 상위 메뉴 */}
                 <Link
                   href={href}
-                  aria-current={active ? 'page' : undefined}
-                  className={clsx('flex h-[26px] items-center')}
+                  aria-current={active ? "page" : undefined}
+                  className={clsx("flex h-[26px] items-center")}
                 >
                   <Typography
                     type="Headline1SemiBold"
-                    className={clsx(active ? 'text-gray-90' : 'text-gray-40', 'hover:text-gray-90')}
+                    className={clsx(active ? "text-gray-90" : "text-gray-40", "hover:text-gray-90")}
                   >
                     {label}
                   </Typography>
@@ -111,8 +130,8 @@ const SNB = ({ Jobs }: SNBProps) => {
                           <Typography
                             type="Body2Semibold"
                             className={clsx(
-                              isSubActive(pathname, subHref) ? 'text-gray-90' : 'text-gray-40',
-                              'hover:text-gray-90',
+                              isSubActive(pathname, subHref) ? "text-gray-90" : "text-gray-40",
+                              "hover:text-gray-90"
                             )}
                           >
                             {subLabel}
@@ -125,6 +144,13 @@ const SNB = ({ Jobs }: SNBProps) => {
               </li>
             );
           })}
+          <li className={clsx("flex flex-col px-2 py-space-10 cursor-pointer")} onClick={handleLogout}>
+            {/* 상위 메뉴 */}
+
+            <Typography type="Headline1SemiBold" className={clsx("text-gray-40", "hover:text-gray-90")}>
+              로그아웃
+            </Typography>
+          </li>
         </ul>
       </nav>
     </aside>

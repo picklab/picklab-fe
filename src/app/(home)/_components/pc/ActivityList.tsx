@@ -1,11 +1,13 @@
 'use client';
 
 import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Card from '@/components/common/Card/Card';
 import ChevronLeft from '@/components/common/Icon/assets/ChevronLeft';
 import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 import Typography from '@/components/common/Typography';
 import ListItem from '@/components/common/List/ListItem';
+import { ListItemData, CardData } from '../constant';
 
 interface ActivityListProps {
   title: string;
@@ -14,6 +16,7 @@ interface ActivityListProps {
 
 export default function ActivityList({ title, type = 'card' }: ActivityListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -43,33 +46,44 @@ export default function ActivityList({ title, type = 'card' }: ActivityListProps
         </div>
       </div>
       <div ref={scrollContainerRef} className="flex gap-5 overflow-x-scroll hide-scrollbar w-full">
-        {Array.from({ length: 10 }).map((_, index) =>
+        {Array.from({ length: CardData.length }).map((_, index) =>
           type === 'card' ? (
             <Card
               key={index}
-              imageUrl={'/imgs/cat.jpg'}
+              imageUrl={CardData[index].thumbnailImage || '/imgs/cat.jpg'}
               chipText="공모전/해커톤"
-              badgeText="D-01"
+              badgeText={CardData[index].registrationPeriod}
               badgeVariant="default"
               isBookmarked={false}
-              companyName="삼양 그룹"
-              title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
-              jobs={['개발']}
+              companyName={CardData[index].companyType}
+              title={CardData[index].title}
+              jobs={CardData[index].activityField
+                .split(';')
+                .map((job) => job.trim())
+                .filter((job) => ['기획', '개발', '마케팅', '디자인', 'AI', '마케터', '기타'].includes(job)) as (
+                | '기획'
+                | '개발'
+                | '마케팅'
+                | '디자인'
+                | 'AI'
+                | '마케터'
+                | '기타'
+              )[]}
               onBookmarkClick={() => {}}
-              onCardClick={() => {}}
+              onCardClick={() => router.push(CardData[index].detailLink)}
             />
           ) : (
             <ListItem
               key={index}
-              thumbnail={'/imgs/cat.jpg'}
-              title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
-              label="회사명"
+              thumbnail={ListItemData[index].thumbnailImage || '/imgs/cat.jpg'}
+              title={ListItemData[index].title}
+              label={ListItemData[index].organizer}
               chipTitle="공모전/해커톤"
-              organization="삼양 그룹"
-              startDate={new Date('2025-05-01')}
-              endDate={new Date('2025-05-15')}
+              organization={ListItemData[index].organizer}
+              startDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[0])}
+              endDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[1])}
               isFinished={false}
-              onListClick={() => {}}
+              onListClick={() => router.push(CardData[index].detailLink)}
               onBookmarkClick={() => {}}
               saveCount={10}
               viewCount={100}

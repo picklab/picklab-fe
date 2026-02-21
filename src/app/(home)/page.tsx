@@ -6,7 +6,7 @@ import NewActivityList from "./_components/pc/NewActivityList";
 import Pagination from "@/components/common/Pagination/Pagination";
 import clsx from "clsx";
 import MobileActivityList from "./_components/mobile/ActivityList";
-// import { fetchWithAuth } from "@/lib/api";
+
 
 // 상수 정의
 const ACTIVITY_TITLES = {
@@ -58,6 +58,8 @@ export default async function HomePage() {
   // const recommendationsResponse = await fetchWithAuth(
   //   "http://localhost:3000/api/activities/recommendations?size=20&page=1"
   // ).then((res) => res.json());
+
+
 
   return (
     <>

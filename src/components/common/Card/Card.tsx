@@ -17,7 +17,7 @@ interface CardProps {
   chipText: CardChipProps['text'];
   companyName: string;
   title: string;
-  jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI')[];
+  jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI' | '마케터' | '기타')[];
   onBookmarkClick?: (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => void;
   onCardClick: () => void;
 }
