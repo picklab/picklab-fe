@@ -334,6 +334,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               alt={`${activity.title} 썸네일`}
               fill
               sizes="244px"
+              unoptimized
               className="object-cover"
             />
             <button
@@ -376,7 +377,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
             <div className="flex flex-col gap-5">
               {detailImages.map((image) => (
                 <div key={image} className="relative w-full h-[720px] rounded-md overflow-hidden bg-gray-10">
-                  <Image src={image} alt="공고 상세 이미지" fill sizes="1060px" className="object-contain" />
+                  <Image src={image} alt="공고 상세 이미지" fill sizes="1060px" unoptimized className="object-contain" />
                 </div>
               ))}
             </div>

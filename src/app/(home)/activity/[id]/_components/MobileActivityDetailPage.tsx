@@ -307,7 +307,13 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
       {tab === 'detail' ? (
         <section className="flex flex-col gap-3">
           <div className="relative w-full h-[430px] rounded-lg overflow-hidden bg-gray-10">
-            <Image src={activity.thumbnailImage || '/imgs/cat.jpg'} alt={`${activity.title} 썸네일`} fill sizes="335px" />
+            <Image
+              src={activity.thumbnailImage || '/imgs/cat.jpg'}
+              alt={`${activity.title} 썸네일`}
+              fill
+              sizes="335px"
+              unoptimized
+            />
             <button
               type="button"
               aria-label="이미지 확대"
@@ -342,7 +348,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
 
           {detailImages.map((image) => (
             <div key={image} className="relative w-full h-[430px] rounded-lg overflow-hidden bg-gray-10">
-              <Image src={image} alt="공고 상세 이미지" fill sizes="335px" className="object-contain" />
+              <Image src={image} alt="공고 상세 이미지" fill sizes="335px" unoptimized className="object-contain" />
             </div>
           ))}
 
