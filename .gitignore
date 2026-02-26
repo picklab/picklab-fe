@@ -46,3 +46,11 @@ next-env.d.ts
 
 # storybook 관련
 .storybook/
+
+# vscode 관련
+.vscode/
+
+
+.env
+.env.*
+.codex
