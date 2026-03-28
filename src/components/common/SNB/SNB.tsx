@@ -8,6 +8,7 @@ import Avatar from "@/components/common/GNB/pc/Avatar";
 import Typography from "@/components/common/Typography";
 import { SNBNavigationMenus, SNBNavigationMenusType } from "@/constants/menus";
 import { useAuthClient } from "@/contexts/AuthContext";
+import { useMe } from "@/hooks/useMe";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -22,6 +23,7 @@ const SNB = ({ Jobs }: SNBProps) => {
   const pathname = usePathname(); // 현재 경로 가져오기
   const router = useRouter();
   const { clientLogout } = useAuthClient();
+  const { data: meData } = useMe();
 
   // 섹션 활성화 여부 계산 함수
   const isSectionActive = (
@@ -66,7 +68,7 @@ const SNB = ({ Jobs }: SNBProps) => {
             사용자 프로필
           </h2>
           <div className="flex h-[26px] justify-center items-center ">
-            <Typography type="Headline1SemiBold">닉네임</Typography>
+            <Typography type="Headline1SemiBold">{meData?.nickname || '닉네임'}</Typography>
           </div>
         </div>
         <div className="flex justify-center py-space-20">

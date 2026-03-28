@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import { CardData } from '../../_components/constant';
 import PcActivityDetailPage from './_components/PcActivityDetailPage';
 import MobileActivityDetailPage from './_components/MobileActivityDetailPage';
+import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
 
 interface ActivityDetailPageProps {
   params: Promise<{ id: string }>;
@@ -9,11 +9,13 @@ interface ActivityDetailPageProps {
 
 export default async function ActivityDetailPage({ params }: ActivityDetailPageProps) {
   const { id } = await params;
-  const activity = CardData.find((item) => item.detailLink.split('/').pop() === id);
+  const rawActivity = findActivityById(id);
 
-  if (!activity) {
-    notFound();
+  if (!rawActivity) {
+    return notFound();
   }
+
+  const activity = mapActivityToDetailItem(rawActivity);
 
   return (
     <>

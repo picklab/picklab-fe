@@ -62,7 +62,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
             <Button
               key={option}
               label={option}
-              size={isSelected ? "sm" : "base"}
+              size="base"
               buttonStyle={isSelected ? "filled" : "outlined"}
               isFullRounded={true}
               className="rounded-full"

@@ -25,16 +25,12 @@ export const ACTIVITY_FILTERS = [
     title: "활동분야",
     options: [
       "전체",
-      "기획/아이디어",
-      "광고/마케팅",
-      "디자인",
-      "사진/영상/UCC",
-      "IT/SW",
-      "문학/시나리오",
-      "봉사/사회공헌",
-      "학술/연구",
-      "창업/스타트업",
-      "기타",
+      "서포터즈",
+      "마케터",
+      "멘토링",
+      "기자단",
+      "해외봉사",
+      "국내봉사단",
     ],
   },
   {
@@ -73,3 +69,11 @@ export const ACTIVITIES = {
   education: "교육",
   contest: "공모전/해커톤",
 };
+
+export const MOBILE_ACTIVITY_MENU_TO_SLUG = {
+  all: "all",
+  "external-activity": "activities",
+  seminar: "seminar",
+  education: "education",
+  contest: "contest",
+} as const;

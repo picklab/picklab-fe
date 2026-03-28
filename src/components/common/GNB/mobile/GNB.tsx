@@ -32,9 +32,6 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         <Link href="/" aria-label="PickLab 홈">
           <Image src="/imgs/logo_mobile.png" width={93} height={22} alt="PickLab 로고" />
         </Link>
-        <Link href="/search" aria-label="검색">
-          <Icon size={24} icon="search" />
-        </Link>
       </div>
 
       {isLogin ? (

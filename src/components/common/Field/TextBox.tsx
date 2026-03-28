@@ -27,6 +27,7 @@ type InputOnlyProps = {
   rounded?: boolean; // 둥근 테두리 여부
   scale?: 'base' | 'sm'; // 사이즈
   icon?: IconType; // 우측 아이콘
+  iconClassName?: string;
 };
 
 // input 전용 전체 Props (공통 + 전용 + 기본 input props)
@@ -63,7 +64,8 @@ const TextBox = (props: TextBoxProps) => {
   // input인 경우 렌더링
   if (textBoxType === 'input') {
     // input 전용 Props 디스트럭처링
-    const { rounded = false, scale = 'base', icon, ...inputRest } = rest as InputOnlyProps & InputTextBoxProps;
+    const { rounded = false, scale = 'base', icon, iconClassName, ...inputRest } = rest as InputOnlyProps &
+      InputTextBoxProps;
 
     // input 전용 클래스
     const inputClass = clsx(
@@ -77,7 +79,13 @@ const TextBox = (props: TextBoxProps) => {
         {/* input 요소 렌더링 */}
         <input type="text" className={clsx(baseClass, inputClass)} disabled={disabled} {...inputRest} />
         {/* 아이콘이 있을 경우 렌더링 */}
-        {icon && <Icon className=" absolute top-1/2 -translate-y-1/2 right-4" icon={icon} size={24} />}
+        {icon && (
+          <Icon
+            className={clsx('absolute top-1/2 -translate-y-1/2 right-4', iconClassName)}
+            icon={icon}
+            size={24}
+          />
+        )}
       </div>
     );
   }

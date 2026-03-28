@@ -9,16 +9,19 @@ import Typography from '@/components/common/Typography';
 import ListItem from '@/components/common/List/ListItem';
 import { ListItemData, CardData } from '../constant';
 import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
+import { useActivities, type ActivityEndpoint } from '@/hooks/useActivities';
 
 interface ActivityListProps {
   title: string;
   type?: 'card' | 'list';
+  endpoint?: ActivityEndpoint;
 }
 
-export default function ActivityList({ title, type = 'card' }: ActivityListProps) {
+export default function ActivityList({ title, type = 'card', endpoint }: ActivityListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+  const { data: apiData, loading } = useActivities(endpoint ?? 'recommendations');
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -49,6 +52,11 @@ export default function ActivityList({ title, type = 'card' }: ActivityListProps
     }
   };
 
+  // API 데이터가 있으면 사용, 없으면 mock 데이터 fallback
+  const hasApiData = !loading && apiData.length > 0;
+  const showEmptyRecentlyViewed = endpoint === 'recently-viewed' && !loading && apiData.length === 0;
+  const shouldUseFallback = !loading && apiData.length === 0 && endpoint !== 'recently-viewed';
+
   return (
     <div className="w-full flex flex-col gap-3">
       <div className="flex justify-between items-center py-[1px]">
@@ -59,57 +67,103 @@ export default function ActivityList({ title, type = 'card' }: ActivityListProps
         </div>
       </div>
       <div ref={scrollContainerRef} className="flex gap-5 overflow-x-scroll hide-scrollbar w-full">
-        {Array.from({ length: CardData.length }).map((_, index) =>
-          (() => {
-            const item = CardData[index];
-            const activityId = extractActivityId(item.detailLink);
-            const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
+        {hasApiData
+          ? apiData.map((item) => {
+              const isBookmarked = bookmarkedMap[item.id] ?? false;
+              return type === 'card' ? (
+                <Card
+                  key={item.id}
+                  imageUrl={item.thumbnailImage || '/imgs/cat.jpg'}
+                  chipText={(item.activityType as '대외활동' | '강연/세미나' | '교육' | '공모전/해커톤') || '대외활동'}
+                  badgeText={item.registrationPeriod}
+                  badgeVariant="default"
+                  isBookmarked={isBookmarked}
+                  companyName={item.organizer}
+                  title={item.title}
+                  jobs={item.jobs as ('기획' | '개발' | '마케팅' | '디자인' | 'AI')[]}
+                  onBookmarkClick={() => handleBookmarkToggle(item.id)}
+                  onCardClick={() => router.push(item.detailLink)}
+                />
+              ) : (
+                <ListItem
+                  key={item.id}
+                  thumbnail={item.thumbnailImage || '/imgs/cat.jpg'}
+                  title={item.title}
+                  label={item.organizer}
+                  chipTitle={(item.activityType as '대외활동' | '강연/세미나' | '교육' | '공모전/해커톤') || '대외활동'}
+                  organization={item.organizer}
+                  startDate={item.activityPeriod ? new Date(item.activityPeriod.split(' ~ ')[0]) : new Date()}
+                  endDate={item.activityPeriod ? new Date(item.activityPeriod.split(' ~ ')[1] || item.activityPeriod.split(' ~ ')[0]) : new Date()}
+                  isFinished={false}
+                  isBookmarked={isBookmarked}
+                  onListClick={() => router.push(item.detailLink)}
+                  onBookmarkClick={() => handleBookmarkToggle(item.id)}
+                  saveCount={item.saveCount}
+                  viewCount={item.viewCount}
+                />
+              );
+            })
+          : null}
+        {showEmptyRecentlyViewed ? (
+          <div className="flex h-[240px] w-full items-center justify-center rounded-lg bg-gray-5">
+            <Typography type="Body2Medium" className="text-gray-50">
+              아직 본 활동이 없습니다. 관심 있는 공고를 눌러보면 이곳에 다시 표시됩니다.
+            </Typography>
+          </div>
+        ) : null}
+        {shouldUseFallback
+          ? Array.from({ length: CardData.length }).map((_, index) =>
+              (() => {
+                const item = CardData[index];
+                const activityId = extractActivityId(item.detailLink);
+                const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
 
-            return type === 'card' ? (
-              <Card
-                key={index}
-                imageUrl={item.thumbnailImage || '/imgs/cat.jpg'}
-                chipText="공모전/해커톤"
-                badgeText={item.registrationPeriod}
-                badgeVariant="default"
-                isBookmarked={isBookmarked}
-                companyName={item.companyType}
-                title={item.title}
-                jobs={item.activityField
-                  .split(';')
-                  .map((job) => job.trim())
-                  .filter((job) => ['기획', '개발', '마케팅', '디자인', 'AI', '마케터', '기타'].includes(job)) as (
-                  | '기획'
-                  | '개발'
-                  | '마케팅'
-                  | '디자인'
-                  | 'AI'
-                  | '마케터'
-                  | '기타'
-                )[]}
-                onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
-                onCardClick={() => router.push(item.detailLink)}
-              />
-            ) : (
-              <ListItem
-                key={index}
-                thumbnail={ListItemData[index].thumbnailImage || '/imgs/cat.jpg'}
-                title={ListItemData[index].title}
-                label={ListItemData[index].organizer}
-                chipTitle="공모전/해커톤"
-                organization={ListItemData[index].organizer}
-                startDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[0])}
-                endDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[1])}
-                isFinished={false}
-                isBookmarked={isBookmarked}
-                onListClick={() => router.push(item.detailLink)}
-                onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
-                saveCount={10}
-                viewCount={100}
-              />
-            );
-          })(),
-        )}
+                return type === 'card' ? (
+                  <Card
+                    key={index}
+                    imageUrl={item.thumbnailImage || '/imgs/cat.jpg'}
+                    chipText="공모전/해커톤"
+                    badgeText={item.registrationPeriod}
+                    badgeVariant="default"
+                    isBookmarked={isBookmarked}
+                    companyName={item.companyType}
+                    title={item.title}
+                    jobs={item.activityField
+                      .split(';')
+                      .map((job) => job.trim())
+                      .filter((job) => ['기획', '개발', '마케팅', '디자인', 'AI', '마케터', '기타'].includes(job)) as (
+                      | '기획'
+                      | '개발'
+                      | '마케팅'
+                      | '디자인'
+                      | 'AI'
+                      | '마케터'
+                      | '기타'
+                    )[]}
+                    onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+                    onCardClick={() => router.push(item.detailLink)}
+                  />
+                ) : (
+                  <ListItem
+                    key={index}
+                    thumbnail={ListItemData[index].thumbnailImage || '/imgs/cat.jpg'}
+                    title={ListItemData[index].title}
+                    label={ListItemData[index].organizer}
+                    chipTitle="공모전/해커톤"
+                    organization={ListItemData[index].organizer}
+                    startDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[0])}
+                    endDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[1])}
+                    isFinished={false}
+                    isBookmarked={isBookmarked}
+                    onListClick={() => router.push(item.detailLink)}
+                    onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+                    saveCount={10}
+                    viewCount={100}
+                  />
+                );
+              })(),
+            )
+          : null}
       </div>
     </div>
   );

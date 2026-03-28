@@ -19,19 +19,19 @@ export const GNBNavigationMenus = [
 export const SNBNavigationMenus: SNBNavigationMenusType[] = [
   {
     label: "MY 활동",
-    href: "/my",
+    href: "/profile/archive",
   },
   {
     label: "작성 글",
-    href: "/my/posts",
+    href: "/profile/archive",
   },
   {
     label: "계정",
-    href: "/my/account/profile", // 대표 메뉴는 계정관리
-    activeHref: "/my/account", // /my/account로 시작하는 경로에서 활성화
+    href: "/profile/account/info",
+    activeHref: "/profile/account",
     children: [
-      { label: "계정관리", href: "/my/account/profile" },
-      { label: "알림관리", href: "/my/account/notification" },
+      { label: "계정관리", href: "/profile/account/info" },
+      { label: "알림관리", href: "/profile/account/notification" },
     ],
   },
 ] as const;

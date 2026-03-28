@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { ActivityCardItem } from '@/app/(home)/_components/constant';
@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
+import { recordRecentlyViewedActivity } from '@/lib/activity-data';
 
 interface PcActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -16,15 +17,17 @@ interface PcActivityDetailPageProps {
 type DetailTab = 'detail' | 'review';
 
 const getApplyLink = (activity: ActivityCardItem) => {
-  if (activity.detailLink.startsWith('http')) {
-    return activity.detailLink;
+  const directLink = activity.applyLink || activity.homepage || activity.detailLink;
+
+  if (directLink.startsWith('http')) {
+    return directLink;
   }
 
   if (activity.source === '링커리어') {
-    return `https://linkareer.com${activity.detailLink}`;
+    return `https://linkareer.com${directLink}`;
   }
 
-  return activity.detailLink;
+  return directLink;
 };
 
 const splitDetailImages = (detailImage: string) =>
@@ -224,6 +227,12 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
 
   const reviewCards = useMemo(() => [true, false, false], []);
 
+  useEffect(() => {
+    if (activityId) {
+      recordRecentlyViewedActivity(activityId);
+    }
+  }, [activityId]);
+
   const handleBookmarkToggle = async () => {
     if (!activityId || isBookmarkLoading) return;
     try {
@@ -416,7 +425,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
                 활동 내용
               </Typography>
               <Typography type="Body2Regular" className="text-gray-70 whitespace-pre-line">
-                {activity.title}\n주최기관: {activity.organizer}\n참여대상: {activity.target || '대상 제한 없음'}
+                {activity.description || `${activity.title}\n주최기관: ${activity.organizer}\n참여대상: ${activity.target || '대상 제한 없음'}`}
               </Typography>
             </div>
 
@@ -431,26 +440,11 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
 
             <div className="flex flex-col gap-2">
               <Typography type="Heading2Semibold" className="text-gray-90">
-                필수 지원서 양식
+                지원 안내
               </Typography>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  className="h-space-40 rounded-small bg-primary-5 px-space-16 inline-flex items-center justify-center"
-                >
-                  <Typography type="Body2Medium" className="text-primary-70">
-                    지원 pdf
-                  </Typography>
-                </button>
-                <button
-                  type="button"
-                  className="h-space-40 rounded-small bg-gray-10 px-space-16 inline-flex items-center justify-center"
-                >
-                  <Typography type="Body2Medium" className="text-gray-60">
-                    파일 없음
-                  </Typography>
-                </button>
-              </div>
+              <Typography type="Body2Regular" className="text-gray-70">
+                별도 첨부파일은 수집되지 않았습니다. 지원서 양식과 제출 방식은 홈페이지 또는 지원하기 링크에서 확인해 주세요.
+              </Typography>
             </div>
           </div>
         </section>

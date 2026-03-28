@@ -3,7 +3,6 @@ import { proxyWithAuth } from '../../../_lib/proxy';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> | { id: string } }) {
   const { id } = await Promise.resolve(params);
-  console.log(request)
   return proxyWithAuth({
     request,
     endpoint: `/v1/activities/${id}/bookmarks`,

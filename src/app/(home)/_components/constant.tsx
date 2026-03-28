@@ -1,5 +1,6 @@
 export interface ActivityCardItem {
   detailLink: string;
+  applyLink?: string;
   activityType: string;
   source: string;
   title: string;
@@ -14,6 +15,7 @@ export interface ActivityCardItem {
   contestField: string;
   activityField: string;
   costPrize: string;
+  description?: string;
   thumbnailImage: string;
   detailImage: string;
 }

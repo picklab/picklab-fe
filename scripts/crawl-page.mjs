@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 import { parseArgs } from "node:util";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 const { values } = parseArgs({
   options: {
@@ -15,6 +17,7 @@ const { values } = parseArgs({
     endDate: { type: "string" },
     limit: { type: "string" },
     waitMs: { type: "string" },
+    output: { type: "string" },
     dumpPageText: { type: "boolean", default: false },
     headful: { type: "boolean", default: false },
   },
@@ -107,7 +110,12 @@ async function main() {
 
     if (values.dumpPageText) {
       const bodyText = normalizeText(await page.locator("body").textContent());
-      console.log(JSON.stringify({ url, bodyText }, null, 2));
+      const payload = JSON.stringify({ url, bodyText }, null, 2);
+      if (values.output) {
+        await mkdir(path.dirname(values.output), { recursive: true });
+        await writeFile(values.output, payload, "utf8");
+      }
+      console.log(payload);
       return;
     }
 
@@ -125,7 +133,12 @@ async function main() {
       }
     }
 
-    console.log(JSON.stringify(results, null, 2));
+    const payload = JSON.stringify(results, null, 2);
+    if (values.output) {
+      await mkdir(path.dirname(values.output), { recursive: true });
+      await writeFile(values.output, payload, "utf8");
+    }
+    console.log(payload);
   } finally {
     await browser.close();
   }

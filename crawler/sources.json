@@ -1,0 +1,23 @@
+{
+  "allcon": {
+    "name": "All-Con",
+    "enabled": true,
+    "mode": "json-endpoint",
+    "listUrl": "https://www.all-con.co.kr/page/ajax.contest_list.php?t=2&page={page}",
+    "source": "all-con"
+  },
+  "wevity": {
+    "name": "Wevity",
+    "enabled": true,
+    "mode": "html-list",
+    "listUrl": "https://www.wevity.com/?c=active&s=1&gub=1&gp={page}",
+    "source": "wevity"
+  },
+  "linkareer": {
+    "name": "Linkareer",
+    "enabled": false,
+    "mode": "disabled",
+    "source": "linkareer",
+    "reason": "링커리어 이용약관 검색 결과 기준으로 비정상적 수집 방식(크롤링/스크래핑)을 제한하고 있어 기본 수집 대상에서 제외했습니다."
+  }
+}

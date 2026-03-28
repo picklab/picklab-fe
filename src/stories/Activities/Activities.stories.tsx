@@ -33,7 +33,7 @@ export const Default: StoryObj<typeof ActivitiesPage> = {
 
 export const PcVersion: StoryObj<typeof PcActivites> = {
   name: "PC",
-  render: () => <PcActivites activities="대외활동" isStorybook />,
+  render: () => <PcActivites activities="대외활동" activitySlug="activities" isStorybook />,
   parameters: {
     docs: {
       description: {
@@ -45,7 +45,7 @@ export const PcVersion: StoryObj<typeof PcActivites> = {
 
 export const MobileVersion: StoryObj<typeof MobileActivites> = {
   name: "Mobile",
-  render: () => <MobileActivites />,
+  render: () => <MobileActivites activitySlug="activities" />,
   parameters: {
     viewport: {
       defaultViewport: "mobile1",

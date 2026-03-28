@@ -103,7 +103,7 @@ const OptionType = ({
           <li
             key={`${option.value}_${index}`}
             className={clsx(
-              `flex items-center w-full h-10 px-space-12 py-space-10 cursor-pointer rounded
+              `flex items-center w-full min-h-10 px-space-12 py-space-10 cursor-pointer rounded
               hover:bg-gray-5 
           `,
               isSelected && styleClass[type],
@@ -130,9 +130,9 @@ const OptionType = ({
               </div>
             )}
             {type === 'checkbox' && (
-              <div className="flex items-center gap-2">
+              <div className="flex w-full min-w-0 items-center gap-2">
                 <CheckBox color="primary" checked={isSelected} readOnly />
-                <Typography type="Body3Medium" className="h-[18px]">
+                <Typography type="Body3Medium" className="min-w-0 break-keep !leading-[1.35]">
                   {option.label}
                 </Typography>
               </div>

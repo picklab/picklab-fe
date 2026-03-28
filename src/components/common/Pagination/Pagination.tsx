@@ -25,7 +25,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
   const pushPage = (pathname: string, route: string | number) => {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('page', String(route));
-    router.push(`${pathname}?${searchParams.toString()}`);
+    router.push(`${pathname}?${searchParams.toString()}`, { scroll: false });
   };
 
   // ◀️ "이전 10페이지" 버튼 눌렀을 때 이동할 페이지 (최소 1페이지 보장)

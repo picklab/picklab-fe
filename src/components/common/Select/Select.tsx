@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Icon from '@/components/common/Icon/Icon';
 import HelpMessage, { HelpMessageProps } from '@/components/common/Field/HelpMessage';
 import Label, { LabelProps } from '@/components/common/Field/Label';
@@ -31,6 +32,9 @@ export interface SelectProps {
   icon?: IconType;
   functionOptionType?: Exclude<FunctionOptionProps['type'], 'selfplus'>;
   className?: string;
+  wrapperClassName?: string;
+  portalDropdown?: boolean;
+  dropdownClassName?: string;
 }
 
 export const widthClassMap = {
@@ -73,11 +77,16 @@ const Select = ({
   functionOptionType,
   icon,
   className,
+  wrapperClassName,
+  portalDropdown = false,
+  dropdownClassName,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [portalStyle, setPortalStyle] = useState<React.CSSProperties>({});
   const isCheckBox = type === 'checkbox';
   const selectRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const widthClass = widthClassMap[width];
   const sizeClass = sizeClassMap[size];
@@ -108,7 +117,11 @@ const Select = ({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const clickedInsideSelect = selectRef.current?.contains(target);
+      const clickedInsideDropdown = dropdownRef.current?.contains(target);
+
+      if (!clickedInsideSelect && !clickedInsideDropdown) {
         setIsOpen(false);
       }
     };
@@ -120,8 +133,51 @@ const Select = ({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen || !portalDropdown || !buttonRef.current) return;
+
+    const rect = buttonRef.current.getBoundingClientRect();
+    setPortalStyle({
+      position: 'fixed',
+      top: rect.bottom + 8,
+      left: rect.left,
+      minWidth: rect.width,
+      zIndex: 80,
+    });
+  }, [isOpen, portalDropdown]);
+
+  const dropdownContent = (
+    <div
+      ref={dropdownRef}
+      id="select-options"
+      role="listbox"
+      style={portalDropdown ? portalStyle : undefined}
+      className={clsx(
+        portalDropdown
+          ? dropdownClassName
+          : [
+              'absolute z-50 bottom-4',
+              widthClass,
+              sizeClass['optionGroup'],
+              label ? (size === 'small' ? 'top-[68px]' : size === 'xsmall' ? 'top-[60px]' : 'top-[76px]') : '',
+              dropdownClassName,
+            ],
+      )}
+    >
+      <OptionGroup
+        icon={icon}
+        options={options}
+        selectedValue={value}
+        onClickHandler={handleSelect}
+        type={type}
+        width={width}
+        functionOptionType={functionOptionType}
+      />
+    </div>
+  );
+
   return (
-    <div ref={selectRef} className={clsx('relative flex flex-col gap-1', widthClass)}>
+    <div ref={selectRef} className={clsx('relative flex flex-col gap-1', widthClass, wrapperClassName)}>
       {label && <Label title={label} status={labelStatus} htmlFor={buttonId} />}
 
       <button
@@ -158,28 +214,7 @@ const Select = ({
         <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} size={24} className="text-gray-90" />
       </button>
 
-      {isOpen && (
-        <div
-          id="select-options"
-          role="listbox"
-          className={clsx(
-            'absolute z-50 bottom-4',
-            widthClass,
-            sizeClass['optionGroup'],
-            label ? (size === 'small' ? 'top-[68px]' : size === 'xsmall' ? 'top-[60px]' : 'top-[76px]') : '',
-          )}
-        >
-          <OptionGroup
-            icon={icon}
-            options={options}
-            selectedValue={value}
-            onClickHandler={handleSelect}
-            type={type}
-            width={width}
-            functionOptionType={functionOptionType}
-          />
-        </div>
-      )}
+      {isOpen && (portalDropdown ? createPortal(dropdownContent, document.body) : dropdownContent)}
 
       {helpMessage && <HelpMessage title={helpMessage} status={helpMessageStatus} />}
     </div>

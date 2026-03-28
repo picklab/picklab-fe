@@ -13,22 +13,12 @@ import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 
-import { useState } from "react";
-
 interface GNBProps {
   isLogin: boolean;
 }
 
 const GNB = ({ isLogin = false }: GNBProps) => {
   const { isAuthenticated } = useAuthClient();
-
-  const options = [
-    { value: "label1", label: "아주대학교" },
-    { value: "label2", label: "아주아주대학교" },
-    { value: "label3", label: "아주초등학교" },
-    { value: "label4", label: "아주중학교" },
-  ];
-  const [selected, setSelected] = useState<string>(options[0].value);
 
   return (
     <header className="w-full">
@@ -58,17 +48,10 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         <div className="flex items-center gap-6">
           <Search
             status="default"
-            optionGroupProps={{
-              selectedValue: selected,
-              onClickHandler: (value) => {
-                setSelected(value as string);
-              },
-              options: options,
-              className: "w-[240px]",
-            }}
             rounded
-            scale="sm"
-            className="w-[240px]"
+            wrapperClassName="w-[376px]"
+            className="!w-[376px] !h-[36px] !rounded-full !px-[18px] !py-0 placeholder:!text-gray-40"
+            placeholder="활동을 검색해보세요"
           />
         </div>
         {isAuthenticated ? (

@@ -13,10 +13,11 @@ import { useRouter } from "next/navigation";
 // Props 타입 정의: TextFieldProps를 기반으로 하고, optionGroupProps를 선택적으로 추가
 export type SelectTextBoxProps = TextFieldProps & {
   optionGroupProps?: Omit<OptionGroupProps, "type">; // 'type'은 내부에서 지정하므로 제외
+  wrapperClassName?: string;
 };
 
 // 검색 가능한 TextField 컴포넌트
-const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
+const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxProps) => {
   const router = useRouter();
 
   // 입력값 상태
@@ -89,9 +90,10 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
       props.onChange(e);
     }
 
+    setInput(value);
+
     // 상태 업데이트 및 선택 초기화
     if (optionGroupProps) {
-      setInput(value);
       if (optionGroupProps?.onClickHandler) {
         optionGroupProps.onClickHandler(""); // 선택 해제 처리
       }
@@ -100,7 +102,7 @@ const Search = ({ optionGroupProps, ...props }: SelectTextBoxProps) => {
   };
 
   return (
-    <div className="w-fit relative">
+    <div className={clsx("relative", wrapperClassName ?? "w-fit")}>
       {/* 검색 입력 필드 */}
       <TextField
         {...props}

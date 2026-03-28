@@ -8,7 +8,8 @@ export async function GET(
 ) {
   const resolvedParams = await Promise.resolve(context.params); // params를 await으로 해결
   const provider = resolvedParams.provider.toLowerCase();
-  const redirectUri = encodeURIComponent("http://localhost:3000/auth/callback");
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const redirectUri = encodeURIComponent(`${baseUrl}/auth/callback`);
 
   let authorizeUrl = "";
 

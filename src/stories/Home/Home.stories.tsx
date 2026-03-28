@@ -30,7 +30,7 @@ export const Default: StoryObj<typeof HomePage> = {
 
 export const PcVersion: StoryObj = {
   name: 'PC',
-  render: () => <PcLayout className="flex" isStorybook />,
+  render: () => <PcLayout className="flex" isStorybook totalPage={5} activePage={1} />,
   parameters: {
     docs: {
       description: {

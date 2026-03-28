@@ -6,6 +6,9 @@ import NewActivityList from "./_components/pc/NewActivityList";
 import Pagination from "@/components/common/Pagination/Pagination";
 import clsx from "clsx";
 import MobileActivityList from "./_components/mobile/ActivityList";
+import { getAllActivities } from "@/lib/activity-data";
+import Link from "next/link";
+import Typography from "@/components/common/Typography";
 
 
 // 상수 정의
@@ -16,10 +19,7 @@ const ACTIVITY_TITLES = {
   NEW: "방금 올라온 따끈따끈한 활동!",
 } as const;
 
-const PAGINATION_CONFIG = {
-  TOTAL_PAGE: 10,
-  ACTIVE_PAGE: 1,
-} as const;
+const PC_NEW_ACTIVITY_PAGE_SIZE = 12;
 
 // 스타일 상수
 const MOBILE_STYLES = {
@@ -42,7 +42,15 @@ interface ResponsiveLayoutProps {
   isStorybook?: boolean;
 }
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams?: Promise<{ page?: string }>;
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const requestedPage = Number(resolvedSearchParams?.page ?? "1");
+  const totalPage = Math.max(1, Math.ceil(getAllActivities().length / PC_NEW_ACTIVITY_PAGE_SIZE));
+  const activePage = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPage) : 1;
   // const response = await fetchWithAuth(
   //   "http://localhost:3000/api/activities?category=EXTRACURRICULAR&sort=LATEST&size=20&page=1"
   // ).then((res) => res.json());
@@ -64,7 +72,7 @@ export default async function HomePage() {
   return (
     <>
       <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} />
-      <PcLayout className={PC_STYLES.HIDDEN_ON_MOBILE} />
+      <PcLayout className={PC_STYLES.HIDDEN_ON_MOBILE} totalPage={totalPage} activePage={activePage} />
     </>
   );
 }
@@ -73,14 +81,54 @@ export function MobileLayout({ className }: ResponsiveLayoutProps) {
   return (
     <div className={clsx(MOBILE_STYLES.CONTAINER, className)}>
       <Banner />
-      <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} className={MOBILE_STYLES.FIRST_SECTION} />
-      <MobileActivityList title={ACTIVITY_TITLES.POPULAR} type="list" className={MOBILE_STYLES.SECOND_SECTION} />
-      <MobileActivityList title={ACTIVITY_TITLES.NEW} className={MOBILE_STYLES.THIRD_SECTION} isSelect />
+      <MobileHomeTabs />
+      <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" className={MOBILE_STYLES.FIRST_SECTION} />
+      <MobileActivityList title={ACTIVITY_TITLES.POPULAR} endpoint="popular" type="list" className={MOBILE_STYLES.SECOND_SECTION} />
+      <MobileActivityList title={ACTIVITY_TITLES.NEW} endpoint="latest" className={MOBILE_STYLES.THIRD_SECTION} isSelect />
     </div>
   );
 }
 
-export function PcLayout({ className, isStorybook }: ResponsiveLayoutProps) {
+const MOBILE_HOME_TABS = [
+  { label: "홈", href: "/" },
+  { label: "대외활동", href: "/activities" },
+  { label: "강연/세미나", href: "/seminar" },
+  { label: "교육", href: "/education" },
+  { label: "공모전/해커톤", href: "/contest" },
+] as const;
+
+function MobileHomeTabs() {
+  return (
+    <div className="relative mt-5 flex h-[35px] w-full flex-row overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+      {MOBILE_HOME_TABS.map((item) => {
+        const isActive = item.href === "/";
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={clsx(
+              "relative flex shrink-0 items-center justify-center",
+              isActive &&
+                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
+            )}
+          >
+            <Typography className="w-[86px] text-center" type="Body2Medium">
+              {item.label}
+            </Typography>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+export function PcLayout({
+  className,
+  isStorybook,
+  totalPage,
+  activePage,
+}: ResponsiveLayoutProps & { totalPage: number; activePage: number }) {
   return (
     <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? "flex" : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
@@ -88,15 +136,15 @@ export function PcLayout({ className, isStorybook }: ResponsiveLayoutProps) {
           <Banner />
         </div>
         {/* 직무를 위한 추천 활동 */}
-        <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} />
+        <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" />
         {/* 이번주 인기 대외활동 */}
-        <PcActivityList title={ACTIVITY_TITLES.POPULAR} type="list" />
+        <PcActivityList title={ACTIVITY_TITLES.POPULAR} endpoint="popular" type="list" />
         {/* 최근에 본 활동 */}
-        <PcActivityList title={ACTIVITY_TITLES.RECENT} />
+        <PcActivityList title={ACTIVITY_TITLES.RECENT} endpoint="recently-viewed" />
         {/* 방금 올라온 따끈따끈한 활동! */}
-        <NewActivityList title={ACTIVITY_TITLES.NEW} />
+        <NewActivityList title={ACTIVITY_TITLES.NEW} useExternalPagination />
       </div>
-      <Pagination totalPage={PAGINATION_CONFIG.TOTAL_PAGE} activePage={PAGINATION_CONFIG.ACTIVE_PAGE} />
+      {totalPage > 1 && <Pagination totalPage={totalPage} activePage={activePage} />}
     </div>
   );
 }

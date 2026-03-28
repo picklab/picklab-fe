@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import BottomSheet from '@/components/common/Modal/BottomSheet';
 import Button from '@/components/common/Button/Button';
 

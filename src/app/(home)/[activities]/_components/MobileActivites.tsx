@@ -6,13 +6,18 @@ import MobileFilterSheet from "./MobileFilterSheet";
 
 import clsx from "clsx";
 import Typography from "@/components/common/Typography";
-import Link from "next/link";
 import MobileActivityList from "./MobileActivityList";
 import Search from "@/components/common/Field/Search";
+import type { ActivityMenuId, ActivityPageFilters, ActivityRouteSlug } from "@/lib/activity-data";
 
-export default function MobileActivites() {
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
-  const [snbMenu, setSnbMenu] = useState<MenuId>("all");
+function getInitialMenu(activitySlug: ActivityRouteSlug): ActivityMenuId {
+  if (activitySlug === "activities") return "external-activity";
+  return activitySlug;
+}
+
+export default function MobileActivites({ activitySlug }: { activitySlug: ActivityRouteSlug }) {
+  const [selectedFilters, setSelectedFilters] = useState<ActivityPageFilters>({});
+  const [snbMenu, setSnbMenu] = useState<ActivityMenuId>(getInitialMenu(activitySlug));
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const openSheet = () => setIsSheetOpen(true);
@@ -26,11 +31,22 @@ export default function MobileActivites() {
         selectedFilters={selectedFilters}
         setSelectedFilters={setSelectedFilters}
       />
-      <div className="px-4 py-2">
-        <Search status="default" rounded scale="sm" className="w-full" />
+      <div className="px-5 py-[13px]">
+        <Search
+          status="default"
+          wrapperClassName="w-full"
+          className="!w-full !rounded-[6px] !border-[#00BC7D] hover:!border-[#00BC7D] active:!border-[#00BC7D] focus:!border-[#00BC7D]"
+          iconClassName="!text-[#00BC7D]"
+          placeholder="찾고 싶은 활동을 검색해보세요"
+        />
       </div>
       <ArchiveMenu snbMenu={snbMenu} setSnbMenu={setSnbMenu} />
-      <MobileActivityList isSelect onFilterClick={openSheet} />
+      <MobileActivityList
+        activeMenu={snbMenu}
+        selectedFilters={selectedFilters}
+        setSelectedFilters={setSelectedFilters}
+        onFilterClick={openSheet}
+      />
     </div>
   );
 }
@@ -43,31 +59,30 @@ const MENU_ITEMS = [
   { id: "contest", label: "공모전/해커톤", href: "#contest" },
 ] as const;
 
-type MenuId = (typeof MENU_ITEMS)[number]["id"];
-
 interface ArchiveMenuProps {
-  snbMenu: MenuId;
-  setSnbMenu: (menu: MenuId) => void;
+  snbMenu: ActivityMenuId;
+  setSnbMenu: (menu: ActivityMenuId) => void;
 }
 
 function ArchiveMenu({ snbMenu, setSnbMenu }: ArchiveMenuProps) {
   return (
-    <div className="flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar">
+    <div className="relative flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
       {MENU_ITEMS.map((item) => (
-        <Link
+        <button
           key={item.id}
-          href={item.href}
+          type="button"
           id={item.id}
           className={clsx(
-            "box-border flex justify-center items-center border-b-[1.5px] border-gray-30",
-            snbMenu === item.id && "!border-primary-50 !border-b-[3px]"
+            "relative box-border flex justify-center items-center",
+            snbMenu === item.id &&
+              "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']"
           )}
           onClick={() => setSnbMenu(item.id)}
         >
           <Typography className="w-[86px] text-center" type="Body2Medium">
             {item.label}
           </Typography>
-        </Link>
+        </button>
       ))}
     </div>
   );
