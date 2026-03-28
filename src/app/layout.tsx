@@ -9,8 +9,30 @@ import GNBMobile from "@/components/common/GNB/mobile/GNB";
 import { Providers } from "@/providers/providers";
 
 export const metadata: Metadata = {
-  title: "PickLab",
-  description: "PickLab",
+  title: {
+    default: "PickLab | 대외활동, 공모전, 교육, 세미나 탐색",
+    template: "%s | PickLab",
+  },
+  description: "대외활동, 강연·세미나, 교육, 공모전·해커톤 정보를 한 곳에서 탐색하는 PickLab입니다.",
+  openGraph: {
+    title: "PickLab | 대외활동, 공모전, 교육, 세미나 탐색",
+    description: "대외활동, 강연·세미나, 교육, 공모전·해커톤 정보를 한 곳에서 탐색하는 PickLab입니다.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        alt: "PickLab 대표 이미지",
+      },
+    ],
+    type: "website",
+    locale: "ko_KR",
+    siteName: "PickLab",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PickLab | 대외활동, 공모전, 교육, 세미나 탐색",
+    description: "대외활동, 강연·세미나, 교육, 공모전·해커톤 정보를 한 곳에서 탐색하는 PickLab입니다.",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export default async function RootLayout({
@@ -24,7 +46,7 @@ export default async function RootLayout({
   const isLogin = !!cookieStore.get("accessToken");
 
   return (
-    <html lang="en">
+    <html lang="ko">
       <body>
         <Providers isLogin={isLogin}>
           <div className="mobile:hidden pc:flex  justify-center">
