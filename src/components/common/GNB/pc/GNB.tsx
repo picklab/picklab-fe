@@ -64,11 +64,11 @@ const GNB = ({ isLogin = false }: GNBProps) => {
                 setSelected(value as string);
               },
               options: options,
-              className: "w-[368px]",
+              className: "w-[240px]",
             }}
             rounded
             scale="sm"
-            className="w-[368px]"
+            className="w-[240px]"
           />
         </div>
         {isAuthenticated ? (

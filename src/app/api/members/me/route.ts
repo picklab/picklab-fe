@@ -4,10 +4,8 @@ import { proxyWithAuth } from '../../_lib/proxy';
 export async function GET(request: NextRequest) {
   return proxyWithAuth({
     request,
-    endpoint: '/v1/activities/recommendations',
+    endpoint: '/v1/members/me',
     method: 'GET',
-    passSearchParams: true,
-    optionalAuth: true,
-    errorContext: '직무 추천 활동 조회 중 오류 발생',
+    errorContext: '내 정보 조회 중 오류 발생',
   });
 }

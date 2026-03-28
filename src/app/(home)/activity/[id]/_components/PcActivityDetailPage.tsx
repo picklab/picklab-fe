@@ -7,6 +7,7 @@ import { ActivityCardItem } from '@/app/(home)/_components/constant';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
+import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
 
 interface PcActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -214,11 +215,28 @@ const JobRadarChart = () => (
 
 export default function PcActivityDetailPage({ activity }: PcActivityDetailPageProps) {
   const [tab, setTab] = useState<DetailTab>('detail');
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const applyLink = getApplyLink(activity);
   const detailImages = splitDetailImages(activity.detailImage);
   const tags = getActivityTags(activity.activityField);
+  const activityId = extractActivityId(activity.detailLink);
 
   const reviewCards = useMemo(() => [true, false, false], []);
+
+  const handleBookmarkToggle = async () => {
+    if (!activityId || isBookmarkLoading) return;
+    try {
+      setIsBookmarkLoading(true);
+      const result = await toggleBookmark({ activityId, isBookmarked });
+      setIsBookmarked(result.isBookmarked);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '북마크 처리 중 오류가 발생했습니다.';
+      window.alert(message);
+    } finally {
+      setIsBookmarkLoading(false);
+    }
+  };
 
   return (
     <div className="mobile:hidden w-full px-5 pb-20 pt-6">
@@ -319,10 +337,13 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
             </Link>
             <button
               type="button"
-              aria-label="북마크"
+              aria-label={isBookmarked ? '북마크 취소' : '북마크'}
+              aria-pressed={isBookmarked}
               className="h-space-40 w-space-40 rounded-small border border-gray-40 inline-flex items-center justify-center hover:bg-gray-5"
+              onClick={handleBookmarkToggle}
+              disabled={!activityId || isBookmarkLoading}
             >
-              <Icon icon="bookmarkLine" size={20} className="text-gray-50" />
+              <Icon icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'} size={20} className="text-gray-50" />
             </button>
           </div>
         </section>

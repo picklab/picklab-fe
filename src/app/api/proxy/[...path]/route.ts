@@ -1,62 +1,84 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ky from 'ky'; // 서버 측에서 ky 사용
+import ky from 'ky';
+import { refreshAccessToken } from '../../_lib/token';
 
-const EXTERNAL_API_BASE_URL = process.env.API_BASE_URL
+const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+
+function buildProxyResponse(externalResponse: Response) {
+  const responseHeaders = new Headers();
+  externalResponse.headers.forEach((value, key) => {
+    if (key.toLowerCase() !== 'set-cookie') {
+      responseHeaders.set(key, value);
+    }
+  });
+
+  return new NextResponse(externalResponse.body, {
+    status: externalResponse.status,
+    statusText: externalResponse.statusText,
+    headers: responseHeaders,
+  });
+}
 
 async function handleRequest(req: NextRequest) {
   try {
     const accessToken = req.cookies.get('accessToken')?.value;
-    const path = req.nextUrl.pathname.replace('/api/proxy', ''); // '/api/proxy' 부분을 제거하여 실제 외부 API 경로를 얻습니다.
+    const refreshToken = req.cookies.get('refreshToken')?.value;
+    const path = req.nextUrl.pathname.replace('/api/proxy', '');
     const externalApiUrl = `${EXTERNAL_API_BASE_URL}${path}${req.nextUrl.search}`;
 
     if (!accessToken) {
       return NextResponse.json({ error: 'Unauthorized: No access token found' }, { status: 401 });
     }
 
-    const headers: HeadersInit = {
-      'Authorization': `Bearer ${accessToken}`,
-    };
-
-    // 클라이언트에서 넘어온 Content-Type 헤더를 유지합니다.
-    if (req.headers.get('Content-Type')) {
-      headers['Content-Type'] = req.headers.get('Content-Type') as string;
-    }
-
-    const kyOptions: Parameters<typeof ky>[1] = {
-      method: req.method,
-      headers: headers,
-      timeout: 30000,
-      throwHttpErrors: false, // ky가 4xx, 5xx 에러를 던지지 않도록 설정 (직접 처리)
-    };
-
-    // GET, HEAD 요청이 아닌 경우에만 body를 포함합니다.
+    let reqBody: string | undefined;
     if (req.method !== 'GET' && req.method !== 'HEAD') {
-      try {
-        const reqBody = await req.text(); // text()로 받아서 raw body를 유지
-        if (reqBody) {
-          kyOptions.body = reqBody;
-        }
-      } catch (e) {
-       console.error('Proxy request failed:', e);
+      reqBody = await req.text();
+    }
+
+    const buildKyOptions = (token: string): Parameters<typeof ky>[1] => {
+      const headers: HeadersInit = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const contentType = req.headers.get('Content-Type');
+      if (contentType) {
+        headers['Content-Type'] = contentType;
+      }
+
+      const options: Parameters<typeof ky>[1] = {
+        method: req.method,
+        headers,
+        timeout: 30000,
+        throwHttpErrors: false,
+      };
+
+      if (reqBody) {
+        options.body = reqBody;
+      }
+
+      return options;
+    };
+
+    let externalResponse = await ky(externalApiUrl, buildKyOptions(accessToken));
+
+    if (externalResponse.status === 401 && refreshToken) {
+      const refreshed = await refreshAccessToken(refreshToken);
+
+      if (refreshed.ok && refreshed.accessToken) {
+        externalResponse = await ky(externalApiUrl, buildKyOptions(refreshed.accessToken));
+        const retryResponse = buildProxyResponse(externalResponse);
+        retryResponse.cookies.set('accessToken', refreshed.accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7,
+        });
+        return retryResponse;
       }
     }
 
-    const externalResponse = await ky(externalApiUrl, kyOptions);
-
-    const responseHeaders = new Headers();
-    externalResponse.headers.forEach((value, key) => {
-      // 보안상 문제가 될 수 있는 헤더 (예: Set-Cookie)는 제외합니다.
-      if (!['set-cookie'].includes(key.toLowerCase())) {
-        responseHeaders.set(key, value);
-      }
-    });
-
-    return new NextResponse(externalResponse.body, {
-      status: externalResponse.status,
-      statusText: externalResponse.statusText,
-      headers: responseHeaders,
-    });
-
+    return buildProxyResponse(externalResponse);
   } catch (error) {
     console.error('Proxy request failed:', error);
     return NextResponse.json({ error: 'Proxy internal server error' }, { status: 500 });

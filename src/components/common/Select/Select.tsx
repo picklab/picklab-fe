@@ -163,7 +163,7 @@ const Select = ({
           id="select-options"
           role="listbox"
           className={clsx(
-            'absolute z-10 bottom-4',
+            'absolute z-50 bottom-4',
             widthClass,
             sizeClass['optionGroup'],
             label ? (size === 'small' ? 'top-[68px]' : size === 'xsmall' ? 'top-[60px]' : 'top-[76px]') : '',

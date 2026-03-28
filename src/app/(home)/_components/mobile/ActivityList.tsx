@@ -6,8 +6,18 @@ import Typography from "@/components/common/Typography";
 import Card from "@/components/common/Card/mobile/Card";
 import MoList from "@/components/common/List/mobile/MoList";
 import clsx from "clsx";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import Select from "@/components/common/Select/Select";
+import { CardData } from "../constant";
+import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
+
+const CARD_CHIP_TYPES = ["대외활동", "강연/세미나", "교육", "공모전/해커톤"] as const;
+type CardChipType = (typeof CARD_CHIP_TYPES)[number];
+
+const normalizeActivityType = (value: string): CardChipType =>
+  CARD_CHIP_TYPES.includes(value as CardChipType) ? (value as CardChipType) : "대외활동";
 
 interface ActivityListProps {
   title: string;
@@ -24,6 +34,21 @@ export default function ActivityList({
   isSelect,
   typoType = "Headline1SemiBold",
 }: ActivityListProps) {
+  const router = useRouter();
+  const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+
+  const handleBookmarkToggle = async (activityId: string) => {
+    const current = bookmarkedMap[activityId] ?? false;
+
+    try {
+      const result = await toggleBookmark({ activityId, isBookmarked: current });
+      setBookmarkedMap((prev) => ({ ...prev, [activityId]: result.isBookmarked }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "북마크 처리 중 오류가 발생했습니다.";
+      window.alert(message);
+    }
+  };
+
   return (
     <div className={clsx("w-full flex flex-col gap-3", className)}>
       <Typography type={typoType}>{title}</Typography>
@@ -34,7 +59,8 @@ export default function ActivityList({
             width="xsmall"
             type="checkbox"
             functionOptionType="reset"
-            className="!rounded-full !w-[98px] !h-[34px]"
+            className="!rounded-full !w-[120px]"
+            placeholder="활동유형"
             options={[
               { label: "대외활동", value: "external_activity" },
               { label: "강연/세미나", value: "seminar" },
@@ -44,11 +70,12 @@ export default function ActivityList({
             onChange={() => {}}
           />
           <Select
-            size="small"
-            width="small"
+            size="xsmall"
+            width="xsmall"
             type="checkbox"
             functionOptionType="reset"
-            className="!rounded-full !w-[98px] !h-[34px]"
+            className="!rounded-full !w-[120px]"
+            placeholder="직무유형"
             options={[
               { label: "기획", value: "planning" },
               { label: "디자인", value: "design" },
@@ -64,35 +91,38 @@ export default function ActivityList({
       <div
         className={clsx("flex overflow-x-scroll hide-scrollbar w-full", type === "card" ? "gap-4" : "flex-col gap-2")}
       >
-        {Array.from({ length: type === "card" ? 10 : 3 }).map((_, index) =>
-          type === "card" ? (
+        {CardData.slice(0, type === "card" ? 10 : 3).map((item, index) => {
+          const activityId = extractActivityId(item.detailLink);
+          const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
+
+          return type === "card" ? (
             <Card
-              key={index}
-              imageUrl={"/imgs/cat.jpg"}
-              chipText="공모전/해커톤"
-              badgeText="D-01"
+              key={`${item.detailLink}-${index}`}
+              imageUrl={item.thumbnailImage || "/imgs/cat.jpg"}
+              chipText={normalizeActivityType(item.activityType)}
+              badgeText={item.registrationPeriod}
               badgeVariant="default"
-              isBookmarked={false}
-              companyName="삼양 그룹"
-              title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
+              isBookmarked={isBookmarked}
+              companyName={item.organizer}
+              title={item.title}
               jobs={["개발"]}
-              onBookmarkClick={() => {}}
-              onCardClick={() => {}}
+              onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+              onCardClick={() => router.push(item.detailLink)}
             />
           ) : (
             <MoList
-              key={index}
-              imageSrc={"/imgs/cat.jpg"}
-              company="삼양 그룹"
-              title="2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기"
+              key={`${item.detailLink}-${index}`}
+              imageSrc={item.thumbnailImage || "/imgs/cat.jpg"}
+              company={item.organizer}
+              title={item.title}
               viewCount={10}
               saveCount={10}
-              isBookmarked={false}
-              onListClick={() => {}}
-              onBookmarkClick={() => {}}
+              isBookmarked={isBookmarked}
+              onListClick={() => router.push(item.detailLink)}
+              onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
             />
-          )
-        )}
+          );
+        })}
       </div>
     </div>
   );

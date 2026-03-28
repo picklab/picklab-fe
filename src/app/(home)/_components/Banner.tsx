@@ -26,7 +26,7 @@ const BANNER_MOCK = [
 
 export default function Banner() {
   return (
-    <div className="mobile:w-full mobile:h-[200px] pc:w-full pc:h-[400px] relative">
+    <div className="mobile:w-full mobile:h-[150px] pc:w-full pc:h-[400px] relative">
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={0}

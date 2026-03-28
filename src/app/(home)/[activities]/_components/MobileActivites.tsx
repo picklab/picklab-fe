@@ -8,6 +8,7 @@ import clsx from "clsx";
 import Typography from "@/components/common/Typography";
 import Link from "next/link";
 import MobileActivityList from "./MobileActivityList";
+import Search from "@/components/common/Field/Search";
 
 export default function MobileActivites() {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
@@ -25,6 +26,9 @@ export default function MobileActivites() {
         selectedFilters={selectedFilters}
         setSelectedFilters={setSelectedFilters}
       />
+      <div className="px-4 py-2">
+        <Search status="default" rounded scale="sm" className="w-full" />
+      </div>
       <ArchiveMenu snbMenu={snbMenu} setSnbMenu={setSnbMenu} />
       <MobileActivityList isSelect onFilterClick={openSheet} />
     </div>

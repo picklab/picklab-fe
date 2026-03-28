@@ -1,25 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import ky from 'ky';
-import { getForwardedHeaders } from '@/utils/apiRouteUtils';
-
-const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+import { NextRequest } from 'next/server';
+import { proxyWithAuth } from '../../_lib/proxy';
 
 export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const headers = getForwardedHeaders(request);
-
-    const response = await ky.get(`${BACKEND_URL}/v1/activities/popular`, {
-      headers,
-      searchParams,
-      throwHttpErrors: false,
-    });
-
-    const data = await response.json();
-
-    return NextResponse.json(data, { status: response.status });
-  } catch (error) {
-    console.error('인기 활동 조회 중 오류 발생:', error);
-    return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });
-  }
+  return proxyWithAuth({
+    request,
+    endpoint: '/v1/activities/popular',
+    method: 'GET',
+    passSearchParams: true,
+    optionalAuth: true,
+    errorContext: '인기 활동 조회 중 오류 발생',
+  });
 }

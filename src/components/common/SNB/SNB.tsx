@@ -70,7 +70,7 @@ const SNB = ({ Jobs }: SNBProps) => {
           </div>
         </div>
         <div className="flex justify-center py-space-20">
-          <Button buttonStyle="outlined" label="프로필 수정" size="sm" />
+          <Button buttonStyle="outlined" label="프로필 수정" size="sm" onClick={() => router.push("/profile/account/info")} />
         </div>
       </section>
 

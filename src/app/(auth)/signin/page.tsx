@@ -73,7 +73,7 @@ function AuthContent() {
               image.className,
             )}
             onClick={() => {
-              window.location.href = `http://161.153.21.86:8080/v1/auth/login/KAKAO`;
+              window.location.href = `/api/auth/login/${image.alt.toUpperCase()}`;
             }}
           >
             <Image src={image.src} alt={image.alt} width={24} height={24} />

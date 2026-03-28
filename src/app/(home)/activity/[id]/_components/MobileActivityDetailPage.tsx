@@ -9,6 +9,7 @@ import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
+import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
 
 interface MobileActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -210,10 +211,27 @@ const MobileRadarChart = () => (
 
 export default function MobileActivityDetailPage({ activity }: MobileActivityDetailPageProps) {
   const [tab, setTab] = useState<MobileTab>('detail');
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const applyLink = getApplyLink(activity);
   const detailImages = splitDetailImages(activity.detailImage);
   const tags = getActivityTags(activity.activityField);
+  const activityId = extractActivityId(activity.detailLink);
   const reviewCards = useMemo(() => [1, 2], []);
+
+  const handleBookmarkToggle = async () => {
+    if (!activityId || isBookmarkLoading) return;
+    try {
+      setIsBookmarkLoading(true);
+      const result = await toggleBookmark({ activityId, isBookmarked });
+      setIsBookmarked(result.isBookmarked);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '북마크 처리 중 오류가 발생했습니다.';
+      window.alert(message);
+    } finally {
+      setIsBookmarkLoading(false);
+    }
+  };
 
   return (
     <div className="pc:hidden flex flex-col gap-4 pb-10">
@@ -223,8 +241,15 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             <CardDayBadge text="D-00" variant="default" />
             <CardChip text={activity.activityType as '대외활동' | '교육' | '공모전/해커톤' | '강연/세미나'} />
           </div>
-          <button type="button" className="h-6 w-6 inline-flex items-center justify-center" aria-label="북마크">
-            <Icon icon="bookmarkLine" size={18} className="text-gray-50" />
+          <button
+            type="button"
+            className="h-6 w-6 inline-flex items-center justify-center"
+            aria-label={isBookmarked ? '북마크 취소' : '북마크'}
+            aria-pressed={isBookmarked}
+            onClick={handleBookmarkToggle}
+            disabled={!activityId || isBookmarkLoading}
+          >
+            <Icon icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'} size={18} className="text-gray-50" />
           </button>
         </div>
 

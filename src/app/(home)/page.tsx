@@ -84,7 +84,9 @@ export function PcLayout({ className, isStorybook }: ResponsiveLayoutProps) {
   return (
     <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? "flex" : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
-        <Banner />
+        <div className="mt-[40px] w-full">
+          <Banner />
+        </div>
         {/* 직무를 위한 추천 활동 */}
         <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} />
         {/* 이번주 인기 대외활동 */}

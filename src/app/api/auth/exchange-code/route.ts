@@ -8,8 +8,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Code or provider not provided' }, { status: 400 });
     }
 
-    // 백엔드 API 엔드포인트
-    const backendApiUrl = `http://161.153.21.86:8080/v1/auth/callback/${provider}?code=${code}`;
+    const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+    const backendApiUrl = `${BACKEND_URL}/v1/auth/callback/${provider}?code=${code}`;
 
     const backendResponse = await fetch(backendApiUrl, {
       method: 'POST',

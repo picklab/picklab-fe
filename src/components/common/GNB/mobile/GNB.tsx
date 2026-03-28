@@ -28,9 +28,14 @@ const GNB = ({ isLogin = false }: GNBProps) => {
 
   return (
     <header className="w-full max-w-[23.4375rem] h-[3.625rem] bg-gray-0 px-5 flex items-center justify-between ">
-      <Link href="/" aria-label="PickLab 홈">
-        <Image src="/imgs/logo_mobile.png" width={93} height={22} alt="PickLab 로고" />
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link href="/" aria-label="PickLab 홈">
+          <Image src="/imgs/logo_mobile.png" width={93} height={22} alt="PickLab 로고" />
+        </Link>
+        <Link href="/search" aria-label="검색">
+          <Icon size={24} icon="search" />
+        </Link>
+      </div>
 
       {isLogin ? (
         <nav aria-label="유저 메뉴">
