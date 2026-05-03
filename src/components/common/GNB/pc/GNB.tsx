@@ -25,13 +25,18 @@ const GNB = ({ isLogin = false }: GNBProps) => {
       <div
         className={clsx(
           "max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[44.5px]",
-          !isLogin && "!gap-12"
+          !isLogin && "!gap-12",
         )}
       >
         {/* 로고 및 메뉴 */}
         <div className="flex items-center gap-[54px]">
           <Link href="/" aria-label="PickLab 홈">
-            <Image src="/imgs/logo.png" width={93} height={22} alt="PickLab 로고" />
+            <Image
+              src="/imgs/logo.png"
+              width={93}
+              height={22}
+              alt="PickLab 로고"
+            />
           </Link>
           <nav aria-label="메인 메뉴">
             <ul className="flex gap-7">
@@ -49,8 +54,8 @@ const GNB = ({ isLogin = false }: GNBProps) => {
           <Search
             status="default"
             rounded
-            wrapperClassName="w-[376px]"
-            className="!w-[376px] !h-[36px] !rounded-full !px-[18px] !py-0 placeholder:!text-gray-40"
+            wrapperClassName="w-[280px]"
+            className="!w-[280px] !h-[36px] !rounded-full !px-[18px] !py-0 placeholder:!text-gray-40"
             placeholder="활동을 검색해보세요"
           />
         </div>

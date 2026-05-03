@@ -7,6 +7,7 @@ import FilterSection from "./FilterSection";
 import clsx from "clsx";
 import Typography from "@/components/common/Typography";
 import Link from "next/link";
+import Footer from "@/components/common/Footer/Footer";
 import {
   getActivityCountForCategoryPage,
   type ActivityPageFilters,
@@ -32,37 +33,35 @@ export default function PcActivites({
   );
 
   return (
-    <div
-      className={clsx(
-        "w-[1058px] px-5 flex-col gap-10",
-        isStorybook ? "flex" : "hidden pc:flex",
-      )}>
-      <nav className="flex items-center gap-1 text-sm">
-        <Link href="/" className="text-gray-50 hover:text-gray-70">
-          <Typography type="Caption1Medium" className="text-gray-50">
-            홈
-          </Typography>
-        </Link>
-        <Typography type="Caption1Medium" className="text-gray-40">
-          &gt;
-        </Typography>
-        <Typography type="Caption1Medium" className="text-gray-90 mt-0.5">
+    <>
+      <div
+        className={clsx(
+          "w-full px-5 flex-col gap-10",
+          isStorybook ? "flex" : "hidden pc:flex",
+        )}
+      >
+        <Typography
+          type="Heading2Medium"
+          className="text-gray-90 max-w-[1100px] mx-auto"
+        >
           {activities}
         </Typography>
-      </nav>
-      <FilterSection
-        selectedFilters={selectedFilters}
-        setSelectedFilters={setSelectedFilters}
-      />
-      <Typography type="Body2Medium" className="text-gray-60">
-        공고 {count}건
-      </Typography>
-      <NewActivityList
-        title={activities}
-        categorySlug={activitySlug}
-        selectedFilters={selectedFilters}
-        showInlineFilters={false}
-      />
-    </div>
+        <div className="max-w-[1100px] mx-auto w-full">
+          <FilterSection
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+          />
+          <Typography type="Body2Medium" className="text-gray-50 mt-10">
+            공고 {count}건
+          </Typography>
+          <NewActivityList
+            title={activities}
+            categorySlug={activitySlug}
+            selectedFilters={selectedFilters}
+            showInlineFilters={false}
+          />
+        </div>
+      </div>
+    </>
   );
 }
