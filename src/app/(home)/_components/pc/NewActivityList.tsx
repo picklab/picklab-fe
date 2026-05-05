@@ -15,6 +15,8 @@ interface NewActivityListProps {
   selectedFilters?: ActivityPageFilters;
   showInlineFilters?: boolean;
   useExternalPagination?: boolean;
+  showTitle?: boolean;
+  resultCount?: number;
 }
 
 const CARDS_PER_PAGE = 12;
@@ -33,6 +35,8 @@ export default function NewActivityList({
   selectedFilters = {},
   showInlineFilters = true,
   useExternalPagination = false,
+  showTitle = true,
+  resultCount,
 }: NewActivityListProps) {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState('latest');
@@ -166,7 +170,7 @@ export default function NewActivityList({
   return (
     <div className="w-full flex flex-col gap-[2rem]">
       <div className="flex flex-col gap-4">
-        <Typography type="Heading1Bold">{title}</Typography>
+        {showTitle && <Typography type="Heading1Bold">{title}</Typography>}
 
         <div className="flex items-end justify-between w-full">
           {showInlineFilters ? (
@@ -176,6 +180,7 @@ export default function NewActivityList({
                 width="small"
                 type="checkbox"
                 functionOptionType="reset"
+                portalDropdown
                 className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
                 placeholder="활동유형"
                 options={[
@@ -199,6 +204,7 @@ export default function NewActivityList({
                 width="small"
                 type="checkbox"
                 functionOptionType="reset"
+                portalDropdown
                 className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
                 placeholder="직무유형"
                 options={[
@@ -219,6 +225,10 @@ export default function NewActivityList({
                 }}
               />
             </div>
+          ) : typeof resultCount === 'number' ? (
+            <Typography type="Body2Medium" className="text-gray-60">
+              공고 {resultCount}건
+            </Typography>
           ) : (
             <div />
           )}

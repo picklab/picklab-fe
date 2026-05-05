@@ -25,7 +25,7 @@ export interface ListItemProps {
   className?: string;
 }
 
-const grayText = 'text-gray-50 group-active:text-gray-40';
+const cardCompanyText = 'text-gray-50 group-active:text-gray-40';
 const grayTextStrong = 'text-gray-90 group-active:text-gray-40';
 
 const ListItem = ({
@@ -44,6 +44,8 @@ const ListItem = ({
   endDate,
   className,
 }: ListItemProps) => {
+  const ongoingOrganization = organization || label;
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -64,7 +66,7 @@ const ListItem = ({
             <Typography type="Body2Semibold" className={`${grayTextStrong} truncate`}>
               {title}
             </Typography>
-            <Typography type="Body4Medium" className={`${grayText} truncate`}>
+            <Typography type="Body4Medium" className={`${cardCompanyText} truncate`}>
               {organization}
             </Typography>
           </div>
@@ -82,13 +84,13 @@ const ListItem = ({
 
   // 모집 및 활동이 진행중인 ListItem
   const renderOngoingContent = () =>
-    label &&
-    saveCount &&
-    viewCount && (
+    ongoingOrganization &&
+    saveCount !== undefined &&
+    viewCount !== undefined && (
       <div className="flex flex-col justify-between h-full py-space-base max-w-[240px]">
         <div className="flex flex-col gap-space-base">
-          <Typography type="Body4Medium" className={`${grayText} truncate`}>
-            {label}
+          <Typography type="Body4Medium" className={`${cardCompanyText} truncate`}>
+            {ongoingOrganization}
           </Typography>
           <Typography type="Body1Semibold" className={`${grayTextStrong} line-clamp-2 break-keep`}>
             {title}
@@ -96,18 +98,18 @@ const ListItem = ({
         </div>
         <div className="flex gap-space-14 items-center">
           <div className="flex gap-space-2 items-center">
-            <Typography type="Caption1Medium" className={grayText}>
+            <Typography type="Caption1Medium" className={cardCompanyText}>
               저장수
             </Typography>
-            <Typography type="Caption1Medium" className={grayText}>
+            <Typography type="Caption1Medium" className={cardCompanyText}>
               {saveCount}
             </Typography>
           </div>
           <div className="flex gap-space-2 items-center">
-            <Typography type="Caption1Medium" className={grayText}>
+            <Typography type="Caption1Medium" className={cardCompanyText}>
               조회수
             </Typography>
-            <Typography type="Caption1Medium" className={grayText}>
+            <Typography type="Caption1Medium" className={cardCompanyText}>
               {viewCount}
             </Typography>
           </div>

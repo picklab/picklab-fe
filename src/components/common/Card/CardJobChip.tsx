@@ -8,7 +8,7 @@ type TypographyKeys = keyof typeof TypographyTypes;
 
 interface CardJobChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   job: JobType;
-  typoType?: Extract<TypographyKeys, "Caption2Medium" | "Caption3Medium">;
+  typoType?: Extract<TypographyKeys, "Body3Medium" | "Caption2Medium" | "Caption3Medium">;
 }
 
 const CardJobChip = ({

@@ -41,7 +41,10 @@ function toTabCategory(activityType: string): MenuId {
   return "activities";
 }
 
-function matchesKeyword(keyword: string, raw: ReturnType<typeof getAllActivities>[number]) {
+function matchesKeyword(
+  keyword: string,
+  raw: ReturnType<typeof getAllActivities>[number],
+) {
   if (!keyword) return true;
 
   const normalizedKeyword = normalizeText(keyword);
@@ -77,12 +80,16 @@ export default function MobileSearchPage({ search }: { search: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const decodedSearch = decodeURIComponent(search);
-  const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+  const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>(
+    {},
+  );
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
   const [sort, setSort] = useState<string>("latest");
   const requestedTab = (searchParams.get("tab") ?? "all") as MenuId;
-  const activeMenu = MENU_ITEMS.some((item) => item.id === requestedTab) ? requestedTab : "all";
+  const activeMenu = MENU_ITEMS.some((item) => item.id === requestedTab)
+    ? requestedTab
+    : "all";
 
   const searchedItems = useMemo(() => {
     return getAllActivities()
@@ -115,7 +122,9 @@ export default function MobileSearchPage({ search }: { search: string }) {
     const tabFiltered =
       activeMenu === "all"
         ? searchedItems
-        : searchedItems.filter((item) => toTabCategory(item.activityType) === activeMenu);
+        : searchedItems.filter(
+            (item) => toTabCategory(item.activityType) === activeMenu,
+          );
 
     const filtered = tabFiltered.filter((item) => {
       const matchesCategory =
@@ -144,10 +153,16 @@ export default function MobileSearchPage({ search }: { search: string }) {
 
     return [...filtered].sort((a, b) => {
       if (sort === "soon") {
-        return getDeadlineRank(a.registrationPeriod) - getDeadlineRank(b.registrationPeriod);
+        return (
+          getDeadlineRank(a.registrationPeriod) -
+          getDeadlineRank(b.registrationPeriod)
+        );
       }
       if (sort === "remain") {
-        return getDeadlineRank(b.registrationPeriod) - getDeadlineRank(a.registrationPeriod);
+        return (
+          getDeadlineRank(b.registrationPeriod) -
+          getDeadlineRank(a.registrationPeriod)
+        );
       }
       const aDate = parseDate(a.registrationPeriod);
       const bDate = parseDate(b.registrationPeriod);
@@ -159,10 +174,19 @@ export default function MobileSearchPage({ search }: { search: string }) {
     const current = bookmarkedMap[activityId] ?? false;
 
     try {
-      const result = await toggleBookmark({ activityId, isBookmarked: current });
-      setBookmarkedMap((prev) => ({ ...prev, [activityId]: result.isBookmarked }));
+      const result = await toggleBookmark({
+        activityId,
+        isBookmarked: current,
+      });
+      setBookmarkedMap((prev) => ({
+        ...prev,
+        [activityId]: result.isBookmarked,
+      }));
     } catch (error) {
-      const message = error instanceof Error ? error.message : "북마크 처리 중 오류가 발생했습니다.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "북마크 처리 중 오류가 발생했습니다.";
       window.alert(message);
     }
   };
@@ -170,12 +194,15 @@ export default function MobileSearchPage({ search }: { search: string }) {
   return (
     <div className="mobile:flex pc:hidden flex-col gap-6 px-5 pb-[113px]">
       <Typography type="Heading1Semibold">{decodedSearch} 검색</Typography>
-      <ArchiveMenu activeMenu={activeMenu} search={search} tabCounts={tabCounts} />
+      <ArchiveMenu
+        activeMenu={activeMenu}
+        search={search}
+        tabCounts={tabCounts}
+      />
       <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
         <button
           type="button"
-          className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0"
-        >
+          className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0">
           <Icon icon="threeDots" size={14} />
         </button>
         <button
@@ -184,8 +211,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
           onClick={() => {
             setSelectedCategory([]);
             setSelectedJobs([]);
-          }}
-        >
+          }}>
           <Icon icon="largeRefresh" color="white" size={14} />
         </button>
         <Select
@@ -206,7 +232,9 @@ export default function MobileSearchPage({ search }: { search: string }) {
             { label: "공모전/해커톤", value: "contest" },
           ]}
           value={selectedCategory}
-          onChange={(value) => setSelectedCategory(Array.isArray(value) ? value : [])}
+          onChange={(value) =>
+            setSelectedCategory(Array.isArray(value) ? value : [])
+          }
         />
         <Select
           size="xsmall"
@@ -226,7 +254,9 @@ export default function MobileSearchPage({ search }: { search: string }) {
             { label: "AI", value: "ai" },
           ]}
           value={selectedJobs}
-          onChange={(value) => setSelectedJobs(Array.isArray(value) ? value : [])}
+          onChange={(value) =>
+            setSelectedJobs(Array.isArray(value) ? value : [])
+          }
         />
       </div>
       <Typography type="Body2Medium" className="text-gray-60">
@@ -235,7 +265,8 @@ export default function MobileSearchPage({ search }: { search: string }) {
 
       <div className="flex items-center justify-between">
         <Typography type="Body2Medium" className="text-gray-60">
-          {MENU_ITEMS.find((item) => item.id === activeMenu)?.label ?? "전체"} {visibleItems.length}건
+          {MENU_ITEMS.find((item) => item.id === activeMenu)?.label ?? "전체"}{" "}
+          {visibleItems.length}건
         </Typography>
         <Select
           size="xsmall"
@@ -247,7 +278,9 @@ export default function MobileSearchPage({ search }: { search: string }) {
             { label: "여유 있는순", value: "remain" },
           ]}
           value={sort}
-          onChange={(value) => setSort(typeof value === "string" ? value : "latest")}
+          onChange={(value) =>
+            setSort(typeof value === "string" ? value : "latest")
+          }
           className="!w-auto !min-w-[88px] !h-[34px] !border-none !px-0 [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
           wrapperClassName="!w-auto"
           dropdownClassName="!w-[124px]"
@@ -265,16 +298,25 @@ export default function MobileSearchPage({ search }: { search: string }) {
         <div className="grid grid-cols-2 gap-4">
           {visibleItems.map((item) => {
             const activityId = extractActivityId(item.detailLink);
-            const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
-            const jobs = item.jobs.filter((job): job is (typeof JOB_TYPES)[number] =>
-              JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
+            const isBookmarked = activityId
+              ? (bookmarkedMap[activityId] ?? false)
+              : false;
+            const jobs = item.jobs.filter(
+              (job): job is (typeof JOB_TYPES)[number] =>
+                JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
             );
 
             return (
               <Card
                 key={item.id}
                 imageUrl={item.thumbnailImage || "/imgs/cat.jpg"}
-                chipText={(item.activityType as "대외활동" | "강연/세미나" | "교육" | "공모전/해커톤") || "대외활동"}
+                chipText={
+                  (item.activityType as
+                    | "대외활동"
+                    | "강연/세미나"
+                    | "교육"
+                    | "공모전/해커톤") || "대외활동"
+                }
                 badgeText={item.registrationPeriod || "D-01"}
                 badgeVariant="default"
                 isBookmarked={isBookmarked}
@@ -282,7 +324,9 @@ export default function MobileSearchPage({ search }: { search: string }) {
                 title={item.title}
                 jobs={jobs.length > 0 ? jobs : ["기획"]}
                 onCardClick={() => router.push(item.detailLink)}
-                onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+                onBookmarkClick={() =>
+                  activityId && handleBookmarkToggle(activityId)
+                }
               />
             );
           })}
@@ -295,7 +339,6 @@ export default function MobileSearchPage({ search }: { search: string }) {
 function ArchiveMenu({
   activeMenu,
   search,
-  tabCounts,
 }: {
   activeMenu: MenuId;
   search: string;
@@ -312,8 +355,7 @@ function ArchiveMenu({
             "relative box-border flex shrink-0 justify-center items-center",
             activeMenu === item.id &&
               "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
-          )}
-        >
+          )}>
           <Typography className="w-[86px] text-center" type="Body2Medium">
             {item.label}
           </Typography>

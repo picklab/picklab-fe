@@ -13,6 +13,14 @@ type ProfileForm = {
   birthDate: string;
 };
 
+type MemberInfoPayload = {
+  school: string;
+  graduationStatus: string;
+  employmentStatus: string;
+  company: string;
+  employmentType: 'NONE' | 'FULL_TIME' | 'CONTRACT' | 'INTERN' | 'PART_TIME';
+};
+
 function readErrorMessage(payload: unknown, fallback: string) {
   if (!payload || typeof payload !== 'object') return fallback;
   if ('message' in payload && typeof payload.message === 'string') return payload.message;
@@ -52,6 +60,50 @@ function extractSocialProviders(raw: unknown): string[] {
   return enabledProviders;
 }
 
+function readString(record: Record<string, unknown>, ...keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string') return value;
+  }
+  return '';
+}
+
+function normalizeEmploymentType(value: unknown): MemberInfoPayload['employmentType'] {
+  const allowedTypes: MemberInfoPayload['employmentType'][] = ['NONE', 'FULL_TIME', 'CONTRACT', 'INTERN', 'PART_TIME'];
+  return allowedTypes.includes(value as MemberInfoPayload['employmentType'])
+    ? (value as MemberInfoPayload['employmentType'])
+    : 'NONE';
+}
+
+function parseMemberInfo(payload: unknown, fallbackForm: ProfileForm, fallbackExtra: MemberInfoPayload) {
+  const data = unwrapData(payload);
+  if (!data || typeof data !== 'object') return { form: fallbackForm, extra: fallbackExtra };
+
+  const record = data as Record<string, unknown>;
+  const employment = record.employment && typeof record.employment === 'object'
+    ? (record.employment as Record<string, unknown>)
+    : {};
+
+  return {
+    form: {
+      name: readString(record, 'name') || fallbackForm.name,
+      nickname: readString(record, 'nickname', 'nick_name') || fallbackForm.nickname,
+      education: readString(record, 'education_level', 'educationLevel') || fallbackForm.education,
+      birthDate: readString(record, 'birth_date', 'birthDate') || fallbackForm.birthDate,
+    },
+    extra: {
+      school: readString(record, 'school') || fallbackExtra.school,
+      graduationStatus: readString(record, 'graduation_status', 'graduationStatus') || fallbackExtra.graduationStatus,
+      employmentStatus:
+        readString(record, 'employment_status', 'employmentStatus') ||
+        readString(employment, 'employment_status', 'employmentStatus') ||
+        fallbackExtra.employmentStatus,
+      company: readString(record, 'company') || readString(employment, 'company') || fallbackExtra.company,
+      employmentType: normalizeEmploymentType(record.employment_type ?? record.employmentType ?? fallbackExtra.employmentType),
+    },
+  };
+}
+
 type PresignedUploadInfo = {
   uploadUrl: string;
   imageUrl?: string;
@@ -67,6 +119,7 @@ function parsePresignedUploadInfo(payload: unknown): PresignedUploadInfo | null 
     const uploadUrlCandidate =
       (typeof record.uploadUrl === 'string' && record.uploadUrl) ||
       (typeof record.presignedUrl === 'string' && record.presignedUrl) ||
+      (typeof record.presigned_url === 'string' && record.presigned_url) ||
       (typeof record.putUrl === 'string' && record.putUrl) ||
       (typeof record.url === 'string' && record.url);
 
@@ -95,6 +148,13 @@ const ProfileSection = () => {
     education: '한국대학교 한국학과',
     birthDate: '0000.00.00',
   };
+  const defaultMemberInfo: MemberInfoPayload = {
+    school: '한국대학교',
+    graduationStatus: '졸업',
+    employmentStatus: '해당 없음',
+    company: '',
+    employmentType: 'NONE',
+  };
   const [editMode, setEditMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingSocialLogins, setIsLoadingSocialLogins] = useState(false);
@@ -105,6 +165,7 @@ const ProfileSection = () => {
   const createdObjectUrlRef = useRef<string | null>(null);
   const [savedForm, setSavedForm] = useState<ProfileForm>(defaultForm);
   const [form, setForm] = useState<ProfileForm>(defaultForm);
+  const [memberInfo, setMemberInfo] = useState<MemberInfoPayload>(defaultMemberInfo);
 
   useEffect(() => {
     const fetchSocialLogins = async () => {
@@ -122,6 +183,26 @@ const ProfileSection = () => {
     };
 
     fetchSocialLogins();
+  }, []);
+
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await fetch('/api/members/me');
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) return;
+
+        const { form: nextForm, extra: nextMemberInfo } = parseMemberInfo(payload, defaultForm, defaultMemberInfo);
+        setSavedForm(nextForm);
+        setForm(nextForm);
+        setMemberInfo(nextMemberInfo);
+      } catch (error) {
+        console.error('회원 정보 로딩 중 오류 발생:', error);
+      }
+    };
+
+    fetchMemberInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -155,7 +236,16 @@ const ProfileSection = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: form.name,
+          nickname: form.nickname,
+          education_level: form.education,
+          school: memberInfo.school,
+          graduation_status: memberInfo.graduationStatus,
+          employment_status: memberInfo.employmentStatus,
+          company: memberInfo.company,
+          employment_type: memberInfo.employmentType,
+        }),
       });
 
       const payload = await response.json().catch(() => ({}));
@@ -201,8 +291,9 @@ const ProfileSection = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          fileName: file.name,
-          contentType: file.type,
+          file_name: file.name,
+          category: 'PROFILE',
+          file_size: file.size,
         }),
       });
 
@@ -238,7 +329,7 @@ const ProfileSection = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageUrl }),
+        body: JSON.stringify({ profile_image: imageUrl }),
       });
 
       const updatePayload = await updateResponse.json().catch(() => ({}));

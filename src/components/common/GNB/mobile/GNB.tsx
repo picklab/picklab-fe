@@ -4,28 +4,12 @@ import Link from 'next/link';
 import Icon from '../../Icon/Icon';
 import Avatar from '../pc/Avatar';
 import Button from '../../Button/Button';
-import { useRouter } from 'next/navigation';
 
 interface GNBProps {
   isLogin: boolean;
 }
 
 const GNB = ({ isLogin = false }: GNBProps) => {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-      if (response.ok) {
-        router.refresh();
-      }
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
   return (
     <header className="w-full max-w-[23.4375rem] h-[3.625rem] bg-gray-0 px-5 flex items-center justify-between ">
       <div className="flex items-center gap-3">
@@ -56,14 +40,6 @@ const GNB = ({ isLogin = false }: GNBProps) => {
               <Link href="/profile" aria-label="프로필">
                 <Avatar />
               </Link>
-            </li>
-            <li>
-              <button
-                onClick={handleLogout}
-                className="text-gray-60 text-xs hover:text-gray-90"
-              >
-                로그아웃
-              </button>
             </li>
           </ul>
         </nav>

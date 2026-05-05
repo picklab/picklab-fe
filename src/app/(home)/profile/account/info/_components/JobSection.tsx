@@ -7,6 +7,37 @@ import PcJobEditSection from './PcJobEditSection';
 import { SignupData } from '@/app/(auth)/signup/types';
 import MobileJobEditSection from './MobileJobEditSection';
 
+const JOB_CATEGORY_MAP: Record<string, { group: string; detail: string }> = {
+  'service-planning': { group: 'PLANNING', detail: 'SERVICE_PLANNING' },
+  'business-development': { group: 'PLANNING', detail: 'BUSINESS_DEVELOPMENT' },
+  'data-analysis': { group: 'PLANNING', detail: 'DATA_ANALYSIS' },
+  'pm-po': { group: 'PLANNING', detail: 'PM_PO' },
+  'ux-design': { group: 'DESIGN', detail: 'UX_DESIGN' },
+  'ui-design': { group: 'DESIGN', detail: 'UI_DESIGN' },
+  'web-design': { group: 'DESIGN', detail: 'WEB_DESIGN' },
+  'graphic-design': { group: 'DESIGN', detail: 'GRAPHIC_DESIGN' },
+  'brand-design': { group: 'DESIGN', detail: 'BRAND_DESIGN' },
+  frontend: { group: 'DEVELOPMENT', detail: 'FRONTEND' },
+  backend: { group: 'DEVELOPMENT', detail: 'BACKEND' },
+  fullstack: { group: 'DEVELOPMENT', detail: 'FULLSTACK' },
+  security: { group: 'DEVELOPMENT', detail: 'SECURITY' },
+  devops: { group: 'DEVELOPMENT', detail: 'DEVOPS' },
+  ios: { group: 'DEVELOPMENT', detail: 'IOS' },
+  android: { group: 'DEVELOPMENT', detail: 'ANDROID' },
+  blockchain: { group: 'DEVELOPMENT', detail: 'BLOCKCHAIN' },
+  game: { group: 'DEVELOPMENT', detail: 'GAME' },
+  'brand-marketing': { group: 'MARKETING', detail: 'BRAND_MARKETING' },
+  'content-marketing': { group: 'MARKETING', detail: 'CONTENT_MARKETING' },
+  'growth-marketing': { group: 'MARKETING', detail: 'GROWTH_MARKETING' },
+  'performance-marketing': { group: 'MARKETING', detail: 'PERFORMANCE_MARKETING' },
+  pr: { group: 'MARKETING', detail: 'PR' },
+  ml: { group: 'AI', detail: 'MACHINE_LEARNING' },
+  dl: { group: 'AI', detail: 'DEEP_LEARNING' },
+  cv: { group: 'AI', detail: 'COMPUTER_VISION' },
+  nlp: { group: 'AI', detail: 'NLP' },
+  data: { group: 'AI', detail: 'DATA_SCIENCE' },
+};
+
 const JobSection = () => {
   const [editMode, setEditMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,12 +73,20 @@ const JobSection = () => {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
+      const unsupportedInterests = signupData.interests.filter((interest) => !JOB_CATEGORY_MAP[interest]);
+      if (unsupportedInterests.length > 0) {
+        window.alert(`현재 API에서 지원하지 않는 직무가 포함되어 있습니다: ${unsupportedInterests.join(', ')}`);
+        return;
+      }
+
       const response = await fetch('/api/members/job-categories', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ jobCategories: signupData.interests }),
+        body: JSON.stringify({
+          interested_job_categories: signupData.interests.map((interest) => JOB_CATEGORY_MAP[interest]),
+        }),
       });
 
       const payload = await response.json().catch(() => ({}));

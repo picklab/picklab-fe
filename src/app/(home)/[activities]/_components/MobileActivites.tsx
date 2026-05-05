@@ -31,7 +31,7 @@ export default function MobileActivites({ activitySlug }: { activitySlug: Activi
         selectedFilters={selectedFilters}
         setSelectedFilters={setSelectedFilters}
       />
-      <div className="px-5 py-[13px]">
+      <div className="py-[13px]">
         <Search
           status="default"
           wrapperClassName="w-full"

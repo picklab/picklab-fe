@@ -12,9 +12,10 @@ import Icon from "@/components/common/Icon/Icon";
 interface FilterSectionProps {
   selectedFilters: Record<string, string[]>;
   setSelectedFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
+  selectedButtonSize?: "base" | "sm";
 }
 
-const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionProps) => {
+const FilterSection = ({ selectedFilters, setSelectedFilters, selectedButtonSize = "base" }: FilterSectionProps) => {
   const [currentTab, setCurrentTab] = useState(ACTIVITY_FILTERS[0].title);
 
   const handleSelectFilter = (category: string, option: string) => {
@@ -62,7 +63,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
             <Button
               key={option}
               label={option}
-              size="base"
+              size={isSelected ? selectedButtonSize : "base"}
               buttonStyle={isSelected ? "filled" : "outlined"}
               isFullRounded={true}
               className="rounded-full"
@@ -75,7 +76,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
       {/* 한줄 넘어가면 다음줄로 갈 수 있게 처리 */}
       <div className="flex items-center gap-1 flex-wrap">
         <button
-          className="flex items-center justify-center w-7 h-7 bg-primary-60 rounded-full"
+          className="flex items-center justify-center w-7 h-7 bg-primary-50 rounded-full"
           onClick={() => setSelectedFilters({})}
         >
           <Icon icon="largeRefresh" color="white" size={16} />

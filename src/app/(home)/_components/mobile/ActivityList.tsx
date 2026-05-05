@@ -99,11 +99,13 @@ export default function ActivityList({
       {isSelect && (
         <div className="flex gap-2">
           <Select
-            size="xsmall"
-            width="xsmall"
+            size="small"
+            width="small"
             type="checkbox"
             functionOptionType="reset"
-            className="!rounded-full !w-[98px] !h-[34px] [&_span]:text-[14px] [&_span]:font-medium [&_span]:text-[#101828]"
+            wrapperClassName="!w-[120px]"
+            className="!rounded-full !w-[120px] [&_span]:text-[14px] [&_span]:font-medium [&_span]:text-[#101828]"
+            dropdownClassName="!w-[120px] [&_ul]:!w-[120px]"
             placeholder="활동유형"
             options={[
               { label: "대외활동", value: "external_activity" },
@@ -115,11 +117,13 @@ export default function ActivityList({
             onChange={(value) => setSelectedCategories(Array.isArray(value) ? value : [])}
           />
           <Select
-            size="xsmall"
-            width="xsmall"
+            size="small"
+            width="small"
             type="checkbox"
             functionOptionType="reset"
-            className="!rounded-full !w-[98px] !h-[34px] [&_span]:text-[14px] [&_span]:font-medium [&_span]:text-[#101828]"
+            wrapperClassName="!w-[120px]"
+            className="!rounded-full !w-[120px] [&_span]:text-[14px] [&_span]:font-medium [&_span]:text-[#101828]"
+            dropdownClassName="!w-[120px] [&_ul]:!w-[120px]"
             placeholder="직무유형"
             options={[
               { label: "기획", value: "planning" },

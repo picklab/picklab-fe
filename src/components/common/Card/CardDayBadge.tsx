@@ -1,4 +1,4 @@
-import Typography from "@/components/common/Typography";
+import Typography, { TypographyType } from "@/components/common/Typography";
 import clsx from "clsx";
 import React from "react";
 
@@ -7,12 +7,14 @@ interface CardDayBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   text: string;
   // Variant 타입 (default, deadline, intended)
   variant: "default" | "deadline" | "intended";
+  typoType?: TypographyType;
 }
 
 const CardDayBadge = ({
   text,
   variant,
   className,
+  typoType = "Caption4Regular",
   ...props
 }: CardDayBadgeProps) => {
   const baseClasses =
@@ -26,7 +28,7 @@ const CardDayBadge = ({
 
   return (
     <Typography
-      type="Caption4Regular"
+      type={typoType}
       className={clsx(baseClasses, variantClasses[variant], className)}
       {...props}
     >

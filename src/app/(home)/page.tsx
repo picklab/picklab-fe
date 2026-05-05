@@ -9,6 +9,8 @@ import MobileActivityList from "./_components/mobile/ActivityList";
 import { getAllActivities } from "@/lib/activity-data";
 import Link from "next/link";
 import Typography from "@/components/common/Typography";
+import { cookies } from "next/headers";
+import Search from "@/components/common/Field/Search";
 
 
 // 상수 정의
@@ -47,6 +49,8 @@ interface HomePageProps {
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
+  const cookieStore = await cookies();
+  const isLogin = !!cookieStore.get("accessToken");
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const requestedPage = Number(resolvedSearchParams?.page ?? "1");
   const totalPage = Math.max(1, Math.ceil(getAllActivities().length / PC_NEW_ACTIVITY_PAGE_SIZE));
@@ -72,7 +76,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <>
       <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} />
-      <PcLayout className={PC_STYLES.HIDDEN_ON_MOBILE} totalPage={totalPage} activePage={activePage} />
+      <PcLayout className={PC_STYLES.HIDDEN_ON_MOBILE} totalPage={totalPage} activePage={activePage} isLogin={isLogin} />
     </>
   );
 }
@@ -80,6 +84,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 export function MobileLayout({ className }: ResponsiveLayoutProps) {
   return (
     <div className={clsx(MOBILE_STYLES.CONTAINER, className)}>
+      <div className="py-[13px]">
+        <Search
+          status="default"
+          wrapperClassName="w-full"
+          className="!w-full !rounded-[6px] !border-[#00BC7D] hover:!border-[#00BC7D] active:!border-[#00BC7D] focus:!border-[#00BC7D]"
+          iconClassName="!text-[#00BC7D]"
+          placeholder="찾고 싶은 활동을 검색해보세요"
+        />
+      </div>
       <Banner />
       <MobileHomeTabs />
       <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" className={MOBILE_STYLES.FIRST_SECTION} />
@@ -128,7 +141,8 @@ export function PcLayout({
   isStorybook,
   totalPage,
   activePage,
-}: ResponsiveLayoutProps & { totalPage: number; activePage: number }) {
+  isLogin = true,
+}: ResponsiveLayoutProps & { totalPage: number; activePage: number; isLogin?: boolean }) {
   return (
     <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? "flex" : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
@@ -136,11 +150,11 @@ export function PcLayout({
           <Banner />
         </div>
         {/* 직무를 위한 추천 활동 */}
-        <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" />
+        {isLogin && <PcActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" />}
         {/* 이번주 인기 대외활동 */}
         <PcActivityList title={ACTIVITY_TITLES.POPULAR} endpoint="popular" type="list" />
         {/* 최근에 본 활동 */}
-        <PcActivityList title={ACTIVITY_TITLES.RECENT} endpoint="recently-viewed" />
+        {isLogin && <PcActivityList title={ACTIVITY_TITLES.RECENT} endpoint="recently-viewed" />}
         {/* 방금 올라온 따끈따끈한 활동! */}
         <NewActivityList title={ACTIVITY_TITLES.NEW} useExternalPagination />
       </div>

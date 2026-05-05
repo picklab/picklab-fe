@@ -71,7 +71,7 @@ const Card = ({
           <div className="flex flex-col gap-1">
             <Typography
               type="Body3Semibold"
-              className="break-words whitespace-normal text-gray-90 leading-[143%] line-clamp-2 overflow-hidden text-ellipsis"
+              className="break-keep whitespace-normal text-gray-90 leading-[143%] line-clamp-2 overflow-hidden text-ellipsis"
             >
               {title}
             </Typography>

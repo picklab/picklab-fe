@@ -1,24 +1,28 @@
-'use client';
+"use client";
 
-import React from 'react';
-import clsx from 'clsx';
-import Image from 'next/image';
-import Icon from '@/components/common/Icon/Icon';
-import CardChip, { CardChipProps } from '@/components/common/Card/CardChip';
-import CardJobChip from '@/components/common/Card/CardJobChip';
-import Typography from '@/components/common/Typography';
-import CardDayBadge from '@/components/common/Card/CardDayBadge';
+import React from "react";
+import clsx from "clsx";
+import Image from "next/image";
+import Icon from "@/components/common/Icon/Icon";
+import CardChip, { CardChipProps } from "@/components/common/Card/CardChip";
+import CardJobChip from "@/components/common/Card/CardJobChip";
+import Typography from "@/components/common/Typography";
+import CardDayBadge from "@/components/common/Card/CardDayBadge";
 
 interface CardProps {
   imageUrl: string;
   badgeText: string;
-  badgeVariant: 'default' | 'deadline' | 'intended';
+  badgeVariant: "default" | "deadline" | "intended";
   isBookmarked: boolean;
-  chipText: CardChipProps['text'];
+  chipText: CardChipProps["text"];
   companyName: string;
   title: string;
-  jobs: ('기획' | '개발' | '마케팅' | '디자인' | 'AI' | '마케터' | '기타')[];
-  onBookmarkClick?: (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => void;
+  jobs: ("기획" | "개발" | "마케팅" | "디자인" | "AI" | "마케터" | "기타")[];
+  onBookmarkClick?: (
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLButtonElement>,
+  ) => void;
   onCardClick: () => void;
 }
 
@@ -38,8 +42,7 @@ const Card = ({
     <div
       onClick={onCardClick}
       aria-label={`카드: ${title}`}
-      className="flex flex-col min-w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer"
-    >
+      className="flex flex-col min-w-[250px] h-[358px] rounded-[10px] bg-white cursor-pointer">
       {/* 이미지 영역 */}
       <div className="relative w-full h-[180px] overflow-hidden">
         <Image
@@ -49,7 +52,12 @@ const Card = ({
           height={180}
           className="w-full h-full object-cover rounded-[10px]"
         />
-        <CardDayBadge text={badgeText} variant={badgeVariant} className="absolute top-4 left-4 text-sm" />
+        <CardDayBadge
+          text={badgeText}
+          variant={badgeVariant}
+          typoType="Body3Medium"
+          className="absolute top-4 left-4"
+        />
 
         <button
           onClick={(e) => {
@@ -57,19 +65,21 @@ const Card = ({
             onBookmarkClick?.(e);
           }}
           aria-pressed={isBookmarked}
-          aria-label={isBookmarked ? '북마크 취소' : '북마크 추가'}
-          className="absolute top-4 right-4 z-20"
-        >
+          aria-label={isBookmarked ? "북마크 취소" : "북마크 추가"}
+          className="absolute top-4 right-4 z-20">
           <Icon
-            icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}
-            className={clsx('w-6 h-6', isBookmarked ? 'text-primary-50' : 'text-gray-10')}
+            icon={isBookmarked ? "bookmarkFill" : "bookmarkLine"}
+            className={clsx(
+              "w-6 h-6",
+              isBookmarked ? "text-primary-50" : "text-gray-10",
+            )}
           />
         </button>
       </div>
 
       {/* 콘텐츠 영역 */}
       <div className="flex flex-col px-space-8 py-space-20 gap-space-8">
-        <CardChip text={chipText} />
+        <CardChip text={chipText} typoType="Body3Medium" />
         <div className="flex flex-col gap-space-16">
           <div className="flex flex-col gap-space-8">
             <div className="text-gray-90 overflow-hidden line-clamp-2 max-w-[222px]">
@@ -77,14 +87,13 @@ const Card = ({
             </div>
             <Typography
               type="Body4Regular"
-              className="text-gray-50 overflow-hidden text-ellipsis whitespace-nowrap max-w-[222px]"
-            >
+              className="text-gray-50 overflow-hidden text-ellipsis whitespace-nowrap max-w-[222px]">
               {companyName}
             </Typography>
           </div>
           <div className="flex gap-1">
             {jobs.map((job) => (
-              <CardJobChip key={job} job={job} />
+              <CardJobChip key={job} job={job} typoType="Body3Medium" />
             ))}
           </div>
         </div>

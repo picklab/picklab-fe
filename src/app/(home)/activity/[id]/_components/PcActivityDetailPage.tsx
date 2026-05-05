@@ -254,12 +254,12 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-1">
               <span className="h-[22px] rounded bg-gray-90 px-space-8 inline-flex items-center">
-                <Typography type="Caption1Medium" className="text-gray-0">
+                <Typography type="Body3Medium" className="text-gray-0">
                   D-00
                 </Typography>
               </span>
               <div className="inline-flex h-[22px] w-fit items-center rounded-full bg-gray-20 px-space-8">
-                <Typography type="Caption2Medium" className="text-gray-50">
+                <Typography type="Body3Medium" className="text-gray-50">
                   {activity.activityType}
                 </Typography>
               </div>
@@ -308,7 +308,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
                       key={tag}
                       className="h-[22px] rounded bg-primary-5 px-space-8 inline-flex items-center justify-center"
                     >
-                      <Typography type="Caption2Medium" className="text-primary-60">
+                      <Typography type="Body3Medium" className="text-primary-60">
                         {tag}
                       </Typography>
                     </span>
