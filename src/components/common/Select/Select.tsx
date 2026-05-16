@@ -27,7 +27,7 @@ export interface SelectProps {
   onChange: (value?: string | string[]) => void;
   type?: OptionGroupProps['type'];
   disabled?: boolean;
-  width?: 'default' | 'large' | 'small' | 'xsmall' | 'full';
+  width?: 'default' | 'large' | 'medium' | 'small' | 'xsmall' | 'full';
   size?: 'default' | 'small' | 'xsmall';
   icon?: IconType;
   functionOptionType?: Exclude<FunctionOptionProps['type'], 'selfplus'>;
@@ -40,6 +40,7 @@ export interface SelectProps {
 export const widthClassMap = {
   default: 'w-60',
   large: 'w-[420px]',
+  medium: 'w-[160px] py-space-9',
   small: 'w-[140px] py-space-9',
   xsmall: 'w-[98px] py-space-7',
   full: 'w-full',

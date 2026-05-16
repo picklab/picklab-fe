@@ -23,7 +23,7 @@ const Footer = ({ className }: { className: string }) => {
         <div className="flex gap-[70px]">
           <Link href="/" aria-label="홈으로 가기">
             <Image
-              src="/imgs/footer_Logo.png"
+              src="/imgs/footer_logo.png"
               width={90}
               height={40}
               alt="Picklab 로고"

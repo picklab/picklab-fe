@@ -206,7 +206,7 @@ const ChevronIconButton = ({ direction, onClick }: { direction: 'left' | 'right'
   return (
     <button
       onClick={onClick}
-      className="w-8 h-8 rounded-[4px] border-gray-20 border flex items-center justify-center hover:bg-gray-50 transition-colors"
+      className="w-8 h-8 rounded-[4px] border-gray-20 border flex items-center justify-center hover:bg-gray-5 transition-colors"
     >
       {direction === 'left' ? (
         <ChevronLeft color="#101828" height={13.5} />

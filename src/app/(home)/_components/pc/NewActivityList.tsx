@@ -177,7 +177,7 @@ export default function NewActivityList({
             <div className="flex gap-2">
               <Select
                 size="small"
-                width="small"
+                width="medium"
                 type="checkbox"
                 functionOptionType="reset"
                 portalDropdown
@@ -201,7 +201,7 @@ export default function NewActivityList({
               />
               <Select
                 size="small"
-                width="small"
+                width="medium"
                 type="checkbox"
                 functionOptionType="reset"
                 portalDropdown
