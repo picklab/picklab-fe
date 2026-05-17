@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityCardItem } from '@/app/(home)/_components/constant';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import CardChip from '@/components/common/Card/CardChip';
@@ -10,7 +10,6 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
-import { recordRecentlyViewedActivity } from '@/lib/activity-data';
 
 interface MobileActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -214,19 +213,13 @@ const MobileRadarChart = () => (
 
 export default function MobileActivityDetailPage({ activity }: MobileActivityDetailPageProps) {
   const [tab, setTab] = useState<MobileTab>('detail');
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(Boolean(activity.isBookmarked));
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const applyLink = getApplyLink(activity);
   const detailImages = splitDetailImages(activity.detailImage);
   const tags = getActivityTags(activity.activityField);
   const activityId = extractActivityId(activity.detailLink);
   const reviewCards = useMemo(() => [1, 2], []);
-
-  useEffect(() => {
-    if (activityId) {
-      recordRecentlyViewedActivity(activityId);
-    }
-  }, [activityId]);
 
   const handleBookmarkToggle = async () => {
     if (!activityId || isBookmarkLoading) return;
@@ -247,7 +240,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <CardDayBadge text="D-00" variant="default" />
+            <CardDayBadge text={activity.badgeText ?? '모집중'} variant="default" />
             <CardChip text={activity.activityType as '대외활동' | '교육' | '공모전/해커톤' | '강연/세미나'} />
           </div>
           <button
@@ -274,13 +267,13 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
           <div className="flex items-center gap-1">
             <Icon icon="eye" size={14} className="text-gray-40" />
             <Typography type="Caption1Regular" className="text-gray-40">
-              6000
+              {activity.viewCount ?? 0}
             </Typography>
           </div>
           <div className="flex items-center gap-1">
             <Icon icon="bookmarkLine" size={14} className="text-gray-40" />
             <Typography type="Caption1Regular" className="text-gray-40">
-              6000
+              {activity.saveCount ?? 0}
             </Typography>
           </div>
         </div>

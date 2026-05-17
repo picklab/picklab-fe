@@ -19,6 +19,26 @@ function buildProxyResponse(externalResponse: Response) {
   });
 }
 
+function setAuthCookies(response: NextResponse, accessToken: string, refreshToken?: string | null) {
+  response.cookies.set('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+  });
+
+  if (refreshToken) {
+    response.cookies.set('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+}
+
 async function handleRequest(req: NextRequest) {
   try {
     const accessToken = req.cookies.get('accessToken')?.value;
@@ -26,7 +46,7 @@ async function handleRequest(req: NextRequest) {
     const path = req.nextUrl.pathname.replace('/api/proxy', '');
     const externalApiUrl = `${EXTERNAL_API_BASE_URL}${path}${req.nextUrl.search}`;
 
-    if (!accessToken) {
+    if (!accessToken && !refreshToken) {
       return NextResponse.json({ error: 'Unauthorized: No access token found' }, { status: 401 });
     }
 
@@ -35,10 +55,12 @@ async function handleRequest(req: NextRequest) {
       reqBody = await req.text();
     }
 
-    const buildKyOptions = (token: string): Parameters<typeof ky>[1] => {
-      const headers: HeadersInit = {
-        Authorization: `Bearer ${token}`,
-      };
+    const buildKyOptions = (token?: string): Parameters<typeof ky>[1] => {
+      const headers: HeadersInit = {};
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       const contentType = req.headers.get('Content-Type');
       if (contentType) {
@@ -59,23 +81,29 @@ async function handleRequest(req: NextRequest) {
       return options;
     };
 
+    const refreshAndRetry = async () => {
+      if (!refreshToken) return null;
+
+      const refreshed = await refreshAccessToken(refreshToken);
+      if (!refreshed.ok || !refreshed.accessToken) return null;
+
+      const retried = await ky(externalApiUrl, buildKyOptions(refreshed.accessToken));
+      const retryResponse = buildProxyResponse(retried);
+      setAuthCookies(retryResponse, refreshed.accessToken, refreshed.refreshToken);
+      return retryResponse;
+    };
+
+    if (!accessToken && refreshToken) {
+      const retryResponse = await refreshAndRetry();
+      if (retryResponse) return retryResponse;
+      return NextResponse.json({ error: 'Unauthorized: Token refresh failed' }, { status: 401 });
+    }
+
     let externalResponse = await ky(externalApiUrl, buildKyOptions(accessToken));
 
     if (externalResponse.status === 401 && refreshToken) {
-      const refreshed = await refreshAccessToken(refreshToken);
-
-      if (refreshed.ok && refreshed.accessToken) {
-        externalResponse = await ky(externalApiUrl, buildKyOptions(refreshed.accessToken));
-        const retryResponse = buildProxyResponse(externalResponse);
-        retryResponse.cookies.set('accessToken', refreshed.accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7,
-        });
-        return retryResponse;
-      }
+      const retryResponse = await refreshAndRetry();
+      if (retryResponse) return retryResponse;
     }
 
     return buildProxyResponse(externalResponse);

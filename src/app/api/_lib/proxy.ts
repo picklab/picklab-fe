@@ -20,6 +20,26 @@ function unauthorizedResponse() {
   return NextResponse.json({ error: '인증 토큰이 없습니다.' }, { status: 401 });
 }
 
+function setAuthCookies(response: NextResponse, accessToken: string, refreshToken?: string | null) {
+  response.cookies.set('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+  });
+
+  if (refreshToken) {
+    response.cookies.set('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+}
+
 async function buildResponse(response: Response) {
   const status = response.status;
   const contentType = response.headers.get('content-type');
@@ -59,7 +79,7 @@ export async function proxyWithAuth({
   try {
     const accessToken = request.cookies.get('accessToken')?.value;
     const refreshToken = request.cookies.get('refreshToken')?.value;
-    if (!accessToken && !optionalAuth) {
+    if (!accessToken && !refreshToken && !optionalAuth) {
       return unauthorizedResponse();
     }
     const requestBody = includeJsonBody ? await request.json() : undefined;
@@ -84,23 +104,29 @@ export async function proxyWithAuth({
       };
     };
 
+    const refreshAndRetry = async () => {
+      if (!refreshToken) return null;
+
+      const refreshed = await refreshAccessToken(refreshToken);
+      if (!refreshed.ok || !refreshed.accessToken) return null;
+
+      const retried = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions(refreshed.accessToken));
+      const retryResponse = await buildResponse(retried);
+      setAuthCookies(retryResponse, refreshed.accessToken, refreshed.refreshToken);
+      return retryResponse;
+    };
+
+    if (!accessToken && refreshToken) {
+      const retryResponse = await refreshAndRetry();
+      if (retryResponse) return retryResponse;
+      if (!optionalAuth) return unauthorizedResponse();
+    }
+
     let response = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions(accessToken));
 
     if (response.status === 401 && refreshToken) {
-      const refreshed = await refreshAccessToken(refreshToken);
-
-      if (refreshed.ok && refreshed.accessToken) {
-        response = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions(refreshed.accessToken));
-        const retryResponse = await buildResponse(response);
-        retryResponse.cookies.set('accessToken', refreshed.accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7,
-        });
-        return retryResponse;
-      }
+      const retryResponse = await refreshAndRetry();
+      if (retryResponse) return retryResponse;
     }
 
     return buildResponse(response);

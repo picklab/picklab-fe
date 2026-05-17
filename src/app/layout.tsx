@@ -43,7 +43,7 @@ export default async function RootLayout({
   modal: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const isLogin = !!cookieStore.get("accessToken");
+  const isLogin = !!(cookieStore.get("accessToken") || cookieStore.get("refreshToken"));
 
   return (
     <html lang="ko">

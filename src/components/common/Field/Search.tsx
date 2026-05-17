@@ -6,7 +6,7 @@ import { OptionGroup, OptionGroupProps } from "@/components/common/Option/Option
 import TextField, { TextFieldProps } from "@/components/common/Field/TextField";
 import { debounce } from "@/utils/debounce";
 import clsx from "clsx";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { OptionType } from "@/components/common/Option/Option";
 import { useRouter } from "next/navigation";
 
@@ -28,6 +28,19 @@ const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxP
   const [filtered, setFiltered] = useState<OptionType[]>([]);
   // 검색 결과 또는 기본 도움말 메시지
   const [searchHelpMessage, setSearchHelpMessage] = useState(props.helpMessage);
+
+  useEffect(() => {
+    if (!optionGroupProps || input.trim() === "") {
+      return;
+    }
+
+    const value = input.toLowerCase();
+    const match = optionGroupProps.options.filter((item) => item.label.toLowerCase().includes(value));
+
+    setFiltered(match);
+    setIsOpen(match.length > 0 || optionGroupProps.functionOptionType === "selfplus");
+    setSearchHelpMessage(props.helpMessage);
+  }, [input, optionGroupProps, props.helpMessage]);
 
   // 옵션 선택 시 동작
   const onSelect = (value?: string | string[]) => {
@@ -69,7 +82,7 @@ const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxP
           }
         }
       }, 300),
-    [] // 의존성 없음
+    [optionGroupProps, props.helpMessage]
   );
 
   // 입력 필드 변경 핸들러
@@ -110,8 +123,10 @@ const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxP
         value={input}
         onChange={onChange}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            router.push(`/search/${input}?tab=all`);
+          const keyword = input.trim();
+
+          if (e.key === "Enter" && keyword) {
+            router.push(`/search/${encodeURIComponent(keyword)}?tab=all`);
             e.preventDefault();
             e.stopPropagation();
           }

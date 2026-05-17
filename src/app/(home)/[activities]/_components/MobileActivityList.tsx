@@ -12,10 +12,10 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import Icon from "@/components/common/Icon/Icon";
 import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
 import {
-  getActivitiesForCategoryPage,
   type ActivityMenuId,
   type ActivityPageFilters,
 } from "@/lib/activity-data";
+import { useActivities } from "@/hooks/useActivities";
 
 const CARD_CHIP_TYPES = [
   "대외활동",
@@ -37,6 +37,12 @@ const MENU_TO_SLUG = {
   seminar: "seminar",
   education: "education",
   contest: "contest",
+} as const;
+const CATEGORY_TO_API = {
+  activities: "EXTRACURRICULAR",
+  seminar: "SEMINAR",
+  education: "EDUCATION",
+  contest: "COMPETITION",
 } as const;
 
 interface ActivityListProps {
@@ -84,9 +90,28 @@ export default function MobileActivityList({
     {},
   );
   const activitySlug = MENU_TO_SLUG[activeMenu];
+  const activityParams = useMemo(
+    () => ({
+      size: "200",
+      sort: "LATEST",
+      ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug], fallbackOnEmpty: "false" } : {}),
+    }),
+    [activitySlug],
+  );
+  const { data: apiData, loading } = useActivities("latest", activityParams);
   const items = useMemo(
-    () => getActivitiesForCategoryPage({ slug: activitySlug, selectedFilters }),
-    [activitySlug, selectedFilters],
+    () =>
+      apiData.filter((item) => {
+        const filterEntries = Object.entries(selectedFilters).filter(([, values]) => values.length > 0);
+        return filterEntries.every(([filterName, values]) => {
+          const activeValues = values.filter((value) => value !== "전체");
+          if (activeValues.length === 0) return true;
+          if (filterName === "주최기관") return activeValues.includes(item.organizer);
+          if (filterName === "관련직무") return item.jobs.some((job) => activeValues.includes(job));
+          return true;
+        });
+      }),
+    [apiData, selectedFilters],
   );
 
   const handleBookmarkToggle = async (activityId: string) => {
@@ -266,7 +291,11 @@ export default function MobileActivityList({
             ? "grid grid-cols-2 gap-4"
             : "flex flex-col gap-2",
         )}>
-        {items.length === 0 ? (
+        {loading ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="h-[250px] rounded-lg bg-gray-10 animate-pulse" />
+          ))
+        ) : items.length === 0 ? (
           <div
             className={clsx(
               "flex h-[220px] w-full items-center justify-center rounded-lg bg-gray-5",

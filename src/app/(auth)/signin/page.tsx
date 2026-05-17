@@ -47,7 +47,7 @@ export default function AuthPage() {
 
 function AuthHeader() {
   return (
-    <div className="flex flex-col gap-4 items-center mt-[120px]">
+    <div className="flex flex-col gap-4 items-center mobile:mt-[60px] pc:mt-[120px]">
       <Image
         src="/imgs/logo_mobile.png"
         alt="Auth Header"
@@ -96,14 +96,14 @@ function AuthContent() {
         ))}
       </div>
       <Link
-        href="/auth/signup"
+        href="/signup"
         className="underline underline-offset-4 decoration-[#A5ADBB]">
         <Typography
           tag="p"
           type="Body3Medium"
           id="auth-content-signup"
           className="text-gray-50">
-          PICKLAB 회원가입
+          간편 회원가입
         </Typography>
       </Link>
     </div>

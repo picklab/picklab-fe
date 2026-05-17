@@ -42,6 +42,7 @@ const PC_STYLES = {
 interface ResponsiveLayoutProps {
   className: string;
   isStorybook?: boolean;
+  isLogin?: boolean;
 }
 
 interface HomePageProps {
@@ -50,7 +51,7 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const cookieStore = await cookies();
-  const isLogin = !!cookieStore.get("accessToken");
+  const isLogin = !!(cookieStore.get("accessToken") || cookieStore.get("refreshToken"));
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const requestedPage = Number(resolvedSearchParams?.page ?? "1");
   const totalPage = Math.max(1, Math.ceil(getAllActivities().length / PC_NEW_ACTIVITY_PAGE_SIZE));
@@ -75,27 +76,32 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <>
-      <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} />
+      <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} isLogin={isLogin} />
       <PcLayout className={PC_STYLES.HIDDEN_ON_MOBILE} totalPage={totalPage} activePage={activePage} isLogin={isLogin} />
     </>
   );
 }
 
-export function MobileLayout({ className }: ResponsiveLayoutProps) {
+export function MobileLayout({ className, isLogin = true }: ResponsiveLayoutProps) {
   return (
     <div className={clsx(MOBILE_STYLES.CONTAINER, className)}>
       <div className="py-[13px]">
-        <Search
-          status="default"
-          wrapperClassName="w-full"
-          className="!w-full !rounded-[6px] !border-[#00BC7D] hover:!border-[#00BC7D] active:!border-[#00BC7D] focus:!border-[#00BC7D]"
-          iconClassName="!text-[#00BC7D]"
-          placeholder="찾고 싶은 활동을 검색해보세요"
-        />
+        <Link href="/search" aria-label="검색 화면으로 이동">
+          <Search
+            status="default"
+            wrapperClassName="w-full"
+            className="!w-full !rounded-[6px] !border-[#00BC7D] hover:!border-[#00BC7D] active:!border-[#00BC7D] focus:!border-[#00BC7D]"
+            iconClassName="!text-[#00BC7D]"
+            placeholder="찾고 싶은 활동을 검색해보세요"
+            readOnly
+          />
+        </Link>
       </div>
       <Banner />
       <MobileHomeTabs />
-      <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" className={MOBILE_STYLES.FIRST_SECTION} />
+      {isLogin && (
+        <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" className={MOBILE_STYLES.FIRST_SECTION} />
+      )}
       <MobileActivityList title={ACTIVITY_TITLES.POPULAR} endpoint="popular" type="list" className={MOBILE_STYLES.SECOND_SECTION} />
       <MobileActivityList title={ACTIVITY_TITLES.NEW} endpoint="latest" className={MOBILE_STYLES.THIRD_SECTION} isSelect />
     </div>
@@ -112,7 +118,7 @@ const MOBILE_HOME_TABS = [
 
 function MobileHomeTabs() {
   return (
-    <div className="relative mt-5 flex h-[35px] w-full flex-row overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+    <div className="relative left-1/2 mt-5 flex h-[35px] w-screen -translate-x-1/2 flex-row overflow-x-auto px-5 hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
       {MOBILE_HOME_TABS.map((item) => {
         const isActive = item.href === "/";
 

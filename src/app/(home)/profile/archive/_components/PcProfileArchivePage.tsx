@@ -4,9 +4,11 @@ import ListItem from '@/components/common/List/ListItem';
 import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
-import type { CardChipProps } from '@/components/common/Card/CardChip';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon/Icon';
+import { useRouter } from 'next/navigation';
+import { toggleBookmark } from '@/lib/bookmarks';
+import useBookmarks from '@/hooks/useBookmarks';
 
 const MENU_ITEMS = [
   { id: 'archive', label: '전체', href: '#archive' },
@@ -17,86 +19,43 @@ const MENU_ITEMS = [
 ] as const;
 
 type MenuId = 'archive' | 'external-activity' | 'seminar' | 'education' | 'contest';
-type ArchiveCategory = Exclude<MenuId, 'archive'>;
+type BackendBookmarkCategory = 'EXTRACURRICULAR' | 'SEMINAR' | 'EDUCATION' | 'COMPETITION';
 interface ArchiveMenuProps {
   snbMenu: MenuId;
   setSnbMenu: (menu: MenuId) => void;
 }
 
-const MENU_LABEL_BY_ID: Record<ArchiveCategory, CardChipProps['text']> = {
-  'external-activity': '대외활동',
-  seminar: '강연/세미나',
-  education: '교육',
-  contest: '공모전/해커톤',
+const BACKEND_CATEGORY_BY_MENU: Partial<Record<MenuId, BackendBookmarkCategory>> = {
+  'external-activity': 'EXTRACURRICULAR',
+  seminar: 'SEMINAR',
+  education: 'EDUCATION',
+  contest: 'COMPETITION',
 };
-
-type ArchiveItem = {
-  id: string;
-  title: string;
-  category: ArchiveCategory;
-  organization: string;
-  startDate: Date;
-  endDate: Date;
-  thumbnail: string;
-  isFinished: boolean;
-};
-
-const MOCK_ITEMS: ArchiveItem[] = [
-  {
-    id: '1',
-    title: '리스트 아이템 제목 A',
-    category: 'external-activity',
-    organization: '삼양 그룹',
-    startDate: new Date('2025-05-01'),
-    endDate: new Date('2025-05-15'),
-    thumbnail: '/imgs/cat.jpg',
-    isFinished: true,
-  },
-  {
-    id: '2',
-    title: '리스트 아이템 제목 B',
-    category: 'seminar',
-    organization: '네이버',
-    startDate: new Date('2025-04-10'),
-    endDate: new Date('2025-04-12'),
-    thumbnail: '/imgs/cat.jpg',
-    isFinished: true,
-  },
-  {
-    id: '3',
-    title: '리스트 아이템 제목 C',
-    category: 'education',
-    organization: '토스',
-    startDate: new Date('2025-03-01'),
-    endDate: new Date('2025-03-31'),
-    thumbnail: '/imgs/cat.jpg',
-    isFinished: true,
-  },
-  {
-    id: '4',
-    title: '리스트 아이템 제목 D',
-    category: 'contest',
-    organization: '카카오',
-    startDate: new Date('2025-02-01'),
-    endDate: new Date('2025-02-15'),
-    thumbnail: '/imgs/cat.jpg',
-    isFinished: true,
-  },
-];
 
 export default function PcProfileArchivePage({ isStorybook = false }: { isStorybook?: boolean }) {
+  const router = useRouter();
   const [snbMenu, setSnbMenu] = useState<MenuId>('archive');
   const [sortType, setSortType] = useState<'latest' | 'oldest'>('latest');
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
   const isLatest = sortType === 'latest';
+  const { data: bookmarkedItems, loading, error } = useBookmarks({
+    activityType: BACKEND_CATEGORY_BY_MENU[snbMenu],
+  });
 
   const filteredAndSortedItems = useMemo(() => {
-    const base = snbMenu === 'archive' ? MOCK_ITEMS : MOCK_ITEMS.filter((item) => item.category === snbMenu);
-    return base.slice().sort((a, b) => {
-      const aTime = a.endDate.getTime();
-      const bTime = b.endDate.getTime();
-      return isLatest ? bTime - aTime : aTime - bTime;
-    });
-  }, [snbMenu, isLatest]);
+    const base = bookmarkedItems.filter((item) => !removedIds.includes(item.id));
+    return isLatest ? base : base.slice().reverse();
+  }, [bookmarkedItems, isLatest, removedIds]);
+
+  const handleBookmarkClick = async (activityId: string) => {
+    try {
+      await toggleBookmark({ activityId, isBookmarked: true });
+      setRemovedIds((prev) => [...prev, activityId]);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '북마크 처리 중 오류가 발생했습니다.';
+      window.alert(message);
+    }
+  };
 
   return (
     <div className={clsx('w-full', isStorybook ? '' : 'mobile:hidden')}>
@@ -133,20 +92,44 @@ export default function PcProfileArchivePage({ isStorybook = false }: { isStoryb
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {filteredAndSortedItems.map((item) => (
-              <ListItem
-                key={item.id}
-                className="border-none"
-                thumbnail={item.thumbnail}
-                title={item.title}
-                isFinished={item.isFinished}
-                chipTitle={MENU_LABEL_BY_ID[item.category]}
-                organization={item.organization}
-                startDate={item.startDate}
-                endDate={item.endDate}
-                onListClick={() => {}}
-              />
-            ))}
+            {loading && (
+              <div className="col-span-2 flex h-[180px] items-center justify-center bg-gray-5 rounded-lg">
+                <Typography type="Body2Medium" className="text-gray-50">
+                  북마크 목록을 불러오는 중입니다.
+                </Typography>
+              </div>
+            )}
+            {!loading && error && (
+              <div className="col-span-2 flex h-[180px] items-center justify-center bg-gray-5 rounded-lg">
+                <Typography type="Body2Medium" className="text-gray-50">
+                  북마크 목록을 불러오지 못했습니다.
+                </Typography>
+              </div>
+            )}
+            {!loading && !error && filteredAndSortedItems.length === 0 && (
+              <div className="col-span-2 flex h-[180px] items-center justify-center bg-gray-5 rounded-lg">
+                <Typography type="Body2Medium" className="text-gray-50">
+                  북마크한 활동이 없습니다.
+                </Typography>
+              </div>
+            )}
+            {!loading &&
+              !error &&
+              filteredAndSortedItems.map((item) => (
+                <ListItem
+                  key={item.id}
+                  className="border-none"
+                  thumbnail={item.thumbnailImage || '/imgs/cat.jpg'}
+                  title={item.title}
+                  isFinished={false}
+                  isBookmarked
+                  organization={item.organizer}
+                  saveCount={item.saveCount}
+                  viewCount={item.viewCount}
+                  onListClick={() => router.push(item.detailLink)}
+                  onBookmarkClick={() => handleBookmarkClick(item.id)}
+                />
+              ))}
           </div>
         </div>
       </div>

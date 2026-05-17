@@ -18,6 +18,10 @@ export interface ActivityCardItem {
   description?: string;
   thumbnailImage: string;
   detailImage: string;
+  badgeText?: string;
+  viewCount?: number;
+  saveCount?: number;
+  isBookmarked?: boolean;
 }
 
 export const CardData: ActivityCardItem[] = [

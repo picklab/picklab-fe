@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { ActivityCardItem } from '@/app/(home)/_components/constant';
@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
-import { recordRecentlyViewedActivity } from '@/lib/activity-data';
 
 interface PcActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -218,7 +217,7 @@ const JobRadarChart = () => (
 
 export default function PcActivityDetailPage({ activity }: PcActivityDetailPageProps) {
   const [tab, setTab] = useState<DetailTab>('detail');
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(Boolean(activity.isBookmarked));
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const applyLink = getApplyLink(activity);
   const detailImages = splitDetailImages(activity.detailImage);
@@ -226,12 +225,6 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
   const activityId = extractActivityId(activity.detailLink);
 
   const reviewCards = useMemo(() => [true, false, false], []);
-
-  useEffect(() => {
-    if (activityId) {
-      recordRecentlyViewedActivity(activityId);
-    }
-  }, [activityId]);
 
   const handleBookmarkToggle = async () => {
     if (!activityId || isBookmarkLoading) return;
@@ -255,7 +248,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
             <div className="flex items-center gap-1">
               <span className="h-[22px] rounded bg-gray-90 px-space-8 inline-flex items-center">
                 <Typography type="Body3Medium" className="text-gray-0">
-                  D-00
+                  {activity.badgeText ?? '모집중'}
                 </Typography>
               </span>
               <div className="inline-flex h-[22px] w-fit items-center rounded-full bg-gray-20 px-space-8">
@@ -277,13 +270,13 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               <div className="flex items-center gap-1">
                 <Icon icon="eye" size={16} className="text-gray-40" />
                 <Typography type="Caption1Regular" className="text-gray-40">
-                  6000
+                  {activity.viewCount ?? 0}
                 </Typography>
               </div>
               <div className="flex items-center gap-1">
                 <Icon icon="bookmarkLine" size={16} className="text-gray-40" />
                 <Typography type="Caption1Regular" className="text-gray-40">
-                  6000
+                  {activity.saveCount ?? 0}
                 </Typography>
               </div>
             </div>

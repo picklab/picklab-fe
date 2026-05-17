@@ -25,6 +25,7 @@ export interface LocalApiActivityItem {
   jobs: string[];
   saveCount: number;
   viewCount: number;
+  isBookmarked?: boolean;
 }
 
 export type LocalActivityEndpoint = 'recommendations' | 'popular' | 'recently-viewed' | 'latest';

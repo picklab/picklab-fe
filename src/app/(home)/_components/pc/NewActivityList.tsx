@@ -7,7 +7,7 @@ import SortTab from '@/components/common/Tab/SortTab';
 import Select from '@/components/common/Select/Select';
 import ChevronIconButton from '@/components/common/Pagination/ChevronIconButton';
 import { useActivities } from '@/hooks/useActivities';
-import { getAllActivities, getActivitiesForCategoryPage, type ActivityPageFilters, type ActivityRouteSlug } from '@/lib/activity-data';
+import { getAllActivities, type ActivityPageFilters, type ActivityRouteSlug } from '@/lib/activity-data';
 
 interface NewActivityListProps {
   title: string;
@@ -21,6 +21,17 @@ interface NewActivityListProps {
 
 const CARDS_PER_PAGE = 12;
 const JOB_TYPES = ['기획', '디자인', '개발', '마케팅', 'AI'] as const;
+const CATEGORY_TO_API = {
+  activities: 'EXTRACURRICULAR',
+  seminar: 'SEMINAR',
+  education: 'EDUCATION',
+  contest: 'COMPETITION',
+} as const satisfies Record<ActivityRouteSlug, string>;
+const SORT_TO_API = {
+  latest: 'LATEST',
+  soon: 'DEADLINE_ASC',
+  remain: 'DEADLINE_DESC',
+} as const;
 
 function getDeadlineRank(badgeText: string): number {
   if (badgeText === '마감') return Number.NEGATIVE_INFINITY;
@@ -45,8 +56,16 @@ export default function NewActivityList({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { data: apiData, loading } = useActivities('latest', { size: String(getAllActivities().length) });
-  const effectiveLoading = categorySlug ? false : loading;
+  const activityParams = useMemo(
+    () => ({
+      size: String(getAllActivities().length),
+      sort: SORT_TO_API[sort as keyof typeof SORT_TO_API] ?? 'LATEST',
+      ...(categorySlug ? { category: CATEGORY_TO_API[categorySlug], fallbackOnEmpty: 'false' } : {}),
+    }),
+    [categorySlug, sort],
+  );
+  const { data: apiData, loading } = useActivities('latest', activityParams);
+  const effectiveLoading = loading;
 
   const resetExternalPage = () => {
     if (!useExternalPagination) return;
@@ -56,27 +75,7 @@ export default function NewActivityList({
   };
 
   const cards = useMemo(() => {
-    const sourceItems = categorySlug
-      ? getActivitiesForCategoryPage({
-          slug: categorySlug,
-          selectedFilters: {
-            ...selectedFilters,
-            ...(selectedCategories.length > 0 ? { 활동유형: selectedCategories } : {}),
-            ...(selectedJobs.length > 0 ? { 관련직무: selectedJobs.map((job) => (
-              job === 'planning'
-                ? '기획'
-                : job === 'design'
-                  ? '디자인'
-                  : job === 'development'
-                    ? '개발'
-                    : job === 'marketing'
-                      ? '마케팅'
-                      : '기타'
-            )) } : {}),
-          },
-          sort: sort as 'latest' | 'soon' | 'remain',
-        })
-      : apiData;
+    const sourceItems = apiData;
 
     if (sourceItems.length === 0) {
       if (categorySlug) {
@@ -97,6 +96,24 @@ export default function NewActivityList({
       }));
     }
 
+    const mergedSelectedFilters = {
+      ...selectedFilters,
+      ...(selectedCategories.length > 0 ? { 활동유형: selectedCategories } : {}),
+      ...(selectedJobs.length > 0 ? {
+        관련직무: selectedJobs.map((job) => (
+          job === 'planning'
+            ? '기획'
+            : job === 'design'
+              ? '디자인'
+              : job === 'development'
+                ? '개발'
+                : job === 'marketing'
+                  ? '마케팅'
+                  : 'AI'
+        )),
+      } : {}),
+    };
+
     const filtered = sourceItems.filter((item) => {
       const matchesCategory =
         selectedCategories.length === 0 ||
@@ -110,23 +127,17 @@ export default function NewActivityList({
                 : 'external_activity',
         );
 
-      const matchesJob =
-        selectedJobs.length === 0 ||
-        item.jobs.some((job) =>
-          selectedJobs.includes(
-            job === '기획'
-              ? 'planning'
-              : job === '디자인'
-                ? 'design'
-                : job === '개발'
-                  ? 'development'
-                  : job === '마케팅'
-                    ? 'marketing'
-                    : 'ai',
-          ),
-        );
+      const filterEntries = Object.entries(mergedSelectedFilters).filter(([, values]) => values.length > 0);
+      const matchesFilters = filterEntries.every(([filterName, values]) => {
+        const activeValues = values.filter((value) => value !== '전체');
+        if (activeValues.length === 0) return true;
+        if (filterName === '주최기관') return activeValues.includes(item.organizer);
+        if (filterName === '관련직무') return item.jobs.some((job) => activeValues.includes(job));
+        if (filterName === '활동유형') return true;
+        return true;
+      });
 
-      return matchesCategory && matchesJob;
+      return matchesCategory && matchesFilters;
     });
 
     const sorted = [...filtered].sort((a, b) => {
@@ -157,7 +168,7 @@ export default function NewActivityList({
         detailLink: item.detailLink,
       };
     });
-  }, [apiData, categorySlug, selectedCategories, selectedFilters, selectedJobs, sort]);
+  }, [apiData, selectedCategories, selectedFilters, selectedJobs, sort]);
 
   const totalPages = Math.ceil(cards.length / CARDS_PER_PAGE);
   const externalPage = Number(searchParams.get('page') ?? 1);
@@ -225,12 +236,10 @@ export default function NewActivityList({
                 }}
               />
             </div>
-          ) : typeof resultCount === 'number' ? (
-            <Typography type="Body2Medium" className="text-gray-60">
-              공고 {resultCount}건
-            </Typography>
           ) : (
-            <div />
+            <Typography type="Body2Medium" className="text-gray-60">
+              공고 {typeof resultCount === 'number' ? resultCount : cards.length}건
+            </Typography>
           )}
           <SortTab
             options={[

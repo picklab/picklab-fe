@@ -42,6 +42,15 @@ export async function POST(request: NextRequest) {
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
+    if (refreshed.refreshToken) {
+      response.cookies.set('refreshToken', refreshed.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
 
     return response;
   } catch (error) {
@@ -49,4 +58,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });
   }
 }
-

@@ -24,6 +24,28 @@ export function extractAccessToken(payload: unknown): string | null {
   return null;
 }
 
+export function extractRefreshToken(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object') return null;
+
+  const record = payload as Record<string, unknown>;
+
+  const directCandidates = [record.refreshToken, record.refresh_token];
+  for (const candidate of directCandidates) {
+    if (typeof candidate === 'string' && candidate.trim()) return candidate;
+  }
+
+  const nested = record.data;
+  if (nested && typeof nested === 'object') {
+    const nestedRecord = nested as Record<string, unknown>;
+    const nestedCandidates = [nestedRecord.refreshToken, nestedRecord.refresh_token];
+    for (const candidate of nestedCandidates) {
+      if (typeof candidate === 'string' && candidate.trim()) return candidate;
+    }
+  }
+
+  return null;
+}
+
 export async function refreshAccessToken(refreshToken: string) {
   const response = await ky.post(`${BACKEND_URL}/v1/auth/refresh`, {
     headers: {
@@ -34,12 +56,13 @@ export async function refreshAccessToken(refreshToken: string) {
 
   const payload = await response.json().catch(() => ({}));
   const accessToken = response.ok ? extractAccessToken(payload) : null;
+  const nextRefreshToken = response.ok ? extractRefreshToken(payload) : null;
 
   return {
     ok: !!accessToken,
     status: response.status,
     accessToken,
+    refreshToken: nextRefreshToken,
     payload,
   };
 }
-
