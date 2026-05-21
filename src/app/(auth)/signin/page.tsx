@@ -9,6 +9,7 @@ const SOCIAL_LOGIN_IMAGES = [
   {
     src: "/imgs/kakao_icon.svg",
     alt: "Kakao",
+    provider: "KAKAO",
     text: "카카오톡으로 로그인",
     color: "text-gray-80",
     className: "bg-[#FFE812]",
@@ -16,6 +17,7 @@ const SOCIAL_LOGIN_IMAGES = [
   {
     src: "/imgs/naver_icon.svg",
     alt: "Naver",
+    provider: "NAVER",
     text: "네이버로 로그인",
     color: "text-gray-0",
     className: "bg-[#00C300]",
@@ -23,6 +25,7 @@ const SOCIAL_LOGIN_IMAGES = [
   {
     src: "/imgs/google_icon.svg",
     alt: "Google",
+    provider: "GOOGLE",
     text: "Google로 로그인",
     color: "text-gray-90",
     className: "border border-gray-40",
@@ -30,6 +33,7 @@ const SOCIAL_LOGIN_IMAGES = [
   {
     src: "/imgs/github_icon.svg",
     alt: "Github",
+    provider: "GITHUB",
     text: "Github로 로그인",
     color: "text-gray-90",
     className: "border border-gray-40",
@@ -82,7 +86,7 @@ function AuthContent() {
               image.className,
             )}
             onClick={() => {
-              window.location.href = `http://161.153.21.86:8080/v1/auth/login/KAKAO`;
+              window.location.href = `http://161.153.21.86:8080/v1/auth/login/${image.provider}`;
             }}>
             <Image src={image.src} alt={image.alt} width={24} height={24} />
             <Typography

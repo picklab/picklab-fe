@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { mapBackendActivityToApiItem, type ApiActivityItem, type BackendActivityItem } from './useActivities';
+import {
+  isClosedBackendActivity,
+  mapBackendActivityToApiItem,
+  type ApiActivityItem,
+  type BackendActivityItem,
+} from './useActivities';
 
 type BookmarkCategory = 'EXTRACURRICULAR' | 'SEMINAR' | 'EDUCATION' | 'COMPETITION';
 type BookmarkSortType = 'RECENTLY_BOOKMARKED' | 'LATEST' | 'DEADLINE_ASC' | 'DEADLINE_DESC';
@@ -62,10 +67,14 @@ export function useBookmarks({ activityType, sortType = 'RECENTLY_BOOKMARKED', s
         const items = payload.data?.items ?? [];
 
         if (!cancelled) {
-          setData(items.map((item) => ({
-            ...mapBackendActivityToApiItem(item),
-            isBookmarked: item.is_bookmarked ?? true,
-          })));
+          setData(
+            items
+              .filter((item) => !isClosedBackendActivity(item))
+              .map((item) => ({
+                ...mapBackendActivityToApiItem(item),
+                isBookmarked: item.is_bookmarked ?? true,
+              })),
+          );
         }
       } catch (err) {
         if (!cancelled) {

@@ -135,6 +135,7 @@ const Button = ({
 
   return (
     <button
+      disabled={disabled}
       className={clsx(
         "flex justify-center items-center rounded-small transition-all gap-1", // 기본 버튼 스타일
         sizeStyleClass[size].label, // 사이즈별 버튼 스타일

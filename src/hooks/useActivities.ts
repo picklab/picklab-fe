@@ -82,6 +82,10 @@ function getBadgeText(item: BackendActivityItem) {
   return '모집중';
 }
 
+export function isClosedBackendActivity(item: BackendActivityItem) {
+  return item.recruitment_end_type === 'FIXED' && typeof item.dday === 'number' && item.dday < 0;
+}
+
 export function mapBackendActivityToApiItem(item: BackendActivityItem): ApiActivityItem {
   const category = item.category && item.category in CATEGORY_LABELS
     ? CATEGORY_LABELS[item.category as BackendActivityCategory]
@@ -137,7 +141,7 @@ async function fetchBackendActivities(
       }),
     );
 
-    return results.flat().map(mapBackendActivityToApiItem);
+    return results.flat().filter((item) => !isClosedBackendActivity(item)).map(mapBackendActivityToApiItem);
   }
 
   const searchParams = new URLSearchParams(params ?? { size });
@@ -146,7 +150,7 @@ async function fetchBackendActivities(
   if (!response.ok) return [];
 
   const json = await response.json() as BackendActivityListResponse;
-  return readBackendItems(json).map(mapBackendActivityToApiItem);
+  return readBackendItems(json).filter((item) => !isClosedBackendActivity(item)).map(mapBackendActivityToApiItem);
 }
 
 export function useActivities(
