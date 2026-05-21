@@ -97,8 +97,8 @@ export function MobileLayout({ className, isLogin = true }: ResponsiveLayoutProp
           />
         </Link>
       </div>
-      <Banner />
       <MobileHomeTabs />
+      <Banner />
       {isLogin && (
         <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" className={MOBILE_STYLES.FIRST_SECTION} />
       )}
