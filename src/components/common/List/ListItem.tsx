@@ -22,6 +22,7 @@ export interface ListItemProps {
   organization?: string;
   startDate?: Date | null;
   endDate?: Date | null;
+  statusText?: string;
   className?: string;
 }
 
@@ -42,6 +43,7 @@ const ListItem = ({
   organization,
   startDate,
   endDate,
+  statusText,
   className,
 }: ListItemProps) => {
   const ongoingOrganization = organization || label;
@@ -53,12 +55,9 @@ const ListItem = ({
     }
   };
 
-  // 모집 및 활동이 종료된 FinisihedListItem
+  // 모집 및 활동이 종료된 FinishedListItem
   const renderFinishedContent = () =>
-    chipTitle &&
-    organization &&
-    startDate &&
-    endDate && (
+    chipTitle && (
       <div className="flex flex-col justify-center max-w-[268px] gap-space-8">
         <div className="flex flex-col gap-space-6">
           <CardChip text={chipTitle} className="cursor-pointer" />
@@ -66,9 +65,11 @@ const ListItem = ({
             <Typography type="Body2Semibold" className={`${grayTextStrong} truncate`}>
               {title}
             </Typography>
-            <Typography type="Body4Medium" className={`${cardCompanyText} truncate`}>
-              {organization}
-            </Typography>
+            {organization && (
+              <Typography type="Body4Medium" className={`${cardCompanyText} truncate`}>
+                {organization}
+              </Typography>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-space-6">
@@ -76,7 +77,7 @@ const ListItem = ({
             활동기간
           </Typography>
           <Typography type="Caption1Regular" className="text-gray-90">
-            {`${getFormatDate(startDate)}~${getFormatDate(endDate)}`}
+            {startDate && endDate ? `${getFormatDate(startDate)}~${getFormatDate(endDate)}` : '-'}
           </Typography>
         </div>
       </div>
@@ -136,6 +137,11 @@ const ListItem = ({
         </div>
         {isFinished ? renderFinishedContent() : renderOngoingContent()}
       </div>
+      {isFinished && statusText && (
+        <Typography type="Caption1Medium" className="shrink-0 self-start rounded-full bg-gray-5 px-3 py-1 text-gray-60">
+          {statusText}
+        </Typography>
+      )}
       {!isFinished && (
         <Icon
           icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'}

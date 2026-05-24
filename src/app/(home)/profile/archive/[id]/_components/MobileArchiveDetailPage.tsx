@@ -4,27 +4,63 @@ import CardChip from '@/components/common/Card/CardChip';
 import TextArea from '@/components/common/Field/TextArea';
 import Select from '@/components/common/Select/Select';
 import Typography from '@/components/common/Typography';
+import useArchiveActivities from '@/hooks/useArchiveActivities';
+import { getFormatDate } from '@/utils/day';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
-export default function MobileArchiveDetailPage() {
+type MobileArchiveDetailPageProps = {
+  archiveId?: string;
+};
+
+function formatPeriod(startDate?: Date | null, endDate?: Date | null) {
+  if (!startDate || !endDate) return '-';
+  return `${getFormatDate(startDate)}~${getFormatDate(endDate)}`;
+}
+
+export default function MobileArchiveDetailPage({ archiveId = 'storybook' }: MobileArchiveDetailPageProps) {
+  const router = useRouter();
+  const { data: archiveItems, loading, error } = useArchiveActivities();
+  const archiveItem = useMemo(() => archiveItems.find((item) => item.id === archiveId), [archiveId, archiveItems]);
+
   return (
     <div className="mobile:flex pc:hidden">
-      <form action="" className="flex flex-col gap-8">
+      <form
+        action=""
+        className="flex flex-col gap-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+        }}
+      >
         <div className="flex flex-col gap-3 p-[18px] border rounded-lg">
           <div className="flex flex-col gap-1.5 p-1">
-            <CardChip text="대외활동" className="cursor-pointer" />
+            <CardChip text={archiveItem?.chipTitle ?? '대외활동'} className="cursor-pointer" />
             <div className="flex flex-col gap-0.5">
               <Typography type="Body1Semibold" className="text-gray-90 truncate">
-                [크래프톤 정글] K-Digital Training 국비지원 SW개발자 육성 프로그램 11기 모집
+                {loading
+                  ? '아카이브 활동을 불러오는 중입니다.'
+                  : error
+                    ? '아카이브 활동을 불러오지 못했습니다.'
+                    : archiveItem?.title || '아카이브 활동을 찾을 수 없습니다.'}
               </Typography>
-              <Typography type="Caption1Medium" className="text-gray-50">
-                company
-              </Typography>
+              {archiveItem?.organization && (
+                <Typography type="Caption1Medium" className="text-gray-50">
+                  {archiveItem.organization}
+                </Typography>
+              )}
             </div>
             <Typography type="Caption1Medium" className="text-gray-50">
-              활동기간 00.00.00~00.00.00
+              활동기간 {formatPeriod(archiveItem?.startDate, archiveItem?.endDate)}
             </Typography>
           </div>
-          <Button label="공고 보기" size="base" buttonStyle="outlined" />
+          <Button
+            type="button"
+            label="공고 보기"
+            size="base"
+            buttonStyle="outlined"
+            disabled={!archiveItem?.activityId}
+            onClick={() => archiveItem?.activityId && router.push(`/activity/${archiveItem.activityId}`)}
+          />
         </div>
         <div className="flex flex-col gap-[18px]">
           <div className="flex gap-2 items-end ">
@@ -88,7 +124,7 @@ export default function MobileArchiveDetailPage() {
           </div>
         </div>
 
-        <Button label="저장하기" size="base" buttonStyle="filled" className="w-40 h-12 mx-auto" />
+        <Button type="submit" label="저장하기" size="base" buttonStyle="filled" className="w-40 h-12 mx-auto" disabled />
       </form>
     </div>
   );

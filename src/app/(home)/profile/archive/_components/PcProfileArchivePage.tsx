@@ -7,8 +7,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon/Icon';
 import { useRouter } from 'next/navigation';
-import { toggleBookmark } from '@/lib/bookmarks';
-import useBookmarks from '@/hooks/useBookmarks';
+import useArchiveActivities from '@/hooks/useArchiveActivities';
 
 const MENU_ITEMS = [
   { id: 'archive', label: '전체', href: '#archive' },
@@ -19,43 +18,35 @@ const MENU_ITEMS = [
 ] as const;
 
 type MenuId = 'archive' | 'external-activity' | 'seminar' | 'education' | 'contest';
-type BackendBookmarkCategory = 'EXTRACURRICULAR' | 'SEMINAR' | 'EDUCATION' | 'COMPETITION';
 interface ArchiveMenuProps {
   snbMenu: MenuId;
   setSnbMenu: (menu: MenuId) => void;
 }
 
-const BACKEND_CATEGORY_BY_MENU: Partial<Record<MenuId, BackendBookmarkCategory>> = {
-  'external-activity': 'EXTRACURRICULAR',
-  seminar: 'SEMINAR',
-  education: 'EDUCATION',
-  contest: 'COMPETITION',
+const MENU_LABEL_BY_ID: Partial<Record<MenuId, string>> = {
+  'external-activity': '대외활동',
+  seminar: '강연/세미나',
+  education: '교육',
+  contest: '공모전/해커톤',
 };
 
 export default function PcProfileArchivePage({ isStorybook = false }: { isStorybook?: boolean }) {
   const router = useRouter();
   const [snbMenu, setSnbMenu] = useState<MenuId>('archive');
   const [sortType, setSortType] = useState<'latest' | 'oldest'>('latest');
-  const [removedIds, setRemovedIds] = useState<string[]>([]);
   const isLatest = sortType === 'latest';
-  const { data: bookmarkedItems, loading, error } = useBookmarks({
-    activityType: BACKEND_CATEGORY_BY_MENU[snbMenu],
-  });
+  const { data: archiveItems, loading, error } = useArchiveActivities();
 
   const filteredAndSortedItems = useMemo(() => {
-    const base = bookmarkedItems.filter((item) => !removedIds.includes(item.id));
-    return isLatest ? base : base.slice().reverse();
-  }, [bookmarkedItems, isLatest, removedIds]);
+    const menuLabel = MENU_LABEL_BY_ID[snbMenu];
+    const base = menuLabel ? archiveItems.filter((item) => item.chipTitle === menuLabel) : archiveItems;
 
-  const handleBookmarkClick = async (activityId: string) => {
-    try {
-      await toggleBookmark({ activityId, isBookmarked: true });
-      setRemovedIds((prev) => [...prev, activityId]);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : '북마크 처리 중 오류가 발생했습니다.';
-      window.alert(message);
-    }
-  };
+    return base.slice().sort((a, b) => {
+      const aTime = a.endDate?.getTime() ?? a.startDate?.getTime() ?? 0;
+      const bTime = b.endDate?.getTime() ?? b.startDate?.getTime() ?? 0;
+      return isLatest ? bTime - aTime : aTime - bTime;
+    });
+  }, [archiveItems, isLatest, snbMenu]);
 
   return (
     <div className={clsx('w-full', isStorybook ? '' : 'mobile:hidden')}>
@@ -95,21 +86,21 @@ export default function PcProfileArchivePage({ isStorybook = false }: { isStoryb
             {loading && (
               <div className="col-span-2 flex h-[180px] items-center justify-center bg-gray-5 rounded-lg">
                 <Typography type="Body2Medium" className="text-gray-50">
-                  북마크 목록을 불러오는 중입니다.
+                  아카이브 활동을 불러오는 중입니다.
                 </Typography>
               </div>
             )}
             {!loading && error && (
               <div className="col-span-2 flex h-[180px] items-center justify-center bg-gray-5 rounded-lg">
                 <Typography type="Body2Medium" className="text-gray-50">
-                  북마크 목록을 불러오지 못했습니다.
+                  아카이브 활동을 불러오지 못했습니다.
                 </Typography>
               </div>
             )}
             {!loading && !error && filteredAndSortedItems.length === 0 && (
               <div className="col-span-2 flex h-[180px] items-center justify-center bg-gray-5 rounded-lg">
                 <Typography type="Body2Medium" className="text-gray-50">
-                  북마크한 활동이 없습니다.
+                  아카이브 활동이 없습니다.
                 </Typography>
               </div>
             )}
@@ -119,15 +110,15 @@ export default function PcProfileArchivePage({ isStorybook = false }: { isStoryb
                 <ListItem
                   key={item.id}
                   className="border-none"
-                  thumbnail={item.thumbnailImage || '/imgs/cat.jpg'}
+                  thumbnail={item.thumbnail}
                   title={item.title}
-                  isFinished={false}
-                  isBookmarked
-                  organization={item.organizer}
-                  saveCount={item.saveCount}
-                  viewCount={item.viewCount}
-                  onListClick={() => router.push(item.detailLink)}
-                  onBookmarkClick={() => handleBookmarkClick(item.id)}
+                  isFinished
+                  chipTitle={item.chipTitle}
+                  organization={item.organization}
+                  startDate={item.startDate}
+                  endDate={item.endDate}
+                  statusText={item.statusText}
+                  onListClick={() => router.push(`/profile/archive/${item.id}`)}
                 />
               ))}
           </div>

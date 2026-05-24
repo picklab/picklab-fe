@@ -9,7 +9,7 @@ import BoxTab from "@/components/common/Tab/BoxTab";
 import Typography from "@/components/common/Typography";
 import Pagination from "@/components/common/Pagination/Pagination";
 import clsx from "clsx";
-import { getAllActivities, mapActivityToApiItem } from "@/lib/activity-data";
+import useSearchActivities from "@/hooks/useSearchActivities";
 
 const TAB_LIST = [
   { label: "전체", value: "all" },
@@ -24,16 +24,6 @@ const JOB_TYPES = ["기획", "디자인", "개발", "마케팅", "AI"] as const;
 
 type SearchTab = (typeof TAB_LIST)[number]["value"];
 
-function parseDate(value?: string | null): number {
-  if (!value) return 0;
-  const timestamp = new Date(value).getTime();
-  return Number.isNaN(timestamp) ? 0 : timestamp;
-}
-
-function normalizeText(value: string): string {
-  return value.trim().toLowerCase();
-}
-
 function toTabCategory(activityType: string): SearchTab {
   if (activityType === "강연/세미나") return "seminar";
   if (activityType === "교육") return "education";
@@ -41,70 +31,35 @@ function toTabCategory(activityType: string): SearchTab {
   return "activities";
 }
 
-function matchesKeyword(keyword: string, raw: ReturnType<typeof getAllActivities>[number]) {
-  if (!keyword) return true;
-
-  const normalizedKeyword = normalizeText(keyword);
-  const searchable = normalizeText(
-    [
-      raw.title,
-      raw.organization,
-      raw.companyName,
-      raw.categoryLabel,
-      raw.summary,
-      raw.source,
-      raw.sourceUrl,
-      raw.raw?.content,
-      raw.raw?.organizer,
-      raw.raw?.category,
-      ...(Array.isArray(raw.jobs) ? raw.jobs : []),
-    ]
-      .filter(Boolean)
-      .join(" "),
-  );
-
-  return searchable.includes(normalizedKeyword);
-}
-
 export default function PcSearchPage({ search, isStorybook = false }: { search: string; isStorybook?: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const decodedSearch = decodeURIComponent(search);
+  const { data: searchedItems, loading, error } = useSearchActivities(decodedSearch);
   const requestedTab = (searchParams.get("tab") ?? "all") as SearchTab;
   const activeTab = TAB_LIST.some((tab) => tab.value === requestedTab) ? requestedTab : "all";
   const requestedPage = Number(searchParams.get("page") ?? "1");
 
-  const filteredActivities = useMemo(() => {
-    return getAllActivities()
-      .filter((raw) => matchesKeyword(decodedSearch, raw))
-      .sort((a, b) => {
-        const aDate = parseDate(a.startDate ?? a.raw?.applicationStartAt);
-        const bDate = parseDate(b.startDate ?? b.raw?.applicationStartAt);
-        return bDate - aDate;
-      })
-      .map(mapActivityToApiItem);
-  }, [decodedSearch]);
-
   const tabCounts = useMemo(() => {
     const counts: Record<SearchTab, number> = {
-      all: filteredActivities.length,
+      all: searchedItems.length,
       activities: 0,
       seminar: 0,
       education: 0,
       contest: 0,
     };
 
-    filteredActivities.forEach((item) => {
+    searchedItems.forEach((item) => {
       counts[toTabCategory(item.activityType)] += 1;
     });
 
     return counts;
-  }, [filteredActivities]);
+  }, [searchedItems]);
 
   const visibleItems = useMemo(() => {
-    if (activeTab === "all") return filteredActivities;
-    return filteredActivities.filter((item) => toTabCategory(item.activityType) === activeTab);
-  }, [activeTab, filteredActivities]);
+    if (activeTab === "all") return searchedItems;
+    return searchedItems.filter((item) => toTabCategory(item.activityType) === activeTab);
+  }, [activeTab, searchedItems]);
 
   const totalPage = Math.max(1, Math.ceil(visibleItems.length / SEARCH_PAGE_SIZE));
   const activePage = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPage) : 1;
@@ -132,7 +87,19 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
         </Typography>
       </div>
 
-      {visibleItems.length === 0 ? (
+      {loading ? (
+        <div className="flex h-[320px] items-center justify-center rounded-lg bg-gray-5">
+          <Typography type="Body2Medium" className="text-gray-50">
+            검색 결과를 불러오는 중입니다.
+          </Typography>
+        </div>
+      ) : error ? (
+        <div className="flex h-[320px] items-center justify-center rounded-lg bg-gray-5">
+          <Typography type="Body2Medium" className="text-gray-50">
+            검색 결과를 불러오지 못했습니다.
+          </Typography>
+        </div>
+      ) : visibleItems.length === 0 ? (
         <div className="flex h-[320px] items-center justify-center rounded-lg bg-gray-5">
           <Typography type="Body2Medium" className="text-gray-50">
             검색 결과가 없습니다.

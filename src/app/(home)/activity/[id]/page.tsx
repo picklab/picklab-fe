@@ -18,6 +18,8 @@ interface BackendActivityDetail {
   id: number | string;
   title?: string | null;
   organization?: string | null;
+  organizer_type?: string | null;
+  organizerType?: string | null;
   target?: string | null;
   recruit_period?: {
     start_date?: string | null;
@@ -63,6 +65,8 @@ const ORGANIZATION_LABELS: Record<string, string> = {
   PUBLIC_ORGANIZATION: '공공기관/공기업',
   NON_PROFIT: '비영리단체/협회/재단',
   FINANCIAL: '금융권',
+  FINANCIAL_INSTITUTION: '금융권',
+  FOREIGN_CORPORATION: '외국계기업',
   HOSPITAL: '병원',
   ETC: '기타',
 };
@@ -115,7 +119,8 @@ function getBadgeText(recruitPeriod?: BackendActivityDetail['recruit_period']) {
 }
 
 function mapBackendDetailToActivity(raw: BackendActivityDetail): ActivityCardItem {
-  const organization = raw.organization ? ORGANIZATION_LABELS[raw.organization] ?? raw.organization : '';
+  const organizerType = raw.organizer_type ?? raw.organizerType;
+  const companyType = organizerType ? ORGANIZATION_LABELS[organizerType] ?? organizerType : '';
   const jobs = (raw.job_tags ?? []).map((job) => JOB_LABELS[job] ?? job).filter(Boolean);
   const domains = (raw.domains ?? []).filter(Boolean);
   const activityFields = [...new Set([...domains, ...jobs])];
@@ -126,8 +131,8 @@ function mapBackendDetailToActivity(raw: BackendActivityDetail): ActivityCardIte
     activityType: raw.category ? CATEGORY_LABELS[raw.category] ?? raw.category : '대외활동',
     source: '',
     title: raw.title ?? '',
-    organizer: organization,
-    companyType: organization,
+    organizer: raw.organization ?? '',
+    companyType,
     target: raw.target ? TARGET_LABELS[raw.target] ?? raw.target : '대상 제한 없음',
     registrationPeriod: formatPeriod(
       raw.recruit_period?.start_date,

@@ -18,6 +18,8 @@ export interface BackendActivityItem {
   id: number | string;
   title?: string | null;
   organization?: string | null;
+  organizer_type?: string | null;
+  organizerType?: string | null;
   start_date?: string | null;
   category?: BackendActivityCategory | string | null;
   job_tags?: string[] | null;
@@ -52,6 +54,8 @@ const ORGANIZATION_LABELS: Record<string, string> = {
   PUBLIC_ORGANIZATION: '공공기관/공기업',
   NON_PROFIT: '비영리단체/협회/재단',
   FINANCIAL: '금융권',
+  FINANCIAL_INSTITUTION: '금융권',
+  FOREIGN_CORPORATION: '외국계기업',
   HOSPITAL: '병원',
   ETC: '기타',
 };
@@ -90,6 +94,8 @@ export function mapBackendActivityToApiItem(item: BackendActivityItem): ApiActiv
   const category = item.category && item.category in CATEGORY_LABELS
     ? CATEGORY_LABELS[item.category as BackendActivityCategory]
     : '대외활동';
+  const organizerType = item.organizer_type ?? item.organizerType;
+  const companyType = organizerType ? ORGANIZATION_LABELS[organizerType] ?? organizerType : '';
   const jobs = (item.job_tags ?? [])
     .map((job) => JOB_LABELS[job] ?? job)
     .filter((job) => ['기획', '개발', '마케팅', '디자인', 'AI'].includes(job));
@@ -97,14 +103,14 @@ export function mapBackendActivityToApiItem(item: BackendActivityItem): ApiActiv
   return {
     id: String(item.id),
     title: item.title ?? '',
-    organizer: item.organization ? ORGANIZATION_LABELS[item.organization] ?? item.organization : '',
+    organizer: item.organization ?? '',
     activityType: category,
     thumbnailImage: item.thumbnail_url ?? '',
     registrationPeriod: getBadgeText(item),
     activityPeriod: item.start_date?.replace(/-/g, '.') ?? '',
     detailLink: `/activity/${item.id}`,
     activityField: jobs.join('; '),
-    companyType: item.organization ? ORGANIZATION_LABELS[item.organization] ?? item.organization : '',
+    companyType,
     jobs: jobs.length > 0 ? jobs : ['기타'],
     saveCount: 0,
     viewCount: Number(item.view_count ?? 0),

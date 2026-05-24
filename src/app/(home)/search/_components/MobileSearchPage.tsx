@@ -9,9 +9,9 @@ import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Card from "@/components/common/Card/mobile/Card";
 import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
-import { getAllActivities, mapActivityToApiItem } from "@/lib/activity-data";
 import Select from "@/components/common/Select/Select";
 import Icon from "@/components/common/Icon/Icon";
+import useSearchActivities from "@/hooks/useSearchActivities";
 
 const MENU_ITEMS = [
   { id: "all", label: "전체" },
@@ -30,43 +30,11 @@ function parseDate(value?: string | null): number {
   return Number.isNaN(timestamp) ? 0 : timestamp;
 }
 
-function normalizeText(value: string): string {
-  return value.trim().toLowerCase();
-}
-
 function toTabCategory(activityType: string): MenuId {
   if (activityType === "강연/세미나") return "seminar";
   if (activityType === "교육") return "education";
   if (activityType === "공모전/해커톤") return "contest";
   return "activities";
-}
-
-function matchesKeyword(
-  keyword: string,
-  raw: ReturnType<typeof getAllActivities>[number],
-) {
-  if (!keyword) return true;
-
-  const normalizedKeyword = normalizeText(keyword);
-  const searchable = normalizeText(
-    [
-      raw.title,
-      raw.organization,
-      raw.companyName,
-      raw.categoryLabel,
-      raw.summary,
-      raw.source,
-      raw.sourceUrl,
-      raw.raw?.content,
-      raw.raw?.organizer,
-      raw.raw?.category,
-      ...(Array.isArray(raw.jobs) ? raw.jobs : []),
-    ]
-      .filter(Boolean)
-      .join(" "),
-  );
-
-  return searchable.includes(normalizedKeyword);
 }
 
 function getDeadlineRank(badgeText: string): number {
@@ -80,6 +48,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const decodedSearch = decodeURIComponent(search);
+  const { data: searchedItems, loading, error } = useSearchActivities(decodedSearch);
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>(
     {},
   );
@@ -90,17 +59,6 @@ export default function MobileSearchPage({ search }: { search: string }) {
   const activeMenu = MENU_ITEMS.some((item) => item.id === requestedTab)
     ? requestedTab
     : "all";
-
-  const searchedItems = useMemo(() => {
-    return getAllActivities()
-      .filter((raw) => matchesKeyword(decodedSearch, raw))
-      .sort((a, b) => {
-        const aDate = parseDate(a.startDate ?? a.raw?.applicationStartAt);
-        const bDate = parseDate(b.startDate ?? b.raw?.applicationStartAt);
-        return bDate - aDate;
-      })
-      .map(mapActivityToApiItem);
-  }, [decodedSearch]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<MenuId, number> = {
@@ -288,7 +246,19 @@ export default function MobileSearchPage({ search }: { search: string }) {
         />
       </div>
 
-      {visibleItems.length === 0 ? (
+      {loading ? (
+        <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
+          <Typography type="Body2Medium" className="text-gray-50">
+            검색 결과를 불러오는 중입니다.
+          </Typography>
+        </div>
+      ) : error ? (
+        <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
+          <Typography type="Body2Medium" className="text-gray-50">
+            검색 결과를 불러오지 못했습니다.
+          </Typography>
+        </div>
+      ) : visibleItems.length === 0 ? (
         <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
           <Typography type="Body2Medium" className="text-gray-50">
             검색 결과가 없습니다.
