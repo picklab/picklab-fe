@@ -106,7 +106,10 @@ const Select = ({
   const findOption = () => {
     if (isCheckBox) {
       if (value && value.length > 0) {
-        return `${options.find((opt) => opt.value === value[0])?.label} ${value.length}`;
+        if (value.length > 1) {
+          return `${placeholder} ${value.length}`;
+        }
+        return options.find((opt) => opt.value === value[0])?.label;
       }
     } else {
       return options.find((opt) => opt.value === value)?.label;
@@ -146,6 +149,19 @@ const Select = ({
       zIndex: 80,
     });
   }, [isOpen, portalDropdown]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = () => {
+      setIsOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, true);
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [isOpen]);
 
   const dropdownContent = (
     <div

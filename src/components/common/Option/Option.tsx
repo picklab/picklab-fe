@@ -131,7 +131,9 @@ const OptionType = ({
             )}
             {type === 'checkbox' && (
               <div className="flex w-full min-w-0 items-center gap-2">
-                <CheckBox color="primary" checked={isSelected} readOnly />
+                <div className="pointer-events-none">
+                  <CheckBox color="primary" checked={isSelected} readOnly />
+                </div>
                 <Typography type="Body3Medium" className="min-w-0 break-keep !leading-[1.35]">
                   {option.label}
                 </Typography>

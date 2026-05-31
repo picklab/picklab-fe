@@ -109,11 +109,11 @@ export function MobileLayout({ className, isLogin = true }: ResponsiveLayoutProp
 }
 
 const MOBILE_HOME_TABS = [
-  { label: "홈", href: "/" },
-  { label: "대외활동", href: "/activities" },
-  { label: "강연/세미나", href: "/seminar" },
-  { label: "교육", href: "/education" },
-  { label: "공모전/해커톤", href: "/contest" },
+  { label: "홈", href: "/", width: "w-[38px]" },
+  { label: "대외활동", href: "/activities", width: "w-[64px]" },
+  { label: "강연/세미나", href: "/seminar", width: "w-[78px]" },
+  { label: "교육", href: "/education", width: "w-[44px]" },
+  { label: "공모전/해커톤", href: "/contest", width: "w-[96px]" },
 ] as const;
 
 function MobileHomeTabs() {
@@ -128,11 +128,12 @@ function MobileHomeTabs() {
             href={item.href}
             className={clsx(
               "relative flex shrink-0 items-center justify-center",
+              item.width,
               isActive &&
                 "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
             )}
           >
-            <Typography className="w-[86px] text-center" type="Body2Medium">
+            <Typography className="w-full text-center" type="Body2Medium">
               {item.label}
             </Typography>
           </Link>

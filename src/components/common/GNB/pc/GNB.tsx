@@ -21,7 +21,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
   const { isAuthenticated } = useAuthClient();
 
   return (
-    <header className="w-full">
+    <header className="w-full border-b border-gray-20">
       <div
         className={clsx(
           "max-w-[1440px] h-[58px] mx-auto flex items-center justify-between px-[170px] py-3 gap-[44.5px]",

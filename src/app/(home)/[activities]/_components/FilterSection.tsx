@@ -15,7 +15,7 @@ interface FilterSectionProps {
   selectedButtonSize?: "base" | "sm";
 }
 
-const FilterSection = ({ selectedFilters, setSelectedFilters, selectedButtonSize = "base" }: FilterSectionProps) => {
+const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionProps) => {
   const [currentTab, setCurrentTab] = useState(ACTIVITY_FILTERS[0].title);
 
   const handleSelectFilter = (category: string, option: string) => {
@@ -63,10 +63,10 @@ const FilterSection = ({ selectedFilters, setSelectedFilters, selectedButtonSize
             <Button
               key={option}
               label={option}
-              size={isSelected ? selectedButtonSize : "base"}
+              size="base"
               buttonStyle={isSelected ? "filled" : "outlined"}
               isFullRounded={true}
-              className="rounded-full"
+              className="rounded-full !min-w-[72px]"
               onClick={() => handleSelectFilter(currentTab, option)}
             />
           );

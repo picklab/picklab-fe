@@ -17,7 +17,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
     <>
       <TitleTypography title="회원관련 정보를 입력해주세요!" description="필수가 아닌 것은 넘어가셔도 됩니다." />
 
-      <div className="w-full flex flex-col gap-4 px-[4.5px]">
+      <div className="w-full flex flex-col gap-2 px-[4.5px]">
         <TextField
           label="닉네임"
           id="signup-name"
@@ -68,7 +68,8 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
         <Select
           label="졸업여부"
           id="signup-graduation"
-          className="mobile:w-[327px] pc:w-[420px]"
+          width="full"
+          wrapperClassName="mobile:w-[327px] pc:w-[420px]"
           options={GRADUATION_OPTIONS}
           value={signupData.userInfo.graduationStatus}
           onChange={(value) => handleInputChange('graduationStatus', value)}

@@ -17,7 +17,7 @@ interface ActivityListProps {
   endpoint?: ActivityEndpoint;
 }
 
-const CARD_ITEMS_PER_PAGE = 4;
+const VISIBLE_CARD_COUNT = 4;
 
 export default function ActivityList({ title, type = 'card', endpoint }: ActivityListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -70,9 +70,9 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
   const showEmptyRecentlyViewed = endpoint === 'recently-viewed' && !loading && apiData.length === 0;
   const shouldUseFallback = !loading && apiData.length === 0 && endpoint !== 'recently-viewed';
   const cardItemCount = type === 'card' ? (hasApiData ? apiData.length : shouldUseFallback ? CardData.length : 0) : 0;
-  const maxCardPage = Math.max(0, Math.ceil(cardItemCount / CARD_ITEMS_PER_PAGE) - 1);
-  const cardPageStart = cardPage * CARD_ITEMS_PER_PAGE;
-  const cardPageEnd = cardPageStart + CARD_ITEMS_PER_PAGE;
+  const maxCardPage = Math.max(0, cardItemCount - VISIBLE_CARD_COUNT);
+  const cardPageStart = cardPage;
+  const cardPageEnd = cardPageStart + VISIBLE_CARD_COUNT;
 
   useEffect(() => {
     setCardPage(0);
@@ -142,7 +142,7 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
         {shouldUseFallback
           ? Array.from({
               length: type === 'card'
-                ? Math.max(0, Math.min(CARD_ITEMS_PER_PAGE, CardData.length - cardPageStart))
+                ? Math.max(0, Math.min(VISIBLE_CARD_COUNT, CardData.length - cardPageStart))
                 : CardData.length,
             }).map((_, offset) =>
               (() => {

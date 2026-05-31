@@ -27,7 +27,7 @@ export default function PcActivites({
   return (
     <div
       className={clsx(
-        "w-full px-5 flex-col gap-10",
+        "w-full px-5 pb-10 flex-col gap-10",
         isStorybook ? "flex" : "hidden pc:flex",
       )}
     >
@@ -41,7 +41,6 @@ export default function PcActivites({
         <FilterSection
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
-          selectedButtonSize="sm"
         />
         <div className="mt-10">
           <NewActivityList

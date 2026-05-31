@@ -9,9 +9,10 @@ import ChevronIconButton from '@/components/common/Pagination/ChevronIconButton'
 interface PaginationProps {
   totalPage: number; // 전체 페이지 수
   activePage: number; // 현재 활성화된 페이지
+  onPageChange?: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
+const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage, onPageChange }) => {
   const router = useRouter();
   const pathname = usePathname();
   const maxPageToShow = 10; // 한 번에 보여줄 최대 페이지 수
@@ -23,6 +24,12 @@ const Pagination: React.FC<PaginationProps> = ({ totalPage, activePage }) => {
 
   //  페이지 이동 함수 - URL의 쿼리 파라미터 변경
   const pushPage = (pathname: string, route: string | number) => {
+    const page = Number(route);
+    if (onPageChange && Number.isFinite(page)) {
+      onPageChange(page);
+      return;
+    }
+
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('page', String(route));
     router.push(`${pathname}?${searchParams.toString()}`, { scroll: false });

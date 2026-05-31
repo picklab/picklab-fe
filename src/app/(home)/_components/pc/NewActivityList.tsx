@@ -5,7 +5,7 @@ import Card from '@/components/common/Card/Card';
 import Typography from '@/components/common/Typography';
 import SortTab from '@/components/common/Tab/SortTab';
 import Select from '@/components/common/Select/Select';
-import ChevronIconButton from '@/components/common/Pagination/ChevronIconButton';
+import Pagination from '@/components/common/Pagination/Pagination';
 import { useActivities } from '@/hooks/useActivities';
 import { getAllActivities, type ActivityPageFilters, type ActivityRouteSlug } from '@/lib/activity-data';
 
@@ -289,20 +289,8 @@ export default function NewActivityList({
             ))}
       </div>
       {!useExternalPagination && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2">
-          <ChevronIconButton
-            direction="left"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={activePage === 1}
-          />
-          <Typography type="Body3Medium" className="text-gray-60">
-            {activePage} / {totalPages}
-          </Typography>
-          <ChevronIconButton
-            direction="right"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={activePage === totalPages}
-          />
+        <div className="mt-8 flex justify-center">
+          <Pagination totalPage={totalPages} activePage={activePage} onPageChange={setPage} />
         </div>
       )}
     </div>

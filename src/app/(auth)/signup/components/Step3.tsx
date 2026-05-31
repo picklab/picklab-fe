@@ -8,6 +8,7 @@ import TitleTypography from './TitleTypography';
 
 export default function Step3({ signupData, setSignupData }: StepProps) {
   const [selectedCategory, setSelectedCategory] = useState<JobParent | null>(null);
+  const [showLimitError, setShowLimitError] = useState(false);
 
   const handleCategorySelect = (category: JobParent) => {
     setSelectedCategory(category);
@@ -15,19 +16,28 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
 
   const handleChildJobSelect = (childValue: string) => {
     if (signupData.interests.includes(childValue)) {
+      setShowLimitError(false);
       setSignupData((prev) => ({
         ...prev,
         interests: prev.interests.filter((job) => job !== childValue),
       }));
-    } else if (signupData.interests.length < 5) {
-      setSignupData((prev) => ({
-        ...prev,
-        interests: [...prev.interests, childValue],
-      }));
+      return;
     }
+
+    if (signupData.interests.length >= 5) {
+      setShowLimitError(true);
+      return;
+    }
+
+    setShowLimitError(false);
+    setSignupData((prev) => ({
+      ...prev,
+      interests: [...prev.interests, childValue],
+    }));
   };
 
   const handleRemoveJob = (jobValue: string) => {
+    setShowLimitError(false);
     setSignupData((prev) => ({
       ...prev,
       interests: prev.interests.filter((job) => job !== jobValue),
@@ -107,6 +117,12 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
           </div>
         </div>
 
+        {showLimitError && (
+          <Typography tag="p" type="Body3Medium" className="text-danger-50">
+            관심 직무는 최대 5개까지 선택할 수 있습니다.
+          </Typography>
+        )}
+
         {/* 하위 직무 선택 */}
         {selectedCategory && (
           <>
@@ -131,7 +147,7 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
                           ? 'bg-gray-10 opacity-50 cursor-not-allowed'
                           : 'bg-gray-10 cursor-pointer hover:bg-gray-20'
                       }`}
-                      onClick={() => !isDisabled && handleChildJobSelect(child.value)}
+                      onClick={() => handleChildJobSelect(child.value)}
                     >
                       <Typography tag="p" type="Body2Medium" className={isSelected ? 'text-white' : 'text-gray-50'}>
                         {child.label}

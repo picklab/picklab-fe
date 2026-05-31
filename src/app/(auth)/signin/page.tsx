@@ -107,7 +107,7 @@ function AuthContent() {
           type="Body3Medium"
           id="auth-content-signup"
           className="text-gray-50">
-          간편 회원가입
+          PICKLAB 회원가입
         </Typography>
       </Link>
     </div>

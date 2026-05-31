@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/common/Button/Button';
+import LeaveConfirmModal from '@/components/common/Modal/LeaveConfirmModal';
 import Typography from '@/components/common/Typography';
 import type { SignupData } from './types';
 import { SIGNUP_ICONS } from './constants';
@@ -72,10 +72,18 @@ function readErrorMessage(payload: unknown, fallback: string) {
   return fallback;
 }
 
+const getNextButtonLabel = (currentStep: number, isSubmitting: boolean) => {
+  if (currentStep === 4) return '홈으로';
+  if (isSubmitting) return '저장 중';
+  if (currentStep === 3) return '가입하기';
+  return '다음으로';
+};
+
 export default function SignupPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const [signupData, setSignupData] = useState<SignupData>({
     terms: {
       all: false,
@@ -143,10 +151,8 @@ export default function SignupPage() {
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+  const handleLeaveConfirm = () => {
+    router.push('/signin');
   };
 
   const handleSignupComplete = async () => {
@@ -193,47 +199,66 @@ export default function SignupPage() {
   };
 
   const canProceed = isCurrentStepValid() && !isSubmitting;
+  const nextButtonLabel = getNextButtonLabel(currentStep, isSubmitting);
 
   return (
     <div className="flex flex-col gap-12 items-center max-w-[429px] mx-auto pt-12">
       {/* Step Indicator */}
-      <div className="flex gap-[14px] justify-center">
-        {SIGNUP_ICONS.map((icon, index) => (
-          <div key={index} className="flex flex-col justify-center items-center gap-[5.5px] w-12">
-            <Image src={currentStep >= index + 1 ? icon.activeSrc : icon.src} alt={icon.alt} width={28} height={28} />
-            <Typography
-              tag="p"
-              type="Caption2Regular"
-              id="signup-icon-text"
-              className={currentStep >= index + 1 ? 'text-primary-50' : 'text-gray-40'}
-            >
-              {icon.alt}
-            </Typography>
-          </div>
-        ))}
+      <div className="relative flex justify-center gap-[14px]">
+        <div className="absolute left-6 right-6 top-[14px] h-px bg-gray-20" aria-hidden="true" />
+        {SIGNUP_ICONS.map((icon, index) => {
+          const isCurrent = currentStep === index + 1;
+
+          return (
+            <div key={index} className="relative z-10 flex w-12 flex-col items-center justify-center gap-[5.5px] bg-white">
+              <Image src={isCurrent ? icon.activeSrc : icon.src} alt={icon.alt} width={28} height={28} />
+              <Typography
+                tag="p"
+                type="Caption2Regular"
+                id="signup-icon-text"
+                className={isCurrent ? 'text-gray-60' : 'text-gray-40'}
+              >
+                {icon.alt}
+              </Typography>
+            </div>
+          );
+        })}
       </div>
 
       {/* Current Step Content */}
       {renderStep()}
 
       {/* Navigation Buttons */}
-      <div className="flex gap-2 w-full mx-auto">
-        <Button
-          buttonStyle="filled"
-          label={currentStep === 1 ? '나가기' : '이전'}
-          className="w-[140px] mobile:!h-[52px] !bg-gray-10"
-          size="lg"
-          onClick={currentStep === 1 ? undefined : handlePrevious}
-        />
-        <Button
-          buttonStyle="filled"
-          label={currentStep === 4 ? '홈으로' : isSubmitting ? '저장 중' : '다음으로'}
-          className={`w-full mobile:!h-[52px]  ${canProceed ? '!bg-primary-50' : '!bg-gray-20'}`}
-          size="lg"
+      <div className="flex h-space-48 w-[420px] gap-2">
+        <button
+          type="button"
+          className="flex h-space-48 w-[140px] items-center justify-center rounded-small bg-gray-10 px-[18px] py-[14px]"
+          onClick={() => setIsLeaveModalOpen(true)}
+        >
+          <Typography type="Heading2Medium" className="text-gray-50">
+            나가기
+          </Typography>
+        </button>
+        <button
+          type="button"
+          className={`flex h-space-48 w-[272px] items-center justify-center rounded-small px-[18px] py-[14px] ${
+            canProceed ? 'bg-primary-50 hover:bg-primary-60 active:bg-primary-70' : 'bg-gray-10'
+          }`}
           onClick={handleNext}
           disabled={!canProceed}
-        />
+        >
+          <Typography type="Heading2Medium" className={canProceed ? 'text-gray-0' : 'text-gray-50'}>
+            {nextButtonLabel}
+          </Typography>
+        </button>
       </div>
+      <LeaveConfirmModal
+        isOpen={isLeaveModalOpen}
+        onClose={() => setIsLeaveModalOpen(false)}
+        onConfirm={handleLeaveConfirm}
+        title="지금 나가시면 작성한 내용이 사라져요!"
+        description="입력하신 정보는 저장되지 않습니다."
+      />
     </div>
   );
 }

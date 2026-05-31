@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { ActivityCardItem } from '@/app/(home)/_components/constant';
@@ -43,26 +43,36 @@ const getActivityTags = (activityField: string) =>
 
 const InfoItem = ({ label, value }: { label: string; value: string }) => (
   <div className="flex gap-4 items-start">
-    <Typography type="Caption1Regular" className="text-gray-50 min-w-[72px]">
+    <Typography type="Body3Medium" className="text-gray-50 min-w-[72px]">
       {label}
     </Typography>
-    <Typography type="Caption1Medium" className="text-gray-90 break-keep">
+    <Typography type="Body3Medium" className="text-gray-90 break-keep">
       {value || '-'}
     </Typography>
   </div>
 );
 
-const RatingStars = ({ value, outOf = 5 }: { value: number; outOf?: number }) => {
+const RatingStars = ({
+  value,
+  outOf = 5,
+  size = 24,
+  gapClassName = 'gap-1',
+}: {
+  value: number;
+  outOf?: number;
+  size?: number;
+  gapClassName?: string;
+}) => {
   const filled = Math.round(value);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={clsx('flex items-center', gapClassName)}>
       {Array.from({ length: outOf }).map((_, index) => (
         <Icon
           key={index}
           icon="starFill"
-          size={24}
-          className={index < filled ? 'text-[#F7B731]' : 'text-gray-20'}
+          size={size}
+          className={index < filled ? 'text-[#FFC95C]' : 'text-gray-20'}
         />
       ))}
     </div>
@@ -70,92 +80,135 @@ const RatingStars = ({ value, outOf = 5 }: { value: number; outOf?: number }) =>
 };
 
 const ProgressRow = ({ label, value }: { label: string; value: number }) => (
-  <div className="flex flex-col gap-2">
-    <Typography type="Body3Medium" className="text-gray-70">
+  <div className="flex h-[22px] items-center gap-4">
+    <Typography type="Body3Medium" className="w-[56px] shrink-0 text-gray-90">
       {label}
     </Typography>
-    <div className="h-3 rounded-full bg-gray-10 overflow-hidden">
-      <div className="h-full rounded-full bg-primary-50" style={{ width: `${value}%` }} />
+    <div className="h-4 flex-1 rounded-full bg-gray-10 overflow-hidden">
+      <div className="h-full rounded-full bg-gray-40" style={{ width: `${value}%` }} />
     </div>
   </div>
 );
 
-const ReviewCard = ({ isPinned = false }: { isPinned?: boolean }) => (
-  <div className="rounded-lg border border-gray-20 bg-gray-0 px-6 py-5">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <span className="h-5 rounded bg-danger-5 px-2 inline-flex items-center">
-          <Typography type="Caption2Medium" className="text-danger-50">
-            기획
-          </Typography>
-        </span>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          서비스 기획 | 2025.06 참여 | 수료 완료
-        </Typography>
-      </div>
-      {!isPinned && (
-        <button type="button" className="h-6 rounded-full bg-primary-5 px-3 inline-flex items-center">
-          <Typography type="Caption2Medium" className="text-primary-60">
-            도움이 돼요 2
-          </Typography>
-        </button>
-      )}
-    </div>
-
-    <div className="mt-4 flex items-center gap-2">
-      <Typography type="Heading2Semibold" className="text-gray-90">
-        총 평점:
-      </Typography>
-      <RatingStars value={4} />
-    </div>
-
-    <div className="mt-2 flex items-center gap-4">
-      <Typography type="Caption1Regular" className="text-gray-50">
-        직무경험
-      </Typography>
-      <RatingStars value={4} outOf={5} />
-      <Typography type="Caption1Regular" className="text-gray-50">
-        혜택 및 복지
-      </Typography>
-      <RatingStars value={4} outOf={5} />
-      <Typography type="Caption1Regular" className="text-gray-50">
-        활동강도
-      </Typography>
-      <RatingStars value={3} outOf={5} />
-    </div>
-
-    <Typography type="Heading2Semibold" className="mt-4 text-primary-50">
-      “최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요.”
+const FilterButton = ({ label }: { label: string }) => (
+  <button
+    type="button"
+    className="h-space-40 w-[132px] rounded-full border border-gray-30 bg-gray-0 px-[18px] py-space-8 inline-flex items-center justify-between"
+  >
+    <Typography type="Body3Medium" className="text-gray-90">
+      {label}
     </Typography>
+    <Icon icon="chevronDown" size={24} className="text-gray-90" />
+  </button>
+);
 
-    <div className="mt-4 flex flex-col gap-3 text-gray-70">
-      <div>
-        <Typography type="Body3Semibold" className="text-gray-90">
-          활동 장점
+const JobFilterChip = ({ label, isActive = false }: { label: string; isActive?: boolean }) => (
+  <button
+    type="button"
+    className={clsx(
+      'h-[26px] rounded-full border px-3 inline-flex items-center justify-center',
+      isActive ? 'border-primary-50 bg-primary-50 text-gray-0' : 'border-gray-40 bg-gray-0 text-gray-90',
+    )}
+  >
+    <Typography type="Caption1Medium">{label}</Typography>
+  </button>
+);
+
+const ReviewCard = () => (
+  <div className="relative h-[520px] rounded-[10px] border border-gray-20 bg-gray-0 px-10 py-7 overflow-hidden">
+    <div className="flex items-center justify-between">
+      <div className="flex h-[26px] items-center gap-3">
+        <div className="flex items-center gap-2">
+          <span className="h-[22px] rounded bg-danger-5 px-space-8 inline-flex items-center">
+            <Typography type="Caption1Medium" className="text-danger-50">
+              기획
+            </Typography>
+          </span>
+          <Typography type="Caption1Medium" className="text-gray-50">
+            서비스 기획
+          </Typography>
+        </div>
+        <span className="h-[13px] w-px bg-gray-90" aria-hidden="true" />
+        <Typography type="Caption1Medium" className="text-gray-50">
+          2025.06 참여
         </Typography>
-        <Typography type="Body3Regular">
-          최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
-          직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
+        <span className="h-[13px] w-px bg-gray-90" aria-hidden="true" />
+        <Typography type="Caption1Medium" className="text-gray-50">
+          수료 완료
         </Typography>
       </div>
-      <div>
-        <Typography type="Body3Semibold" className="text-gray-90">
-          활동 단점
+      <button type="button" className="h-[26px] rounded-full bg-[#DBEAFE] px-[10px] py-1 inline-flex items-center">
+        <Typography type="Caption1Medium" className="text-[#155DFC]">
+          도움이 돼요 2
         </Typography>
-        <Typography type="Body3Regular">
-          최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
-          직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
-        </Typography>
+      </button>
+    </div>
+
+    <div className="mt-5 flex items-center gap-2">
+      <Typography type="Title3Bold" className="text-gray-90">
+        총 평점 :
+      </Typography>
+      <RatingStars value={4} size={40} gapClassName="gap-0" />
+    </div>
+
+    <div className="mt-1 flex h-10 items-center gap-[10px]">
+      {[
+        ['직무경험', 4],
+        ['혜택 및 복지', 4],
+        ['활동강도', 4],
+      ].map(([label, value], index) => (
+        <div key={label} className="flex items-center gap-1">
+          {index > 0 && <span className="mr-[6px] h-3 w-px bg-gray-40" aria-hidden="true" />}
+          <Typography type="Caption1Medium" className="text-gray-70">
+            {label}
+          </Typography>
+          <RatingStars value={Number(value)} outOf={5} size={24} gapClassName="gap-0" />
+        </div>
+      ))}
+    </div>
+
+    <div className="mt-6 blur-[6px] select-none">
+      <Typography type="Heading1Bold" className="text-xl leading-[140%] text-primary-50">
+        “최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. “
+      </Typography>
+
+      <div className="mt-6 flex flex-col gap-6 text-gray-70">
+        <div>
+          <Typography type="Body3Semibold" className="text-gray-90">
+            활동 장점
+          </Typography>
+          <Typography type="Body3Regular">
+            최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
+            직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
+          </Typography>
+        </div>
+        <div>
+          <Typography type="Body3Semibold" className="text-gray-90">
+            활동 단점
+          </Typography>
+          <Typography type="Body3Regular">
+            최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
+            직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
+          </Typography>
+        </div>
+        <div>
+          <Typography type="Body3Semibold" className="text-gray-90">
+            합격 꿀팁
+          </Typography>
+          <Typography type="Body3Regular">
+            최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
+            직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
+          </Typography>
+        </div>
       </div>
-      <div>
-        <Typography type="Body3Semibold" className="text-gray-90">
-          합격 꿀팁
+    </div>
+
+    <div className="absolute inset-x-0 top-[278px] flex justify-center">
+      <button type="button" className="h-space-56 rounded-[6px] border border-gray-40 bg-gray-0 px-space-24 py-space-16 inline-flex items-center justify-center">
+        <Typography type="Heading2Medium" className="text-gray-90">
+          리뷰 작성하고 전체보기
         </Typography>
-        <Typography type="Body3Regular">
-          최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
-          직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
-        </Typography>
-      </div>
+      </button>
     </div>
   </div>
 );
@@ -221,10 +274,9 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const applyLink = getApplyLink(activity);
   const detailImages = splitDetailImages(activity.detailImage);
+  const hasThumbnail = Boolean(activity.thumbnailImage);
   const tags = getActivityTags(activity.activityField);
   const activityId = extractActivityId(activity.detailLink);
-
-  const reviewCards = useMemo(() => [true, false, false], []);
 
   const handleBookmarkToggle = async () => {
     if (!activityId || isBookmarkLoading) return;
@@ -241,7 +293,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
   };
 
   return (
-    <div className="mobile:hidden w-full px-5 pb-20 pt-6">
+    <div className="mobile:hidden w-full px-5 pb-20 pt-10">
       <div className="flex justify-between gap-10">
         <section className="flex-1 min-w-0">
           <div className="flex flex-col gap-3">
@@ -258,24 +310,24 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               </div>
             </div>
 
-            <Typography type="Heading1Bold" className="text-gray-90 break-keep">
+            <Typography type="Heading1Bold" className="text-[28px] font-bold leading-[1.35] text-gray-90 break-keep">
               {activity.title}
             </Typography>
 
-            <Typography type="Body4Medium" className="text-gray-50">
+            <Typography type="Heading2Medium" className="text-gray-50">
               {activity.organizer}
             </Typography>
 
             <div className="flex items-center gap-4 text-gray-40">
               <div className="flex items-center gap-1">
                 <Icon icon="eye" size={16} className="text-gray-40" />
-                <Typography type="Caption1Regular" className="text-gray-40">
+                <Typography type="Body3Medium" className="text-gray-40">
                   {activity.viewCount ?? 0}
                 </Typography>
               </div>
               <div className="flex items-center gap-1">
                 <Icon icon="bookmarkLine" size={16} className="text-gray-40" />
-                <Typography type="Caption1Regular" className="text-gray-40">
+                <Typography type="Body3Medium" className="text-gray-40">
                   {activity.saveCount ?? 0}
                 </Typography>
               </div>
@@ -291,7 +343,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
             <InfoItem label="활동기간" value={activity.activityPeriod} />
             <InfoItem label="모임지역" value={activity.region} />
             <div className="flex gap-4 items-start">
-              <Typography type="Caption1Regular" className="text-gray-50 min-w-[72px]">
+              <Typography type="Body3Medium" className="text-gray-50 min-w-[72px]">
                 공고직무
               </Typography>
               <div className="flex flex-wrap gap-1">
@@ -350,25 +402,27 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
           </div>
         </section>
 
-        <section className="w-[244px] shrink-0">
-          <div className="relative h-[324px] w-full overflow-hidden rounded-lg border border-gray-20 bg-gray-5">
-            <Image
-              src={activity.thumbnailImage || '/imgs/cat.jpg'}
-              alt={`${activity.title} 썸네일`}
-              fill
-              sizes="244px"
-              unoptimized
-              className="object-cover"
-            />
-            <button
-              type="button"
-              aria-label="이미지 확대"
-              className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-gray-90/70 text-gray-0 inline-flex items-center justify-center"
-            >
-              <Icon icon="search" size={16} className="text-gray-0" />
-            </button>
-          </div>
-        </section>
+        {hasThumbnail && (
+          <section className="w-[244px] shrink-0">
+            <div className="relative h-[324px] w-full overflow-hidden rounded-lg border border-gray-20 bg-gray-5">
+              <Image
+                src={activity.thumbnailImage}
+                alt={`${activity.title} 썸네일`}
+                fill
+                sizes="244px"
+                unoptimized
+                className="object-cover"
+              />
+              <button
+                type="button"
+                aria-label="이미지 확대"
+                className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-gray-90/70 text-gray-0 inline-flex items-center justify-center"
+              >
+                <Icon icon="search" size={16} className="text-gray-0" />
+              </button>
+            </div>
+          </section>
+        )}
       </div>
 
       <div className="mt-10 border-b border-gray-20 flex">
@@ -404,17 +458,11 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="h-[720px] w-full rounded-md bg-gray-10 flex items-center justify-center">
-              <Typography type="Body2Medium" className="text-gray-40">
-                상세 이미지가 없습니다.
-              </Typography>
-            </div>
-          )}
+          ) : null}
 
-          <div className="mt-8 flex flex-col gap-6">
-            <div className="flex flex-col gap-2">
-              <Typography type="Heading2Semibold" className="text-gray-90">
+          <div className="mt-8 flex flex-col gap-9">
+            <div className="flex flex-col gap-3">
+              <Typography type="Title3Bold" className="text-gray-90">
                 활동 내용
               </Typography>
               <Typography type="Body2Regular" className="text-gray-70 whitespace-pre-line">
@@ -422,8 +470,8 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               </Typography>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Typography type="Heading2Semibold" className="text-gray-90">
+            <div className="flex flex-col gap-3">
+              <Typography type="Title3Bold" className="text-gray-90">
                 혜택
               </Typography>
               <Typography type="Body2Regular" className="text-gray-70">
@@ -431,8 +479,8 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               </Typography>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Typography type="Heading2Semibold" className="text-gray-90">
+            <div className="flex flex-col gap-3">
+              <Typography type="Title3Bold" className="text-gray-90">
                 지원 안내
               </Typography>
               <Typography type="Body2Regular" className="text-gray-70">
@@ -442,103 +490,55 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
           </div>
         </section>
       ) : (
-        <section className="mt-6 flex flex-col gap-6">
-          <div className="rounded-lg border border-gray-20 bg-gray-5 p-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <Typography type="Body1Semibold" className="text-gray-90 mb-4">
-                  직무 연관성
-                </Typography>
-                <JobRadarChart />
-              </div>
-              <div className="border-l border-gray-20 pl-6">
-                <Typography type="Body1Semibold" className="text-gray-90 mb-3">
+        <section className="mt-[60px]">
+          <div className="flex w-full items-start gap-20">
+            <div className="flex h-[351px] w-[382px] shrink-0 items-center justify-center rounded-[20px] border border-gray-20 bg-gray-0 px-9 py-4">
+              <JobRadarChart />
+            </div>
+            <div className="flex w-[438px] flex-col gap-6">
+              <div className="flex flex-col gap-5">
+                <Typography type="Body1Semibold" className="text-lg leading-[144.5%] text-gray-90">
                   활동 만족도 평가
                 </Typography>
-
-                <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2">
                   {['전체', 'PM/PO', '프론트엔드', '머신러닝 엔지니어'].map((item, index) => (
-                    <button
-                      key={item}
-                      type="button"
-                      className={clsx(
-                        'h-[24px] rounded-full border px-3 inline-flex items-center',
-                        index === 0 ? 'bg-primary-50 text-gray-0 border-primary-50' : 'bg-gray-0 text-gray-70 border-gray-20',
-                      )}
-                    >
-                      <Typography type="Caption2Medium">{item}</Typography>
-                    </button>
+                    <JobFilterChip key={item} label={item} isActive={index === 0} />
                   ))}
                 </div>
+              </div>
 
-                <div className="mt-5 flex items-center gap-3">
-                  <Typography type="Heading2Semibold" className="text-gray-90">
-                    4.2
-                  </Typography>
-                  <RatingStars value={4} />
-                </div>
+              <div className="h-px w-full bg-gray-20" />
 
-                <div className="mt-4 flex flex-col gap-4">
-                  <ProgressRow label="직무 경험" value={62} />
-                  <ProgressRow label="활동 강도" value={62} />
-                  <ProgressRow label="혜택 및 복지" value={62} />
-                </div>
+              <div className="flex items-center gap-2">
+                <Typography type="Title3Bold" className="text-gray-90">
+                  4.2
+                </Typography>
+                <RatingStars value={4} size={36} gapClassName="gap-0.5" />
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <ProgressRow label="직무 경험" value={75} />
+                <ProgressRow label="활동 강도" value={48} />
+                <ProgressRow label="혜택 및 복지" value={80} />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-primary-20 bg-primary-5 px-7 py-6 flex items-center justify-between">
-            <div>
-              <Typography type="Body2Semibold" className="text-gray-90">
-                이 활동에 참여하셨다면?
-              </Typography>
-              <Typography type="Body3Regular" className="text-gray-70 mt-1">
-                간단한 리뷰로 다음 참가자에게 인사이트를 공유해 주세요!
-              </Typography>
-            </div>
-            <button
-              type="button"
-              className="h-space-40 rounded-small bg-primary-50 px-6 inline-flex items-center justify-center"
-            >
-              <Icon icon="pencil" size={16} className="text-gray-0" />
-              <Typography type="Body2Medium" className="text-gray-0 ml-2">
-                리뷰 작성하기
-              </Typography>
-            </button>
-          </div>
+          <div className="mt-[49px] h-px w-full bg-gray-20" />
 
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+          <div className="mt-[50px] flex flex-col gap-6">
+            <div className="flex h-space-40 items-center justify-between">
               <Typography type="Heading1Semibold" className="text-gray-90">
                 리뷰 253
               </Typography>
               <div className="flex items-center gap-2">
-                <button type="button" className="h-[34px] rounded-full border border-gray-20 px-4 inline-flex items-center gap-2">
-                  <Typography type="Body3Medium" className="text-gray-70">
-                    관심 직무
-                  </Typography>
-                  <Icon icon="chevronDown" size={14} className="text-gray-50" />
-                </button>
-                <button type="button" className="h-[34px] rounded-full border border-gray-20 px-4 inline-flex items-center gap-2">
-                  <Typography type="Body3Medium" className="text-gray-70">
-                    총 평점
-                  </Typography>
-                  <Icon icon="chevronDown" size={14} className="text-gray-50" />
-                </button>
-                <button type="button" className="h-[34px] rounded-full border border-gray-20 px-4 inline-flex items-center gap-2">
-                  <Typography type="Body3Medium" className="text-gray-70">
-                    수료여부
-                  </Typography>
-                  <Icon icon="chevronDown" size={14} className="text-gray-50" />
-                </button>
+                <FilterButton label="관심 직무" />
+                <FilterButton label="총 평점" />
+                <FilterButton label="수료여부" />
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {reviewCards.map((isPinned, index) => (
-                <ReviewCard key={index} isPinned={isPinned} />
-              ))}
-            </div>
+            <ReviewCard />
           </div>
         </section>
       )}
