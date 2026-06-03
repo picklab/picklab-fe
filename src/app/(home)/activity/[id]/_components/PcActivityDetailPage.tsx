@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { ActivityCardItem } from '@/app/(home)/_components/constant';
@@ -8,6 +9,26 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
+import { useAuthClient } from '@/contexts/AuthContext';
+import Pagination from '@/components/common/Pagination/Pagination';
+import ReviewFilters from './ReviewFilters';
+import {
+  useActivityReviews,
+  useReviewSatisfactionStats,
+  useReviewJobRelevanceStats,
+} from '@/hooks/useActivityReviews';
+import {
+  aggregateSatisfaction,
+  formatParticipationDate,
+  jobDetailLabel,
+  jobGroupBadgeClass,
+  jobGroupLabel,
+  progressStatusLabel,
+  toFiveScale,
+  toScorePercent,
+  EMPTY_REVIEW_FILTER,
+} from '@/types/review.types';
+import type { ActivityReviewItem, JobRelevanceStats, ReviewFilterValue } from '@/types/review.types';
 
 interface PcActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -52,6 +73,19 @@ const InfoItem = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
+const DetailSection = ({ title, value }: { title: string; value: string }) => (
+  <div className="flex flex-col gap-3">
+    <Typography type="Title3Bold" className="text-gray-90">
+      {title}
+    </Typography>
+    <Typography type="Body2Regular" className="text-gray-70 whitespace-pre-line break-keep">
+      {value}
+    </Typography>
+  </div>
+);
+
+const hasDetailValue = (value?: string) => Boolean(value && value.trim() && value.trim() !== '-');
+
 const RatingStars = ({
   value,
   outOf = 5,
@@ -90,18 +124,6 @@ const ProgressRow = ({ label, value }: { label: string; value: number }) => (
   </div>
 );
 
-const FilterButton = ({ label }: { label: string }) => (
-  <button
-    type="button"
-    className="h-space-40 w-[132px] rounded-full border border-gray-30 bg-gray-0 px-[18px] py-space-8 inline-flex items-center justify-between"
-  >
-    <Typography type="Body3Medium" className="text-gray-90">
-      {label}
-    </Typography>
-    <Icon icon="chevronDown" size={24} className="text-gray-90" />
-  </button>
-);
-
 const JobFilterChip = ({ label, isActive = false }: { label: string; isActive?: boolean }) => (
   <button
     type="button"
@@ -114,32 +136,46 @@ const JobFilterChip = ({ label, isActive = false }: { label: string; isActive?: 
   </button>
 );
 
-const ReviewCard = () => (
-  <div className="relative h-[520px] rounded-[10px] border border-gray-20 bg-gray-0 px-10 py-7 overflow-hidden">
+// 디자인: 비로그인(locked)은 본문 블러 + "리뷰 작성하고 전체보기"(2408-26558),
+// 로그인은 본문 전체 공개(블러 없음).
+const ReviewCard = ({
+  review,
+  locked = false,
+  onWrite,
+}: {
+  review: ActivityReviewItem;
+  locked?: boolean;
+  onWrite?: () => void;
+}) => (
+  <div
+    className={clsx(
+      'rounded-[10px] border border-gray-20 bg-gray-0 px-10 py-7',
+      locked && 'relative h-[520px] overflow-hidden',
+    )}
+  >
     <div className="flex items-center justify-between">
       <div className="flex h-[26px] items-center gap-3">
         <div className="flex items-center gap-2">
-          <span className="h-[22px] rounded bg-danger-5 px-space-8 inline-flex items-center">
-            <Typography type="Caption1Medium" className="text-danger-50">
-              기획
-            </Typography>
+          <span className={clsx('h-[22px] rounded px-space-8 inline-flex items-center', jobGroupBadgeClass(review.job_group))}>
+            <Typography type="Caption1Medium">{jobGroupLabel(review.job_group)}</Typography>
           </span>
           <Typography type="Caption1Medium" className="text-gray-50">
-            서비스 기획
+            {jobDetailLabel(review.job_detail)}
           </Typography>
         </div>
         <span className="h-[13px] w-px bg-gray-90" aria-hidden="true" />
         <Typography type="Caption1Medium" className="text-gray-50">
-          2025.06 참여
+          {formatParticipationDate(review.participation_date)} 참여
         </Typography>
         <span className="h-[13px] w-px bg-gray-90" aria-hidden="true" />
         <Typography type="Caption1Medium" className="text-gray-50">
-          수료 완료
+          {progressStatusLabel(review.progress_status)}
         </Typography>
       </div>
+      {/* helpful(도움이 돼요) 카운트/토글 API가 아직 없어 숫자 생략 */}
       <button type="button" className="h-[26px] rounded-full bg-[#DBEAFE] px-[10px] py-1 inline-flex items-center">
         <Typography type="Caption1Medium" className="text-[#155DFC]">
-          도움이 돼요 2
+          도움이 돼요
         </Typography>
       </button>
     </div>
@@ -148,127 +184,149 @@ const ReviewCard = () => (
       <Typography type="Title3Bold" className="text-gray-90">
         총 평점 :
       </Typography>
-      <RatingStars value={4} size={40} gapClassName="gap-0" />
+      <RatingStars value={toFiveScale(review.overall_score)} size={40} gapClassName="gap-0" />
     </div>
 
     <div className="mt-1 flex h-10 items-center gap-[10px]">
       {[
-        ['직무경험', 4],
-        ['혜택 및 복지', 4],
-        ['활동강도', 4],
+        ['직무경험', review.info_score],
+        ['혜택 및 복지', review.benefit_score],
+        ['활동강도', review.difficulty_score],
       ].map(([label, value], index) => (
-        <div key={label} className="flex items-center gap-1">
+        <div key={label as string} className="flex items-center gap-1">
           {index > 0 && <span className="mr-[6px] h-3 w-px bg-gray-40" aria-hidden="true" />}
           <Typography type="Caption1Medium" className="text-gray-70">
             {label}
           </Typography>
-          <RatingStars value={Number(value)} outOf={5} size={24} gapClassName="gap-0" />
+          <RatingStars value={toFiveScale(Number(value))} outOf={5} size={24} gapClassName="gap-0" />
         </div>
       ))}
     </div>
 
-    <div className="mt-6 blur-[6px] select-none">
-      <Typography type="Heading1Bold" className="text-xl leading-[140%] text-primary-50">
-        “최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. “
-      </Typography>
+    <div className={clsx('mt-6', locked && 'blur-[6px] select-none')} aria-hidden={locked || undefined}>
+      {review.summary && (
+        <Typography type="Heading1Bold" className="text-xl leading-[140%] text-primary-50 break-keep">
+          “{review.summary}”
+        </Typography>
+      )}
 
       <div className="mt-6 flex flex-col gap-6 text-gray-70">
         <div>
           <Typography type="Body3Semibold" className="text-gray-90">
             활동 장점
           </Typography>
-          <Typography type="Body3Regular">
-            최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
-            직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
-          </Typography>
+          <Typography type="Body3Regular" className="break-keep">{review.strength}</Typography>
         </div>
         <div>
           <Typography type="Body3Semibold" className="text-gray-90">
             활동 단점
           </Typography>
-          <Typography type="Body3Regular">
-            최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
-            직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
-          </Typography>
+          <Typography type="Body3Regular" className="break-keep">{review.weakness}</Typography>
         </div>
-        <div>
-          <Typography type="Body3Semibold" className="text-gray-90">
-            합격 꿀팁
-          </Typography>
-          <Typography type="Body3Regular">
-            최근에 방문한 카페는 분위기가 아늑하고 조용해서 너무 좋았어요. 커피 맛도 좋고 친절해서 만족스러웠습니다.
-            직원들도 친절하게 응대해주셔서 기분 좋은 시간이었습니다. 다음에 또 방문하고 싶은 곳이에요!
-          </Typography>
-        </div>
+        {review.tips && (
+          <div>
+            <Typography type="Body3Semibold" className="text-gray-90">
+              합격 꿀팁
+            </Typography>
+            <Typography type="Body3Regular" className="break-keep">{review.tips}</Typography>
+          </div>
+        )}
       </div>
     </div>
 
-    <div className="absolute inset-x-0 top-[278px] flex justify-center">
-      <button type="button" className="h-space-56 rounded-[6px] border border-gray-40 bg-gray-0 px-space-24 py-space-16 inline-flex items-center justify-center">
-        <Typography type="Heading2Medium" className="text-gray-90">
-          리뷰 작성하고 전체보기
-        </Typography>
-      </button>
-    </div>
+    {locked && (
+      <div className="absolute inset-x-0 top-[278px] flex justify-center">
+        <button
+          type="button"
+          onClick={onWrite}
+          className="h-space-56 rounded-[6px] border border-gray-40 bg-gray-0 px-space-24 py-space-16 inline-flex items-center justify-center hover:bg-gray-5"
+        >
+          <Typography type="Heading2Medium" className="text-gray-90">
+            리뷰 작성하고 전체보기
+          </Typography>
+        </button>
+      </div>
+    )}
   </div>
 );
 
-const JobRadarChart = () => (
-  <div className="relative h-[230px] w-[260px]">
-    <svg viewBox="0 0 260 230" className="h-full w-full">
-      <polygon points="130,20 210,70 180,170 80,170 50,70" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-      <polygon points="130,45 186,80 164,150 96,150 74,80" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-      <polygon points="130,70 162,90 148,130 112,130 98,90" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-      <polygon points="130,58 195,78 176,150 108,161 66,84" fill="#10B981" fillOpacity="0.7" stroke="#10B981" />
-      <line x1="130" y1="20" x2="130" y2="170" stroke="#E5E7EB" strokeWidth="1" />
-      <line x1="50" y1="70" x2="210" y2="70" stroke="#E5E7EB" strokeWidth="1" />
-      <line x1="80" y1="170" x2="210" y2="70" stroke="#E5E7EB" strokeWidth="1" />
-      <line x1="50" y1="70" x2="180" y2="170" stroke="#E5E7EB" strokeWidth="1" />
-    </svg>
-    <div className="absolute left-1/2 top-0 -translate-x-1/2 text-center">
-      <Typography type="Caption1Regular" className="text-gray-50">
-        기획
-      </Typography>
-      <Typography type="Body2Semibold" className="text-primary-50">
-        90
-      </Typography>
-    </div>
-    <div className="absolute right-0 top-[44%] text-center">
-      <Typography type="Body2Semibold" className="text-primary-50">
-        90
-      </Typography>
-      <Typography type="Caption1Regular" className="text-gray-50">
-        개발
-      </Typography>
-    </div>
-    <div className="absolute right-4 bottom-1 text-center">
-      <Typography type="Body2Semibold" className="text-primary-50">
-        90
-      </Typography>
-      <Typography type="Caption1Regular" className="text-gray-50">
-        마케팅
-      </Typography>
-    </div>
-    <div className="absolute left-1/2 bottom-0 -translate-x-1/2 text-center">
-      <Typography type="Body2Semibold" className="text-primary-50">
-        90
-      </Typography>
-      <Typography type="Caption1Regular" className="text-gray-50">
-        AI
-      </Typography>
-    </div>
-    <div className="absolute left-1 top-[44%] text-center">
-      <Typography type="Body2Semibold" className="text-primary-50">
-        90
-      </Typography>
-      <Typography type="Caption1Regular" className="text-gray-50">
-        디자인
-      </Typography>
-    </div>
+const EmptyReview = ({ className }: { className?: string }) => (
+  <div
+    className={clsx(
+      'flex flex-col items-center justify-center gap-2 rounded-[10px] border border-gray-20 bg-gray-0 text-center',
+      className,
+    )}
+  >
+    <Icon icon="pencil" size={28} className="text-gray-30" />
+    <Typography type="Body2Medium" className="text-gray-50">
+      아직 등록된 리뷰가 없어요
+    </Typography>
+    <Typography type="Body3Regular" className="text-gray-40">
+      첫 리뷰를 남겨 다음 참가자에게 인사이트를 공유해 주세요!
+    </Typography>
   </div>
 );
+
+const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
+  const score = (value?: number) => (stats ? toScorePercent(value) : 0);
+  return (
+    <div className="relative h-[230px] w-[260px]">
+      <svg viewBox="0 0 260 230" className="h-full w-full">
+        <polygon points="130,20 210,70 180,170 80,170 50,70" fill="none" stroke="#E5E7EB" strokeWidth="1" />
+        <polygon points="130,45 186,80 164,150 96,150 74,80" fill="none" stroke="#E5E7EB" strokeWidth="1" />
+        <polygon points="130,70 162,90 148,130 112,130 98,90" fill="none" stroke="#E5E7EB" strokeWidth="1" />
+        <polygon points="130,58 195,78 176,150 108,161 66,84" fill="#10B981" fillOpacity="0.7" stroke="#10B981" />
+        <line x1="130" y1="20" x2="130" y2="170" stroke="#E5E7EB" strokeWidth="1" />
+        <line x1="50" y1="70" x2="210" y2="70" stroke="#E5E7EB" strokeWidth="1" />
+        <line x1="80" y1="170" x2="210" y2="70" stroke="#E5E7EB" strokeWidth="1" />
+        <line x1="50" y1="70" x2="180" y2="170" stroke="#E5E7EB" strokeWidth="1" />
+      </svg>
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 text-center">
+        <Typography type="Caption1Regular" className="text-gray-50">
+          기획
+        </Typography>
+        <Typography type="Body2Semibold" className="text-primary-50">
+          {score(stats?.planning_avg_score)}
+        </Typography>
+      </div>
+      <div className="absolute right-0 top-[44%] text-center">
+        <Typography type="Body2Semibold" className="text-primary-50">
+          {score(stats?.development_avg_score)}
+        </Typography>
+        <Typography type="Caption1Regular" className="text-gray-50">
+          개발
+        </Typography>
+      </div>
+      <div className="absolute right-4 bottom-1 text-center">
+        <Typography type="Body2Semibold" className="text-primary-50">
+          {score(stats?.marketing_avg_score)}
+        </Typography>
+        <Typography type="Caption1Regular" className="text-gray-50">
+          마케팅
+        </Typography>
+      </div>
+      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 text-center">
+        <Typography type="Body2Semibold" className="text-primary-50">
+          {score(stats?.ai_avg_score)}
+        </Typography>
+        <Typography type="Caption1Regular" className="text-gray-50">
+          AI
+        </Typography>
+      </div>
+      <div className="absolute left-1 top-[44%] text-center">
+        <Typography type="Body2Semibold" className="text-primary-50">
+          {score(stats?.design_avg_score)}
+        </Typography>
+        <Typography type="Caption1Regular" className="text-gray-50">
+          디자인
+        </Typography>
+      </div>
+    </div>
+  );
+};
 
 export default function PcActivityDetailPage({ activity }: PcActivityDetailPageProps) {
+  const router = useRouter();
   const [tab, setTab] = useState<DetailTab>('detail');
   const [isBookmarked, setIsBookmarked] = useState(Boolean(activity.isBookmarked));
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
@@ -277,6 +335,34 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
   const hasThumbnail = Boolean(activity.thumbnailImage);
   const tags = getActivityTags(activity.activityField);
   const activityId = extractActivityId(activity.detailLink);
+
+  const { isAuthenticated } = useAuthClient();
+  const [reviewPage, setReviewPage] = useState(1);
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilterValue>(EMPTY_REVIEW_FILTER);
+  const reviewsEnabled = tab === 'review';
+  const reviewActivityId = activityId ? String(activityId) : '';
+  const { data: reviewList, loading: reviewLoading } = useActivityReviews(reviewActivityId, {
+    enabled: reviewsEnabled,
+    page: reviewPage,
+    size: 10, // 기획: 리뷰 10개 단위 페이지네이션(로그인 전체 공개 시)
+    filter: reviewFilter,
+  });
+
+  const goReviewWrite = () => router.push(`/activity/${activityId}/review`);
+  const handleReviewFilterChange = (next: ReviewFilterValue) => {
+    setReviewFilter(next);
+    setReviewPage(1);
+  };
+  const handleReviewFilterReset = () => {
+    setReviewFilter(EMPTY_REVIEW_FILTER);
+    setReviewPage(1);
+  };
+  const { data: satisfaction } = useReviewSatisfactionStats(reviewActivityId, { enabled: reviewsEnabled });
+  const { data: jobRelevance } = useReviewJobRelevanceStats(reviewActivityId, { enabled: reviewsEnabled });
+  const satisfactionSummary = useMemo(() => aggregateSatisfaction(satisfaction), [satisfaction]);
+  const reviews = reviewList?.items ?? [];
+  const reviewCount = reviewList?.total_elements ?? 0;
+  const reviewTotalPages = reviewList?.total_pages ?? 0;
 
   const handleBookmarkToggle = async () => {
     if (!activityId || isBookmarkLoading) return;
@@ -461,31 +547,37 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
           ) : null}
 
           <div className="mt-8 flex flex-col gap-9">
-            <div className="flex flex-col gap-3">
-              <Typography type="Title3Bold" className="text-gray-90">
-                활동 내용
-              </Typography>
-              <Typography type="Body2Regular" className="text-gray-70 whitespace-pre-line">
-                {activity.description || `${activity.title}\n주최기관: ${activity.organizer}\n참여대상: ${activity.target || '대상 제한 없음'}`}
-              </Typography>
-            </div>
+            <DetailSection
+              title="활동 내용"
+              value={
+                activity.description ||
+                `${activity.title}\n주최기관: ${activity.organizer}\n참여대상: ${activity.target || '대상 제한 없음'}`
+              }
+            />
+
+            {hasDetailValue(activity.target) && <DetailSection title="모집대상" value={activity.target} />}
+
+            {hasDetailValue(activity.registrationPeriod) && (
+              <DetailSection title="지원기간" value={activity.registrationPeriod} />
+            )}
+
+            <DetailSection
+              title="혜택"
+              value={activity.costPrize || '상세 혜택 정보는 홈페이지 또는 지원 링크에서 확인해 주세요.'}
+            />
 
             <div className="flex flex-col gap-3">
               <Typography type="Title3Bold" className="text-gray-90">
-                혜택
+                필수 지원서 양식
               </Typography>
-              <Typography type="Body2Regular" className="text-gray-70">
-                {activity.costPrize || '상세 혜택 정보는 홈페이지 또는 지원 링크에서 확인해 주세요.'}
-              </Typography>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <Typography type="Title3Bold" className="text-gray-90">
-                지원 안내
-              </Typography>
-              <Typography type="Body2Regular" className="text-gray-70">
-                별도 첨부파일은 수집되지 않았습니다. 지원서 양식과 제출 방식은 홈페이지 또는 지원하기 링크에서 확인해 주세요.
-              </Typography>
+              {/* 지원서 첨부 파일 필드가 응답에 없어 현재는 "파일 없음"만 표시. 첨부 제공 시 다운로드 버튼으로 교체 */}
+              <div className="flex gap-2">
+                <span className="h-space-40 inline-flex items-center rounded-md border border-gray-20 bg-gray-0 px-space-16">
+                  <Typography type="Body2Medium" className="text-gray-50">
+                    파일 없음
+                  </Typography>
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -493,7 +585,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
         <section className="mt-[60px]">
           <div className="flex w-full items-start gap-20">
             <div className="flex h-[351px] w-[382px] shrink-0 items-center justify-center rounded-[20px] border border-gray-20 bg-gray-0 px-9 py-4">
-              <JobRadarChart />
+              <JobRadarChart stats={jobRelevance} />
             </div>
             <div className="flex w-[438px] flex-col gap-6">
               <div className="flex flex-col gap-5">
@@ -511,34 +603,86 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
 
               <div className="flex items-center gap-2">
                 <Typography type="Title3Bold" className="text-gray-90">
-                  4.2
+                  {satisfactionSummary.total.toFixed(1)}
                 </Typography>
-                <RatingStars value={4} size={36} gapClassName="gap-0.5" />
+                <RatingStars value={toFiveScale(satisfactionSummary.total)} size={36} gapClassName="gap-0.5" />
               </div>
 
               <div className="flex flex-col gap-3">
-                <ProgressRow label="직무 경험" value={75} />
-                <ProgressRow label="활동 강도" value={48} />
-                <ProgressRow label="혜택 및 복지" value={80} />
+                <ProgressRow label="직무 경험" value={toScorePercent(satisfactionSummary.jobExperience)} />
+                <ProgressRow label="활동 강도" value={toScorePercent(satisfactionSummary.intensity)} />
+                <ProgressRow label="혜택 및 복지" value={toScorePercent(satisfactionSummary.benefit)} />
               </div>
             </div>
           </div>
 
           <div className="mt-[49px] h-px w-full bg-gray-20" />
 
+          {/* 로그인 시에만 작성 유도 박스 노출 (2-25064) */}
+          {isAuthenticated && (
+            <div className="mt-8 flex items-center justify-between rounded-lg border border-primary-20 bg-primary-5 px-6 py-5">
+              <div className="flex flex-col gap-1">
+                <Typography type="Body1Semibold" className="text-gray-90">
+                  이 활동에 참여하신 경험이 있으신가요?
+                </Typography>
+                <Typography type="Body3Regular" className="text-gray-70">
+                  간단한 리뷰로 다음 참가자에게 인사이트를 공유해 주세요!
+                </Typography>
+              </div>
+              <button
+                type="button"
+                onClick={goReviewWrite}
+                className="h-space-40 rounded-small bg-primary-50 px-space-16 inline-flex items-center gap-2 hover:bg-primary-60"
+              >
+                <Icon icon="pencil" size={16} className="text-gray-0" />
+                <Typography type="Body2Medium" className="text-gray-0">
+                  리뷰 작성하기
+                </Typography>
+              </button>
+            </div>
+          )}
+
           <div className="mt-[50px] flex flex-col gap-6">
             <div className="flex h-space-40 items-center justify-between">
               <Typography type="Heading1Semibold" className="text-gray-90">
-                리뷰 253
+                리뷰 {reviewCount}
               </Typography>
-              <div className="flex items-center gap-2">
-                <FilterButton label="관심 직무" />
-                <FilterButton label="총 평점" />
-                <FilterButton label="수료여부" />
-              </div>
+              <ReviewFilters
+                value={reviewFilter}
+                onChange={handleReviewFilterChange}
+                onReset={handleReviewFilterReset}
+                variant="pc"
+              />
             </div>
 
-            <ReviewCard />
+            {reviewLoading && reviews.length === 0 ? (
+              <div className="flex h-[200px] items-center justify-center rounded-[10px] border border-gray-20 bg-gray-0">
+                <Typography type="Body2Medium" className="text-gray-40">
+                  리뷰를 불러오는 중이에요...
+                </Typography>
+              </div>
+            ) : reviews.length > 0 ? (
+              isAuthenticated ? (
+                // 로그인(2-25064): 전체 공개 — 다건 + 페이지네이션
+                <>
+                  <div className="flex flex-col gap-6">
+                    {reviews.map((review) => (
+                      <ReviewCard key={review.id} review={review} />
+                    ))}
+                  </div>
+                  {reviewTotalPages > 1 && (
+                    <div className="mt-4 flex justify-center">
+                      <Pagination totalPage={reviewTotalPages} activePage={reviewPage} onPageChange={setReviewPage} />
+                    </div>
+                  )}
+                </>
+              ) : (
+                // 비로그인(2408-26558): 대표 1개 블러 + "리뷰 작성하고 전체보기"
+                <ReviewCard review={reviews[0]} locked onWrite={goReviewWrite} />
+              )
+            ) : (
+              <EmptyReview className="h-[200px]" />
+            )}
           </div>
         </section>
       )}

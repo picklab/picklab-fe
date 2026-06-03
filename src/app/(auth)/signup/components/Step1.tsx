@@ -1,8 +1,16 @@
+import { useState } from 'react';
 import CheckBoxLabel from '@/components/common/CheckBox/CheckBoxLabel';
+import Icon from '@/components/common/Icon/Icon';
+import Typography from '@/components/common/Typography';
 import type { StepProps } from '../types';
+import { SIGNUP_TERMS } from '../constants';
 import TitleTypography from './TitleTypography';
 
 export default function Step1({ signupData, setSignupData }: StepProps) {
+  // 본문 아코디언 펼침 상태 (약관 key별)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const toggleExpanded = (key: string) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+
   const handleAllTermsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     const newTerms = {
@@ -42,42 +50,46 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
           />
         </div>
 
-        <CheckBoxLabel
-          label="(필수) 만 14세 이상입니다."
-          id="signup-terms-age"
-          value="age"
-          scale="sm"
-          color="primary"
-          checked={signupData.terms.age}
-          onChange={handleTermChange('age')}
-        />
-        <CheckBoxLabel
-          label="(필수) 이용약관 동의"
-          id="signup-terms-service"
-          value="service"
-          scale="sm"
-          color="primary"
-          checked={signupData.terms.service}
-          onChange={handleTermChange('service')}
-        />
-        <CheckBoxLabel
-          label="(필수) 개인정보 수집 및 이용 목적"
-          id="signup-terms-privacy"
-          value="privacy"
-          scale="sm"
-          color="primary"
-          checked={signupData.terms.privacy}
-          onChange={handleTermChange('privacy')}
-        />
-        <CheckBoxLabel
-          label="(선택) 마케팅 수신 동의"
-          id="signup-terms-marketing"
-          value="marketing"
-          scale="sm"
-          color="primary"
-          checked={signupData.terms.marketing}
-          onChange={handleTermChange('marketing')}
-        />
+        {SIGNUP_TERMS.map((term) => {
+          const isOpen = !!expanded[term.key];
+          return (
+            <div key={term.key} className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <CheckBoxLabel
+                  label={term.label}
+                  id={`signup-terms-${term.key}`}
+                  value={term.key}
+                  scale="sm"
+                  color="primary"
+                  checked={signupData.terms[term.key]}
+                  onChange={handleTermChange(term.key)}
+                />
+                {term.content && (
+                  <button
+                    type="button"
+                    onClick={() => toggleExpanded(term.key)}
+                    aria-expanded={isOpen}
+                    aria-controls={`signup-terms-${term.key}-body`}
+                    aria-label={`${term.label} 전문 ${isOpen ? '접기' : '펼치기'}`}
+                    className="flex h-6 w-6 shrink-0 items-center justify-center text-gray-50 hover:text-gray-80"
+                  >
+                    <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} size={20} />
+                  </button>
+                )}
+              </div>
+              {term.content && isOpen && (
+                <div
+                  id={`signup-terms-${term.key}-body`}
+                  className="max-h-[120px] overflow-y-auto rounded-md border border-gray-20 bg-gray-5 p-3"
+                >
+                  <Typography type="Body3Medium" className="whitespace-pre-line text-gray-60">
+                    {term.content}
+                  </Typography>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </>
   );

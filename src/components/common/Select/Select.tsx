@@ -142,8 +142,9 @@ const Select = ({
 
     const rect = buttonRef.current.getBoundingClientRect();
     setPortalStyle({
+      // 드롭다운(OptionGroup ul)의 mt-1(4px)이 버튼과의 간격을 만든다 → 비-portal과 동일하게 4px 유지
       position: 'fixed',
-      top: rect.bottom + 8,
+      top: rect.bottom,
       left: rect.left,
       minWidth: rect.width,
       zIndex: 80,
@@ -153,7 +154,11 @@ const Select = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleScroll = () => {
+    const handleScroll = (event: Event) => {
+      const target = event.target as Node | null;
+      if (target && (selectRef.current?.contains(target) || dropdownRef.current?.contains(target))) {
+        return;
+      }
       setIsOpen(false);
     };
 
@@ -203,12 +208,20 @@ const Select = ({
         id={buttonId}
         className={clsx(
           'px-[18px] py-space-[13px] rounded-md border text-left text-gray-40 flex justify-between items-center transition-colors group',
-          'border-gray-30 bg-gray-0',
-          'hover:border-gray-40 hover:text-gray-60 hover:placeholder:text-gray-60',
-          'focus:border-primary-50 focus:bg-gray-0',
+          'bg-gray-0',
+          // 테두리 우선순위: 에러 > 열림(클릭/포커스) > 선택됨 > 기본 — 단일 클래스만 방출해 source-order 충돌 방지
+          helpMessageStatus === 'error'
+            ? 'border-danger-50'
+            : isOpen
+            ? 'border-primary-50'
+            : selectedLabel
+            ? 'border-gray-50'
+            : 'border-gray-30',
+          // 호버는 닫혀 있고 에러가 아닐 때만 (열림/에러 테두리를 덮지 않도록)
+          !isOpen && helpMessageStatus !== 'error' && 'hover:border-gray-40 hover:text-gray-60 hover:placeholder:text-gray-60',
+          selectedLabel && 'text-gray-90',
+          'focus:bg-gray-0',
           'disabled:border-gray-30 disabled:bg-gray-5 disabled:text-gray-40 disabled:cursor-not-allowed disabled:group-hover:text-gray-40',
-          helpMessageStatus === 'error' && '!border-danger-50',
-          selectedLabel && 'border-gray-50 text-gray-90',
           widthClass,
           sizeClass['button'],
           className,

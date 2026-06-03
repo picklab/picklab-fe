@@ -26,18 +26,24 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
   const [cardPage, setCardPage] = useState(0);
   const { data: apiData, loading } = useActivities(endpoint ?? 'recommendations');
 
+  // 카드 1개 너비(+gap) 만큼만 스크롤해 "한 칸씩" 이동 (속도는 smooth 유지)
+  const scrollByOneCard = (direction: 'left' | 'right') => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const items = container.children;
+    const step =
+      items.length > 1
+        ? (items[1] as HTMLElement).offsetLeft - (items[0] as HTMLElement).offsetLeft
+        : (container.firstElementChild as HTMLElement)?.clientWidth ?? 300;
+    container.scrollBy({ left: direction === 'left' ? -step : step, behavior: 'smooth' });
+  };
+
   const scrollLeft = () => {
     if (type === 'card') {
       setCardPage((page) => Math.max(0, page - 1));
       return;
     }
-
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: -300, // 한 번에 스크롤할 거리 (px)
-        behavior: 'smooth',
-      });
-    }
+    scrollByOneCard('left');
   };
 
   const scrollRight = () => {
@@ -45,13 +51,7 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
       setCardPage((page) => Math.min(maxCardPage, page + 1));
       return;
     }
-
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 300, // 한 번에 스크롤할 거리 (px)
-        behavior: 'smooth',
-      });
-    }
+    scrollByOneCard('right');
   };
 
   const handleBookmarkToggle = async (activityId: string) => {

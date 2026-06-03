@@ -50,7 +50,8 @@ export const OptionGroup = ({
         role="listbox"
         className={clsx(
           'flex flex-col mt-1 rounded  bg-gray-0 p-space-2 focus:outline-none',
-          'overflow-y-auto max-h-60 shadow-optionGroup',
+          // 옵션 1개=40px(min-h-10). 5.5개(=224px)만 보이도록 캡 → 6개 이상(재직상태 등)에서 스크롤 어포던스 확보
+          'overflow-y-auto max-h-[224px] shadow-optionGroup',
           functionOptionType && 'pb-10',
           widthClassMap[width],
           className,

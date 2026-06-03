@@ -1,16 +1,20 @@
 "use client";
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '../../Icon/Icon';
 import Avatar from '../pc/Avatar';
 import Button from '../../Button/Button';
+import ReviewWriteModal from '../ReviewWriteModal';
 
 interface GNBProps {
   isLogin: boolean;
 }
 
 const GNB = ({ isLogin = false }: GNBProps) => {
+  const [reviewOpen, setReviewOpen] = useState(false);
   return (
+    <>
     <header className="w-full max-w-[23.4375rem] h-[3.625rem] bg-gray-0 px-5 flex items-center justify-between ">
       <div className="flex items-center gap-3">
         <Link href="/" aria-label="PickLab 홈">
@@ -27,9 +31,9 @@ const GNB = ({ isLogin = false }: GNBProps) => {
               </Link>
             </li>
             <li>
-              <Link href="/notes" aria-label="메모">
+              <button type="button" onClick={() => setReviewOpen(true)} aria-label="리뷰쓰기">
                 <Icon size={24} icon="pencil" />
-              </Link>
+              </button>
             </li>
             <li>
               <Link href="/notifications" aria-label="알림">
@@ -49,6 +53,8 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         </Link>
       )}
     </header>
+    {reviewOpen && <ReviewWriteModal onClose={() => setReviewOpen(false)} />}
+    </>
   );
 };
 

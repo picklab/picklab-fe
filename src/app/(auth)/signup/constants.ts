@@ -24,25 +24,54 @@ export const SIGNUP_ICONS = [
 ];
 
 export const EDUCATION_OPTIONS = [
-  { label: '고등학교 졸업', value: 'high_school' },
-  { label: '대학교 졸업', value: 'university' },
-  { label: '대학원 졸업', value: 'graduate' },
-  { label: '기타', value: 'other' },
+  { label: '고등학교', value: 'high_school' },
+  { label: '대학교(2,3년)', value: 'college' }, // 백엔드 enum 확인 필요
+  { label: '대학교(4년)', value: 'university' },
+  { label: '대학원', value: 'graduate' },
 ];
 
 export const GRADUATION_OPTIONS = [
   { label: '졸업', value: 'graduated' },
-  { label: '재학중', value: 'enrolled' },
-  { label: '휴학중', value: 'on_leave' },
+  { label: '재학 중', value: 'enrolled' },
+  { label: '휴학', value: 'on_leave' },
+  { label: '중퇴', value: 'dropped_out' }, // 백엔드 enum 확인 필요
 ];
 
 export const EMPLOYMENT_OPTIONS = [
-  { label: '재직중', value: 'employed' },
-  { label: '구직중', value: 'job_seeking' },
+  { label: '재직 중', value: 'employed' },
+  { label: '구직 중', value: 'job_seeking' },
   { label: '프리랜서', value: 'freelancer' },
   { label: '학생', value: 'student' },
+  { label: '휴직', value: 'on_leave' }, // 백엔드 enum 확인 필요
   { label: '기타', value: 'other' },
 ];
+
+/** 재직상태가 "재직 중"일 때만 직장명 입력을 활성화 */
+export const EMPLOYED_STATUS_VALUE = 'employed';
+
+/** Step1 약관 항목 (전체 동의 제외) — content가 있으면 본문 아코디언 노출 */
+export interface SignupTerm {
+  key: 'age' | 'service' | 'privacy' | 'marketing';
+  label: string;
+  required: boolean;
+  /**
+   * 약관 전문. 실제 법무 검토 문구로 교체 필요(현재는 임시 안내).
+   * content가 없으면(만 14세 확인 등) 아코디언 토글을 노출하지 않는다.
+   */
+  content?: string;
+}
+
+const TERMS_CONTENT_PLACEHOLDER = '약관 전문이 준비되는 대로 이곳에 표시됩니다.'; // TODO: 법무 확정 문구로 교체
+
+export const SIGNUP_TERMS: SignupTerm[] = [
+  { key: 'age', label: '(필수) 만 14세 이상입니다.', required: true },
+  { key: 'service', label: '(필수) 이용약관 동의', required: true, content: TERMS_CONTENT_PLACEHOLDER },
+  { key: 'privacy', label: '(필수) 개인정보 수집 및 이용 목적', required: true, content: TERMS_CONTENT_PLACEHOLDER },
+  { key: 'marketing', label: '(선택) 마케팅 수신 동의', required: false, content: TERMS_CONTENT_PLACEHOLDER },
+];
+
+/** 닉네임 중복 메시지 (중복 체크 API 생기면 연결) */
+export const NICKNAME_DUPLICATE_MESSAGE = '이미 사용 중인 닉네임입니다.';
 
 /** 카테고리 → 하위 태그 매핑 */
 export const JOB_CHILDREN: Record<JobParent, JobChild[]> = {

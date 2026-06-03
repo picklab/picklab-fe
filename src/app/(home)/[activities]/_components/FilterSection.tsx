@@ -75,12 +75,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
       <div className="h-[1px] bg-gray-20" />
       {/* 한줄 넘어가면 다음줄로 갈 수 있게 처리 */}
       <div className="flex items-center gap-1 flex-wrap">
-        <button
-          className="flex items-center justify-center w-7 h-7 bg-primary-50 rounded-full"
-          onClick={() => setSelectedFilters({})}
-        >
-          <Icon icon="largeRefresh" color="white" size={16} />
-        </button>
+        {/* 디자인: 선택 칩 → 새로고침(초기화) 순 */}
         {selectedFilterEntries.map(({ category, option }) => (
           <div
             key={`${category}-${option}`}
@@ -94,6 +89,12 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
             </button>
           </div>
         ))}
+        <button
+          className="flex items-center justify-center w-7 h-7 bg-primary-50 rounded-full"
+          onClick={() => setSelectedFilters({})}
+        >
+          <Icon icon="largeRefresh" color="white" size={16} />
+        </button>
       </div>
     </div>
   );

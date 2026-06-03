@@ -3,16 +3,21 @@ import Typography from '@/components/common/Typography';
 interface TitleTypographyProps {
   title: string;
   description: string;
+  descriptionClassName?: string;
 }
 
-export default function TitleTypography({ title, description }: TitleTypographyProps) {
+export default function TitleTypography({
+  title,
+  description,
+  descriptionClassName = 'text-gray-50',
+}: TitleTypographyProps) {
   return (
     <>
       <div className="flex flex-col gap-2 items-center text-center pc:hidden">
         <Typography tag="h1" type="Title2Bold" id="signup-title" className="break-keep">
           {title}
         </Typography>
-        <Typography tag="p" type="Body2Medium" id="signup-description" className="text-gray-50">
+        <Typography tag="p" type="Body2Medium" id="signup-description" className={descriptionClassName}>
           {description}
         </Typography>
       </div>
@@ -20,7 +25,7 @@ export default function TitleTypography({ title, description }: TitleTypographyP
         <Typography tag="h1" type="Heading2Bold" id="signup-title">
           {title}
         </Typography>
-        <Typography tag="p" type="Body3Medium" id="signup-description" className="text-gray-50">
+        <Typography tag="p" type="Body3Medium" id="signup-description" className={descriptionClassName}>
           {description}
         </Typography>
       </div>

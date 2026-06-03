@@ -98,7 +98,9 @@ export function MobileLayout({ className, isLogin = true }: ResponsiveLayoutProp
         </Link>
       </div>
       <MobileHomeTabs />
-      <Banner />
+      <div className="mt-5">
+        <Banner />
+      </div>
       {isLogin && (
         <MobileActivityList title={ACTIVITY_TITLES.RECOMMENDED} endpoint="recommendations" className={MOBILE_STYLES.FIRST_SECTION} />
       )}
@@ -109,16 +111,16 @@ export function MobileLayout({ className, isLogin = true }: ResponsiveLayoutProp
 }
 
 const MOBILE_HOME_TABS = [
-  { label: "홈", href: "/", width: "w-[38px]" },
-  { label: "대외활동", href: "/activities", width: "w-[64px]" },
-  { label: "강연/세미나", href: "/seminar", width: "w-[78px]" },
-  { label: "교육", href: "/education", width: "w-[44px]" },
-  { label: "공모전/해커톤", href: "/contest", width: "w-[96px]" },
+  { label: "홈", href: "/" },
+  { label: "대외활동", href: "/activities" },
+  { label: "강연/세미나", href: "/seminar" },
+  { label: "교육", href: "/education" },
+  { label: "공모전/해커톤", href: "/contest" },
 ] as const;
 
 function MobileHomeTabs() {
   return (
-    <div className="relative left-1/2 mt-5 flex h-[35px] w-screen -translate-x-1/2 flex-row overflow-x-auto px-5 hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+    <div className="relative mt-5 flex h-[35px] w-full flex-row overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
       {MOBILE_HOME_TABS.map((item) => {
         const isActive = item.href === "/";
 
@@ -128,12 +130,11 @@ function MobileHomeTabs() {
             href={item.href}
             className={clsx(
               "relative flex shrink-0 items-center justify-center",
-              item.width,
               isActive &&
                 "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
             )}
           >
-            <Typography className="w-full text-center" type="Body2Medium">
+            <Typography className="w-[86px] text-center" type="Body2Medium">
               {item.label}
             </Typography>
           </Link>

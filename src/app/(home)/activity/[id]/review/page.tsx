@@ -1,0 +1,118 @@
+import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
+import PcReviewWritePage from './_components/PcReviewWritePage';
+import MobileReviewWritePage from './_components/MobileReviewWritePage';
+import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
+import type { ActivityCardItem } from '@/app/(home)/_components/constant';
+
+interface ReviewWritePageProps {
+  params: Promise<{ id: string }>;
+}
+
+const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+
+const CATEGORY_LABELS: Record<string, ActivityCardItem['activityType']> = {
+  EXTRACURRICULAR: '대외활동',
+  EDUCATION: '교육',
+  COMPETITION: '공모전/해커톤',
+  SEMINAR: '강연/세미나',
+};
+
+const ORGANIZATION_LABELS: Record<string, string> = {
+  LARGE_CORPORATION: '대기업',
+  MEDIUM_CORPORATION: '중견기업',
+  SMALL_CORPORATION: '중소기업',
+  STARTUP: '스타트업',
+  PUBLIC_ORGANIZATION: '공공기관/공기업',
+  NON_PROFIT: '비영리단체/협회/재단',
+  FINANCIAL: '금융권',
+  FINANCIAL_INSTITUTION: '금융권',
+  FOREIGN_CORPORATION: '외국계기업',
+  HOSPITAL: '병원',
+  ETC: '기타',
+};
+
+interface BackendActivityDetail {
+  id: number | string;
+  title?: string | null;
+  organization?: string | null;
+  organizer_type?: string | null;
+  organizerType?: string | null;
+  category?: string | null;
+  thumbnail?: string | null;
+  application_url?: string | null;
+  homepage_url?: string | null;
+}
+
+interface BackendActivityDetailResponse {
+  code?: number;
+  data?: BackendActivityDetail;
+}
+
+/** 활동 상세를 리뷰 작성에 필요한 최소 필드로 매핑 (activity/[id]/page.tsx 패턴 참고). */
+function mapBackendDetailToActivity(raw: BackendActivityDetail): ActivityCardItem {
+  const organizerType = raw.organizer_type ?? raw.organizerType;
+  const companyType = organizerType ? ORGANIZATION_LABELS[organizerType] ?? organizerType : '';
+
+  return {
+    detailLink: `/activity/${raw.id}`,
+    applyLink: raw.application_url ?? raw.homepage_url ?? '',
+    activityType: raw.category ? CATEGORY_LABELS[raw.category] ?? raw.category : '대외활동',
+    source: '',
+    title: raw.title ?? '',
+    organizer: raw.organization ?? '',
+    companyType,
+    target: '',
+    registrationPeriod: '',
+    activityPeriod: '',
+    recruitment: '',
+    region: '',
+    homepage: raw.homepage_url ?? '',
+    contestField: '',
+    activityField: '',
+    costPrize: '',
+    description: '',
+    thumbnailImage: raw.thumbnail ?? '/imgs/cat.jpg',
+    detailImage: '',
+    badgeText: '',
+    viewCount: 0,
+    saveCount: 0,
+    isBookmarked: false,
+  };
+}
+
+async function fetchActivityDetail(id: string): Promise<ActivityCardItem | null> {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
+    const headers: HeadersInit = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+    const response = await fetch(`${BACKEND_URL}/v1/activities/${id}`, {
+      headers,
+      cache: 'no-store',
+    });
+    if (!response.ok) return null;
+    const json = (await response.json()) as BackendActivityDetailResponse;
+    return json.data ? mapBackendDetailToActivity(json.data) : null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function ReviewWritePage({ params }: ReviewWritePageProps) {
+  const { id } = await params;
+  const apiActivity = await fetchActivityDetail(id);
+  const rawActivity = apiActivity ? null : findActivityById(id);
+
+  if (!apiActivity && !rawActivity) {
+    return notFound();
+  }
+
+  const activity = apiActivity ?? mapActivityToDetailItem(rawActivity!);
+
+  return (
+    <>
+      <PcReviewWritePage activity={activity} activityId={id} />
+      <MobileReviewWritePage activity={activity} activityId={id} />
+    </>
+  );
+}

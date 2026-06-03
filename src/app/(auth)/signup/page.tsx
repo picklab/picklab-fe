@@ -12,24 +12,27 @@ import Step2 from './components/Step2';
 import Step3 from './components/Step3';
 import Step4 from './components/Step4';
 
+// NOTE: 아래 라벨은 백엔드로 전송되는 값. 새 항목(대학교(2,3년)/중퇴/휴직)은 백엔드 enum 확인 필요.
 const EDUCATION_LABELS: Record<string, string> = {
-  high_school: '고등학교 졸업',
-  university: '대학교 졸업',
-  graduate: '대학원 졸업',
-  other: '기타',
+  high_school: '고등학교',
+  college: '대학교(2,3년)', // 백엔드 enum 확인 필요
+  university: '대학교(4년)',
+  graduate: '대학원',
 };
 
 const GRADUATION_LABELS: Record<string, string> = {
   graduated: '졸업',
-  enrolled: '재학중',
-  on_leave: '휴학중',
+  enrolled: '재학 중',
+  on_leave: '휴학',
+  dropped_out: '중퇴', // 백엔드 enum 확인 필요
 };
 
 const EMPLOYMENT_LABELS: Record<string, string> = {
-  employed: '재직중',
-  job_seeking: '구직중',
+  employed: '재직 중',
+  job_seeking: '구직 중',
   freelancer: '프리랜서',
   student: '학생',
+  on_leave: '휴직', // 백엔드 enum 확인 필요
   other: '기타',
 };
 
