@@ -56,3 +56,10 @@ next-env.d.ts
 .codex
 .omx/
 .omx
+
+# 백엔드 레포(프론트에 중첩) — 추적 제외
+/picklab-be/
+
+# oh-my-claudecode 로컬 설정/상태
+/.claude/
+/.omc/
