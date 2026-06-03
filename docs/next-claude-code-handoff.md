@@ -11,7 +11,12 @@
 
 ## Current Worktree State
 
-커밋 전 변경입니다. 임의로 되돌리지 말고 이어서 작업하세요.
+> **상태(업데이트):** 아래 작업은 모두 `dev`에 **커밋·푸시 완료**.
+> - `6143e65` feat: 리뷰 기능 전반 + 회원가입 정합 + Select/약관 UI 개선
+> - `4b25d3c` chore: gitignore(picklab-be·.claude·.omc 제외)
+> 추적 제외: `picklab-be/`, `.claude/`, `.omc/`. 미추적 보존: `docs/api-spec.json`, `issues/`.
+
+이전 세션에서 구현·검증한 변경 내역입니다(이제 커밋됨).
 
 ### 신규 파일
 | 파일 | 내용 |
