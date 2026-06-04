@@ -1,3 +1,4 @@
+import { PRIVACY_POLICY, TERMS_OF_SERVICE, type LegalDoc } from '@/constants/legal';
 import type { JobParent, JobChild } from './types';
 
 export const SIGNUP_ICONS = [
@@ -49,25 +50,23 @@ export const EMPLOYMENT_OPTIONS = [
 /** 재직상태가 "재직 중"일 때만 직장명 입력을 활성화 */
 export const EMPLOYED_STATUS_VALUE = 'employed';
 
-/** Step1 약관 항목 (전체 동의 제외) — content가 있으면 본문 아코디언 노출 */
+/** Step1 약관 항목 (전체 동의 제외) — doc이 있으면 본문 아코디언 노출 */
 export interface SignupTerm {
   key: 'age' | 'service' | 'privacy' | 'marketing';
   label: string;
   required: boolean;
   /**
-   * 약관 전문. 실제 법무 검토 문구로 교체 필요(현재는 임시 안내).
-   * content가 없으면(만 14세 확인 등) 아코디언 토글을 노출하지 않는다.
+   * 약관 전문(법무 확정본, `@/constants/legal`).
+   * doc이 없으면(만 14세 확인·마케팅 수신 등) 아코디언 토글을 노출하지 않는다.
    */
-  content?: string;
+  doc?: LegalDoc;
 }
-
-const TERMS_CONTENT_PLACEHOLDER = '약관 전문이 준비되는 대로 이곳에 표시됩니다.'; // TODO: 법무 확정 문구로 교체
 
 export const SIGNUP_TERMS: SignupTerm[] = [
   { key: 'age', label: '(필수) 만 14세 이상입니다.', required: true },
-  { key: 'service', label: '(필수) 이용약관 동의', required: true, content: TERMS_CONTENT_PLACEHOLDER },
-  { key: 'privacy', label: '(필수) 개인정보 수집 및 이용 목적', required: true, content: TERMS_CONTENT_PLACEHOLDER },
-  { key: 'marketing', label: '(선택) 마케팅 수신 동의', required: false, content: TERMS_CONTENT_PLACEHOLDER },
+  { key: 'service', label: '(필수) 이용약관 동의', required: true, doc: TERMS_OF_SERVICE },
+  { key: 'privacy', label: '(필수) 개인정보 수집 및 이용 목적', required: true, doc: PRIVACY_POLICY },
+  { key: 'marketing', label: '(선택) 마케팅 수신 동의', required: false },
 ];
 
 /** 닉네임 중복 메시지 (중복 체크 API 생기면 연결) */

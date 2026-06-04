@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import CheckBoxLabel from '@/components/common/CheckBox/CheckBoxLabel';
 import Icon from '@/components/common/Icon/Icon';
-import Typography from '@/components/common/Typography';
+import LegalDocument from '@/app/(home)/_components/LegalDocument';
 import type { StepProps } from '../types';
 import { SIGNUP_TERMS } from '../constants';
 import TitleTypography from './TitleTypography';
@@ -64,7 +64,7 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
                   checked={signupData.terms[term.key]}
                   onChange={handleTermChange(term.key)}
                 />
-                {term.content && (
+                {term.doc && (
                   <button
                     type="button"
                     onClick={() => toggleExpanded(term.key)}
@@ -77,14 +77,12 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
                   </button>
                 )}
               </div>
-              {term.content && isOpen && (
+              {term.doc && isOpen && (
                 <div
                   id={`signup-terms-${term.key}-body`}
-                  className="max-h-[120px] overflow-y-auto rounded-md border border-gray-20 bg-gray-5 p-3"
+                  className="max-h-[150px] overflow-y-auto rounded-md border border-gray-20 bg-gray-5 p-4"
                 >
-                  <Typography type="Body3Medium" className="whitespace-pre-line text-gray-60">
-                    {term.content}
-                  </Typography>
+                  <LegalDocument doc={term.doc} variant="embed" />
                 </div>
               )}
             </div>

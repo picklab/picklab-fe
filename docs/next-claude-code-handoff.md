@@ -136,7 +136,14 @@ figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. �
 - ✅ **Step2 검증 완료**: 닉네임 5종(빈값/띄어쓰기/특수문자/20자/성공) `validateNickname`+TextField status/helpMessage, 재직 중 외 선택 시 직장명 disabled+값clear, 옵션 정정(학력 고등학교/대학교2,3년/대학교4년/대학원, 졸업 졸업/재학중/휴학/중퇴, 재직 +휴직), 최종학력·졸업여부 성공 메시지. (`Step2.tsx`, `constants.ts`, `page.tsx` 라벨매핑)
 - ✅ **Step3 정합 완료**: 세부직무를 직무분야 카드 아래로(구분선/제목 제거), max-w-[420px]·좌측정렬, 대분류 텍스트 gray-80/gray-50, description 빨강(`TitleTypography`에 `descriptionClassName` 옵션 추가), 선택칩 8px/list 10px.
 - ✅ **Select 디테일 완료**: ① 클릭 시 primary 테두리(테두리 우선순위 에러>열림>선택>기본 단일식) ② 드롭다운 간격 portal 포함 4px 통일(`rect.bottom`+ul `mt-1`) ③ `OptionGroup` `max-h-60`→`max-h-[224px]`로 6개(재직상태) 스크롤. Playwright 측정 검증(borderColor rgb(0,188,125), gapPx 4, 재직 scrollable true).
-- ✅ **Step1 약관 본문 아코디언 완료**: `SIGNUP_TERMS` 데이터화(`constants.ts`), content 있는 약관만 chevron 토글 → `max-h-[120px]` 스크롤 본문 패널, a11y(aria-expanded/controls). **본문 문구는 `TERMS_CONTENT_PLACEHOLDER` 임시 안내 — 법무 확정 문구로 교체 필요(구조 완성)**.
+- ✅ **Step1 약관 본문 아코디언 완료 + 법무 확정본 연결**: `SIGNUP_TERMS`를 `LegalDoc` 참조(`doc?`)로 변경, 이용약관=`TERMS_OF_SERVICE`/개인정보=`PRIVACY_POLICY` **전문 inline 표시**(`max-h-[150px]` 스크롤, `LegalDocument variant="embed"`). 마케팅 수신 동의는 figma 시안대로 토글/패널 없음. **임시 placeholder 제거 완료**.
+
+### 이용약관·개인정보처리방침 페이지 신규 완료 (2026-06)
+- `src/constants/legal.ts`: 약관 확정본 데이터(`LegalDoc`/`LegalBlock` 타입 + `TERMS_OF_SERVICE`/`PRIVACY_POLICY`). **페이지·회원가입 아코디언이 이 단일 소스 공유** — 본문 수정 시 이 파일만.
+- `src/app/(home)/_components/LegalDocument.tsx`: 렌더러(`variant: 'page' | 'embed'`). Server Component(’use client’ 없음)라 /terms·/privacy는 server-render, client인 Step1에도 임베드 가능.
+- `/terms`, `/privacy` 페이지(`(home)` 그룹 → GNB+Footer 자동). footer 링크 연결(`menus.ts`: 이용약관→`/terms`, 개인정보처리방침→`/privacy`).
+- 검증: typecheck/eslint EXIT 0, Playwright 실렌더(페이지 2종 + 회원가입 Step1 펼침) 시안 정합 확인. 코드리뷰 통과(critical/high 0).
+- ⏳ **후속(비차단) 접근성 2건**: ① `LegalDocument` 리스트가 `<ol>/<ul>`에 수동 `1.`·`•` 주입 → CSS `list-decimal/list-disc`로 교체 시 **시안 재검증 필요**. ② `Step1` 아코디언 패널 닫힘 시 DOM 제거로 `aria-controls` 대상 사라짐 → 항상 렌더 후 `hidden` 토글 권장.
 - ✅ **학교명 search 정정 완료**: 디자인 확인 결과 학교명은 **드롭다운 없는 자유 입력 필드**(돋보기 아이콘은 장식)였음. 이전 세션의 "optionGroup·직접 추가하기"는 오해 — 별도 검색 API/드롭다운 불필요, 기존 `TextField icon="search"`로 이미 충족. 추가로 **학교명/직장명 placeholder 색 `#A5ADBB` 정합**(`Step2.tsx`: `placeholder:!text-[#A5ADBB]`, 직장명은 활성 시에만 적용, disabled 시 기존 회색 유지). 라벨은 `label=" "` 공백이라 이미 투명(Select와 높이 정렬). 토큰(`gray.40`) 미변경.
 
 ### QA CSV 남은 figma 의존 (PNG 필요)
