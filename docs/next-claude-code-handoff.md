@@ -143,7 +143,8 @@ figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. �
 - `src/app/(home)/_components/LegalDocument.tsx`: 렌더러(`variant: 'page' | 'embed'`). Server Component(’use client’ 없음)라 /terms·/privacy는 server-render, client인 Step1에도 임베드 가능.
 - `/terms`, `/privacy` 페이지(`(home)` 그룹 → GNB+Footer 자동). footer 링크 연결(`menus.ts`: 이용약관→`/terms`, 개인정보처리방침→`/privacy`).
 - 검증: typecheck/eslint EXIT 0, Playwright 실렌더(페이지 2종 + 회원가입 Step1 펼침) 시안 정합 확인. 코드리뷰 통과(critical/high 0).
-- ⏳ **후속(비차단) 접근성 2건**: ① `LegalDocument` 리스트가 `<ol>/<ul>`에 수동 `1.`·`•` 주입 → CSS `list-decimal/list-disc`로 교체 시 **시안 재검증 필요**. ② `Step1` 아코디언 패널 닫힘 시 DOM 제거로 `aria-controls` 대상 사라짐 → 항상 렌더 후 `hidden` 토글 권장.
+- ⏳ **후속(비차단) 접근성 1건 남음**: ① `LegalDocument` 리스트가 `<ol>/<ul>`에 수동 `1.`·`•` 주입 → CSS `list-decimal/list-disc`로 교체 시 **시안 재검증 필요**.
+- ✅ **접근성 ② 완료**: `Step1` 아코디언 패널을 항상 렌더 + `hidden={!isOpen}` 토글로 변경 → `aria-controls` 대상 상시 존재. Playwright로 닫힘(빈 공간 없음)/열림 동작 검증.
 - ✅ **학교명 search 정정 완료**: 디자인 확인 결과 학교명은 **드롭다운 없는 자유 입력 필드**(돋보기 아이콘은 장식)였음. 이전 세션의 "optionGroup·직접 추가하기"는 오해 — 별도 검색 API/드롭다운 불필요, 기존 `TextField icon="search"`로 이미 충족. 추가로 **학교명/직장명 placeholder 색 `#A5ADBB` 정합**(`Step2.tsx`: `placeholder:!text-[#A5ADBB]`, 직장명은 활성 시에만 적용, disabled 시 기존 회색 유지). 라벨은 `label=" "` 공백이라 이미 투명(Select와 높이 정렬). 토큰(`gray.40`) 미변경.
 
 ### QA CSV 남은 figma 의존 (PNG 필요)

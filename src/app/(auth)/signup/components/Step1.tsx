@@ -77,9 +77,10 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
                   </button>
                 )}
               </div>
-              {term.doc && isOpen && (
+              {term.doc && (
                 <div
                   id={`signup-terms-${term.key}-body`}
+                  hidden={!isOpen}
                   className="max-h-[150px] overflow-y-auto rounded-md border border-gray-20 bg-gray-5 p-4"
                 >
                   <LegalDocument doc={term.doc} variant="embed" />
