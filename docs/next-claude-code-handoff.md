@@ -11,7 +11,9 @@
 
 ## Current Worktree State
 
-> **상태(업데이트):** 아래 작업은 모두 `dev`에 **커밋·푸시 완료**.
+> **상태(업데이트):** 아래 작업은 모두 `dev`에 **커밋·푸시 완료** (working tree 깨끗).
+> - `30ea323` fix: 회원가입 학교명·직장명 placeholder 색상 #A5ADBB 정합 + QA CSV 전체 감사 결과 반영 ← **최신**
+> - `dfabdca` docs: handoff에 커밋·푸시 완료 상태 반영
 > - `6143e65` feat: 리뷰 기능 전반 + 회원가입 정합 + Select/약관 UI 개선
 > - `4b25d3c` chore: gitignore(picklab-be·.claude·.omc 제외)
 > 추적 제외: `picklab-be/`, `.claude/`, `.omc/`. 미추적 보존: `docs/api-spec.json`, `issues/`.
