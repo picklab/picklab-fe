@@ -141,6 +141,7 @@ figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. �
 ### 이용약관·개인정보처리방침 페이지 신규 완료 (2026-06)
 - `src/constants/legal.ts`: 약관 확정본 데이터(`LegalDoc`/`LegalBlock` 타입 + `TERMS_OF_SERVICE`/`PRIVACY_POLICY`). **페이지·회원가입 아코디언이 이 단일 소스 공유** — 본문 수정 시 이 파일만.
 - `src/app/(home)/_components/LegalDocument.tsx`: 렌더러(`variant: 'page' | 'embed'`). Server Component(’use client’ 없음)라 /terms·/privacy는 server-render, client인 Step1에도 임베드 가능.
+- **page 타이포 규격(디자인 확정)**: 제목 24px/700(`Title3Bold`), 부제 13px/500(`Body4Medium`), 섹션제목 16px/600(`Body1Semibold`), 본문 12px/400(`Caption1Regular`) — **전부 gray-90(#101828)**. Playwright computed-style 측정 일치 검증. embed(회원가입 아코디언)는 별도 규격 유지.
 - `/terms`, `/privacy` 페이지(`(home)` 그룹 → GNB+Footer 자동). footer 링크 연결(`menus.ts`: 이용약관→`/terms`, 개인정보처리방침→`/privacy`).
 - 검증: typecheck/eslint EXIT 0, Playwright 실렌더(페이지 2종 + 회원가입 Step1 펼침) 시안 정합 확인. 코드리뷰 통과(critical/high 0).
 - ⏳ **후속(비차단) 접근성 1건 남음**: ① `LegalDocument` 리스트가 `<ol>/<ul>`에 수동 `1.`·`•` 주입 → CSS `list-decimal/list-disc`로 교체 시 **시안 재검증 필요**.
