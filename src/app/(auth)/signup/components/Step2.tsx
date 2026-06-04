@@ -120,7 +120,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             helpMessage={schoolHelpMessage}
             scale="base"
             icon="search"
-            className="w-full"
+            className="w-full placeholder:!text-[#A5ADBB]"
             value={schoolName}
             onChange={(e) => handleInputChange('schoolName', e.target.value)}
           />
@@ -168,7 +168,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             placeholder="현재소속 및 재직명"
             status="default"
             scale="base"
-            className="!w-full"
+            className={`!w-full ${isCompanyEnabled ? 'placeholder:!text-[#A5ADBB]' : ''}`}
             disabled={!isCompanyEnabled}
             value={signupData.userInfo.companyName}
             onChange={(e) => handleInputChange('companyName', e.target.value)}

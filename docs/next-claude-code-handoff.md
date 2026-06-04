@@ -111,6 +111,17 @@ GET /api/reviews/[id]   PUT /api/reviews/[id]   DELETE /api/reviews/[id]
 
 figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. 대부분 명시 스펙은 이미 충족돼 있었고 실제 수정만 아래.
 
+> **전체 감사 완료(2026-06-04):** CSV 31개 항목을 코드와 1:1 대조(병렬 read-only 감사). 결론 — 수치 명확 항목은 **거의 다 이미 충족**. 추가로 검증한 A·B·C(아래)도 모두 충족 확인되어 코드 변경 없음. **진짜 남은 것은 "대상 불명확 → PNG/명세 필요" 항목들뿐**:
+> - 리뷰 탭 50px/24px/20px가 **어느 요소인지** 불명, "삭제하여 노출" 대상 불명, 전반 디자인 node `2408-26558` → PNG 필요
+> - ~~메인 드롭다운 레이블~~ → ✅ **충족 확정**: `NewActivityList.tsx:192-220` 활동유형/직무유형 `type="checkbox"`, `Select.findOption()`이 2개↑ 시 `"활동유형 2"`/`"직무유형 2"` 출력. CSV "/"는 두 드롭다운 나열 표기.
+> - 메인(MOBILE) 배너/tab bar 위치·탭 너비 → 디자인 필요 (일부는 CSV상 "반영")
+> - ~~회원가입 가입 후 자동 로그인~~ → ✅ **사실상 충족**: `additional-info/route.ts`가 `proxyWithAuth`로 호출(이미 인증 상태). OAuth 선로그인→추가정보 플로우라 가입 완료 시점에 로그인됨. (100% 확정은 소셜 가입 E2E 필요)
+>
+> **A·B·C 감사 상세(모두 이미 충족, 변경 없음):**
+> - **A** 회원가입 간격 8px+서브텍스트 gray-50: `TitleTypography.tsx:12` `descriptionClassName` 기본값이 `text-gray-50`(Step2 적용됨), Step3는 의도적 `danger-50`. 간격 `Step2.tsx:91 gap-2`(8px). list 10px/칩 8px는 의도적 구분.
+> - **B** 페이지네이션↔footer 여백 2배: `PcActivites.tsx:30 pb-20`(80px) 이미 적용. (`layout.tsx:8 mb-10`은 활동목록 외 페이지용, CSV 대상 아님)
+> - **C** 공고상세 본문 14px: `InfoItem`(`PcActivityDetailPage.tsx:67,70`)은 이미 `Body3Medium`(14px). `DetailSection` 본문 15px는 **사용자 결정으로 유지**(CSV 요구 근거 없음).
+
 | # | 화면 | 결과 |
 |---|---|---|
 | 1 | 공고상세 > 리뷰 | ✅ **로그인 분기**: 비로그인=블러 잠금(대표1개+"리뷰 작성하고 전체보기"), 로그인=전체공개(다건+페이지네이션+작성유도박스). `ReviewCard`/`ReviewListCard`에 `locked` prop, `useAuthClient().isAuthenticated`로 분기. PC/모바일 둘 다. **기준이 로그인 여부 — 실제 기준이 '본인 작성 여부'면 백엔드 플래그 필요** |
@@ -124,10 +135,11 @@ figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. �
 - ✅ **Step3 정합 완료**: 세부직무를 직무분야 카드 아래로(구분선/제목 제거), max-w-[420px]·좌측정렬, 대분류 텍스트 gray-80/gray-50, description 빨강(`TitleTypography`에 `descriptionClassName` 옵션 추가), 선택칩 8px/list 10px.
 - ✅ **Select 디테일 완료**: ① 클릭 시 primary 테두리(테두리 우선순위 에러>열림>선택>기본 단일식) ② 드롭다운 간격 portal 포함 4px 통일(`rect.bottom`+ul `mt-1`) ③ `OptionGroup` `max-h-60`→`max-h-[224px]`로 6개(재직상태) 스크롤. Playwright 측정 검증(borderColor rgb(0,188,125), gapPx 4, 재직 scrollable true).
 - ✅ **Step1 약관 본문 아코디언 완료**: `SIGNUP_TERMS` 데이터화(`constants.ts`), content 있는 약관만 chevron 토글 → `max-h-[120px]` 스크롤 본문 패널, a11y(aria-expanded/controls). **본문 문구는 `TERMS_CONTENT_PLACEHOLDER` 임시 안내 — 법무 확정 문구로 교체 필요(구조 완성)**.
-- ⏳ **회원가입 남은 것(PNG 필요)**: 학교명 select+search(optionGroup·"직접 추가하기", node `select+search` PNG)
+- ✅ **학교명 search 정정 완료**: 디자인 확인 결과 학교명은 **드롭다운 없는 자유 입력 필드**(돋보기 아이콘은 장식)였음. 이전 세션의 "optionGroup·직접 추가하기"는 오해 — 별도 검색 API/드롭다운 불필요, 기존 `TextField icon="search"`로 이미 충족. 추가로 **학교명/직장명 placeholder 색 `#A5ADBB` 정합**(`Step2.tsx`: `placeholder:!text-[#A5ADBB]`, 직장명은 활성 시에만 적용, disabled 시 기존 회색 유지). 라벨은 `label=" "` 공백이라 이미 투명(Select와 높이 정렬). 토큰(`gray.40`) 미변경.
 
 ### QA CSV 남은 figma 의존 (PNG 필요)
-- 4번 회원가입 나머지(위), 5번 회원가입 진입(`1136-72980`)
+- 4번 회원가입: ✅ 완료 (학교명 search 오해 정정 + placeholder 정합)
+- 5번 회원가입 진입(`1136-72980`): ✅ 완료 — signin "PICKLAB 회원가입"→`/signup`(`signin/page.tsx:102-112`), PC GNB 회원가입 버튼→`/signup`(`GNB/pc/GNB.tsx:96-98`) 모두 이미 충족. 기능 요구 충족, 픽셀 정합만 PNG로 추가 대조 가능
 - 리뷰 블러 분기 기준(로그인 vs 작성여부) 기획 확인
 
 ### 백엔드 확인 대기 (누적)
