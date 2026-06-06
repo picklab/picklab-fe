@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type {
+  ActivityReviewItem,
   ReviewListData,
   SatisfactionAvgScores,
   JobRelevanceStats,
@@ -155,4 +156,44 @@ export function useReviewJobRelevanceStats(
   }, [activityId, enabled]);
 
   return { data, loading, error };
+}
+
+/** POST/DELETE /api/reviews/[id]/helpful — 도움이 돼요 등록/취소 (body 없음) */
+export async function toggleReviewHelpful(id: number | string, helpful: boolean): Promise<void> {
+  const response = await fetch(`/api/reviews/${id}/helpful`, {
+    method: helpful ? 'POST' : 'DELETE',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('도움이 돼요 처리에 실패했습니다.');
+  }
+}
+
+/**
+ * 리뷰 카드의 "도움이 돼요" 상태 관리(낙관적 업데이트 + 실패 롤백).
+ * 초기값은 review.is_helpful / review.helpful_count.
+ */
+export function useReviewHelpful(review: ActivityReviewItem) {
+  const [helpful, setHelpful] = useState(review.is_helpful ?? false);
+  const [count, setCount] = useState(review.helpful_count ?? 0);
+  const [pending, setPending] = useState(false);
+
+  const toggle = useCallback(async () => {
+    if (pending) return;
+    const next = !helpful;
+    setHelpful(next);
+    setCount((c) => Math.max(0, c + (next ? 1 : -1)));
+    setPending(true);
+    try {
+      await toggleReviewHelpful(review.id, next);
+    } catch {
+      // 실패 시 롤백
+      setHelpful(!next);
+      setCount((c) => Math.max(0, c + (next ? -1 : 1)));
+    } finally {
+      setPending(false);
+    }
+  }, [helpful, pending, review.id]);
+
+  return { helpful, count, pending, toggle };
 }

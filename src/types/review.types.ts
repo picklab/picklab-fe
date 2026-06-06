@@ -50,6 +50,10 @@ export interface ActivityReviewItem {
   strength: string;
   weakness: string;
   tips?: string | null;
+  /** 도움이 돼요 수 (백엔드 추가됨) */
+  helpful_count?: number;
+  /** 내가 도움이 돼요를 눌렀는지 */
+  is_helpful?: boolean;
 }
 
 /** GET /v1/activities/{id}/reviews 의 data */

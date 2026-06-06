@@ -18,6 +18,7 @@ import {
   useActivityReviews,
   useReviewSatisfactionStats,
   useReviewJobRelevanceStats,
+  useReviewHelpful,
 } from '@/hooks/useActivityReviews';
 import {
   aggregateSatisfaction,
@@ -124,7 +125,9 @@ const ReviewListCard = ({
   review: ActivityReviewItem;
   locked?: boolean;
   onWrite?: () => void;
-}) => (
+}) => {
+  const { helpful, count, pending, toggle } = useReviewHelpful(review);
+  return (
   <div className="rounded-lg border border-gray-20 bg-gray-0 px-4 py-4">
     <div className="flex items-center gap-2">
       <span className={clsx('h-5 rounded px-2 inline-flex items-center', jobGroupBadgeClass(review.job_group))}>
@@ -141,10 +144,19 @@ const ReviewListCard = ({
       </Typography>
     </div>
 
-    {/* helpful(도움이 돼요) 카운트/토글 API가 아직 없어 표시만 한다. */}
-    <button type="button" className="mt-2 h-6 rounded-full bg-primary-5 px-3 inline-flex items-center">
-      <Typography type="Caption2Medium" className="text-primary-60">
-        도움이 돼요
+    {/* helpful(도움이 돼요): is_helpful 토글 + helpful_count. 잠금(비로그인) 카드에선 비활성 */}
+    <button
+      type="button"
+      onClick={locked ? undefined : toggle}
+      disabled={locked || pending}
+      aria-pressed={helpful}
+      className={clsx(
+        'mt-2 h-6 rounded-full px-3 inline-flex items-center disabled:opacity-60',
+        helpful ? 'bg-primary-50' : 'bg-primary-5',
+      )}
+    >
+      <Typography type="Caption2Medium" className={helpful ? 'text-gray-0' : 'text-primary-60'}>
+        {count > 0 ? `도움이 돼요 ${count}` : '도움이 돼요'}
       </Typography>
     </button>
 
@@ -228,7 +240,8 @@ const ReviewListCard = ({
       )}
     </div>
   </div>
-);
+  );
+};
 
 const MobileRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
   const score = (value?: number) => (stats ? toScorePercent(value) : 0);
