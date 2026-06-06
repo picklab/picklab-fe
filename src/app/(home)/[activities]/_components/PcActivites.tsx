@@ -2,6 +2,7 @@
 
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import NewActivityList from "../../_components/pc/NewActivityList";
 import FilterSection from "./FilterSection";
 import clsx from "clsx";
@@ -31,12 +32,19 @@ export default function PcActivites({
         isStorybook ? "flex" : "hidden pc:flex",
       )}
     >
-      <Typography
-        type="Heading2Medium"
-        className="text-gray-90 max-w-[1100px] mx-auto"
-      >
-        {activities}
-      </Typography>
+      <div className="max-w-[1100px] mx-auto w-full flex flex-col gap-3">
+        {/* 브레드크럼: 홈 > {카테고리} */}
+        <div className="flex items-center gap-1 text-gray-50">
+          <Link href="/" className="hover:text-gray-70">
+            <Typography type="Body4Medium">홈</Typography>
+          </Link>
+          <Typography type="Body4Medium">&gt;</Typography>
+          <Typography type="Body4Medium">{activities}</Typography>
+        </div>
+        <Typography type="Title2Bold" className="text-gray-90">
+          {activities}
+        </Typography>
+      </div>
       <div className="max-w-[1100px] mx-auto w-full">
         <FilterSection
           selectedFilters={selectedFilters}
