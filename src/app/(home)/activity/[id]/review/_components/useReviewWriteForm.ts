@@ -5,12 +5,18 @@ import { useRouter } from 'next/navigation';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
 import {
   JOB_DETAIL_BY_GROUP,
+  type MyReviewDetail,
   type ReviewJobDetail,
   type ReviewJobGroup,
   type ReviewProgressStatus,
+  type ReviewUpdatePayload,
 } from '@/types/review.types';
+import { updateReview } from '@/hooks/useMyReviews';
 
 export type ReviewStep = 1 | 2 | 3;
+
+/** 폼 동작 모드: 신규 작성(create) / 기존 리뷰 수정(edit). */
+export type ReviewFormMode = 'create' | 'edit';
 
 /** 인증자료 업로드 가능한 이미지 확장자 (디자인 명세 기준). 백엔드 검증 정책 확인 필요. */
 export const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.gif', '.png', '.psd', '.ai', '.jpeg', '.tif', '.tiff'];
@@ -68,6 +74,18 @@ export interface ReviewFieldErrors {
 interface UseReviewWriteFormArgs {
   activity: ActivityCardItem;
   activityId: string;
+  /** 'create'(기본) | 'edit'. edit는 PUT /api/reviews/{reviewId}로 제출한다. */
+  mode?: ReviewFormMode;
+  /** edit 모드 필수: 수정 대상 리뷰 id. */
+  reviewId?: string | number;
+  /** edit 모드 프리필 초기값 (MyReviewDetail → ReviewWriteState 변환분). */
+  initialState?: Partial<ReviewWriteState>;
+  /** edit 모드에서 새 인증자료를 올리지 않을 때 유지할 기존 인증자료 URL. */
+  initialFileUrl?: string | null;
+  /** 제출 성공 후 동작. 미지정 시 활동 상세로 이동(작성 기본 동작). */
+  onSuccess?: () => void;
+  /** "나가기" 동작. 미지정 시 활동 상세로 이동(작성 기본 동작). */
+  onLeave?: () => void;
 }
 
 /** presigned 업로드 응답 파싱 (archiveRecordOptions.parsePresignedUploadInfo 로직 복제). */
@@ -107,10 +125,19 @@ function readApiErrorMessage(payload: unknown, fallback: string) {
   return fallback;
 }
 
-export function useReviewWriteForm({ activity: initialActivity, activityId: initialActivityId }: UseReviewWriteFormArgs) {
+export function useReviewWriteForm({
+  activity: initialActivity,
+  activityId: initialActivityId,
+  mode = 'create',
+  reviewId,
+  initialState,
+  initialFileUrl,
+  onSuccess,
+  onLeave,
+}: UseReviewWriteFormArgs) {
   const router = useRouter();
   const [step, setStep] = useState<ReviewStep>(1);
-  const [state, setState] = useState<ReviewWriteState>(INITIAL_STATE);
+  const [state, setState] = useState<ReviewWriteState>(() => ({ ...INITIAL_STATE, ...initialState }));
   const [errors, setErrors] = useState<ReviewFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -191,8 +218,9 @@ export function useReviewWriteForm({ activity: initialActivity, activityId: init
   }, []);
 
   const leave = useCallback(() => {
-    router.push(`/activity/${activityId}`);
-  }, [router, activityId]);
+    if (onLeave) onLeave();
+    else router.push(`/activity/${activityId}`);
+  }, [router, activityId, onLeave]);
 
   /** 인증자료 파일 검증 (확장자/크기). */
   const validateFile = useCallback((file: File): string | null => {
@@ -268,31 +296,49 @@ export function useReviewWriteForm({ activity: initialActivity, activityId: init
           ...(state.progressStatus ? { progress_status: state.progressStatus } : {}),
         };
         if (state.tips.trim().length > 0) payload.tips = state.tips;
+        // 새 인증자료가 있으면 그 URL을, edit에서 미교체면 기존 URL을 유지한다.
         if (url) payload.url = url;
+        else if (mode === 'edit' && initialFileUrl) payload.url = initialFileUrl;
 
-        const response = await fetch('/api/review', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) {
-          const errPayload = await response.json().catch(() => ({}));
-          window.alert(readApiErrorMessage(errPayload, '리뷰 등록에 실패했습니다.'));
-          return;
+        if (mode === 'edit') {
+          if (reviewId == null) {
+            window.alert('수정할 리뷰를 찾을 수 없습니다.');
+            return;
+          }
+          try {
+            await updateReview(reviewId, payload as unknown as ReviewUpdatePayload);
+          } catch (err) {
+            window.alert(err instanceof Error ? err.message : '리뷰 수정에 실패했습니다.');
+            return;
+          }
+        } else {
+          const response = await fetch('/api/review', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) {
+            const errPayload = await response.json().catch(() => ({}));
+            window.alert(readApiErrorMessage(errPayload, '리뷰 등록에 실패했습니다.'));
+            return;
+          }
         }
-        router.push(`/activity/${activityId}`);
+
+        if (onSuccess) onSuccess();
+        else router.push(`/activity/${activityId}`);
       } catch (error) {
-        console.error('리뷰 등록 중 오류 발생:', error);
-        window.alert('리뷰 등록 중 오류가 발생했습니다.');
+        console.error(`리뷰 ${mode === 'edit' ? '수정' : '등록'} 중 오류 발생:`, error);
+        window.alert(`리뷰 ${mode === 'edit' ? '수정' : '등록'} 중 오류가 발생했습니다.`);
       } finally {
         setSubmitting(false);
       }
     },
-    [submitting, activityId, state, router],
+    [submitting, activityId, state, router, mode, reviewId, initialFileUrl, onSuccess],
   );
 
   return {
+    mode,
     step,
     setStep,
     state,
@@ -315,3 +361,23 @@ export function useReviewWriteForm({ activity: initialActivity, activityId: init
 }
 
 export type UseReviewWriteFormReturn = ReturnType<typeof useReviewWriteForm>;
+
+/**
+ * 수정 모드 프리필용: 내 리뷰 단건(MyReviewDetail) → 폼 초기값 변환.
+ * 주의: 수료여부(progress_status)·활동 정보는 단건 응답에 없어 프리필되지 않는다(빈 값).
+ */
+export function myReviewDetailToFormState(detail: MyReviewDetail): Partial<ReviewWriteState> {
+  return {
+    jobGroup: detail.job_group,
+    jobDetail: detail.job_detail,
+    overallScore: detail.overall_score,
+    infoScore: detail.info_score,
+    difficultyScore: detail.difficulty_score,
+    benefitScore: detail.benefit_score,
+    jobRelevanceScore: detail.job_relevance_score,
+    summary: detail.summary ?? '',
+    strength: detail.strength ?? '',
+    weakness: detail.weakness ?? '',
+    tips: detail.tips ?? '',
+  };
+}

@@ -17,8 +17,8 @@ import { FieldError, RatingRadio, StarRating, StarRatingLabel } from './ReviewWr
 
 const jobGroupSelectOptions = JOB_GROUP_OPTIONS.map((g) => ({ label: jobGroupLabel(g), value: g }));
 
-/** Step 1 — 직무/수료여부 선택. */
-export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormReturn; onOpenChangeModal: () => void }) {
+/** Step 1 — 직무/수료여부 선택. onOpenChangeModal 미전달 시(수정 모드) "활동 변경" 숨김. */
+export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormReturn; onOpenChangeModal?: () => void }) {
   const { state, setField, errors, activity, jobDetailOptions } = form;
 
   const detailOptions = jobDetailOptions.map((d) => ({ label: jobDetailLabel(d), value: d }));
@@ -30,15 +30,17 @@ export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormRet
         <Typography type="Body2Medium" className="text-gray-70">
           선택한 활동
         </Typography>
-        <button
-          type="button"
-          onClick={onOpenChangeModal}
-          className="rounded-full border border-primary-50 px-3 py-1.5 hover:bg-primary-5"
-        >
-          <Typography type="Body3Medium" className="text-primary-60">
-            활동 변경하기
-          </Typography>
-        </button>
+        {onOpenChangeModal && (
+          <button
+            type="button"
+            onClick={onOpenChangeModal}
+            className="rounded-full border border-primary-50 px-3 py-1.5 hover:bg-primary-5"
+          >
+            <Typography type="Body3Medium" className="text-primary-60">
+              활동 변경하기
+            </Typography>
+          </button>
+        )}
       </div>
 
       <div className="rounded-lg border border-gray-20 bg-gray-5 px-5 py-4">

@@ -267,3 +267,94 @@ export function formatParticipationDate(value?: string | null): string {
   if (match) return `${match[1]}.${match[2]}`;
   return value.replace(/-/g, '.');
 }
+
+// ── 내 리뷰: 조회·수정·삭제 (기획 3-5) ─────────────────────────────
+// 주의: 공고 상세 리뷰 목록(ActivityReviewItem)에는 작성자 식별 필드가 없어
+// "본인 리뷰" 판별이 불가능하다. 백엔드는 대신 본인 전용 엔드포인트를 제공한다:
+//   GET /v1/reviews            내가 작성한 리뷰 목록    (MyReviewItem)
+//   GET /v1/reviews/{id}       내 리뷰 단건(수정 프리필) (MyReviewDetail, 타인 접근 시 403)
+//   PUT /v1/reviews/{id}       리뷰 수정               (ReviewUpdatePayload)
+//   DELETE /v1/reviews/{id}    리뷰 삭제
+// 따라서 수정/삭제 UI는 "내 리뷰" 컨텍스트에서 노출하는 것이 스펙 정합이다.
+
+/** GET /v1/reviews item의 승인 상태 */
+export type ReviewApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+/**
+ * 디자인(PROFILE-004-001) 기준 라벨/색상:
+ * - PENDING(증빙 검토 중)  → "승인중" (gray)
+ * - APPROVED(증빙 승인)     → "승인"   (info/blue)
+ * - REJECTED(미업로드/반려) → "미승인" (danger/red)
+ */
+export const REVIEW_APPROVAL_STATUS_LABELS: Record<ReviewApprovalStatus, string> = {
+  PENDING: '승인중',
+  APPROVED: '승인',
+  REJECTED: '미승인',
+};
+
+/** 승인상태별 텍스트 색상 클래스 */
+export const REVIEW_APPROVAL_STATUS_TEXT_CLASS: Record<ReviewApprovalStatus, string> = {
+  PENDING: 'text-gray-50',
+  APPROVED: 'text-info-50',
+  REJECTED: 'text-danger-50',
+};
+
+export function reviewApprovalStatusLabel(status?: ReviewApprovalStatus | null): string {
+  if (!status) return '';
+  return REVIEW_APPROVAL_STATUS_LABELS[status] ?? status;
+}
+
+/** GET /v1/reviews 의 item — 내가 작성한 리뷰 목록 */
+export interface MyReviewItem {
+  id: number;
+  title: string;
+  organizer: string;
+  organizer_type: string;
+  activity_type: string;
+  created_at: string;
+  approval_status: ReviewApprovalStatus;
+}
+
+/** GET /v1/reviews 의 data (페이지네이션) */
+export interface MyReviewListData {
+  items: MyReviewItem[];
+  page: number;
+  size: number;
+  total_pages: number;
+  total_elements: number;
+}
+
+/** GET /v1/reviews/{id} 의 data — 수정 폼 프리필용 단건 */
+export interface MyReviewDetail {
+  job_group: ReviewJobGroup;
+  job_detail: ReviewJobDetail;
+  overall_score: number;
+  info_score: number;
+  difficulty_score: number;
+  benefit_score: number;
+  job_relevance_score: number;
+  summary: string;
+  strength: string;
+  weakness: string;
+  tips?: string | null;
+  url?: string | null;
+}
+
+/** PUT /v1/reviews/{id} body (ReviewUpdateRequest). 작성 페이로드와 동일 구조. */
+export interface ReviewUpdatePayload {
+  activity_id: number;
+  overall_score: number;
+  info_score: number;
+  difficulty_score: number;
+  benefit_score: number;
+  job_relevance_score: number;
+  summary: string;
+  strength: string;
+  weakness: string;
+  tips?: string;
+  url?: string;
+  job_category: {
+    job_group: ReviewJobGroup;
+    job_detail?: ReviewJobDetail;
+  };
+}

@@ -91,17 +91,46 @@
 - **jobDetail 멀티 직렬화** 방식 최종 확인
 - **상세탭**: 공모분야·모집인원·지원서 첨부 필드 제공 시 섹션 채움
 
-### 2. 리뷰 수정/삭제 (기획 3-5)
+### 2. 리뷰 수정/삭제 (기획 3-5) — 🔶 데이터 레이어 골격 완료(2026-06), UI 진입점 결정 대기
+**본인 식별 질문 해소**: api-spec 확인 결과 공고 상세 리뷰 목록(`ActivityReviewResponse`)에는 **작성자 플래그가 없다** → 공고 상세에서 "본인 리뷰"를 식별할 방법이 없음. 대신 백엔드가 본인 전용 엔드포인트를 제공(본인 판별은 서버 권한, 타인 접근 시 403):
 ```text
-GET /api/reviews/[id]   PUT /api/reviews/[id]   DELETE /api/reviews/[id]
+GET    /v1/reviews          내가 작성한 리뷰 목록   (MyReviewItem: id·title·organizer·organizer_type·activity_type·created_at·approval_status)
+GET    /v1/reviews/{id}     내 리뷰 단건(수정 프리필)(MyReviewDetail: 점수+텍스트+url, 타인 403)
+PUT    /v1/reviews/{id}     리뷰 수정              (ReviewUpdateRequest = Create와 동일 필드)
+DELETE /v1/reviews/{id}     리뷰 삭제
 ```
-본인이 작성한 리뷰에 수정/삭제 버튼 노출. 본인 리뷰 식별 방법(응답에 작성자 플래그?) 백엔드 확인 필요.
+→ **수정/삭제 UI는 "내 리뷰" 컨텍스트(프로필 영역)에서 노출하는 것이 스펙 정합.** (공고 상세에 버튼 달려면 백엔드가 `ActivityReviewResponse`에 `is_mine` 추가 필요 — 별도 요청 대상.)
+
+**완료(골격):**
+- 프록시 라우트: `GET/PUT/DELETE /api/reviews/[id]` + `GET /api/reviews` **이미 구현돼 있음**(확인). `POST /api/review`(작성)도 존재.
+- 타입(`review.types.ts`): `ReviewApprovalStatus`(+라벨 PENDING/APPROVED/REJECTED), `MyReviewItem`, `MyReviewListData`, `MyReviewDetail`, `ReviewUpdatePayload` 추가.
+- 훅(`src/hooks/useMyReviews.ts`): `useMyReviews`(목록·refetch), `useMyReview`(단건·프리필), `updateReview(id,payload)`, `deleteReview(id)`. typecheck/eslint EXIT 0.
+
+**완료(수정 폼 재사용 리팩터, 2026-06):** `useReviewWriteForm`/`ReviewWriteBody`/`Step1`을 주입형으로 전환. **작성 동작 100% 보존**(기본 `mode='create'`).
+- `useReviewWriteForm({ mode, reviewId, initialState, initialFileUrl, onSuccess, onLeave })`: `mode='edit'`이면 submit이 **PUT `updateReview`**로 분기, 미교체 시 `initialFileUrl`(기존 인증자료) 유지, 성공/나가기 목적지는 `onSuccess`/`onLeave`로 주입(미지정 시 활동 상세).
+- `myReviewDetailToFormState(detail)` 헬퍼 추가: `MyReviewDetail` → 폼 초기값. (※ 수료여부·활동정보는 단건 응답에 없어 프리필 불가 → 빈 값.)
+- `ReviewWriteBody`에 `mode`/`reviewId`/`initialState`/`initialFileUrl`/`onSuccess`/`onLeave` props 추가. `mode='edit'`이면 **"활동 변경" 트리거·모달 숨김**.
+- `Step1`의 `onOpenChangeModal` 옵셔널화(미전달 시 활동 변경 버튼 숨김). typecheck/eslint EXIT 0.
+
+**완료(내 리뷰 목록 + 삭제 UI, 2026-06, Figma PROFILE-004-001 `1136-75951` 정합):**
+- 라우트 `/profile/posts`(`page.tsx` → `PcMyReviewsPage`/`MobileMyReviewsPage`).
+- PC: SNB + "내가 작성한 리뷰" 테이블(width 750px, 6열: 활동명·주체기관·활동구분칩·작성일·승인여부·수정/삭제 pill). 활동명/주체기관 1줄 truncate.
+- 모바일: `MobileProfile` 헤더 + 3탭(MY 활동/작성글/계정) + 카드 리스트(승인상태색+구분칩 / title / organizer / 작성일 / 케밥 `threeDots`→수정·삭제 드롭다운).
+- 삭제: `DeleteReviewModal`("정말 삭제하시겠어요?" / green "삭제 안 할래요"=닫기 / outline "네, 삭제할게요"=삭제). 확인 시 `deleteReview` → `refetch`.
+- 승인상태 라벨/색 디자인 정합: PENDING=승인중(gray-50), APPROVED=승인(info-50), REJECTED=미승인(danger-50). `REVIEW_APPROVAL_STATUS_LABELS`/`_TEXT_CLASS`/`reviewApprovalStatusLabel` 추가.
+- `menus.ts`: SNB "작성 글"→"작성글", href `/profile/archive`→`/profile/posts`.
+- typecheck/eslint EXIT 0. (적응: 모바일 디자인은 프로필 내 탭이지만 기존 mock 프로필 탭이 비동작이라 `/profile/posts` 별도 라우트 + 자체 헤더/탭(Link)으로 구현.)
+
+**🚧 수정(edit) 블로커 — 백엔드 `activity_id` 필요:**
+- `MyReviewsResponse`(목록)·`MyReviewResponse`(단건) 둘 다 **`activity_id` 없음**. 수정은 작성 폼 재사용이라 ① Step1 활동 카드 ② presigned ③ **PUT 페이로드 `activity_id`(필수)** 에 activity_id가 있어야 함 → **현재 응답만으론 수정 저장 불가**.
+- 그래서 "수정" 버튼은 렌더하되 임시 안내(`window.alert`) + `TODO(edit)` 주석. 백엔드가 리뷰 응답에 `activity_id`(+ title/organizer) 추가하면, 이미 만든 `useReviewWriteForm mode="edit"` + `myReviewDetailToFormState`로 즉시 연결 가능.
+- 페이지네이션 UI는 디자인에 없어 미구현(`useMyReviews` 기본 page 1/size 10).
 
 ### 3. 부가기능 (화면 미연동, 별도 영역)
 검색 기록(`/search/history`), 알림(`/notifications` + SSE subscribe), 회원탈퇴(`withdrawal-survey`), 이메일 변경(`/members/email`), 알림 설정(`/members/notifications`) — 프록시 라우트는 있으나 화면 미구현.
 
 ### 4. Figma로 이제 가능 (이전 "PNG 필요"로 막혔던 QA 항목)
-- **리뷰 탭 디자인 정합**(node `2408-26558`): 50px/24px/20px가 어느 요소인지, "삭제하여 노출" 대상 → figma로 확인 후 정합
+- ✅ **리뷰 탭 디자인 정합**(node `2408-26558`) **완료(2026-06)**: figma `get_design_context`로 전 요소 1:1 대조. 모호했던 50/24/20/132px·"삭제하여 노출"의 정체 규명 결과 — **대부분 이미 충족**(132px 드롭다운폭, 카드패딩 40/28, 총평점 24px+별점40, 세부별점24, 50px 마진, 만족도 gap 20px, 레이더 컨테이너 border/rounded·"삭제" 가설은 figma에도 border 있어 기각). 실제 figma 불일치 3건만 수정: ① "활동 만족도 평가" 헤딩 20px/gray-90 → **18px/gray-80**(`PcActivityDetailPage.tsx:592`) ② 정렬 드롭다운 텍스트 `Body3Medium`(14) → **`Body2Medium`(15)**(`ReviewFilters.tsx:67`) ③ 만족도 필터칩 `Caption1Medium`(12) → **`Body4Medium`(13)**(`JobFilterChip`). typecheck/eslint EXIT 0. (※ 로그인 전체공개 다건 카드는 별도 미검증 — 비로그인 잠금 카드 기준 figma와 일치)
 - **메인 드롭다운 레이블** "활동유형 2 / 직무유형 2" 통합 형식 여부(현재 각 Select별 표시는 충족)
 - **메인(MOBILE)** 배너/tab bar 위치·탭 너비(일부 CSV상 "반영")
 
@@ -124,7 +153,7 @@ GET /api/reviews/[id]   PUT /api/reviews/[id]   DELETE /api/reviews/[id]
 figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. 대부분 명시 스펙은 이미 충족돼 있었고 실제 수정만 아래.
 
 > **전체 감사 완료(2026-06-04):** CSV 31개 항목을 코드와 1:1 대조(병렬 read-only 감사). 결론 — 수치 명확 항목은 **거의 다 이미 충족**. 추가로 검증한 A·B·C(아래)도 모두 충족 확인되어 코드 변경 없음. **진짜 남은 것은 "대상 불명확 → PNG/명세 필요" 항목들뿐**:
-> - 리뷰 탭 50px/24px/20px가 **어느 요소인지** 불명, "삭제하여 노출" 대상 불명, 전반 디자인 node `2408-26558` → PNG 필요
+> - ~~리뷰 탭 50px/24px/20px가 **어느 요소인지** 불명, "삭제하여 노출" 대상 불명~~ → ✅ **figma 직접 대조로 해소(2026-06)**: 132/50/40·28/24·40px 등은 이미 충족, "삭제하여 노출"(레이더 border 제거) 가설은 figma에도 border 있어 기각. figma 불일치 3건(만족도 헤딩 18px·gray-80, 드롭다운 15px, 칩 13px)만 수정 완료 → 위 Main Remaining Work 4번 참고.
 > - ~~메인 드롭다운 레이블~~ → ✅ **충족 확정**: `NewActivityList.tsx:192-220` 활동유형/직무유형 `type="checkbox"`, `Select.findOption()`이 2개↑ 시 `"활동유형 2"`/`"직무유형 2"` 출력. CSV "/"는 두 드롭다운 나열 표기.
 > - 메인(MOBILE) 배너/tab bar 위치·탭 너비 → 디자인 필요 (일부는 CSV상 "반영")
 > - ~~회원가입 가입 후 자동 로그인~~ → ✅ **사실상 충족**: `additional-info/route.ts`가 `proxyWithAuth`로 호출(이미 인증 상태). OAuth 선로그인→추가정보 플로우라 가입 완료 시점에 로그인됨. (100% 확정은 소셜 가입 E2E 필요)
@@ -164,7 +193,7 @@ figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. �
 - 리뷰 블러 분기 기준(로그인 vs 작성여부) 기획 확인
 
 ### 백엔드 확인 대기 (누적)
-수료여부 저장/조회, helpful API, 만족도 전체평균, jobDetail 멀티 직렬화, 닉네임 중복 체크 API, 회원가입 새 enum(college/dropped_out/on_leave), 상세탭 공모분야·지원서 첨부 필드.
+수료여부 저장/조회, helpful API, 만족도 전체평균, jobDetail 멀티 직렬화, 닉네임 중복 체크 API, 회원가입 새 enum(college/dropped_out/on_leave), 상세탭 공모분야·지원서 첨부 필드, **리뷰 응답(`MyReviewsResponse`/`MyReviewResponse`)에 `activity_id`(+title/organizer) 추가 — 리뷰 수정 기능 활성화에 필수**.
 
 ## Recommended Next Prompt
 

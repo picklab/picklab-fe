@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Typography from '@/components/common/Typography';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
-import { useReviewWriteForm } from './useReviewWriteForm';
+import { useReviewWriteForm, type ReviewFormMode, type ReviewWriteState } from './useReviewWriteForm';
 import { ConfirmDialog, ReviewWriteHeader } from './ReviewWriteShared';
 import { Step1, Step2, Step3 } from './ReviewSteps';
 import ActivityChangeModal from './ActivityChangeModal';
@@ -12,6 +12,13 @@ import CertificationUploadModal from './CertificationUploadModal';
 interface ReviewWriteBodyProps {
   activity: ActivityCardItem;
   activityId: string;
+  /** 'create'(기본) | 'edit'. edit는 작성 폼을 프리필·재사용한다(기획 3-5). */
+  mode?: ReviewFormMode;
+  reviewId?: string | number;
+  initialState?: Partial<ReviewWriteState>;
+  initialFileUrl?: string | null;
+  onSuccess?: () => void;
+  onLeave?: () => void;
 }
 
 function FooterButton({
@@ -43,9 +50,28 @@ function FooterButton({
   );
 }
 
-export default function ReviewWriteBody({ activity, activityId }: ReviewWriteBodyProps) {
-  const form = useReviewWriteForm({ activity, activityId });
+export default function ReviewWriteBody({
+  activity,
+  activityId,
+  mode = 'create',
+  reviewId,
+  initialState,
+  initialFileUrl,
+  onSuccess,
+  onLeave,
+}: ReviewWriteBodyProps) {
+  const form = useReviewWriteForm({
+    activity,
+    activityId,
+    mode,
+    reviewId,
+    initialState,
+    initialFileUrl,
+    onSuccess,
+    onLeave,
+  });
   const { step, goNext, goPrev, leave, validateStep3, validateFile, uploadFile, submit, submitting } = form;
+  const isEdit = mode === 'edit';
 
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [changeOpen, setChangeOpen] = useState(false);
@@ -71,7 +97,9 @@ export default function ReviewWriteBody({ activity, activityId }: ReviewWriteBod
       <ReviewWriteHeader onClose={() => setLeaveOpen(true)} />
 
       <div className="mx-auto w-full max-w-[600px] px-4 py-8 pb-28 pc:pb-8">
-        {step === 1 && <Step1 form={form} onOpenChangeModal={() => setChangeOpen(true)} />}
+        {step === 1 && (
+          <Step1 form={form} onOpenChangeModal={isEdit ? undefined : () => setChangeOpen(true)} />
+        )}
         {step === 2 && <Step2 form={form} />}
         {step === 3 && <Step3 form={form} />}
 
@@ -115,7 +143,7 @@ export default function ReviewWriteBody({ activity, activityId }: ReviewWriteBod
         onConfirm={() => setLeaveOpen(false)}
       />
 
-      {changeOpen && (
+      {!isEdit && changeOpen && (
         <ActivityChangeModal
           onClose={() => setChangeOpen(false)}
           onApply={(nextActivity, nextActivityId) => form.changeActivity(nextActivity, nextActivityId)}

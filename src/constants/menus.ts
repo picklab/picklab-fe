@@ -22,8 +22,8 @@ export const SNBNavigationMenus: SNBNavigationMenusType[] = [
     href: "/profile/archive",
   },
   {
-    label: "작성 글",
-    href: "/profile/archive",
+    label: "작성글",
+    href: "/profile/posts",
   },
   {
     label: "계정",
