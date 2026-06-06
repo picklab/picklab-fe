@@ -132,7 +132,7 @@ const JobFilterChip = ({ label, isActive = false }: { label: string; isActive?: 
       isActive ? 'border-primary-50 bg-primary-50 text-gray-0' : 'border-gray-40 bg-gray-0 text-gray-90',
     )}
   >
-    <Typography type="Caption1Medium">{label}</Typography>
+    <Typography type="Body4Medium">{label}</Typography>
   </button>
 );
 
@@ -589,7 +589,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
             </div>
             <div className="flex w-[438px] flex-col gap-6">
               <div className="flex flex-col gap-5">
-                <Typography type="Body1Semibold" className="text-lg leading-[144.5%] text-gray-90">
+                <Typography type="Body1Semibold" className="text-[18px] leading-[144.5%] text-gray-80">
                   활동 만족도 평가
                 </Typography>
                 <div className="flex gap-2">

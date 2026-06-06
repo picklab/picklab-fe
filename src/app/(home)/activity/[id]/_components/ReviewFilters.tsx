@@ -64,7 +64,7 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
       className={clsx(triggerClass, active ? 'border-primary-50' : 'border-gray-30')}
     >
       <Typography
-        type={isMobile ? 'Caption2Medium' : 'Body3Medium'}
+        type={isMobile ? 'Caption2Medium' : 'Body2Medium'}
         className={active ? 'text-primary-60' : 'text-gray-90'}
       >
         {label}
