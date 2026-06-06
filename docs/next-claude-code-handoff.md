@@ -9,14 +9,38 @@
 - 리뷰 **작성 페이지**(3스텝+인증): PC/모바일 **구현 완료**
 - 리뷰 **작성 진입**: 공고 상세 "리뷰 작성하기" + GNB 연필 두 경로 완료
 
+## 남은 작업 스냅샷 (2026-06 최신)
+
+> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록). 모두 `feat/my-reviews` 브랜치에 커밋(미push).
+
+**A. 화면 있고 바로 가능 (비블로킹)**
+- **회원탈퇴 연동** — `WithdrawPage` 화면 존재, `POST /members/withdrawal-survey` + `DELETE /v1/members`. (다음 1순위 후보)
+
+**B. 백엔드 추가 후 활성화 (코드/리팩터는 준비됨)**
+- **리뷰 수정 저장** — 리뷰 응답에 `activity_id`(+title/organizer) 추가 필요 → 이미 만든 `useReviewWriteForm mode="edit"`로 즉시 연결.
+- **알림 설정 초기값** — on/off 조회 GET 부재 → 스위치 초기상태 표시 불가.
+- **인기 검색어** — 랭킹+순위변동(↑↓) API 부재 → 검색 기록 카드의 인기검색어 섹션 미구현.
+- **리뷰 마무리** — 수료여부 저장/조회, helpful(도움이돼요), 만족도 전체평균, jobDetail 직렬화, 상세탭 공모분야·지원서 첨부 필드.
+
+**C. Figma(디자인) 필요**
+- **메인(MOBILE)** 배너/tab bar 위치·탭 너비 (Figma MCP 호출 한도 회복/PNG 필요).
+- **이메일 변경 최종 UX** (footer vs 인라인 버튼 역할), **자동완성(WordList) 정합**.
+
+**D. 복잡/별도**
+- **실시간 알림(SSE)** — `/notifications` + subscribe. 별도 설계 권장.
+
+**E. 비차단 접근성 1건**
+- `LegalDocument` 리스트 수동 `1.`·`•` → CSS `list-decimal/list-disc` 교체(시안 재검증 필요).
+
 ## Current Worktree State
 
-> **상태(업데이트):** 아래 작업은 모두 `dev`에 **커밋·푸시 완료** (working tree 깨끗).
-> - `30ea323` fix: 회원가입 학교명·직장명 placeholder 색상 #A5ADBB 정합 + QA CSV 전체 감사 결과 반영 ← **최신**
-> - `dfabdca` docs: handoff에 커밋·푸시 완료 상태 반영
-> - `6143e65` feat: 리뷰 기능 전반 + 회원가입 정합 + Select/약관 UI 개선
-> - `4b25d3c` chore: gitignore(picklab-be·.claude·.omc 제외)
+> **상태(2026-06 업데이트):** 현재 작업 브랜치 **`feat/my-reviews`** (dev에서 분기, **아직 push 안 됨**, working tree 깨끗).
+> - `79c4e16` feat: 부가기능 연동(알림 설정·이메일 변경·최근 검색기록) ← **최신**
+> - `eb746aa` feat: 내가 작성한 리뷰 목록·삭제 + 작성 폼 edit 모드 재사용 리팩터
+> - `60d99cd` style: 리뷰 탭 Figma 정합(만족도 헤딩 18px·gray-80, 드롭다운 15px, 칩 13px)
+> - (이전 dev) `30ea323` 회원가입 placeholder 정합 / `6143e65` 리뷰 기능 전반 …
 > 추적 제외: `picklab-be/`, `.claude/`, `.omc/`. 미추적 보존: `docs/api-spec.json`, `issues/`.
+> **다음 세션 시작 시**: `feat/my-reviews` 브랜치에서 이어서. 필요 시 push/PR.
 
 이전 세션에서 구현·검증한 변경 내역입니다(이제 커밋됨).
 
