@@ -82,6 +82,8 @@
 
 ## Main Remaining Work
 
+> **🔑 Figma MCP 연결 가능해짐 (2026-06):** picklab 파일(`fileKey=7PEqXV7XjAN2R6l1nnbAI9`) 권한 초대 적용됨. `mcp__figma__whoami`=Bumsu(qjatn50089@gmail.com), `get_metadata`/`get_design_context`/`get_screenshot`로 **node-id만 있으면 직접 디자인 추출 가능**. → 이전 "PNG 필요"로 막혔던 항목들(아래 4번)을 이제 figma로 직접 진행 가능. (주의: 큰 프레임은 메타데이터 토큰 초과 → 하위 node-id로 좁히거나 subagent로 파싱)
+
 ### 1. 백엔드 답변 후 마무리 (요청 발송됨, 대기 중)
 - **수료여부**: POST /v1/review에 필드 추가 → 작성 저장 + 모달 수료여부 칸 표시
 - **helpful(도움이 돼요)**: 카운트/토글 API → 리뷰 카드 버튼 숫자·동작 연결
@@ -97,6 +99,14 @@ GET /api/reviews/[id]   PUT /api/reviews/[id]   DELETE /api/reviews/[id]
 
 ### 3. 부가기능 (화면 미연동, 별도 영역)
 검색 기록(`/search/history`), 알림(`/notifications` + SSE subscribe), 회원탈퇴(`withdrawal-survey`), 이메일 변경(`/members/email`), 알림 설정(`/members/notifications`) — 프록시 라우트는 있으나 화면 미구현.
+
+### 4. Figma로 이제 가능 (이전 "PNG 필요"로 막혔던 QA 항목)
+- **리뷰 탭 디자인 정합**(node `2408-26558`): 50px/24px/20px가 어느 요소인지, "삭제하여 노출" 대상 → figma로 확인 후 정합
+- **메인 드롭다운 레이블** "활동유형 2 / 직무유형 2" 통합 형식 여부(현재 각 Select별 표시는 충족)
+- **메인(MOBILE)** 배너/tab bar 위치·탭 너비(일부 CSV상 "반영")
+
+### 5. 후속(비차단) 접근성 1건
+- `LegalDocument` 리스트가 `<ol>/<ul>`에 수동 `1.`·`•` 주입 → 스크린리더 이중 announce. CSS `list-decimal/list-disc`로 교체 시 **시안 재검증 필요**.
 
 ## Remaining Questions (백엔드/기획에 발송됨)
 
