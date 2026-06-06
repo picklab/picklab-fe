@@ -32,6 +32,19 @@
 **E. 비차단 접근성 1건**
 - `LegalDocument` 리스트 수동 `1.`·`•` → CSS `list-decimal/list-disc` 교체(시안 재검증 필요).
 
+## 백엔드 답변 반영 (2026-06) — 도메인 분리 + 수료여부/ helpful 확정
+
+> 백엔드가 **활동 결과 상태(지원/합불/수료)=`ActivityParticipation`** / **아카이브=기록 작성 여부**로 도메인 분리 후 배포 완료. api-spec엔 helpful 등록/취소(`POST·DELETE /v1/reviews/{reviewId}/helpful`) **단 하나만 미반영**, 나머지는 모두 반영됨.
+
+**확정된 흐름 / 후속 작업:**
+1. **수료여부 저장 방식 변경(재작업 필요)**: POST `/v1/review` body에 `progress_status` 동봉 ❌ → 사용자가 수료완료/중도하차 선택 시 **`PATCH /v1/activity-participations/{participationId}/progress-status` 먼저 호출 → 그 다음 `POST /v1/review`**. 리뷰 작성 가능 조건 = `progressStatus ∈ {COMPLETED, DROPPED}` (목록의 `canWriteReview`로 버튼 노출 판단). → `useReviewWriteForm.submit`이 현재 body에 `progress_status` 동봉 중이므로 수정.
+2. **리뷰 작성 대상/활동 변경 모달 데이터 소스 변경**: `GET /v1/archive` ❌ → **`GET /v1/activity-participations/results`** (응답: `participationId, activityId, applicationStatus, progressStatus, canWriteReview`). 중도하차도 리뷰 가능하므로 이 API로 조회. → `ActivityChangeModal`(현재 `GET /api/archive`+클라 제목검색) 교체.
+3. **helpful(도움이 돼요) 연결 가능**: `ActivityReviewResponse`에 `helpful_count`·`is_helpful` 추가됨. **등록 `POST /v1/reviews/{reviewId}/helpful` / 취소 `DELETE`**. → 프론트 프록시 라우트 `/api/reviews/[id]/helpful`(POST/DELETE) 신규 + `ReviewCard` "도움이 돼요" 버튼에 카운트·토글 연결. (⚠️ api-spec에 helpful 경로 추가 대기 — 사용자 작업)
+4. **활동 결과 상태 API(신규 활용처)**: 지원완료 `POST /v1/activities/{id}/participations`, 취소 `DELETE`, 합불 `PATCH .../application-status`, 수료 `PATCH .../progress-status`(applicationStatus=ACCEPTED일 때만, 아니면 progressStatus=NOT_SELECTED 초기화). 결과목록 `.../results`, 카운트 `.../summary`. → 프로필 "활동 결과" 섹션·지원완료 토글 등에 활용 가능.
+5. **아카이브 변경(영향 범위)**: 이제 `participationId` 기준 생성(progressStatus=COMPLETED만 가능). `GET /v1/archive`는 수료완료 참여이력 기준, 미작성도 목록에 나옴(`archiveId=null, writeStatus=NOT_WRITTEN`), 작성완료는 `writeStatus=COMPLETED`. 응답에 `activity_participation_id`(아카이브 작성용)·`activity_id`(공고보기용) 둘 다. → 기존 아카이브 작성/조회 코드 점검 필요.
+
+> ※ **리뷰 수정의 `activity_id` 블로커**는 이 답변에 직접 언급 없음 — `MyReviewsResponse`/`MyReviewResponse`에 `activity_id` 추가 여부는 별도 확인 필요(participation 도입으로 경로가 생겼을 수 있음).
+
 ## Current Worktree State
 
 > **상태(2026-06 업데이트):** 현재 작업 브랜치 **`feat/my-reviews`** (dev에서 분기, **아직 push 안 됨**, working tree 깨끗).
