@@ -149,6 +149,13 @@ async function fetchBackendActivities(
             .filter(Boolean)
             .forEach((tag) => searchParams.append('jobTag', tag));
         }
+        // 주최기관 필터: organizerType도 배열이므로 반복 param으로 전송
+        if (params?.organizerType) {
+          params.organizerType
+            .split(',')
+            .filter(Boolean)
+            .forEach((t) => searchParams.append('organizerType', t));
+        }
         const response = await fetch(`${path}?${searchParams.toString()}`, { credentials: 'include' });
         if (!response.ok) return [];
         const json = await response.json() as BackendActivityListResponse;

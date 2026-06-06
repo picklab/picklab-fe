@@ -56,6 +56,21 @@ const JOB_CODE_TO_TAG: Record<string, string> = {
   marketing: 'MARKETING',
   ai: 'AI',
 };
+// 주최기관 옵션 라벨 → 백엔드 organizerType 코드 (※ 금융권 코드는 백엔드 확인 필요)
+const ORGANIZER_LABEL_TO_TYPE: Record<string, string> = {
+  대기업: 'LARGE_CORPORATION',
+  중견기업: 'MEDIUM_CORPORATION',
+  중소기업: 'SMALL_CORPORATION',
+  '공공기관/공기업': 'PUBLIC_ORGANIZATION',
+  '외국계 기업': 'FOREIGN_CORPORATION',
+  '비영리단체/협회/재단': 'NON_PROFIT',
+  스타트업: 'STARTUP',
+  금융권: 'FINANCIAL_INSTITUTION',
+  병원: 'HOSPITAL',
+  기타: 'ETC',
+};
+// 클라 보정 비교용 공백 정규화 (옵션 "외국계 기업" vs 라벨 "외국계기업" 불일치 방지)
+const normalizeOrg = (s: string) => s.replace(/\s/g, '');
 
 export default function NewActivityList({
   title,
@@ -84,14 +99,25 @@ export default function NewActivityList({
     return Array.from(new Set([...fromFilters, ...fromSelect].filter(Boolean)));
   }, [selectedFilters, selectedJobs]);
 
+  // 선택한 주최기관(유형)을 백엔드 organizerType 코드로 변환
+  const selectedOrgTypes = useMemo(
+    () =>
+      (selectedFilters['주최기관'] ?? [])
+        .filter((v) => v !== '전체')
+        .map((label) => ORGANIZER_LABEL_TO_TYPE[label])
+        .filter(Boolean),
+    [selectedFilters],
+  );
+
   const activityParams = useMemo(
     () => ({
       size: String(getAllActivities().length),
       sort: SORT_TO_API[sort as keyof typeof SORT_TO_API] ?? 'LATEST',
       ...(categorySlug ? { category: CATEGORY_TO_API[categorySlug], fallbackOnEmpty: 'false' } : {}),
       ...(selectedJobTags.length > 0 ? { jobTag: selectedJobTags.join(',') } : {}),
+      ...(selectedOrgTypes.length > 0 ? { organizerType: selectedOrgTypes.join(',') } : {}),
     }),
-    [categorySlug, sort, selectedJobTags],
+    [categorySlug, sort, selectedJobTags, selectedOrgTypes],
   );
   const { data: apiData, loading } = useActivities('latest', activityParams);
   const effectiveLoading = loading;
@@ -160,7 +186,8 @@ export default function NewActivityList({
       const matchesFilters = filterEntries.every(([filterName, values]) => {
         const activeValues = values.filter((value) => value !== '전체');
         if (activeValues.length === 0) return true;
-        if (filterName === '주최기관') return activeValues.includes(item.organizer);
+        if (filterName === '주최기관')
+          return activeValues.some((v) => normalizeOrg(v) === normalizeOrg(item.companyType));
         if (filterName === '관련직무') return item.jobs.some((job) => activeValues.includes(job));
         if (filterName === '활동유형') return true;
         return true;

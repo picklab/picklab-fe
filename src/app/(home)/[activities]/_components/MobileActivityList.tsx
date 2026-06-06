@@ -91,7 +91,7 @@ export default function MobileActivityList({
   );
   const activitySlug = MENU_TO_SLUG[activeMenu];
   const activityParams = useMemo(() => {
-    // 직무유형(관련직무) → 백엔드 jobTag 코드. 선택 시 쿼리로 전송.
+    // 직무유형(관련직무) → 백엔드 jobTag 코드
     const jobLabelToTag: Record<string, string> = {
       기획: "PLANNING",
       디자인: "DESIGN",
@@ -99,18 +99,35 @@ export default function MobileActivityList({
       마케팅: "MARKETING",
       AI: "AI",
     };
+    // 주최기관(유형) → 백엔드 organizerType 코드 (※ 금융권 코드는 백엔드 확인 필요)
+    const orgLabelToType: Record<string, string> = {
+      대기업: "LARGE_CORPORATION",
+      중견기업: "MEDIUM_CORPORATION",
+      중소기업: "SMALL_CORPORATION",
+      "공공기관/공기업": "PUBLIC_ORGANIZATION",
+      "외국계 기업": "FOREIGN_CORPORATION",
+      "비영리단체/협회/재단": "NON_PROFIT",
+      스타트업: "STARTUP",
+      금융권: "FINANCIAL_INSTITUTION",
+      병원: "HOSPITAL",
+      기타: "ETC",
+    };
     const jobTags = (selectedFilters["관련직무"] ?? [])
       .filter((v) => v !== "전체")
       .map((label) => jobLabelToTag[label])
+      .filter(Boolean);
+    const orgTypes = (selectedFilters["주최기관"] ?? [])
+      .filter((v) => v !== "전체")
+      .map((label) => orgLabelToType[label])
       .filter(Boolean);
     return {
       size: "200",
       sort: "LATEST",
       // 활동 목록은 실데이터 기준이라 mock fallback을 항상 끈다.
-      // ("전체" 탭에서 fallbackOnEmpty가 켜져 필터 결과가 mock으로 새던 문제 수정)
       fallbackOnEmpty: "false",
       ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug] } : {}),
       ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
+      ...(orgTypes.length > 0 ? { organizerType: orgTypes.join(",") } : {}),
     };
   }, [activitySlug, selectedFilters]);
   const { data: apiData, loading } = useActivities("latest", activityParams);
@@ -121,7 +138,8 @@ export default function MobileActivityList({
         return filterEntries.every(([filterName, values]) => {
           const activeValues = values.filter((value) => value !== "전체");
           if (activeValues.length === 0) return true;
-          if (filterName === "주최기관") return activeValues.includes(item.organizer);
+          if (filterName === "주최기관")
+            return activeValues.some((v) => v.replace(/\s/g, "") === item.companyType.replace(/\s/g, ""));
           if (filterName === "관련직무") return item.jobs.some((job) => activeValues.includes(job));
           return true;
         });
