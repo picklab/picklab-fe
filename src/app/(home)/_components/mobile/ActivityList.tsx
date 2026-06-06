@@ -16,6 +16,14 @@ import { useActivities, type ActivityEndpoint } from "@/hooks/useActivities";
 
 const CARD_CHIP_TYPES = ["대외활동", "강연/세미나", "교육", "공모전/해커톤"] as const;
 const JOB_TYPES = ["기획", "디자인", "개발", "마케팅", "AI"] as const;
+// 직무유형 Select 값(코드) → 백엔드 jobTag 코드
+const JOB_CODE_TO_TAG: Record<string, string> = {
+  planning: "PLANNING",
+  design: "DESIGN",
+  development: "DEVELOPMENT",
+  marketing: "MARKETING",
+  ai: "AI",
+};
 type CardChipType = (typeof CARD_CHIP_TYPES)[number];
 
 const normalizeActivityType = (value: string): CardChipType =>
@@ -42,7 +50,18 @@ export default function ActivityList({
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
-  const { data: apiData, loading } = useActivities(endpoint ?? "recommendations");
+
+  // 필터 선택 시: 직무유형은 백엔드 jobTag로 전송 + mock fallback 차단(필터 결과가 더미로 새지 않게)
+  const activityParams = useMemo(() => {
+    const jobTags = selectedJobs.map((c) => JOB_CODE_TO_TAG[c]).filter(Boolean);
+    const hasFilterSel = jobTags.length > 0 || selectedCategories.length > 0;
+    if (!hasFilterSel) return undefined;
+    return {
+      ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
+      fallbackOnEmpty: "false",
+    };
+  }, [selectedJobs, selectedCategories]);
+  const { data: apiData, loading } = useActivities(endpoint ?? "recommendations", activityParams);
 
   const handleBookmarkToggle = async (activityId: string) => {
     const current = bookmarkedMap[activityId] ?? false;
@@ -92,6 +111,7 @@ export default function ActivityList({
     });
   }, [apiData, selectedCategories, selectedJobs]);
   const filteredItems = filteredData.slice(0, displayLimit);
+  const hasFilter = selectedCategories.length > 0 || selectedJobs.length > 0;
 
   return (
     <div className={clsx("w-full flex flex-col gap-3", className)}>
@@ -175,14 +195,14 @@ export default function ActivityList({
             />
           );
         }) : null}
-        {hasApiData && filteredItems.length === 0 ? (
+        {(hasApiData && filteredItems.length === 0) || (!hasApiData && hasFilter && !loading) ? (
           <div className="flex h-[160px] w-full items-center justify-center rounded-lg bg-gray-5">
             <Typography type="Body3Medium" className="text-gray-50">
               선택한 조건에 맞는 활동이 없습니다.
             </Typography>
           </div>
         ) : null}
-        {!hasApiData
+        {!hasApiData && !hasFilter
           ? CardData.slice(0, displayLimit).map((item, index) => {
               const activityId = extractActivityId(item.detailLink);
               const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
