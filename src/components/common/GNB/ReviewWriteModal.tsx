@@ -5,35 +5,53 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
-import useArchiveActivities from '@/hooks/useArchiveActivities';
+import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
+import type { ParticipationProgressStatus } from '@/types/review.types';
 
 interface ReviewWriteModalProps {
   onClose: () => void;
 }
 
+// activity_type(코드) → 한글 라벨
+const ACTIVITY_TYPE_LABELS: Record<string, string> = {
+  EXTRACURRICULAR: '대외활동',
+  EDUCATION: '교육',
+  COMPETITION: '공모전/해커톤',
+  SEMINAR: '강연/세미나',
+};
+
+// 수료여부(progress_status) → 한글 라벨
+const PROGRESS_LABELS: Record<ParticipationProgressStatus, string> = {
+  COMPLETED: '수료 완료',
+  DROPPED: '중도 하차',
+  IN_PROGRESSING: '진행 중',
+  NOT_SELECTED: '-',
+};
+
 /**
  * GNB 리뷰(연필) 진입 → "어떤 활동에 참여하셨나요?" 검색 모달.
  * 활동 선택 후 "작성하기" → /activity/{activityId}/review (기존 작성 페이지 재사용).
- * 데이터 소스: GET /api/archive (참여 활동). 검색은 클라이언트 제목 필터.
- * (활동 목록 검색 API/수료여부 필드는 백엔드 확인 필요 — ActivityChangeModal과 동일 이슈)
+ * 데이터 소스: GET /api/activity-participations/results (리뷰 작성 대상). 검색은 클라이언트 제목 필터.
+ * can_write_review === true 인 활동만 노출.
  */
 export default function ReviewWriteModal({ onClose }: ReviewWriteModalProps) {
   const router = useRouter();
-  const { data, loading } = useArchiveActivities();
+  const { data, loading } = useActivityParticipationResults();
   const [keyword, setKeyword] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
+  const writable = useMemo(() => data.filter((item) => item.can_write_review), [data]);
   const filtered = useMemo(() => {
     const kw = keyword.trim();
-    if (!kw) return data;
-    return data.filter((item) => item.title.includes(kw));
-  }, [data, keyword]);
+    if (!kw) return writable;
+    return writable.filter((item) => item.title.includes(kw));
+  }, [writable, keyword]);
 
-  const selected = data.find((item) => item.id === selectedId) ?? null;
+  const selected = writable.find((item) => item.participation_id === selectedId) ?? null;
 
   const handleWrite = () => {
     if (!selected) return;
-    router.push(`/activity/${selected.activityId}/review`);
+    router.push(`/activity/${selected.activity_id}/review`);
     onClose();
   };
 
@@ -76,7 +94,7 @@ export default function ReviewWriteModal({ onClose }: ReviewWriteModalProps) {
         {loading || filtered.length === 0 ? (
           <div className="mt-4 flex h-[180px] items-center justify-center">
             <Typography type="Body3Regular" className="text-gray-40">
-              {loading ? '불러오는 중이에요...' : '참여한 활동이 없어요'}
+              {loading ? '불러오는 중이에요...' : '리뷰를 작성할 수 있는 활동이 없어요'}
             </Typography>
           </div>
         ) : (
@@ -98,12 +116,12 @@ export default function ReviewWriteModal({ onClose }: ReviewWriteModalProps) {
               {/* 기본 5개 표출, 5개 이상이면 스크롤 (행 약 64px × 5) */}
               <div className="max-h-[320px] overflow-y-auto">
                 {filtered.map((item) => {
-                  const active = selectedId === item.id;
+                  const active = selectedId === item.participation_id;
                   return (
                     <button
-                      key={item.id}
+                      key={item.participation_id}
                       type="button"
-                      onClick={() => setSelectedId(item.id)}
+                      onClick={() => setSelectedId(item.participation_id)}
                       aria-pressed={active}
                       className={clsx(
                         'grid w-full grid-cols-[2fr_1.4fr_1fr_1fr] items-center border-b border-gray-10 px-4 py-4 text-left transition-colors last:border-b-0',
@@ -117,17 +135,18 @@ export default function ReviewWriteModal({ onClose }: ReviewWriteModalProps) {
                         {item.title}
                       </Typography>
                       <Typography type="Body3Regular" className="truncate px-2 text-center text-gray-50">
-                        {item.organization || '-'}
+                        {item.organizer || '-'}
                       </Typography>
                       <div className="flex justify-center">
                         <span className="rounded-full bg-gray-10 px-space-8 py-1">
                           <Typography type="Caption2Medium" className="text-gray-60">
-                            {item.chipTitle}
+                            {ACTIVITY_TYPE_LABELS[item.activity_type] ?? item.activity_type}
                           </Typography>
                         </span>
                       </div>
-                      {/* 수료여부: 백엔드가 수료여부(수료완료/중도하차) 필드를 내려주기 전까지 비워둠 */}
-                      <div aria-hidden />
+                      <Typography type="Body3Regular" className="text-center text-gray-60">
+                        {PROGRESS_LABELS[item.progress_status] ?? '-'}
+                      </Typography>
                     </button>
                   );
                 })}
@@ -137,12 +156,12 @@ export default function ReviewWriteModal({ onClose }: ReviewWriteModalProps) {
             {/* 모바일: 카드형 리스트 */}
             <div className="mt-4 flex max-h-[360px] flex-col gap-3 overflow-y-auto pc:hidden">
               {filtered.map((item) => {
-                const active = selectedId === item.id;
+                const active = selectedId === item.participation_id;
                 return (
                   <button
-                    key={item.id}
+                    key={item.participation_id}
                     type="button"
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => setSelectedId(item.participation_id)}
                     aria-pressed={active}
                     className={clsx(
                       'flex w-full items-start justify-between gap-3 rounded-lg border p-4 text-left transition-colors',
@@ -157,17 +176,18 @@ export default function ReviewWriteModal({ onClose }: ReviewWriteModalProps) {
                         {item.title}
                       </Typography>
                       <Typography type="Caption2Regular" className="truncate text-gray-50">
-                        {item.organization || '-'}
+                        {item.organizer || '-'}
                       </Typography>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
                       <span className="rounded-full bg-gray-10 px-space-8 py-1">
                         <Typography type="Caption2Medium" className="text-gray-60">
-                          {item.chipTitle}
+                          {ACTIVITY_TYPE_LABELS[item.activity_type] ?? item.activity_type}
                         </Typography>
                       </span>
-                      {/* 수료여부: 백엔드가 수료여부 필드를 내려주기 전까지 비워둠 */}
-                      <div aria-hidden />
+                      <Typography type="Caption2Regular" className="text-gray-50">
+                        {PROGRESS_LABELS[item.progress_status] ?? '-'}
+                      </Typography>
                     </div>
                   </button>
                 );
