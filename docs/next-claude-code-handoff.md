@@ -14,7 +14,7 @@
 > 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록) / **백엔드 답변 반영: helpful 연결·수료여부 PATCH 흐름·활동변경 모달·GNB 모달 results 전환**. 모두 `feat/my-reviews` 브랜치에 커밋(미push).
 
 **A. 화면 있고 바로 가능 (비블로킹)**
-- **회원탈퇴 연동** — `WithdrawPage` 화면 존재, `POST /members/withdrawal-survey` + `DELETE /v1/members`. (다음 1순위 후보)
+- ✅ **회원탈퇴 연동 완료(2026-06)**: `WithdrawPage` client 전환 — 동의 체크 + 사유 라디오(6종 enum 매핑) → `POST /api/members/withdrawal-survey {reason}` → `DELETE /api/members` → 로그아웃(`clientLogout`+`/api/auth/logout`) → `/signin`. 탈퇴 전 `window.confirm` 가드. 취소→`/profile/account/info`. typecheck/eslint EXIT 0.
 
 **B. 백엔드 추가 후 활성화 (코드/리팩터는 준비됨)**
 - **리뷰 수정 저장** — `MyReviewsResponse`/`MyReviewDetail`에 `activity_id` 없음(participation 도입됐으니 재확인). 추가되면 `useReviewWriteForm mode="edit"`로 즉시 연결.
