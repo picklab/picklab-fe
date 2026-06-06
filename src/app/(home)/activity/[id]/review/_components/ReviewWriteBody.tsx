@@ -17,6 +17,7 @@ interface ReviewWriteBodyProps {
   reviewId?: string | number;
   initialState?: Partial<ReviewWriteState>;
   initialFileUrl?: string | null;
+  participationId?: number | string | null;
   onSuccess?: () => void;
   onLeave?: () => void;
 }
@@ -57,6 +58,7 @@ export default function ReviewWriteBody({
   reviewId,
   initialState,
   initialFileUrl,
+  participationId,
   onSuccess,
   onLeave,
 }: ReviewWriteBodyProps) {
@@ -67,6 +69,7 @@ export default function ReviewWriteBody({
     reviewId,
     initialState,
     initialFileUrl,
+    participationId,
     onSuccess,
     onLeave,
   });

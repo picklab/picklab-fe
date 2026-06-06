@@ -82,6 +82,8 @@ interface UseReviewWriteFormArgs {
   initialState?: Partial<ReviewWriteState>;
   /** edit 모드에서 새 인증자료를 올리지 않을 때 유지할 기존 인증자료 URL. */
   initialFileUrl?: string | null;
+  /** 수료여부 저장용 활동 참여 id(GET activity-participations/results에서 activity_id 매칭). */
+  participationId?: number | string | null;
   /** 제출 성공 후 동작. 미지정 시 활동 상세로 이동(작성 기본 동작). */
   onSuccess?: () => void;
   /** "나가기" 동작. 미지정 시 활동 상세로 이동(작성 기본 동작). */
@@ -132,6 +134,7 @@ export function useReviewWriteForm({
   reviewId,
   initialState,
   initialFileUrl,
+  participationId: initialParticipationId = null,
   onSuccess,
   onLeave,
 }: UseReviewWriteFormArgs) {
@@ -141,9 +144,10 @@ export function useReviewWriteForm({
   const [errors, setErrors] = useState<ReviewFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
-  // 활동 변경 가능하므로 활동/activityId를 상태로 관리
+  // 활동 변경 가능하므로 활동/activityId/participationId를 상태로 관리
   const [activity, setActivity] = useState<ActivityCardItem>(initialActivity);
   const [activityId, setActivityId] = useState<string>(initialActivityId);
+  const [participationId, setParticipationId] = useState<number | string | null>(initialParticipationId);
 
   const jobDetailOptions = useMemo<ReviewJobDetail[]>(() => {
     if (!state.jobGroup) return [];
@@ -160,14 +164,18 @@ export function useReviewWriteForm({
     setErrors((prev) => ({ ...prev, [key]: undefined }));
   }, []);
 
-  /** 활동 변경: 선택 활동으로 교체하고 입력값 초기화. */
-  const changeActivity = useCallback((nextActivity: ActivityCardItem, nextActivityId: string) => {
-    setActivity(nextActivity);
-    setActivityId(nextActivityId);
-    setState(INITIAL_STATE);
-    setErrors({});
-    setStep(1);
-  }, []);
+  /** 활동 변경: 선택 활동으로 교체하고 입력값 초기화. participationId도 함께 갱신. */
+  const changeActivity = useCallback(
+    (nextActivity: ActivityCardItem, nextActivityId: string, nextParticipationId: number | string | null = null) => {
+      setActivity(nextActivity);
+      setActivityId(nextActivityId);
+      setParticipationId(nextParticipationId);
+      setState(INITIAL_STATE);
+      setErrors({});
+      setStep(1);
+    },
+    [],
+  );
 
   const validateStep1 = useCallback((): boolean => {
     const next: ReviewFieldErrors = {};
@@ -291,9 +299,7 @@ export function useReviewWriteForm({
             // job_detail 선택 항목 (백엔드 스키마상 선택)
             ...(state.jobDetail ? { job_detail: state.jobDetail } : {}),
           },
-          // progress_status: 수료여부. POST /v1/review body 스키마에 명시되지 않았으나
-          // Step1에서 입력받으므로 함께 전송한다. 백엔드 수용 여부 확인 필요.
-          ...(state.progressStatus ? { progress_status: state.progressStatus } : {}),
+          // 수료여부(progress_status)는 리뷰 body가 아니라 아래 progress-status PATCH로 별도 저장.
         };
         if (state.tips.trim().length > 0) payload.tips = state.tips;
         // 새 인증자료가 있으면 그 URL을, edit에서 미교체면 기존 URL을 유지한다.
@@ -312,6 +318,22 @@ export function useReviewWriteForm({
             return;
           }
         } else {
+          // 1) 수료여부 먼저 저장(백엔드 흐름: PATCH progress-status → POST review).
+          //    participationId·선택값이 있을 때만. (applicationStatus=ACCEPTED일 때만 변경 가능)
+          if (participationId != null && state.progressStatus) {
+            const psRes = await fetch(`/api/activity-participations/${participationId}/progress-status`, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ progress_status: state.progressStatus }),
+            });
+            if (!psRes.ok) {
+              const e = await psRes.json().catch(() => ({}));
+              window.alert(readApiErrorMessage(e, '수료여부 저장에 실패했습니다.'));
+              return;
+            }
+          }
+          // 2) 리뷰 등록
           const response = await fetch('/api/review', {
             method: 'POST',
             credentials: 'include',
@@ -334,7 +356,7 @@ export function useReviewWriteForm({
         setSubmitting(false);
       }
     },
-    [submitting, activityId, state, router, mode, reviewId, initialFileUrl, onSuccess],
+    [submitting, activityId, participationId, state, router, mode, reviewId, initialFileUrl, onSuccess],
   );
 
   return {

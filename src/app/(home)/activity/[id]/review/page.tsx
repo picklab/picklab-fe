@@ -98,9 +98,28 @@ async function fetchActivityDetail(id: string): Promise<ActivityCardItem | null>
   }
 }
 
+/** 수료여부 저장용 participationId: 활동 결과 목록에서 activity_id 매칭. (미참여/비로그인이면 null) */
+async function fetchParticipationId(activityId: string): Promise<number | null> {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
+    if (!accessToken) return null;
+    const response = await fetch(`${BACKEND_URL}/v1/activity-participations/results?size=100`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    });
+    if (!response.ok) return null;
+    const json = (await response.json()) as { data?: { items?: { participation_id?: number; activity_id?: number }[] } };
+    const match = json.data?.items?.find((it) => Number(it?.activity_id) === Number(activityId));
+    return match?.participation_id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function ReviewWritePage({ params }: ReviewWritePageProps) {
   const { id } = await params;
-  const apiActivity = await fetchActivityDetail(id);
+  const [apiActivity, participationId] = await Promise.all([fetchActivityDetail(id), fetchParticipationId(id)]);
   const rawActivity = apiActivity ? null : findActivityById(id);
 
   if (!apiActivity && !rawActivity) {
@@ -111,8 +130,8 @@ export default async function ReviewWritePage({ params }: ReviewWritePageProps) 
 
   return (
     <>
-      <PcReviewWritePage activity={activity} activityId={id} />
-      <MobileReviewWritePage activity={activity} activityId={id} />
+      <PcReviewWritePage activity={activity} activityId={id} participationId={participationId ?? undefined} />
+      <MobileReviewWritePage activity={activity} activityId={id} participationId={participationId ?? undefined} />
     </>
   );
 }

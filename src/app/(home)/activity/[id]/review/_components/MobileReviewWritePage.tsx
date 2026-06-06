@@ -6,12 +6,13 @@ import ReviewWriteBody from './ReviewWriteBody';
 interface MobileReviewWritePageProps {
   activity: ActivityCardItem;
   activityId: string;
+  participationId?: number | null;
 }
 
-export default function MobileReviewWritePage({ activity, activityId }: MobileReviewWritePageProps) {
+export default function MobileReviewWritePage({ activity, activityId, participationId }: MobileReviewWritePageProps) {
   return (
     <div className="min-h-screen bg-gray-0 pc:hidden">
-      <ReviewWriteBody activity={activity} activityId={activityId} />
+      <ReviewWriteBody activity={activity} activityId={activityId} participationId={participationId} />
     </div>
   );
 }

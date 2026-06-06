@@ -362,3 +362,26 @@ export interface ReviewUpdatePayload {
     job_detail?: ReviewJobDetail;
   };
 }
+
+// ── 활동 참여 결과(수료여부 흐름, 백엔드 도메인 분리) ────────────────
+// 수료여부는 리뷰 body가 아니라 활동 참여(ActivityParticipation)에서 관리한다:
+//   GET   /v1/activity-participations/results                              리뷰 작성 대상 목록
+//   PATCH /v1/activity-participations/{participationId}/progress-status    수료여부 변경 { progress_status }
+// 리뷰 작성 흐름: progress-status PATCH 먼저 → POST /v1/review.
+
+export type ApplicationStatus = 'APPLIED' | 'ACCEPTED' | 'REJECTED';
+export type ParticipationProgressStatus = 'NOT_SELECTED' | 'IN_PROGRESSING' | 'COMPLETED' | 'DROPPED';
+
+/** GET /v1/activity-participations/results 의 item */
+export interface ActivityParticipationResult {
+  participation_id: number;
+  activity_id: number;
+  title: string;
+  organizer: string;
+  activity_type: string;
+  thumbnail_url?: string | null;
+  application_status: ApplicationStatus;
+  progress_status: ParticipationProgressStatus;
+  /** 리뷰 작성 가능 여부(progress_status ∈ {COMPLETED, DROPPED}) */
+  can_write_review: boolean;
+}
