@@ -32,6 +32,28 @@
 **E. 비차단 접근성 1건**
 - `LegalDocument` 리스트 수동 `1.`·`•` → CSS `list-decimal/list-disc` 교체(시안 재검증 필요).
 
+## 외부 확인 요청 (2026-06 최신) — 백엔드/디자이너 전달용
+
+### 🔧 백엔드 요청/확인
+| # | 항목 | 왜 필요 | 우선 |
+|---|---|---|---|
+| 1 | **리뷰 수정용 `activity_id`** — `GET /v1/reviews/{id}`(`MyReviewResponse`) 응답에 `activity_id` 추가 **또는** `ReviewUpdateRequest`의 `activity_id`를 optional로(서버가 review id로 식별) | 수정 PUT의 `activity_id`가 **required**인데 내 리뷰 단건/목록 응답에 그 값이 없어 **수정 저장 불가**. 응답에 추가되면 `mode="edit"` 리팩터로 즉시 완성 | ★최우선 |
+| 2 | **알림 설정 현재값 조회 GET** (me 응답 포함 또는 별도) | PATCH 토글만 있어 스위치 **초기 on/off 표시 불가**(항상 off) | 중 |
+| 3 | **인기 검색어 랭킹 API** (순위 + 순위변동 ↑↓ + 집계시각) | 검색 기록 카드의 **인기 검색어** 섹션 미구현(`recent-keywords`는 순위 없는 단순목록) | 중 |
+| 4 | **만족도 "전체" 평균** 직접 제공 여부 | 현재 클라 집계 → 제공 시 단순화 | 낮 |
+| 5 | **jobDetail 멀티 직렬화** 방식 (반복 param vs 콤마) | 리뷰 필터 직렬화 최종 확정 | 낮 |
+| 6 | **상세탭 공모분야·모집인원·지원서 첨부 필드** 제공 여부 | 공고 상세내용 탭 빈 섹션 채움 | 낮 |
+| 7 | (확인) `can_write_review=true`인데 `progress-status` PATCH 막히는 케이스 있는지 (ACCEPTED 조건) | 수료여부 저장 엣지케이스 | 낮 |
+
+### 🎨 Figma(디자인) 확인
+| # | 항목 | 비고 |
+|---|---|---|
+| 1 | **메인(MOBILE) 배너·tab bar** 위치·탭 너비 | MCP 호출 한도 회복 또는 PNG |
+| 2 | **이메일 변경 최종 UX** | CustomModal footer(취소/확인) vs 인라인 버튼 역할 (현재 "확인하기"에서 검증+변경) |
+| 3 | **자동완성(WordList) 정합** | 돋보기+행·hover 스타일 |
+| 4 | **회원탈퇴 확인 모달** 전용 시안 유무 | 현재 `window.confirm`으로 가드 |
+| 5 | **접근성** `LegalDocument` 리스트 시맨틱 교체 | 교체 시 시안 재검증 |
+
 ## 백엔드 답변 반영 (2026-06) — 도메인 분리 + 수료여부/ helpful 확정
 
 > 백엔드가 **활동 결과 상태(지원/합불/수료)=`ActivityParticipation`** / **아카이브=기록 작성 여부**로 도메인 분리 후 배포 완료. api-spec엔 helpful 등록/취소(`POST·DELETE /v1/reviews/{reviewId}/helpful`) **단 하나만 미반영**, 나머지는 모두 반영됨.
