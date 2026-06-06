@@ -129,6 +129,12 @@ DELETE /v1/reviews/{id}     리뷰 삭제
 ### 3. 부가기능 (화면 미연동, 별도 영역)
 검색 기록(`/search/history`), 알림(`/notifications` + SSE subscribe), 회원탈퇴(`withdrawal-survey`), 이메일 변경(`/members/email`), 알림 설정(`/members/notifications`) — 프록시 라우트는 있으나 화면 미구현.
 
+**진행(2026-06, 부가기능 연동):**
+- ✅ **알림 설정**(`profile/alarm`) — 토글 2개(인기 공고=POPULAR/저장한 공고=BOOKMARKED) → `PATCH /api/members/notifications {type}` 낙관적 업데이트+롤백. 🔧 **백엔드 read 필요**: PATCH 토글만 있고 현재 on/off 조회 GET이 없음(me 응답에도 없음) → 스위치 초기상태 항상 off. 조회 제공 시 마운트 초기값 채울 것.
+- ✅ **이메일 변경**(`@modal/change-email`) — 인증요청(POST `email/code/send {email}`) → 확인하기(POST `email/code/verify {code}` 성공 시 POST `members/email {email}` 변경 적용) + 성공/오류 메시지. 🎨 **figma 확인 권장**: CustomModal footer(취소/확인)와 모달 내 인증요청/확인하기 버튼 역할 분담(현재 "확인하기"에서 검증+변경 처리, footer는 닫기).
+- ✅ **최근 검색기록**(`search/_components/RecentSearchHistory` + `useSearchHistory` + `SearchEntryPage`) — Figma "검색 기록" 카드의 최근검색기록부 구현. 입력 비었을 때 칩 목록(8px gap, 308px wrap, 텍스트클릭=검색이동/X=개별삭제) + 전체삭제, 검색 실행 시 `POST /api/search/history {keyword}` 저장. GET/DELETE/DELETE-all 연동. 🚧 **인기 검색어(1~10위+순위변동 ↑↓)는 백엔드 미제공**(`recent-keywords`는 `{id,keyword,searched_at}` 단순목록·순위/변동 없음) → 랭킹+순위변동 API 추가 필요. 🎨 자동완성(WordList)은 기존 연동, 디자인 정합만 추후.
+- ⏳ **회원탈퇴**: 화면(`WithdrawPage`) 있음, 연동 가능(다음 후보). **실시간 알림(SSE)**: 복잡, 별도.
+
 ### 4. Figma로 이제 가능 (이전 "PNG 필요"로 막혔던 QA 항목)
 - ✅ **리뷰 탭 디자인 정합**(node `2408-26558`) **완료(2026-06)**: figma `get_design_context`로 전 요소 1:1 대조. 모호했던 50/24/20/132px·"삭제하여 노출"의 정체 규명 결과 — **대부분 이미 충족**(132px 드롭다운폭, 카드패딩 40/28, 총평점 24px+별점40, 세부별점24, 50px 마진, 만족도 gap 20px, 레이더 컨테이너 border/rounded·"삭제" 가설은 figma에도 border 있어 기각). 실제 figma 불일치 3건만 수정: ① "활동 만족도 평가" 헤딩 20px/gray-90 → **18px/gray-80**(`PcActivityDetailPage.tsx:592`) ② 정렬 드롭다운 텍스트 `Body3Medium`(14) → **`Body2Medium`(15)**(`ReviewFilters.tsx:67`) ③ 만족도 필터칩 `Caption1Medium`(12) → **`Body4Medium`(13)**(`JobFilterChip`). typecheck/eslint EXIT 0. (※ 로그인 전체공개 다건 카드는 별도 미검증 — 비로그인 잠금 카드 기준 figma와 일치)
 - **메인 드롭다운 레이블** "활동유형 2 / 직무유형 2" 통합 형식 여부(현재 각 Select별 표시는 충족)

@@ -2,11 +2,13 @@
 
 "use client";
 
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Search from "@/components/common/Field/Search";
 import Typography from "@/components/common/Typography";
 import type { OptionGroupProps } from "@/components/common/Option/OptionGroup";
+import { createSearchHistory } from "@/hooks/useSearchHistory";
+import RecentSearchHistory from "./RecentSearchHistory";
 
 type AutocompleteResponse = {
   data?: {
@@ -62,6 +64,17 @@ export default function SearchEntryPage() {
     };
   }, [keyword]);
 
+  // 검색 실행 시 기록 저장(fire-and-forget) 후 검색 결과로 이동
+  const goSearch = useCallback(
+    (keyword: string) => {
+      const trimmed = keyword.trim();
+      if (!trimmed) return;
+      createSearchHistory(trimmed);
+      router.push(toSearchPath(trimmed));
+    },
+    [router],
+  );
+
   const optionGroupProps = useMemo<OptionGroupProps>(
     () => ({
       options: suggestions.map((suggestion) => ({
@@ -69,15 +82,17 @@ export default function SearchEntryPage() {
         value: suggestion,
       })),
       onClickHandler: (value) => {
-        if (typeof value === "string" && value.trim()) {
-          router.push(toSearchPath(value.trim()));
+        if (typeof value === "string") {
+          goSearch(value);
         }
       },
       width: "full",
       className: "!w-full",
     }),
-    [router, suggestions],
+    [goSearch, suggestions],
   );
+
+  const showHistory = keyword.trim() === "";
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setKeyword(event.target.value);
@@ -101,8 +116,10 @@ export default function SearchEntryPage() {
         <Typography type="Body2Medium" className="text-gray-60">
           검색어를 입력해 관심 있는 활동을 찾아보세요.
         </Typography>
+        {showHistory && <RecentSearchHistory onSelect={goSearch} />}
+        {/* TODO(인기검색어): 백엔드 랭킹+순위변동 API 필요 — 미구현 */}
       </section>
-      <section className="mobile:hidden pc:flex min-h-[320px] items-center justify-center">
+      <section className="mobile:hidden pc:flex min-h-[320px] flex-col items-center justify-center gap-6">
         <Search
           status="default"
           wrapperClassName="w-[520px]"
@@ -112,6 +129,8 @@ export default function SearchEntryPage() {
           onChange={handleChange}
           optionGroupProps={optionGroupProps}
         />
+        {showHistory && <RecentSearchHistory onSelect={goSearch} />}
+        {/* TODO(인기검색어): 백엔드 랭킹+순위변동 API 필요 — 미구현 */}
       </section>
     </>
   );
