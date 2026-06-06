@@ -149,7 +149,9 @@ export default function ReviewWriteBody({
       {!isEdit && changeOpen && (
         <ActivityChangeModal
           onClose={() => setChangeOpen(false)}
-          onApply={(nextActivity, nextActivityId) => form.changeActivity(nextActivity, nextActivityId)}
+          onApply={(nextActivity, nextActivityId, nextParticipationId) =>
+            form.changeActivity(nextActivity, nextActivityId, nextParticipationId)
+          }
         />
       )}
 

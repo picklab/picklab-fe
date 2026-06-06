@@ -4,23 +4,40 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import Typography from '@/components/common/Typography';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
-import useArchiveActivities, { type ArchiveActivityItem } from '@/hooks/useArchiveActivities';
+import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
+import type { ActivityParticipationResult, ParticipationProgressStatus } from '@/types/review.types';
 import { ConfirmDialog, ModalShell } from './ReviewWriteShared';
 
 interface ActivityChangeModalProps {
   onClose: () => void;
-  onApply: (activity: ActivityCardItem, activityId: string) => void;
+  onApply: (activity: ActivityCardItem, activityId: string, participationId: number) => void;
 }
 
-/** 아카이브 항목을 리뷰 작성용 ActivityCardItem(부분)으로 변환. 데이터 구조 불확실하여 방어적 매핑. */
-function toActivityCardItem(item: ArchiveActivityItem): ActivityCardItem {
+// activity_type(코드) → 한글 라벨
+const ACTIVITY_TYPE_LABELS: Record<string, string> = {
+  EXTRACURRICULAR: '대외활동',
+  EDUCATION: '교육',
+  COMPETITION: '공모전/해커톤',
+  SEMINAR: '강연/세미나',
+};
+
+// 수료여부(progress_status) → 한글 라벨
+const PROGRESS_LABELS: Record<ParticipationProgressStatus, string> = {
+  COMPLETED: '수료 완료',
+  DROPPED: '중도 하차',
+  IN_PROGRESSING: '진행 중',
+  NOT_SELECTED: '-',
+};
+
+/** 활동 참여 결과(ActivityParticipationResult)를 리뷰 작성용 ActivityCardItem(부분)으로 변환. */
+function toActivityCardItem(item: ActivityParticipationResult): ActivityCardItem {
   return {
-    detailLink: `/activity/${item.activityId}`,
+    detailLink: `/activity/${item.activity_id}`,
     applyLink: '',
-    activityType: typeof item.chipTitle === 'string' ? item.chipTitle : '대외활동',
+    activityType: ACTIVITY_TYPE_LABELS[item.activity_type] ?? item.activity_type,
     source: '',
     title: item.title,
-    organizer: item.organization,
+    organizer: item.organizer,
     companyType: '',
     target: '',
     registrationPeriod: '',
@@ -32,7 +49,7 @@ function toActivityCardItem(item: ArchiveActivityItem): ActivityCardItem {
     activityField: '',
     costPrize: '',
     description: '',
-    thumbnailImage: item.thumbnail,
+    thumbnailImage: item.thumbnail_url ?? '/imgs/cat.jpg',
     detailImage: '',
     badgeText: '',
     viewCount: 0,
@@ -42,12 +59,13 @@ function toActivityCardItem(item: ArchiveActivityItem): ActivityCardItem {
 }
 
 export default function ActivityChangeModal({ onClose, onApply }: ActivityChangeModalProps) {
-  // 데이터 소스: GET /api/archive?sort=LATEST (useArchiveActivities). 응답 항목 매핑은 확인 필요.
-  const { data, loading } = useArchiveActivities();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // 데이터 소스: GET /api/activity-participations/results (리뷰 작성 대상). 작성 가능(can_write_review)만 노출.
+  const { data, loading } = useActivityParticipationResults();
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const selected = data.find((item) => item.id === selectedId) ?? null;
+  const items = data.filter((item) => item.can_write_review);
+  const selected = items.find((item) => item.participation_id === selectedId) ?? null;
 
   const handleApply = () => {
     if (!selected) return;
@@ -56,7 +74,7 @@ export default function ActivityChangeModal({ onClose, onApply }: ActivityChange
 
   const handleConfirm = () => {
     if (!selected) return;
-    onApply(toActivityCardItem(selected), selected.activityId);
+    onApply(toActivityCardItem(selected), String(selected.activity_id), selected.participation_id);
     setConfirmOpen(false);
     onClose();
   };
@@ -81,38 +99,42 @@ export default function ActivityChangeModal({ onClose, onApply }: ActivityChange
                     불러오는 중이에요...
                   </Typography>
                 </div>
-              ) : data.length === 0 ? (
+              ) : items.length === 0 ? (
                 <div className="flex h-[160px] items-center justify-center">
                   <Typography type="Body3Regular" className="text-gray-40">
-                    활동이 없어요
+                    리뷰를 작성할 수 있는 활동이 없어요
                   </Typography>
                 </div>
               ) : (
-                data.map((item) => (
+                items.map((item) => (
                   <button
-                    key={item.id}
+                    key={item.participation_id}
                     type="button"
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => setSelectedId(item.participation_id)}
                     className={clsx(
                       'grid h-[52px] w-full grid-cols-[2fr_1.5fr_1fr_1fr] items-center border-b border-gray-10 px-4 text-left transition-colors last:border-b-0',
-                      selectedId === item.id ? 'bg-primary-5' : 'hover:bg-gray-5',
+                      selectedId === item.participation_id ? 'bg-primary-5' : 'hover:bg-gray-5',
                     )}
-                    aria-pressed={selectedId === item.id}
+                    aria-pressed={selectedId === item.participation_id}
                   >
                     <Typography
                       type="Body3Medium"
-                      className={clsx('truncate pr-2', selectedId === item.id ? 'text-primary-60' : 'text-gray-90')}
+                      className={clsx(
+                        'truncate pr-2',
+                        selectedId === item.participation_id ? 'text-primary-60' : 'text-gray-90',
+                      )}
                     >
                       {item.title}
                     </Typography>
                     <Typography type="Body3Regular" className="truncate pr-2 text-gray-50">
-                      {item.organization || '-'}
+                      {item.organizer || '-'}
                     </Typography>
                     <Typography type="Body3Regular" className="text-gray-50">
-                      {item.chipTitle}
+                      {ACTIVITY_TYPE_LABELS[item.activity_type] ?? item.activity_type}
                     </Typography>
-                    {/* 수료여부: 백엔드가 수료여부(수료완료/중도하차) 필드를 내려주기 전까지 비워둠 */}
-                    <div aria-hidden />
+                    <Typography type="Body3Regular" className="text-gray-50">
+                      {PROGRESS_LABELS[item.progress_status] ?? '-'}
+                    </Typography>
                   </button>
                 ))
               )}
