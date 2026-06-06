@@ -11,16 +11,16 @@
 
 ## 남은 작업 스냅샷 (2026-06 최신)
 
-> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록). 모두 `feat/my-reviews` 브랜치에 커밋(미push).
+> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록) / **백엔드 답변 반영: helpful 연결·수료여부 PATCH 흐름·활동변경 모달·GNB 모달 results 전환**. 모두 `feat/my-reviews` 브랜치에 커밋(미push).
 
 **A. 화면 있고 바로 가능 (비블로킹)**
 - **회원탈퇴 연동** — `WithdrawPage` 화면 존재, `POST /members/withdrawal-survey` + `DELETE /v1/members`. (다음 1순위 후보)
 
 **B. 백엔드 추가 후 활성화 (코드/리팩터는 준비됨)**
-- **리뷰 수정 저장** — 리뷰 응답에 `activity_id`(+title/organizer) 추가 필요 → 이미 만든 `useReviewWriteForm mode="edit"`로 즉시 연결.
+- **리뷰 수정 저장** — `MyReviewsResponse`/`MyReviewDetail`에 `activity_id` 없음(participation 도입됐으니 재확인). 추가되면 `useReviewWriteForm mode="edit"`로 즉시 연결.
 - **알림 설정 초기값** — on/off 조회 GET 부재 → 스위치 초기상태 표시 불가.
 - **인기 검색어** — 랭킹+순위변동(↑↓) API 부재 → 검색 기록 카드의 인기검색어 섹션 미구현.
-- **리뷰 마무리** — 수료여부 저장/조회, helpful(도움이돼요), 만족도 전체평균, jobDetail 직렬화, 상세탭 공모분야·지원서 첨부 필드.
+- **리뷰 마무리 잔여** — 만족도 전체평균, jobDetail 직렬화, 상세탭 공모분야·지원서 첨부 필드. *(수료여부·helpful은 완료)*
 
 **C. Figma(디자인) 필요**
 - **메인(MOBILE)** 배너/tab bar 위치·탭 너비 (Figma MCP 호출 한도 회복/PNG 필요).
