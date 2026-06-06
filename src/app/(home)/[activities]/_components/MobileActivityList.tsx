@@ -106,7 +106,10 @@ export default function MobileActivityList({
     return {
       size: "200",
       sort: "LATEST",
-      ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug], fallbackOnEmpty: "false" } : {}),
+      // 활동 목록은 실데이터 기준이라 mock fallback을 항상 끈다.
+      // ("전체" 탭에서 fallbackOnEmpty가 켜져 필터 결과가 mock으로 새던 문제 수정)
+      fallbackOnEmpty: "false",
+      ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug] } : {}),
       ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
     };
   }, [activitySlug, selectedFilters]);
