@@ -40,6 +40,22 @@ function getDeadlineRank(badgeText: string): number {
   return 999;
 }
 
+// 직무 라벨/코드 → 백엔드 jobTag 코드(PLANNING/DESIGN/DEVELOPMENT/MARKETING/AI)
+const JOB_LABEL_TO_TAG: Record<string, string> = {
+  기획: 'PLANNING',
+  디자인: 'DESIGN',
+  개발: 'DEVELOPMENT',
+  마케팅: 'MARKETING',
+  AI: 'AI',
+};
+const JOB_CODE_TO_TAG: Record<string, string> = {
+  planning: 'PLANNING',
+  design: 'DESIGN',
+  development: 'DEVELOPMENT',
+  marketing: 'MARKETING',
+  ai: 'AI',
+};
+
 export default function NewActivityList({
   title,
   categorySlug,
@@ -56,13 +72,23 @@ export default function NewActivityList({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // 선택한 직무유형(관련직무 칩 + 직무유형 Select)을 백엔드 jobTag 코드로 변환
+  const selectedJobTags = useMemo(() => {
+    const fromFilters = (selectedFilters['관련직무'] ?? [])
+      .filter((v) => v !== '전체')
+      .map((label) => JOB_LABEL_TO_TAG[label]);
+    const fromSelect = selectedJobs.map((code) => JOB_CODE_TO_TAG[code]);
+    return Array.from(new Set([...fromFilters, ...fromSelect].filter(Boolean)));
+  }, [selectedFilters, selectedJobs]);
+
   const activityParams = useMemo(
     () => ({
       size: String(getAllActivities().length),
       sort: SORT_TO_API[sort as keyof typeof SORT_TO_API] ?? 'LATEST',
       ...(categorySlug ? { category: CATEGORY_TO_API[categorySlug], fallbackOnEmpty: 'false' } : {}),
+      ...(selectedJobTags.length > 0 ? { jobTag: selectedJobTags.join(',') } : {}),
     }),
-    [categorySlug, sort],
+    [categorySlug, sort, selectedJobTags],
   );
   const { data: apiData, loading } = useActivities('latest', activityParams);
   const effectiveLoading = loading;

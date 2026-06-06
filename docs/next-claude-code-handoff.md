@@ -32,6 +32,11 @@
 **E. 비차단 접근성 1건**
 - `LegalDocument` 리스트 수동 `1.`·`•` → CSS `list-decimal/list-disc` 교체(시안 재검증 필요).
 
+## 활동 목록 필터 (2026-06)
+
+- ✅ **직무유형(jobTag) 백엔드 연동 완료**: 대외활동 목록 필터의 직무유형 선택을 `GET /v1/activities?jobTag=...`(배열=반복 param)로 전송. 라벨→코드 매핑(기획=PLANNING, 디자인=DESIGN, 개발=DEVELOPMENT, 마케팅=MARKETING, AI=AI). PC(`NewActivityList`+`useActivities` 'latest' 분기)·모바일(`MobileActivityList`) 모두. **이전엔 백엔드 미전송 + 클라이언트 임시 필터라 불완전**했음(현재 불러온 목록 내에서만 필터).
+- ⏳ **나머지 필터는 미연동/무동작**: 주최기관=클라 필터만(백엔드 `organizerType` param 미사용), **참여대상/활동분야/모집지역=선택해도 무동작(no-op)**. 백엔드 `GET /v1/activities`는 `organizerType/target/field/location` param을 모두 지원하나, **프론트 한글 라벨→백엔드 코드값 매핑을 몰라 미연동** → 아래 외부 요청 참고.
+
 ## 외부 확인 요청 (2026-06 최신) — 백엔드/디자이너 전달용
 
 ### 🔧 백엔드 요청/확인
@@ -44,6 +49,7 @@
 | 5 | **jobDetail 멀티 직렬화** 방식 (반복 param vs 콤마) | 리뷰 필터 직렬화 최종 확정 | 낮 |
 | 6 | **상세탭 공모분야·모집인원·지원서 첨부 필드** 제공 여부 | 공고 상세내용 탭 빈 섹션 채움 | 낮 |
 | 7 | (확인) `can_write_review=true`인데 `progress-status` PATCH 막히는 케이스 있는지 (ACCEPTED 조건) | 수료여부 저장 엣지케이스 | 낮 |
+| 8 | **활동 목록 필터 코드값** — `GET /v1/activities`의 `organizerType/target/field/location` 각 허용 코드(enum) 리스트 | 주최기관·참여대상·활동분야·모집지역 필터 백엔드 연동(현재 라벨→코드 매핑 불가로 미동작). jobTag(직무유형)은 코드 확인되어 연동 완료 | 중 |
 
 ### 🎨 Figma(디자인) 확인
 | # | 항목 | 비고 |

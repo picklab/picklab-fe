@@ -140,6 +140,13 @@ async function fetchBackendActivities(
           size,
           page: params?.page ?? '1',
         });
+        // 직무유형 필터: jobTag는 배열이므로 콤마 구분 값을 반복 param으로 전송 (jobTag=A&jobTag=B)
+        if (params?.jobTag) {
+          params.jobTag
+            .split(',')
+            .filter(Boolean)
+            .forEach((tag) => searchParams.append('jobTag', tag));
+        }
         const response = await fetch(`${path}?${searchParams.toString()}`, { credentials: 'include' });
         if (!response.ok) return [];
         const json = await response.json() as BackendActivityListResponse;

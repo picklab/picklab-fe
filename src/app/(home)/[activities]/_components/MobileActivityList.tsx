@@ -90,14 +90,26 @@ export default function MobileActivityList({
     {},
   );
   const activitySlug = MENU_TO_SLUG[activeMenu];
-  const activityParams = useMemo(
-    () => ({
+  const activityParams = useMemo(() => {
+    // 직무유형(관련직무) → 백엔드 jobTag 코드. 선택 시 쿼리로 전송.
+    const jobLabelToTag: Record<string, string> = {
+      기획: "PLANNING",
+      디자인: "DESIGN",
+      개발: "DEVELOPMENT",
+      마케팅: "MARKETING",
+      AI: "AI",
+    };
+    const jobTags = (selectedFilters["관련직무"] ?? [])
+      .filter((v) => v !== "전체")
+      .map((label) => jobLabelToTag[label])
+      .filter(Boolean);
+    return {
       size: "200",
       sort: "LATEST",
       ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug], fallbackOnEmpty: "false" } : {}),
-    }),
-    [activitySlug],
-  );
+      ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
+    };
+  }, [activitySlug, selectedFilters]);
   const { data: apiData, loading } = useActivities("latest", activityParams);
   const items = useMemo(
     () =>
