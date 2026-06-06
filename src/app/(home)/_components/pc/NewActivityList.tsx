@@ -8,6 +8,7 @@ import Select from '@/components/common/Select/Select';
 import Pagination from '@/components/common/Pagination/Pagination';
 import { useActivities } from '@/hooks/useActivities';
 import { getAllActivities, type ActivityPageFilters, type ActivityRouteSlug } from '@/lib/activity-data';
+import { toggleBookmark } from '@/lib/bookmarks';
 
 interface NewActivityListProps {
   title: string;
@@ -69,6 +70,8 @@ export default function NewActivityList({
   const [sort, setSort] = useState('latest');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
+  // 카드별 북마크 상태(낙관적 업데이트): { [activityId]: boolean }
+  const [bookmarkMap, setBookmarkMap] = useState<Record<string, boolean>>({});
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -181,20 +184,23 @@ export default function NewActivityList({
         JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
       );
 
+      // 낙관적 상태가 있으면 우선 적용, 없으면 백엔드 응답값 사용
+      const currentBookmarked = bookmarkMap[item.id] ?? (item.isBookmarked ?? false);
+
       return {
         key: item.id,
         imageUrl: item.thumbnailImage || '/imgs/cat.jpg',
         chipText: (item.activityType as '대외활동' | '강연/세미나' | '교육' | '공모전/해커톤') || '공모전/해커톤',
         badgeText: item.registrationPeriod || 'D-01',
         badgeVariant: 'default' as const,
-        isBookmarked: false,
+        isBookmarked: currentBookmarked,
         companyName: item.organizer || '',
         title: item.title,
         jobs: (jobs.length > 0 ? jobs : ['기획']) as ('기획' | '디자인' | '개발' | '마케팅' | 'AI')[],
         detailLink: item.detailLink,
       };
     });
-  }, [apiData, selectedCategories, selectedFilters, selectedJobs, sort]);
+  }, [apiData, bookmarkMap, categorySlug, selectedCategories, selectedFilters, selectedJobs, sort]);
 
   const totalPages = Math.ceil(cards.length / CARDS_PER_PAGE);
   const externalPage = Number(searchParams.get('page') ?? 1);
@@ -309,7 +315,19 @@ export default function NewActivityList({
                 companyName={card.companyName}
                 title={card.title}
                 jobs={card.jobs}
-                onBookmarkClick={() => {}}
+                onBookmarkClick={async () => {
+                  const prev = card.isBookmarked;
+                  // 낙관적 업데이트: 즉시 상태 반영
+                  setBookmarkMap((m) => ({ ...m, [card.key]: !prev }));
+                  try {
+                    await toggleBookmark({ activityId: card.key, isBookmarked: prev });
+                  } catch (error) {
+                    // 실패 시 롤백
+                    setBookmarkMap((m) => ({ ...m, [card.key]: prev }));
+                    const message = error instanceof Error ? error.message : '북마크 처리 중 오류가 발생했습니다.';
+                    window.alert(message);
+                  }
+                }}
                 onCardClick={() => card.detailLink && router.push(card.detailLink)}
               />
             ))}

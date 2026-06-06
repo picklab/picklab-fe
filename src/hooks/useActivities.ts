@@ -114,6 +114,8 @@ export function mapBackendActivityToApiItem(item: BackendActivityItem): ApiActiv
     jobs: jobs.length > 0 ? jobs : ['기타'],
     saveCount: 0,
     viewCount: Number(item.view_count ?? 0),
+    // 백엔드 응답의 북마크 상태 반영
+    isBookmarked: item.is_bookmarked ?? false,
   };
 }
 

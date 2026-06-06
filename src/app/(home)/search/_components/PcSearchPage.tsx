@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Card from "@/components/common/Card/Card";
 import BoxTab from "@/components/common/Tab/BoxTab";
@@ -10,6 +10,7 @@ import Typography from "@/components/common/Typography";
 import Pagination from "@/components/common/Pagination/Pagination";
 import clsx from "clsx";
 import useSearchActivities from "@/hooks/useSearchActivities";
+import { toggleBookmark } from "@/lib/bookmarks";
 
 const TAB_LIST = [
   { label: "전체", value: "all" },
@@ -34,6 +35,8 @@ function toTabCategory(activityType: string): SearchTab {
 export default function PcSearchPage({ search, isStorybook = false }: { search: string; isStorybook?: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  // 카드별 북마크 상태(낙관적 업데이트): { [activityId]: boolean }
+  const [bookmarkMap, setBookmarkMap] = useState<Record<string, boolean>>({});
   const decodedSearch = decodeURIComponent(search);
   const { data: searchedItems, loading, error } = useSearchActivities(decodedSearch);
   const requestedTab = (searchParams.get("tab") ?? "all") as SearchTab;
@@ -113,6 +116,9 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
                 JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
               );
 
+              // 낙관적 상태가 있으면 우선 적용, 없으면 백엔드 응답값 사용
+              const currentBookmarked = bookmarkMap[item.id] ?? (item.isBookmarked ?? false);
+
               return (
                 <Card
                   key={item.id}
@@ -120,11 +126,23 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
                   chipText={(item.activityType as "대외활동" | "강연/세미나" | "교육" | "공모전/해커톤") || "대외활동"}
                   badgeText={item.registrationPeriod || "D-01"}
                   badgeVariant="default"
-                  isBookmarked={false}
+                  isBookmarked={currentBookmarked}
                   companyName={item.organizer}
                   title={item.title}
                   jobs={(jobs.length > 0 ? jobs : ["기획"]) as ("기획" | "디자인" | "개발" | "마케팅" | "AI")[]}
-                  onBookmarkClick={() => {}}
+                  onBookmarkClick={async () => {
+                    const prev = currentBookmarked;
+                    // 낙관적 업데이트: 즉시 상태 반영
+                    setBookmarkMap((m) => ({ ...m, [item.id]: !prev }));
+                    try {
+                      await toggleBookmark({ activityId: item.id, isBookmarked: prev });
+                    } catch (error) {
+                      // 실패 시 롤백
+                      setBookmarkMap((m) => ({ ...m, [item.id]: prev }));
+                      const message = error instanceof Error ? error.message : "북마크 처리 중 오류가 발생했습니다.";
+                      window.alert(message);
+                    }
+                  }}
                   onCardClick={() => router.push(item.detailLink)}
                 />
               );

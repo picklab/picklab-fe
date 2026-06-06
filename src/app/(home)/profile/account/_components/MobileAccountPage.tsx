@@ -1,19 +1,49 @@
 'use client';
 
+import { useState } from 'react';
 import Button from '@/components/common/Button/Button';
 import Switch from '@/components/common/Control/Switch';
 import Avatar from '@/components/common/GNB/pc/Avatar';
 import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 import TextLink from '@/components/common/TextLink/TextLink';
 import Typography from '@/components/common/Typography';
+import { useMe } from '@/hooks/useMe';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
+/**
+ * 이메일 마케팅 수신 동의.
+ * ⚠️ 백엔드에 현재 동의 여부를 읽을 GET이 없어(me 응답에도 없음) 초기 스위치 상태는
+ *    기본 off로 시작한다. 백엔드가 조회를 제공하면 마운트 시 초기값을 채울 것.
+ */
 export default function MobileAccountPage() {
   const [snbMenu, setSnbMenu] = useState<'my-activity' | 'my-post' | 'account'>('my-activity');
   const router = useRouter();
+  const { data: me, loading } = useMe();
+
+  const [emailAgreement, setEmailAgreement] = useState(false);
+  const [pending, setPending] = useState(false);
+
+  const toggleEmailAgreement = async (next: boolean) => {
+    if (pending) return;
+    setEmailAgreement(next); // 낙관적 업데이트
+    setPending(true);
+    try {
+      const res = await fetch('/api/members/email-agreement', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email_agreement: next }),
+      });
+      if (!res.ok) throw new Error('이메일 마케팅 수신 동의 변경에 실패했습니다.');
+    } catch (error) {
+      setEmailAgreement(!next); // 실패 시 롤백
+      window.alert(error instanceof Error ? error.message : '이메일 마케팅 수신 동의 변경 중 오류가 발생했습니다.');
+    } finally {
+      setPending(false);
+    }
+  };
 
   return (
     <div className="block pc:hidden w-full flex flex-col items-center gap-8">
@@ -22,7 +52,9 @@ export default function MobileAccountPage() {
         <Avatar className="w-20 h-20" scale="lg" />
         <div className="flex flex-col w-[238.5px]">
           <button className="flex flex-row items-center gap-2 w-full py-4 text-gray-90">
-            <Typography type="Heading2Semibold">이름이름</Typography>
+            <Typography type="Heading2Semibold">
+              {loading ? '' : (me?.name ?? '')}
+            </Typography>
             <ChevronRight width={7.5} height={13.5} />
           </button>
           {/*TODO: 메뉴 1,2,3.. 코딩 해둔거 수정하면서 마지막 menu만 map 함수에서 -> border 없이 or Divder 활용 && hidden */}
@@ -125,7 +157,7 @@ export default function MobileAccountPage() {
               <div className="flex flex-col gap-1">
                 <Typography type="Headline2SemiBold">이메일</Typography>
                 <Typography type="Body3Medium" className="text-gray-60">
-                  test@test.com
+                  {loading ? '' : (me?.email ?? '')}
                 </Typography>
               </div>
               <div>
@@ -146,7 +178,11 @@ export default function MobileAccountPage() {
                 </Typography>
               </div>
               <div>
-                <Switch />
+                <Switch
+                  checked={emailAgreement}
+                  disabled={pending}
+                  onChange={(e) => toggleEmailAgreement(e.target.checked)}
+                />
               </div>
             </div>
           </div>

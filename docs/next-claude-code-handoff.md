@@ -11,7 +11,7 @@
 
 ## 남은 작업 스냅샷 (2026-06 최신)
 
-> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록) / **백엔드 답변 반영: helpful 연결·수료여부 PATCH 흐름·활동변경 모달·GNB 모달 results 전환**. 모두 `feat/my-reviews` 브랜치에 커밋(미push).
+> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록·회원탈퇴) / 백엔드 답변 반영(helpful·수료여부 PATCH·활동변경/GNB 모달 results) / 활동목록 직무유형 필터 / **전수 감사 후 미연동 7건 일괄 수정(프로필 메인·계정·이메일동의·관심직무·북마크 등)**. 모두 `feat/my-reviews` 브랜치.
 
 **A. 화면 있고 바로 가능 (비블로킹)**
 - ✅ **회원탈퇴 연동 완료(2026-06)**: `WithdrawPage` client 전환 — 동의 체크 + 사유 라디오(6종 enum 매핑) → `POST /api/members/withdrawal-survey {reason}` → `DELETE /api/members` → 로그아웃(`clientLogout`+`/api/auth/logout`) → `/signin`. 탈퇴 전 `window.confirm` 가드. 취소→`/profile/account/info`. typecheck/eslint EXIT 0.
@@ -31,6 +31,20 @@
 
 **E. 비차단 접근성 1건**
 - `LegalDocument` 리스트 수동 `1.`·`•` → CSS `list-decimal/list-disc` 교체(시안 재검증 필요).
+
+## 코드 미연동 일괄 수정 (2026-06) — 전수 감사 + 1~7 수정
+
+> 4영역 병렬 감사(활동/검색·인증/계정/프로필·리뷰/아카이브·부가/전역)로 "UI만 있고 미연동/mock/no-op"을 찾아, **코드만으로 가능한 7건을 일괄 수정**. typecheck/eslint EXIT 0, 재감사(빈 핸들러·하드코딩 더미 0건) 통과.
+
+1. ✅ **프로필 메인**(`PcProfilePage`/`MobileProfilePage`) — 통째 mock → 실데이터: 활동결과=`useParticipationSummary`(신규, `GET /api/activity-participations/summary` 프록시 신규), 아카이브=`useArchiveActivities`, 저장공고=`useBookmarks`(북마크 토글 낙관적 제거). 로딩/빈 상태 처리.
+2. ✅ **계정 이메일/이름**(`Pc/MobileAccountPage`) — 하드코딩(kjyook01@/이름이름/test@test.com) 제거 → `useMe`.
+3. ✅ **이메일 마케팅 수신 동의 토글** — `PATCH /api/members/email-agreement {email_agreement}` 낙관적 연결. (초기값은 백엔드 read 부재로 기본 off — alarm과 동일 한계)
+4. ✅ **관심직무 초기 로드**(`JobSection`) — `useMe`의 `selected_interested_jobs`를 컴포넌트 value로 역매핑해 편집 진입 시 기존값 표시.
+5. ✅ **활동 카드 북마크**(`NewActivityList`) — 빈 핸들러 → `toggleBookmark` 낙관적 토글, `is_bookmarked`를 `useActivities` 매핑에 반영.
+6. ✅ **검색결과 카드 북마크**(`PcSearchPage`) — 동일.
+7. ✅ **홈 `ActivityList.tsx` Select** — 해당 파일은 **미사용 데드코드**로 확인(실 렌더 트리는 `NewActivityList`/`MobileActivityList`, 이미 연동). 빈 핸들러 위 주석만 추가.
+
+**남은 한계**: 프로필 "더보기"는 아카이브만 `/profile/archive` 연결(활동결과/저장공고는 전용 목록 페이지 없어 미연결). 알림/이메일동의 초기값 read·인기검색어·리뷰수정 activity_id 등은 여전히 외부 대기(외부 확인 요청 참고).
 
 ## 활동 목록 필터 (2026-06)
 

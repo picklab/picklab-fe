@@ -66,7 +66,10 @@ export default function ActivityList({
               { label: "교육", value: "education" },
               { label: "공모전/해커톤", value: "contest" },
             ]}
-            onChange={() => {}}
+            // 이 컴포넌트는 현재 렌더 트리에서 사용되지 않는 미사용 파일입니다.
+          // PC는 NewActivityList, 모바일은 MobileActivityList가 대신 사용됩니다.
+          // 실제 필터 연동이 필요한 경우 해당 컴포넌트를 수정하세요.
+          onChange={() => {}}
           />
           <Select
             size="small"

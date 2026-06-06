@@ -2,10 +2,11 @@
 
 import Button from '@/components/common/Button/Button';
 import Typography from '@/components/common/Typography';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PcJobEditSection from './PcJobEditSection';
 import { SignupData } from '@/app/(auth)/signup/types';
 import MobileJobEditSection from './MobileJobEditSection';
+import { useMe } from '@/hooks/useMe';
 
 const JOB_CATEGORY_MAP: Record<string, { group: string; detail: string }> = {
   'service-planning': { group: 'PLANNING', detail: 'SERVICE_PLANNING' },
@@ -38,7 +39,13 @@ const JOB_CATEGORY_MAP: Record<string, { group: string; detail: string }> = {
   data: { group: 'AI', detail: 'DATA_SCIENCE' },
 };
 
+// API 응답의 detail enum → 컴포넌트 내부 value 키로 역변환
+const DETAIL_TO_VALUE: Record<string, string> = Object.fromEntries(
+  Object.entries(JOB_CATEGORY_MAP).map(([value, { detail }]) => [detail, value]),
+);
+
 const JobSection = () => {
+  const { data: meData, loading: meLoading } = useMe();
   const [editMode, setEditMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [signupData, setSignupData] = useState<SignupData>({
@@ -61,6 +68,17 @@ const JobSection = () => {
     interests: [],
   });
   const [savedInterests, setSavedInterests] = useState<string[]>([]);
+
+  // useMe 로드 완료 후 기존 관심직무를 초기값으로 세팅
+  useEffect(() => {
+    if (meLoading || !meData) return;
+    // selectedInterestedJobs: API에서 오는 detail enum 코드 (e.g. 'FRONTEND')
+    const initialInterests = meData.selectedInterestedJobs
+      .map((code) => DETAIL_TO_VALUE[code])
+      .filter(Boolean);
+    setSignupData((prev) => ({ ...prev, interests: initialInterests }));
+    setSavedInterests(initialInterests);
+  }, [meLoading, meData]);
 
   const handleCancel = () => {
     setSignupData((prev) => ({
