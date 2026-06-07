@@ -11,7 +11,9 @@
 
 ## 남은 작업 스냅샷 (2026-06 최신)
 
-> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록·회원탈퇴) / 백엔드 답변 반영(helpful·수료여부 PATCH·활동변경/GNB 모달 results) / 활동목록 직무유형 필터 / **전수 감사 후 미연동 7건 일괄 수정(프로필 메인·계정·이메일동의·관심직무·북마크 등)**. 모두 `feat/my-reviews` 브랜치.
+> 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록·회원탈퇴) / 백엔드 답변 반영(helpful·수료여부 PATCH·활동변경/GNB 모달 results) / **전수 감사 후 미연동 7건 일괄 수정**(프로필 메인·계정·이메일동의·관심직무·북마크) / **활동 필터 직무유형·주최기관 백엔드 연동**(참여대상·활동분야·모집지역만 코드값 대기) / 모바일·홈 따끈따끈 필터 mock 새던 버그 수정 / 카테고리 목록 PC 상단 디자인 정합(브레드크럼+제목). 모두 `feat/my-reviews` 브랜치(**push 완료**).
+>
+> **다음 세션 우선순위**: 백엔드 회신(외부 확인 요청 섹션) 오는 순서대로 — ① 리뷰 수정 `activity_id` ② 필터 코드값(target/field/location, 금융권) ③ 알림·동의 초기값 read ④ 인기검색어 랭킹 ⑤ 닉네임 중복확인. 코드 미연동 잔여는 거의 없고 대부분 백엔드/디자인 대기 상태.
 
 **A. 화면 있고 바로 가능 (비블로킹)**
 - ✅ **회원탈퇴 연동 완료(2026-06)**: `WithdrawPage` client 전환 — 동의 체크 + 사유 라디오(6종 enum 매핑) → `POST /api/members/withdrawal-survey {reason}` → `DELETE /api/members` → 로그아웃(`clientLogout`+`/api/auth/logout`) → `/signin`. 탈퇴 전 `window.confirm` 가드. 취소→`/profile/account/info`. typecheck/eslint EXIT 0.
@@ -94,13 +96,14 @@
 
 ## Current Worktree State
 
-> **상태(2026-06 업데이트):** 현재 작업 브랜치 **`feat/my-reviews`** (dev에서 분기, **아직 push 안 됨**, working tree 깨끗).
-> - `79c4e16` feat: 부가기능 연동(알림 설정·이메일 변경·최근 검색기록) ← **최신**
-> - `eb746aa` feat: 내가 작성한 리뷰 목록·삭제 + 작성 폼 edit 모드 재사용 리팩터
-> - `60d99cd` style: 리뷰 탭 Figma 정합(만족도 헤딩 18px·gray-80, 드롭다운 15px, 칩 13px)
-> - (이전 dev) `30ea323` 회원가입 placeholder 정합 / `6143e65` 리뷰 기능 전반 …
+> **상태(2026-06 업데이트):** 작업 브랜치 **`feat/my-reviews`** (dev에서 분기, **`ganziman`에 push 완료**, 로컬·원격 동기화, working tree 깨끗). dev 이후 커밋 18개.
+> - `5dd5730` fix: 주최기관 필터 동작 수정(organizerType 연동) ← **최신**
+> - `7bb9989` style: 카테고리 목록 PC 상단 디자인 정합(브레드크럼+제목)
+> - `7b7f314` fix: 홈 모바일 '따끈따끈' 직무유형 필터 수정
+> - `c1fc7bf` feat: 전수 감사 후 미연동 7건 일괄 실데이터 연동
+> - `02c192d` feat: 활동 목록 직무유형 필터 백엔드 연동 … (이하 helpful·수료여부·모달·회원탈퇴·리뷰목록 등)
 > 추적 제외: `picklab-be/`, `.claude/`, `.omc/`. 미추적 보존: `docs/api-spec.json`, `issues/`.
-> **다음 세션 시작 시**: `feat/my-reviews` 브랜치에서 이어서. 필요 시 push/PR.
+> **다음 세션 시작 시**: `feat/my-reviews` 브랜치에서 이어서(이미 push됨). PR 미생성 — 필요 시 생성. 작업은 백엔드 회신 대기 항목 위주(외부 확인 요청 섹션).
 
 이전 세션에서 구현·검증한 변경 내역입니다(이제 커밋됨).
 
