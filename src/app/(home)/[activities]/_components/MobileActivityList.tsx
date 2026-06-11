@@ -234,7 +234,7 @@ export default function MobileActivityList({
       {title ? <Typography type={typoType}>{title}</Typography> : null}
 
       <div className="relative z-20 mt-5">
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center pb-1">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center pb-1 w-screen ml-[calc(50%-50vw)] px-5">
           <button
             type="button"
             className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0"

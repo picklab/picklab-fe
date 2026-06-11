@@ -66,7 +66,7 @@ interface ArchiveMenuProps {
 
 function ArchiveMenu({ snbMenu, setSnbMenu }: ArchiveMenuProps) {
   return (
-    <div className="relative flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+    <div className="relative flex flex-row w-screen ml-[calc(50%-50vw)] px-5 h-[35px] overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
       {MENU_ITEMS.map((item) => (
         <button
           key={item.id}
