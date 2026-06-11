@@ -112,6 +112,42 @@ export default function MobileActivityList({
       병원: "HOSPITAL",
       기타: "ETC",
     };
+    // 참여대상(target) → 백엔드 코드 ("기타"는 코드 없음)
+    const targetLabelToCode: Record<string, string> = {
+      "제한 없음": "all",
+      대학생: "university_student",
+      직장인: "worker",
+    };
+    // 활동분야(field) → 백엔드 코드 (1:1)
+    const fieldLabelToCode: Record<string, string> = {
+      서포터즈: "supporters",
+      마케터: "marketer",
+      멘토링: "mentoring",
+      기자단: "press",
+      해외봉사: "overseas_volunteer",
+      국내봉사단: "domestic_volunteer",
+    };
+    // 모집지역(location) → 백엔드 권역 코드 (개별 시·도를 권역에 매핑, 충북은 충청권 best-effort)
+    const regionLabelToLocation: Record<string, string> = {
+      서울: "seoul_incheon",
+      인천: "seoul_incheon",
+      경기: "gyeonggi_gangwon",
+      강원: "gyeonggi_gangwon",
+      대전: "daejeon_sejong_chungnam",
+      세종: "daejeon_sejong_chungnam",
+      충남: "daejeon_sejong_chungnam",
+      충북: "daejeon_sejong_chungnam",
+      부산: "busan_daegu_gyeongsang",
+      대구: "busan_daegu_gyeongsang",
+      울산: "busan_daegu_gyeongsang",
+      경북: "busan_daegu_gyeongsang",
+      경남: "busan_daegu_gyeongsang",
+      광주: "gwangju_jeolla",
+      전남: "gwangju_jeolla",
+      전북: "gwangju_jeolla",
+      제주: "jeju",
+    };
+    const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
     const jobTags = (selectedFilters["관련직무"] ?? [])
       .filter((v) => v !== "전체")
       .map((label) => jobLabelToTag[label])
@@ -120,6 +156,27 @@ export default function MobileActivityList({
       .filter((v) => v !== "전체")
       .map((label) => orgLabelToType[label])
       .filter(Boolean);
+    const targets = uniq(
+      (selectedFilters["참여대상"] ?? [])
+        .filter((v) => v !== "전체")
+        .map((label) => targetLabelToCode[label])
+        .filter(Boolean),
+    );
+    const fields = uniq(
+      (selectedFilters["활동분야"] ?? [])
+        .filter((v) => v !== "전체")
+        .map((label) => fieldLabelToCode[label])
+        .filter(Boolean),
+    );
+    const regionSel = selectedFilters["모집지역"] ?? [];
+    const locations = uniq(
+      regionSel
+        .filter((v) => v !== "전체")
+        .map((label) => regionLabelToLocation[label])
+        .filter(Boolean),
+    );
+    // "온라인"은 location이 아니라 format=online으로 전송
+    const format = regionSel.includes("온라인") ? "online" : undefined;
     return {
       size: "200",
       sort: "LATEST",
@@ -128,6 +185,10 @@ export default function MobileActivityList({
       ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug] } : {}),
       ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
       ...(orgTypes.length > 0 ? { organizerType: orgTypes.join(",") } : {}),
+      ...(targets.length > 0 ? { target: targets.join(",") } : {}),
+      ...(fields.length > 0 ? { field: fields.join(",") } : {}),
+      ...(locations.length > 0 ? { location: locations.join(",") } : {}),
+      ...(format ? { format } : {}),
     };
   }, [activitySlug, selectedFilters]);
   const { data: apiData, loading } = useActivities("latest", activityParams);

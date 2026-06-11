@@ -72,6 +72,44 @@ const ORGANIZER_LABEL_TO_TYPE: Record<string, string> = {
 // 클라 보정 비교용 공백 정규화 (옵션 "외국계 기업" vs 라벨 "외국계기업" 불일치 방지)
 const normalizeOrg = (s: string) => s.replace(/\s/g, '');
 
+// 참여대상 라벨 → 백엔드 target 코드 (all/university_student/worker). "기타"는 백엔드 코드 없음 → 미전송
+const TARGET_LABEL_TO_CODE: Record<string, string> = {
+  '제한 없음': 'all',
+  대학생: 'university_student',
+  직장인: 'worker',
+};
+// 활동분야 라벨 → 백엔드 field 코드 (1:1)
+const FIELD_LABEL_TO_CODE: Record<string, string> = {
+  서포터즈: 'supporters',
+  마케터: 'marketer',
+  멘토링: 'mentoring',
+  기자단: 'press',
+  해외봉사: 'overseas_volunteer',
+  국내봉사단: 'domestic_volunteer',
+};
+// 모집지역 라벨 → 백엔드 location 권역 코드. 백엔드가 권역으로 묶어 개별 시·도를 권역에 매핑
+// (충북은 명시 안 됐으나 충청권으로 best-effort). "온라인"은 location이 아니라 format=online으로 전송
+const REGION_LABEL_TO_LOCATION: Record<string, string> = {
+  서울: 'seoul_incheon',
+  인천: 'seoul_incheon',
+  경기: 'gyeonggi_gangwon',
+  강원: 'gyeonggi_gangwon',
+  대전: 'daejeon_sejong_chungnam',
+  세종: 'daejeon_sejong_chungnam',
+  충남: 'daejeon_sejong_chungnam',
+  충북: 'daejeon_sejong_chungnam',
+  부산: 'busan_daegu_gyeongsang',
+  대구: 'busan_daegu_gyeongsang',
+  울산: 'busan_daegu_gyeongsang',
+  경북: 'busan_daegu_gyeongsang',
+  경남: 'busan_daegu_gyeongsang',
+  광주: 'gwangju_jeolla',
+  전남: 'gwangju_jeolla',
+  전북: 'gwangju_jeolla',
+  제주: 'jeju',
+};
+const uniqueJoin = (codes: string[]) => Array.from(new Set(codes.filter(Boolean))).join(',');
+
 export default function NewActivityList({
   title,
   categorySlug,
@@ -109,6 +147,35 @@ export default function NewActivityList({
     [selectedFilters],
   );
 
+  // 참여대상(target)/활동분야(field)/모집지역(location)/온오프라인(format) 백엔드 코드로 변환
+  const selectedTargets = useMemo(
+    () =>
+      (selectedFilters['참여대상'] ?? [])
+        .filter((v) => v !== '전체')
+        .map((label) => TARGET_LABEL_TO_CODE[label])
+        .filter(Boolean),
+    [selectedFilters],
+  );
+  const selectedFields = useMemo(
+    () =>
+      (selectedFilters['활동분야'] ?? [])
+        .filter((v) => v !== '전체')
+        .map((label) => FIELD_LABEL_TO_CODE[label])
+        .filter(Boolean),
+    [selectedFilters],
+  );
+  const regionSelection = useMemo(() => selectedFilters['모집지역'] ?? [], [selectedFilters]);
+  const selectedLocations = useMemo(
+    () =>
+      regionSelection
+        .filter((v) => v !== '전체')
+        .map((label) => REGION_LABEL_TO_LOCATION[label])
+        .filter(Boolean),
+    [regionSelection],
+  );
+  // "온라인"은 location이 아니라 format=online으로 분리 전송
+  const selectedFormat = regionSelection.includes('온라인') ? 'online' : undefined;
+
   const activityParams = useMemo(
     () => ({
       size: String(getAllActivities().length),
@@ -116,8 +183,12 @@ export default function NewActivityList({
       ...(categorySlug ? { category: CATEGORY_TO_API[categorySlug], fallbackOnEmpty: 'false' } : {}),
       ...(selectedJobTags.length > 0 ? { jobTag: selectedJobTags.join(',') } : {}),
       ...(selectedOrgTypes.length > 0 ? { organizerType: selectedOrgTypes.join(',') } : {}),
+      ...(selectedTargets.length > 0 ? { target: uniqueJoin(selectedTargets) } : {}),
+      ...(selectedFields.length > 0 ? { field: uniqueJoin(selectedFields) } : {}),
+      ...(selectedLocations.length > 0 ? { location: uniqueJoin(selectedLocations) } : {}),
+      ...(selectedFormat ? { format: selectedFormat } : {}),
     }),
-    [categorySlug, sort, selectedJobTags, selectedOrgTypes],
+    [categorySlug, sort, selectedJobTags, selectedOrgTypes, selectedTargets, selectedFields, selectedLocations, selectedFormat],
   );
   const { data: apiData, loading } = useActivities('latest', activityParams);
   const effectiveLoading = loading;

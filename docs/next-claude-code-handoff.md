@@ -13,7 +13,7 @@
 
 > 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록·회원탈퇴) / 백엔드 답변 반영(helpful·수료여부 PATCH·활동변경/GNB 모달 results) / **전수 감사 후 미연동 7건 일괄 수정**(프로필 메인·계정·이메일동의·관심직무·북마크) / **활동 필터 직무유형·주최기관 백엔드 연동**(참여대상·활동분야·모집지역만 코드값 대기) / 모바일·홈 따끈따끈 필터 mock 새던 버그 수정 / 카테고리 목록 PC 상단 디자인 정합(브레드크럼+제목). 모두 `feat/my-reviews` 브랜치(**push 완료**).
 >
-> **다음 세션 우선순위**: 백엔드 회신(외부 확인 요청 섹션) 오는 순서대로 — ① 리뷰 수정 `activity_id` ② 필터 코드값(target/field/location, 금융권) ③ 알림·동의 초기값 read ④ 인기검색어 랭킹 ⑤ 닉네임 중복확인. 코드 미연동 잔여는 거의 없고 대부분 백엔드/디자인 대기 상태.
+> **다음 세션 우선순위**: 백엔드 회신(외부 확인 요청 섹션) 오는 순서대로 — ① 리뷰 수정 `activity_id`(여전히 응답·요청 양쪽 미해결) ② ~~필터 코드값~~(✅ 2026-06-11 연동 완료, 충북 권역·멀티값 허용만 확인) ③ 알림·동의 초기값 read ④ 인기검색어 랭킹 ⑤ 닉네임 중복확인. 코드 미연동 잔여는 거의 없고 대부분 백엔드/디자인 대기 상태.
 
 **A. 화면 있고 바로 가능 (비블로킹)**
 - ✅ **회원탈퇴 연동 완료(2026-06)**: `WithdrawPage` client 전환 — 동의 체크 + 사유 라디오(6종 enum 매핑) → `POST /api/members/withdrawal-survey {reason}` → `DELETE /api/members` → 로그아웃(`clientLogout`+`/api/auth/logout`) → `/signin`. 탈퇴 전 `window.confirm` 가드. 취소→`/profile/account/info`. typecheck/eslint EXIT 0.
@@ -54,7 +54,8 @@
 - ✅ **모바일 "전체" 탭 필터 깨짐 수정**: `MobileActivityList`가 "전체" 탭에서 `fallbackOnEmpty` 미설정(기본 true)이라 필터 결과가 비면 **mock 데이터로 새던 문제** → 활동 목록은 항상 `fallbackOnEmpty:"false"`로 변경. (PC는 항상 카테고리가 있어 영향 없었음)
 - ✅ **홈 메인(`/`) 모바일 "따끈따끈"(latest) 직무유형 필터 수정**: `_components/mobile/ActivityList.tsx`가 ① jobTag를 백엔드 미전송(클라 필터만) ② 데이터 비면 `CardData` mock fallback으로 필터 무시 → "안 바뀜". 직무유형→jobTag 백엔드 전송 + 필터 활성 시 mock 차단(빈 결과는 "조건에 맞는 활동 없음")으로 수정. (PC 홈 따끈따끈은 `NewActivityList`라 원래 정상)
 - ✅ **주최기관(organizerType) 백엔드 연동 완료(2026-06)**: 라벨→코드 매핑(대기업=`LARGE_CORPORATION` 등) + 클라 보정 — 기존 버그(회사명 `organizer`를 유형과 비교해 항상 불일치)를 유형 `companyType` 공백정규화 비교로 수정. PC(`NewActivityList`)·모바일(`MobileActivityList`). (금융권 코드 `FINANCIAL_INSTITUTION`은 백엔드 확인 권장)
-- ⏳ **참여대상/활동분야/모집지역만 무동작**(no-op): 백엔드 `target/field/location` 허용 코드값(enum)을 몰라 미연동 → 외부요청 #8.
+- ✅ **참여대상(target)/활동분야(field)/모집지역(location) 백엔드 연동 완료(2026-06-11)**: api-spec(6/6 갱신)에 `GET /v1/activities` 코드값이 문서화되어 연동. 라벨→코드 매핑 — **참여대상**: 제한없음=`all`/대학생=`university_student`/직장인=`worker`(기타는 백엔드 코드 없어 미전송), **활동분야**: 서포터즈=`supporters`/마케터=`marketer`/멘토링=`mentoring`/기자단=`press`/해외봉사=`overseas_volunteer`/국내봉사단=`domestic_volunteer`(1:1), **모집지역**: 백엔드가 권역으로 묶어(seoul_incheon 등) 개별 시·도를 권역에 매핑(충북은 명시 안 됐으나 충청권 best-effort), **"온라인"은 location 아닌 `format=online`으로 분리 전송**. PC(`NewActivityList`+`useActivities` latest 분기)·모바일(`MobileActivityList`) 모두 반복 param 전송(jobTag/organizerType와 동일 패턴). typecheck/eslint EXIT 0.
+  - ⚠️ **잔여 확인 2건(백엔드)**: ① 충북이 `daejeon_sejong_chungnam` 권역에 포함되는지 ② target/field/location이 멀티값(반복 param) 허용인지 단일값만인지(현재 멀티선택 시 반복 전송).
 
 ## 외부 확인 요청 (2026-06 최신) — 백엔드/디자이너 전달용
 
@@ -68,7 +69,7 @@
 | 5 | **jobDetail 멀티 직렬화** 방식 (반복 param vs 콤마) | 리뷰 필터 직렬화 최종 확정 | 낮 |
 | 6 | **상세탭 공모분야·모집인원·지원서 첨부 필드** 제공 여부 | 공고 상세내용 탭 빈 섹션 채움 | 낮 |
 | 7 | (확인) `can_write_review=true`인데 `progress-status` PATCH 막히는 케이스 있는지 (ACCEPTED 조건) | 수료여부 저장 엣지케이스 | 낮 |
-| 8 | **활동 목록 필터 코드값** — `GET /v1/activities`의 `target/field/location` 각 허용 코드(enum) 리스트 (+`organizerType` 금융권 코드 `FINANCIAL` vs `FINANCIAL_INSTITUTION` 확인) | 참여대상·활동분야·모집지역 필터 백엔드 연동(현재 코드값 몰라 미동작). 직무유형(jobTag)·주최기관(organizerType)은 연동 완료 | 중 |
+| 8 | ✅ **해결(2026-06-11)** — `GET /v1/activities`의 `target/field/location` 코드값이 api-spec(6/6)에 문서화되어 **연동 완료**. organizerType 금융권=`FINANCIAL_INSTITUTION` 확정. **잔여 확인만**: ⓐ 충북이 `daejeon_sejong_chungnam`에 포함? ⓑ target/field/location 멀티값(반복 param) 허용 여부 | 참여대상·활동분야·모집지역 필터 연동 마무리 | 낮 |
 
 ### 🎨 Figma(디자인) 확인
 | # | 항목 | 비고 |

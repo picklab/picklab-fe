@@ -156,6 +156,15 @@ async function fetchBackendActivities(
             .filter(Boolean)
             .forEach((t) => searchParams.append('organizerType', t));
         }
+        // 참여대상(target)/활동분야(field)/모집지역(location)/온오프라인(format) 필터도 동일하게 반복 param 전송
+        (['target', 'field', 'location', 'format'] as const).forEach((key) => {
+          const value = params?.[key];
+          if (!value) return;
+          value
+            .split(',')
+            .filter(Boolean)
+            .forEach((v) => searchParams.append(key, v));
+        });
         const response = await fetch(`${path}?${searchParams.toString()}`, { credentials: 'include' });
         if (!response.ok) return [];
         const json = await response.json() as BackendActivityListResponse;
