@@ -130,7 +130,11 @@ export function StarRating({ value, onChange }: { value: number; onChange: (v: n
     <div className="flex items-center gap-2">
       {[1, 2, 3, 4, 5].map((n) => (
         <button key={n} type="button" onClick={() => onChange(n)} aria-label={`${n}점`}>
-          <Icon icon="starFill" size={40} className={n <= value ? 'text-[#FFC95C]' : 'text-gray-20'} />
+          <Icon
+            icon="starFill"
+            size={50}
+            className={clsx('size-[50px] pc:size-[70px]', n <= value ? 'text-[#FFC95C]' : 'text-gray-20')}
+          />
         </button>
       ))}
     </div>
@@ -173,8 +177,8 @@ export function RatingRadio({ question, labels, value, onChange, error }: Rating
         {question}
       </Typography>
       <div className="relative flex items-start justify-between px-2">
-        {/* 연결선 */}
-        <div className="absolute left-[10%] right-[10%] top-[10px] h-px bg-gray-20" aria-hidden />
+        {/* 연결선: 원 중앙 (모바일 48px→24px / PC 58px→29px) */}
+        <div className="absolute left-[10%] right-[10%] top-6 h-px bg-gray-20 pc:top-[29px]" aria-hidden />
         {labels.map((label, idx) => {
           const score = idx + 1;
           const selected = value === score;
@@ -188,7 +192,7 @@ export function RatingRadio({ question, labels, value, onChange, error }: Rating
             >
               <span
                 className={clsx(
-                  'size-5 rounded-full border-2 bg-gray-0 transition-colors',
+                  'size-12 rounded-full border-2 bg-gray-0 transition-colors pc:size-[58px]',
                   selected ? 'border-primary-50 bg-primary-50' : 'border-gray-30',
                 )}
               />
