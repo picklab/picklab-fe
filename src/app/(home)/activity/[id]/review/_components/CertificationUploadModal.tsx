@@ -124,7 +124,7 @@ export default function CertificationUploadModal({
             type="button"
             onClick={onPrev}
             disabled={submitting}
-            className="hidden h-space-48 w-full rounded-small bg-gray-5 hover:bg-gray-10 disabled:opacity-60 pc:block"
+            className="hidden h-space-48 w-full rounded-small bg-gray-5 hover:bg-gray-10 disabled:opacity-60 pc:block pc:flex-1"
           >
             <Typography type="Body2Medium" className="text-gray-90">
               이전으로

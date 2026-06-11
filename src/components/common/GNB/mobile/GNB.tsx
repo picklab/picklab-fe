@@ -25,23 +25,27 @@ const GNB = ({ isLogin = false }: GNBProps) => {
       {isLogin ? (
         <nav aria-label="유저 메뉴">
           <ul className="flex items-center gap-[0.625rem]">
-            <li>
-              <Link href="/calendar" aria-label="캘린더">
+            <li className="flex items-center">
+              <Link href="/calendar" aria-label="캘린더" className="flex items-center">
                 <Icon size={24} icon="calendar" />
               </Link>
             </li>
-            <li>
-              <button type="button" onClick={() => setReviewOpen(true)} aria-label="리뷰쓰기">
+            <li className="flex items-center">
+              <button
+                type="button"
+                onClick={() => setReviewOpen(true)}
+                aria-label="리뷰쓰기"
+                className="flex items-center justify-center">
                 <Icon size={24} icon="pencil" />
               </button>
             </li>
-            <li>
-              <Link href="/notifications" aria-label="알림">
+            <li className="flex items-center">
+              <Link href="/notifications" aria-label="알림" className="flex items-center">
                 <Icon size={24} icon="cowBell" />
               </Link>
             </li>
-            <li>
-              <Link href="/profile" aria-label="프로필">
+            <li className="flex items-center">
+              <Link href="/profile" aria-label="프로필" className="flex items-center">
                 <Avatar />
               </Link>
             </li>
