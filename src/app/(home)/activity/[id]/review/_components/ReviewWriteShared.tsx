@@ -192,10 +192,12 @@ export function RatingRadio({ question, labels, value, onChange, error }: Rating
             >
               <span
                 className={clsx(
-                  'size-12 rounded-full border-2 bg-gray-0 transition-colors pc:size-[58px]',
-                  selected ? 'border-primary-50 bg-primary-50' : 'border-gray-30',
+                  'flex size-12 items-center justify-center rounded-full border-2 transition-colors pc:size-[58px]',
+                  selected ? 'border-[#F7AFA1] bg-[#F7AFA1]' : 'border-gray-30 bg-gray-0',
                 )}
-              />
+              >
+                {selected && <span className="size-6 rounded-full bg-[#DE3412] pc:size-7" />}
+              </span>
               <Typography type="Body4Regular" className={selected ? 'text-primary-60' : 'text-gray-50'}>
                 {label}
               </Typography>
