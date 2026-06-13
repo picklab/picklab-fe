@@ -207,7 +207,7 @@ const ReviewCard = ({
       ].map(([label, value], index) => (
         <div key={label as string} className="flex items-center gap-1">
           {index > 0 && <span className="mr-[6px] h-3 w-px bg-gray-40" aria-hidden="true" />}
-          <Typography type="Caption1Medium" className="text-gray-70">
+          <Typography type="Caption1Medium" className="inline-block w-20 text-gray-70">
             {label}
           </Typography>
           <RatingStars value={toFiveScale(Number(value))} outOf={5} size={24} gapClassName="gap-0" />
@@ -280,60 +280,110 @@ const EmptyReview = ({ className }: { className?: string }) => (
   </div>
 );
 
+// 직무 연관성 레이더: 12시(기획)부터 시계방향 72°씩 5축 정오각형 (figma 2409-26932)
+const RADAR_AXES = [
+  { key: 'planning_avg_score', label: '기획' },
+  { key: 'development_avg_score', label: '개발' },
+  { key: 'marketing_avg_score', label: '마케팅' },
+  { key: 'ai_avg_score', label: 'AI' },
+  { key: 'design_avg_score', label: '디자인' },
+] as const;
+
 const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
-  const score = (value?: number) => (stats ? toScorePercent(value) : 0);
+  const CX = 170;
+  const CY = 150;
+  const R = 88;
+  const LEVELS = 3;
+
+  const angleAt = (i: number) => ((-90 + i * 72) * Math.PI) / 180;
+  const pointAt = (i: number, radius: number) => ({
+    x: CX + radius * Math.cos(angleAt(i)),
+    y: CY + radius * Math.sin(angleAt(i)),
+  });
+  const polygonOf = (radius: number) =>
+    RADAR_AXES.map((_, i) => {
+      const p = pointAt(i, radius);
+      return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+    }).join(' ');
+
+  const scoreOf = (key: (typeof RADAR_AXES)[number]['key']) =>
+    stats ? toScorePercent(stats[key]) : 0;
+  const dataPolygon = RADAR_AXES.map((axis, i) => {
+    const ratio = Math.max(0, Math.min(1, scoreOf(axis.key) / 100));
+    const p = pointAt(i, R * ratio);
+    return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+  }).join(' ');
+
+  // 동심 그리드(바깥→안), 안쪽으로 갈수록 진한 음영
+  const gridFills = ['#F7F8FA', '#EFF1F4', '#E6E9ED'];
+
   return (
     <div className="relative h-[230px] w-[260px]">
-      <svg viewBox="0 0 260 230" className="h-full w-full">
-        <polygon points="130,20 210,70 180,170 80,170 50,70" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-        <polygon points="130,45 186,80 164,150 96,150 74,80" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-        <polygon points="130,70 162,90 148,130 112,130 98,90" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-        <polygon points="130,58 195,78 176,150 108,161 66,84" fill="#10B981" fillOpacity="0.7" stroke="#10B981" />
-        <line x1="130" y1="20" x2="130" y2="170" stroke="#E5E7EB" strokeWidth="1" />
-        <line x1="50" y1="70" x2="210" y2="70" stroke="#E5E7EB" strokeWidth="1" />
-        <line x1="80" y1="170" x2="210" y2="70" stroke="#E5E7EB" strokeWidth="1" />
-        <line x1="50" y1="70" x2="180" y2="170" stroke="#E5E7EB" strokeWidth="1" />
+      <svg viewBox="0 0 340 300" className="h-full w-full">
+        {Array.from({ length: LEVELS }, (_, level) => {
+          const radius = (R * (LEVELS - level)) / LEVELS;
+          return (
+            <polygon
+              key={level}
+              points={polygonOf(radius)}
+              fill={gridFills[level]}
+              stroke="#E5E7EB"
+              strokeWidth="1"
+            />
+          );
+        })}
+        {RADAR_AXES.map((axis, i) => {
+          const p = pointAt(i, R);
+          return (
+            <line
+              key={axis.label}
+              x1={CX}
+              y1={CY}
+              x2={p.x}
+              y2={p.y}
+              stroke="#D1D5DB"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+            />
+          );
+        })}
+        <polygon
+          points={dataPolygon}
+          fill="#00BC7D"
+          fillOpacity="0.85"
+          stroke="#00BC7D"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        {RADAR_AXES.map((axis, i) => {
+          const base = pointAt(i, R + 30);
+          const labelFirst = i === 0; // 상단(기획)만 라벨 위·숫자 아래
+          return (
+            <g key={`label-${axis.label}`}>
+              <text
+                x={base.x}
+                y={labelFirst ? base.y + 8 : base.y - 4}
+                textAnchor="middle"
+                fontSize="20"
+                fontWeight="700"
+                fill="#101828"
+              >
+                {scoreOf(axis.key)}
+              </text>
+              <text
+                x={base.x}
+                y={labelFirst ? base.y - 14 : base.y + 14}
+                textAnchor="middle"
+                fontSize="13"
+                fontWeight="500"
+                fill="#98A2B3"
+              >
+                {axis.label}
+              </text>
+            </g>
+          );
+        })}
       </svg>
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 text-center">
-        <Typography type="Caption1Regular" className="text-gray-50">
-          기획
-        </Typography>
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.planning_avg_score)}
-        </Typography>
-      </div>
-      <div className="absolute right-0 top-[44%] text-center">
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.development_avg_score)}
-        </Typography>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          개발
-        </Typography>
-      </div>
-      <div className="absolute right-4 bottom-1 text-center">
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.marketing_avg_score)}
-        </Typography>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          마케팅
-        </Typography>
-      </div>
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 text-center">
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.ai_avg_score)}
-        </Typography>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          AI
-        </Typography>
-      </div>
-      <div className="absolute left-1 top-[44%] text-center">
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.design_avg_score)}
-        </Typography>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          디자인
-        </Typography>
-      </div>
     </div>
   );
 };
@@ -343,6 +393,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
   const [tab, setTab] = useState<DetailTab>('detail');
   const [isBookmarked, setIsBookmarked] = useState(Boolean(activity.isBookmarked));
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
   const applyLink = getApplyLink(activity);
   const detailImages = splitDetailImages(activity.detailImage);
   const hasThumbnail = Boolean(activity.thumbnailImage);
@@ -515,6 +566,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               <button
                 type="button"
                 aria-label="이미지 확대"
+                onClick={() => setIsImageZoomed(true)}
                 className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-gray-90/70 text-gray-0 inline-flex items-center justify-center"
               >
                 <Icon icon="search" size={16} className="text-gray-0" />
@@ -698,6 +750,31 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
             )}
           </div>
         </section>
+      )}
+
+      {/* 이미지 확대 팝업: 돋보기 클릭 시 2배수 노출, 딤드 클릭 시 닫기 (2510-23083) */}
+      {isImageZoomed && hasThumbnail && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="공고 이미지 확대"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-90/70"
+          onClick={() => setIsImageZoomed(false)}
+        >
+          <div
+            className="relative h-[648px] w-[488px] overflow-hidden rounded-lg bg-gray-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={activity.thumbnailImage}
+              alt={`${activity.title} 확대 이미지`}
+              fill
+              sizes="488px"
+              unoptimized
+              className="object-contain"
+            />
+          </div>
+        </div>
       )}
     </div>
   );

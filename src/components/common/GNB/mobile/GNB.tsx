@@ -1,18 +1,15 @@
 "use client";
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '../../Icon/Icon';
 import Avatar from '../pc/Avatar';
 import Button from '../../Button/Button';
-import ReviewWriteModal from '../ReviewWriteModal';
 
 interface GNBProps {
   isLogin: boolean;
 }
 
 const GNB = ({ isLogin = false }: GNBProps) => {
-  const [reviewOpen, setReviewOpen] = useState(false);
   return (
     <>
     <header className="w-full max-w-[23.4375rem] h-[3.625rem] bg-gray-0 px-5 flex items-center justify-between ">
@@ -31,13 +28,9 @@ const GNB = ({ isLogin = false }: GNBProps) => {
               </Link>
             </li>
             <li className="flex items-center">
-              <button
-                type="button"
-                onClick={() => setReviewOpen(true)}
-                aria-label="리뷰쓰기"
-                className="flex items-center justify-center">
+              <Link href="/profile/posts" aria-label="내가 작성한 리뷰" className="flex items-center">
                 <Icon size={24} icon="pencil" />
-              </button>
+              </Link>
             </li>
             <li className="flex items-center">
               <Link href="/notifications" aria-label="알림" className="flex items-center">
@@ -57,7 +50,6 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         </Link>
       )}
     </header>
-    {reviewOpen && <ReviewWriteModal onClose={() => setReviewOpen(false)} />}
     </>
   );
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Card from '@/components/common/Card/Card';
 import ChevronLeft from '@/components/common/Icon/assets/ChevronLeft';
@@ -17,16 +17,13 @@ interface ActivityListProps {
   endpoint?: ActivityEndpoint;
 }
 
-const VISIBLE_CARD_COUNT = 4;
-
 export default function ActivityList({ title, type = 'card', endpoint }: ActivityListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
-  const [cardPage, setCardPage] = useState(0);
   const { data: apiData, loading } = useActivities(endpoint ?? 'recommendations');
 
-  // 카드 1개 너비(+gap) 만큼만 스크롤해 "한 칸씩" 이동 (속도는 smooth 유지)
+  // 카드 1개 너비(+gap) 만큼만 스크롤해 "한 칸씩" 이동 (인기/추천/최근 동일 인터랙션, 속도는 smooth 유지)
   const scrollByOneCard = (direction: 'left' | 'right') => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -38,21 +35,8 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
     container.scrollBy({ left: direction === 'left' ? -step : step, behavior: 'smooth' });
   };
 
-  const scrollLeft = () => {
-    if (type === 'card') {
-      setCardPage((page) => Math.max(0, page - 1));
-      return;
-    }
-    scrollByOneCard('left');
-  };
-
-  const scrollRight = () => {
-    if (type === 'card') {
-      setCardPage((page) => Math.min(maxCardPage, page + 1));
-      return;
-    }
-    scrollByOneCard('right');
-  };
+  const scrollLeft = () => scrollByOneCard('left');
+  const scrollRight = () => scrollByOneCard('right');
 
   const handleBookmarkToggle = async (activityId: string) => {
     const current = bookmarkedMap[activityId] ?? false;
@@ -69,18 +53,6 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
   const hasApiData = !loading && apiData.length > 0;
   const showEmptyRecentlyViewed = endpoint === 'recently-viewed' && !loading && apiData.length === 0;
   const shouldUseFallback = !loading && apiData.length === 0 && endpoint !== 'recently-viewed';
-  const cardItemCount = type === 'card' ? (hasApiData ? apiData.length : shouldUseFallback ? CardData.length : 0) : 0;
-  const maxCardPage = Math.max(0, cardItemCount - VISIBLE_CARD_COUNT);
-  const cardPageStart = cardPage;
-  const cardPageEnd = cardPageStart + VISIBLE_CARD_COUNT;
-
-  useEffect(() => {
-    setCardPage(0);
-  }, [endpoint, type]);
-
-  useEffect(() => {
-    setCardPage((page) => Math.min(page, maxCardPage));
-  }, [maxCardPage]);
 
   return (
     <div className="w-full flex flex-col gap-3">
@@ -93,10 +65,10 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
       </div>
       <div
         ref={scrollContainerRef}
-        className={type === 'card' ? 'flex gap-5 overflow-hidden w-full' : 'flex gap-5 overflow-x-scroll hide-scrollbar w-full'}
+        className="flex gap-5 overflow-x-scroll hide-scrollbar w-full"
       >
         {hasApiData
-          ? (type === 'card' ? apiData.slice(cardPageStart, cardPageEnd) : apiData).map((item) => {
+          ? apiData.map((item) => {
               const isBookmarked = bookmarkedMap[item.id] ?? false;
               return type === 'card' ? (
                 <Card
@@ -140,14 +112,8 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
           </div>
         ) : null}
         {shouldUseFallback
-          ? Array.from({
-              length: type === 'card'
-                ? Math.max(0, Math.min(VISIBLE_CARD_COUNT, CardData.length - cardPageStart))
-                : CardData.length,
-            }).map((_, offset) =>
+          ? CardData.map((item, index) =>
               (() => {
-                const index = type === 'card' ? cardPageStart + offset : offset;
-                const item = CardData[index];
                 const activityId = extractActivityId(item.detailLink);
                 const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
 

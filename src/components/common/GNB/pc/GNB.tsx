@@ -1,13 +1,11 @@
 /** @format */
 
 "use client";
-import { useState } from "react";
 import Button from "@/components/common/Button/Button";
 import Search from "@/components/common/Field/Search";
 import Avatar from "@/components/common/GNB/pc/Avatar";
 import GNBMenu from "@/components/common/GNB/pc/GNBMenu";
 import Icon from "@/components/common/Icon/Icon";
-import ReviewWriteModal from "@/components/common/GNB/ReviewWriteModal";
 import { GNBNavigationMenus } from "@/constants/menus";
 import { useAuthClient } from "@/contexts/AuthContext";
 
@@ -21,10 +19,8 @@ interface GNBProps {
 
 const GNB = ({ isLogin = false }: GNBProps) => {
   const { isAuthenticated } = useAuthClient();
-  const [reviewOpen, setReviewOpen] = useState(false);
 
   return (
-    <>
     <header className="w-full border-b border-gray-20">
       <div
         className={clsx(
@@ -72,9 +68,9 @@ const GNB = ({ isLogin = false }: GNBProps) => {
                 </Link>
               </li>
               <li>
-                <button type="button" onClick={() => setReviewOpen(true)} aria-label="리뷰쓰기">
+                <Link href="/profile/posts" aria-label="내가 작성한 리뷰" className="flex items-center">
                   <Icon size={24} icon="pencil" />
-                </button>
+                </Link>
               </li>
               <li>
                 <Link href="/notifications" aria-label="알림">
@@ -101,8 +97,6 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         )}
       </div>
     </header>
-    {reviewOpen && <ReviewWriteModal onClose={() => setReviewOpen(false)} />}
-    </>
   );
 };
 

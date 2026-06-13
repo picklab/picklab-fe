@@ -163,6 +163,10 @@ const ProfileSection = () => {
   const [avatarSrc, setAvatarSrc] = useState('/imgs/avatar.jpg');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const createdObjectUrlRef = useRef<string | null>(null);
+  // 프로필 사진 등록 팝업(2532-26124): 드롭존에서 선택 후 "등록하기"로 업로드
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedPreview, setSelectedPreview] = useState<string | null>(null);
   const [savedForm, setSavedForm] = useState<ProfileForm>(defaultForm);
   const [form, setForm] = useState<ProfileForm>(defaultForm);
   const [memberInfo, setMemberInfo] = useState<MemberInfoPayload>(defaultMemberInfo);
@@ -265,18 +269,57 @@ const ProfileSection = () => {
     }
   };
 
+  // 카메라 버튼 → 프로필 사진 등록 팝업 오픈
   const handleAvatarClick = () => {
-    fileInputRef.current?.click();
+    if (selectedPreview) URL.revokeObjectURL(selectedPreview);
+    setSelectedFile(null);
+    setSelectedPreview(null);
+    setIsPhotoModalOpen(true);
   };
 
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const closePhotoModal = () => {
+    if (selectedPreview) URL.revokeObjectURL(selectedPreview);
+    setSelectedFile(null);
+    setSelectedPreview(null);
+    setIsPhotoModalOpen(false);
+  };
+
+  // 드롭존/파일선택에서 호출 — 업로드는 "등록하기"에서
+  const pickFile = (file?: File | null) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       window.alert('이미지 파일만 업로드할 수 있습니다.');
       return;
     }
+    if (file.size > 50 * 1024 * 1024) {
+      window.alert('50MB 이하의 파일만 등록할 수 있습니다.');
+      return;
+    }
+    if (selectedPreview) URL.revokeObjectURL(selectedPreview);
+    setSelectedFile(file);
+    setSelectedPreview(URL.createObjectURL(file));
+  };
 
+  const handleModalFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    pickFile(event.target.files?.[0]);
+    event.target.value = '';
+  };
+
+  const handleDropZoneDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    pickFile(event.dataTransfer.files?.[0]);
+  };
+
+  const handleRegisterPhoto = async () => {
+    if (!selectedFile) {
+      window.alert('등록할 이미지를 선택해주세요.');
+      return;
+    }
+    const ok = await uploadProfileImage(selectedFile);
+    if (ok) closePhotoModal();
+  };
+
+  const uploadProfileImage = async (file: File): Promise<boolean> => {
     const previousAvatarSrc = avatarSrc;
     const previewUrl = URL.createObjectURL(file);
     createdObjectUrlRef.current = previewUrl;
@@ -301,14 +344,14 @@ const ProfileSection = () => {
       if (!presignedResponse.ok) {
         window.alert(readErrorMessage(presignedPayload, '이미지 업로드 URL 발급에 실패했습니다.'));
         setAvatarSrc(previousAvatarSrc);
-        return;
+        return false;
       }
 
       const presignedInfo = parsePresignedUploadInfo(presignedPayload);
       if (!presignedInfo) {
         window.alert('업로드 URL 정보를 해석할 수 없습니다.');
         setAvatarSrc(previousAvatarSrc);
-        return;
+        return false;
       }
 
       const uploadResponse = await fetch(presignedInfo.uploadUrl, {
@@ -320,7 +363,7 @@ const ProfileSection = () => {
       if (!uploadResponse.ok) {
         window.alert('이미지 업로드에 실패했습니다.');
         setAvatarSrc(previousAvatarSrc);
-        return;
+        return false;
       }
 
       const imageUrl = presignedInfo.imageUrl || presignedInfo.uploadUrl.split('?')[0];
@@ -336,17 +379,18 @@ const ProfileSection = () => {
       if (!updateResponse.ok) {
         window.alert(readErrorMessage(updatePayload, '프로필 이미지 저장에 실패했습니다.'));
         setAvatarSrc(previousAvatarSrc);
-        return;
+        return false;
       }
 
       window.alert('프로필 이미지가 저장되었습니다.');
+      return true;
     } catch (error) {
       console.error('프로필 이미지 업로드 중 오류 발생:', error);
       window.alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
       setAvatarSrc(previousAvatarSrc);
+      return false;
     } finally {
       setIsUploadingImage(false);
-      event.target.value = '';
     }
   };
 
@@ -358,6 +402,7 @@ const ProfileSection = () => {
   ];
 
   return (
+    <>
     <section className="flex flex-col items-center pb-7 border-b border-gray-20 pc:rounded-[10px] pc:border pc:border-gray-30 pc:px-[58px] pc:pb-[45px] pc:pt-[20px]">
       <div className="flex flex-col items-center gap-6 pc:gap-9 w-[335px] pc:w-[420px]">
         <div className="w-full flex flex-col items-center gap-4">
@@ -380,7 +425,7 @@ const ProfileSection = () => {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={handleImageChange}
+              onChange={handleModalFileInput}
               disabled={isUploadingImage}
             />
           </div>
@@ -429,6 +474,82 @@ const ProfileSection = () => {
         )}
       </div>
     </section>
+
+      {/* 프로필 사진 등록 팝업 (2532-26124) */}
+      {isPhotoModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="프로필 사진 등록"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-90/50 px-5"
+          onClick={closePhotoModal}
+        >
+          <div
+            className="relative w-full max-w-[560px] rounded-[16px] bg-gray-0 px-8 py-7"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <Typography type="Heading1Bold" className="text-gray-90">
+                프로필 사진 등록
+              </Typography>
+              <button type="button" aria-label="닫기" onClick={closePhotoModal}>
+                <Icon icon="xMark" size={24} className="text-gray-90" />
+              </button>
+            </div>
+
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click();
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDropZoneDrop}
+              className="mt-6 flex min-h-[260px] cursor-pointer flex-col items-center justify-center gap-3 rounded-[8px] border border-dashed border-gray-40 px-4 text-center"
+            >
+              {selectedPreview ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={selectedPreview}
+                  alt="선택한 이미지 미리보기"
+                  className="max-h-[200px] rounded-[8px] object-contain"
+                />
+              ) : (
+                <>
+                  <Typography type="Body1Semibold" className="text-gray-90">
+                    이 영역에 파일을 끌어 놓거나 붙여넣으세요.
+                  </Typography>
+                  <Typography type="Body3Medium" className="text-gray-50">
+                    이미지 파일(.jpg .gif .png .psd .ai .jpeg .tif .tiff) 업로드 가능
+                  </Typography>
+                  <Typography type="Body3Medium" className="text-gray-50">
+                    *파일은 50MB 이하의 파일을 등록할 수 있습니다.
+                  </Typography>
+                </>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-center gap-3">
+              <Button
+                label="취소하기"
+                size="sm"
+                buttonStyle="outlined"
+                onClick={closePhotoModal}
+                disabled={isUploadingImage}
+              />
+              <Button
+                label="등록하기"
+                size="sm"
+                buttonStyle="filled"
+                onClick={handleRegisterPhoto}
+                disabled={isUploadingImage || !selectedFile}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

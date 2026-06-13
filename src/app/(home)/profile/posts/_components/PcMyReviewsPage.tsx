@@ -143,17 +143,31 @@ export default function PcMyReviewsPage() {
                   {reviewApprovalStatusLabel(item.approval_status)}
                 </Typography>
 
-                {/* 수정/삭제 */}
+                {/* 수정/삭제 (수정은 미승인(REJECTED)일 때만 활성) */}
                 <div className="flex justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleEdit}
-                    className="h-[34px] rounded-full border border-gray-30 px-4 hover:bg-gray-5"
-                  >
-                    <Typography type="Body3Medium" className="text-gray-90">
-                      수정
-                    </Typography>
-                  </button>
+                  {(() => {
+                    const editable = item.approval_status === 'REJECTED';
+                    return (
+                      <button
+                        type="button"
+                        onClick={handleEdit}
+                        disabled={!editable}
+                        className={clsx(
+                          'h-[34px] rounded-full border px-4',
+                          editable
+                            ? 'border-gray-30 hover:bg-gray-5'
+                            : 'cursor-not-allowed border-gray-20',
+                        )}
+                      >
+                        <Typography
+                          type="Body3Medium"
+                          className={editable ? 'text-gray-90' : 'text-gray-30'}
+                        >
+                          수정
+                        </Typography>
+                      </button>
+                    );
+                  })()}
                   <button
                     type="button"
                     onClick={() => setDeleteTarget(item)}
