@@ -112,40 +112,40 @@ export default function MobileActivityList({
       병원: "HOSPITAL",
       기타: "ETC",
     };
-    // 참여대상(target) → 백엔드 코드 ("기타"는 코드 없음)
+    // 참여대상(target) → 백엔드 코드 (대문자 enum, "기타"는 코드 없음)
     const targetLabelToCode: Record<string, string> = {
-      "제한 없음": "all",
-      대학생: "university_student",
-      직장인: "worker",
+      "제한 없음": "ALL",
+      대학생: "UNIVERSITY_STUDENT",
+      직장인: "WORKER",
     };
-    // 활동분야(field) → 백엔드 코드 (1:1)
+    // 활동분야(field) → 백엔드 코드 (1:1, 대문자 enum)
     const fieldLabelToCode: Record<string, string> = {
-      서포터즈: "supporters",
-      마케터: "marketer",
-      멘토링: "mentoring",
-      기자단: "press",
-      해외봉사: "overseas_volunteer",
-      국내봉사단: "domestic_volunteer",
+      서포터즈: "SUPPORTERS",
+      마케터: "MARKETER",
+      멘토링: "MENTORING",
+      기자단: "PRESS",
+      해외봉사: "OVERSEAS_VOLUNTEER",
+      국내봉사단: "DOMESTIC_VOLUNTEER",
     };
-    // 모집지역(location) → 백엔드 권역 코드 (개별 시·도를 권역에 매핑, 충북은 충청권 best-effort)
+    // 모집지역(location) → 백엔드 권역 코드 (대문자 enum, 개별 시·도를 권역에 매핑, 충북은 충청권 best-effort)
     const regionLabelToLocation: Record<string, string> = {
-      서울: "seoul_incheon",
-      인천: "seoul_incheon",
-      경기: "gyeonggi_gangwon",
-      강원: "gyeonggi_gangwon",
-      대전: "daejeon_sejong_chungnam",
-      세종: "daejeon_sejong_chungnam",
-      충남: "daejeon_sejong_chungnam",
-      충북: "daejeon_sejong_chungnam",
-      부산: "busan_daegu_gyeongsang",
-      대구: "busan_daegu_gyeongsang",
-      울산: "busan_daegu_gyeongsang",
-      경북: "busan_daegu_gyeongsang",
-      경남: "busan_daegu_gyeongsang",
-      광주: "gwangju_jeolla",
-      전남: "gwangju_jeolla",
-      전북: "gwangju_jeolla",
-      제주: "jeju",
+      서울: "SEOUL_INCHEON",
+      인천: "SEOUL_INCHEON",
+      경기: "GYEONGGI_GANGWON",
+      강원: "GYEONGGI_GANGWON",
+      대전: "DAEJEON_SEJONG_CHUNGNAM",
+      세종: "DAEJEON_SEJONG_CHUNGNAM",
+      충남: "DAEJEON_SEJONG_CHUNGNAM",
+      충북: "DAEJEON_SEJONG_CHUNGNAM",
+      부산: "BUSAN_DAEGU_GYEONGSANG",
+      대구: "BUSAN_DAEGU_GYEONGSANG",
+      울산: "BUSAN_DAEGU_GYEONGSANG",
+      경북: "BUSAN_DAEGU_GYEONGSANG",
+      경남: "BUSAN_DAEGU_GYEONGSANG",
+      광주: "GWANGJU_JEOLLA",
+      전남: "GWANGJU_JEOLLA",
+      전북: "GWANGJU_JEOLLA",
+      제주: "JEJU",
     };
     const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
     const jobTags = (selectedFilters["관련직무"] ?? [])
@@ -175,8 +175,8 @@ export default function MobileActivityList({
         .map((label) => regionLabelToLocation[label])
         .filter(Boolean),
     );
-    // "온라인"은 location이 아니라 format=online으로 전송
-    const format = regionSel.includes("온라인") ? "online" : undefined;
+    // "온라인"은 location이 아니라 format=ONLINE으로 전송
+    const format = regionSel.includes("온라인") ? "ONLINE" : undefined;
     return {
       size: "200",
       sort: "LATEST",
