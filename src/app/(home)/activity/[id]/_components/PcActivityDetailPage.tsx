@@ -293,29 +293,52 @@ const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
   const CX = 170;
   const CY = 150;
   const R = 88;
-  const LEVELS = 3;
+  const LEVELS = 4;
 
   const angleAt = (i: number) => ((-90 + i * 72) * Math.PI) / 180;
   const pointAt = (i: number, radius: number) => ({
     x: CX + radius * Math.cos(angleAt(i)),
     y: CY + radius * Math.sin(angleAt(i)),
   });
-  const polygonOf = (radius: number) =>
-    RADAR_AXES.map((_, i) => {
-      const p = pointAt(i, radius);
-      return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
-    }).join(' ');
+  const CORNER = 13.85; // 오각형 모서리 둥글기
+  const pointsOf = (radius: number) => RADAR_AXES.map((_, i) => pointAt(i, radius));
+
+  // 둥근 모서리 폴리곤 path (각 꼭짓점을 corner 만큼 깎아 Q 베지어로 연결)
+  const roundedPath = (pts: { x: number; y: number }[], corner: number) => {
+    const n = pts.length;
+    const unit = (from: { x: number; y: number }, to: { x: number; y: number }) => {
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const len = Math.hypot(dx, dy) || 1;
+      return { x: dx / len, y: dy / len };
+    };
+    let d = '';
+    for (let i = 0; i < n; i++) {
+      const prev = pts[(i - 1 + n) % n];
+      const curr = pts[i];
+      const next = pts[(i + 1) % n];
+      const half =
+        Math.min(Math.hypot(prev.x - curr.x, prev.y - curr.y), Math.hypot(next.x - curr.x, next.y - curr.y)) / 2;
+      const c = Math.min(corner, half);
+      const toPrev = unit(curr, prev);
+      const toNext = unit(curr, next);
+      const a = { x: curr.x + toPrev.x * c, y: curr.y + toPrev.y * c };
+      const b = { x: curr.x + toNext.x * c, y: curr.y + toNext.y * c };
+      d += `${i === 0 ? 'M' : 'L'} ${a.x.toFixed(2)} ${a.y.toFixed(2)} `;
+      d += `Q ${curr.x.toFixed(2)} ${curr.y.toFixed(2)} ${b.x.toFixed(2)} ${b.y.toFixed(2)} `;
+    }
+    return `${d}Z`;
+  };
 
   const scoreOf = (key: (typeof RADAR_AXES)[number]['key']) =>
     stats ? toScorePercent(stats[key]) : 0;
-  const dataPolygon = RADAR_AXES.map((axis, i) => {
+  const dataPts = RADAR_AXES.map((axis, i) => {
     const ratio = Math.max(0, Math.min(1, scoreOf(axis.key) / 100));
-    const p = pointAt(i, R * ratio);
-    return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
-  }).join(' ');
+    return pointAt(i, R * ratio);
+  });
 
-  // 동심 그리드(바깥→안), 안쪽으로 갈수록 진한 음영
-  const gridFills = ['#F7F8FA', '#EFF1F4', '#E6E9ED'];
+  // 동심 그리드(바깥→안) 4겹, 배경색을 번갈아 적용
+  const gridFills = ['#F9FAFB', '#F3F4F6', '#F9FAFB', '#F3F4F6'];
 
   return (
     <div className="relative h-[230px] w-[260px]">
@@ -323,9 +346,9 @@ const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
         {Array.from({ length: LEVELS }, (_, level) => {
           const radius = (R * (LEVELS - level)) / LEVELS;
           return (
-            <polygon
+            <path
               key={level}
-              points={polygonOf(radius)}
+              d={roundedPath(pointsOf(radius), (CORNER * radius) / R)}
               fill={gridFills[level]}
               stroke="#E5E7EB"
               strokeWidth="1"
@@ -347,10 +370,10 @@ const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
             />
           );
         })}
-        <polygon
-          points={dataPolygon}
+        <path
+          d={roundedPath(dataPts, CORNER)}
           fill="#00BC7D"
-          fillOpacity="0.85"
+          fillOpacity="0.7"
           stroke="#00BC7D"
           strokeWidth="2"
           strokeLinejoin="round"
