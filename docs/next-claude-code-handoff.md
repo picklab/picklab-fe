@@ -9,6 +9,23 @@
 - 리뷰 **작성 페이지**(3스텝+인증): PC/모바일 **구현 완료**
 - 리뷰 **작성 진입**: 공고 상세 "리뷰 작성하기" + GNB 연필 두 경로 완료
 
+## 세션 로그 (2026-06-13) — UI 수정 + 백엔드 라이브 조사
+
+> 모두 **`dev` 브랜치에 머지·`origin/dev` push 완료**. (이전 `feat/my-reviews`를 dev로 fast-forward 머지)
+
+**코드 변경 (커밋 완료)**
+- ✅ **활동 필터 참여대상/활동분야/모집지역 백엔드 연동**: `target/field/location/format` 대문자 enum으로 전송(`NewActivityList`·`MobileActivityList`·`useActivities`). 라벨→코드 매핑(target ALL/UNIVERSITY_STUDENT/WORKER, field 1:1, location 권역 그룹, "온라인"→format=ONLINE). ⚠️ 실측 결과 **백엔드는 대소문자 무관(case-insensitive)** — 소문자였어도 동작했음(처음엔 sort 누락 400을 casing 문제로 오진했다가 정정).
+- ✅ **UI 수정 5건**: ① 모바일 GNB 펜슬 flex 정렬 ② 인증 모달 푸터 버튼 `pc:flex-1`(찌그러짐 수정) ③ 리뷰 별·동그라미 크기(PC 70·58px / 모바일 50·48px 반응형 + 연결선 위치 보정) ④ 라디오 active 색상(바깥 `#F7AFA1` + 안쪽 `#DE3412`, 안쪽=바깥 50%) ⑤ 모바일 활동 탭·필터 가로 `full-bleed` 스크롤(`max-w-[335px]` 갇힘 → `w-screen ml-[calc(50%-50vw)] px-5`).
+
+**백엔드 라이브 조사 (member 3 토큰으로 실측 + picklab-be `main` 소스 확인)**
+- 🔴 **`GET /v1/activity-participations/results` 가 계속 500** (helpful 배포 후에도). summary는 200, 다른 API(활동/리뷰/통계/아카이브/알림/검색) 전부 200 — **딱 이 엔드포인트만 깨짐**. 참여 0건·1건·size=1 전부 500, 활동 날짜 null도 아님 → 데이터 무관, 쿼리 실행 자체 문제. **`issues/backend-issues-review-participation.md`** 에 정리. 원경님(@wonsnim)께 디스코드 전달, **수정 대기**.
+  - 영향: 리뷰 작성 진입 모달 데이터 소스 + **participationId 주는 유일 경로** → 합격/수료 처리·리뷰 작성 end-to-end 실측이 막힘.
+- ✅ **리뷰 정책 소스 확정** (`ReviewApprovalDecider.decideOnCreate`): 인증자료 url **있으면 PENDING / 없으면 REJECTED**. 공개 리뷰 목록·통계는 **APPROVED만** 노출(`ReviewOverviewQueryRepositoryImpl.kt:86`). → **인증자료 올려도 즉시 공개 안 됨(관리자 승인 필요)**, 인증 없이 쓰면 즉시 미승인.
+- ✅ **리뷰 작성 자격**: 참여가 `progressStatus = COMPLETED 또는 DROPPED`일 때만 가능(`canWriteReview`). 지원만 한 상태(applied)면 400. = 의도된 게이팅(프론트/페이로드 문제 아님).
+- ✅ **백엔드 개발자 안내사항 반영 확인**: progress-status PATCH 선행→review POST, results 기반 모달, can_write_review 필터 등 모두 프론트에 반영됨(아카이브 생성측 participationId만 추가 점검 권장).
+
+> **다음 세션 1순위**: results 500 수정되면 → member 3 토큰으로 합격→수료→리뷰 등록→공개 여부까지 end-to-end 실측(테스트 데이터는 만든 뒤 삭제 정리). 그 외는 아래 백엔드 대기 항목.
+
 ## 남은 작업 스냅샷 (2026-06 최신)
 
 > 최근 완료: 리뷰 탭 Figma 정합 / 내 리뷰 목록·삭제 + 작성폼 edit 리팩터 / 부가기능(알림설정·이메일변경·최근검색기록·회원탈퇴) / 백엔드 답변 반영(helpful·수료여부 PATCH·활동변경/GNB 모달 results) / **전수 감사 후 미연동 7건 일괄 수정**(프로필 메인·계정·이메일동의·관심직무·북마크) / **활동 필터 직무유형·주최기관 백엔드 연동**(참여대상·활동분야·모집지역만 코드값 대기) / 모바일·홈 따끈따끈 필터 mock 새던 버그 수정 / 카테고리 목록 PC 상단 디자인 정합(브레드크럼+제목). 모두 `feat/my-reviews` 브랜치(**push 완료**).
