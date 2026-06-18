@@ -54,9 +54,11 @@ const Footer = ({ className }: { className: string }) => {
               >
                 E-mail
               </Typography>
-              <Typography type="Caption2Regular" className="text-gray-50">
-                pick.lab.studio@gmail.com
-              </Typography>
+              <a href="mailto:pick.lab.studio@gmail.com">
+                <Typography type="Caption2Regular" className="text-gray-50">
+                  pick.lab.studio@gmail.com
+                </Typography>
+              </a>
             </div>
             <div className="flex items-center">
               <Typography

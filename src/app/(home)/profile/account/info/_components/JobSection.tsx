@@ -132,7 +132,7 @@ const JobSection = () => {
 
   return (
     <section className="flex flex-col items-center pc:rounded-[10px] pc:border pc:border-gray-30 pc:pt-[20px] pc:px-[58px] pc:pb-[45px]">
-      <div className="flex flex-col items-center gap-4 pc:gap-12 w-[335px] pc:w-[420px]">
+      <div className="flex flex-col items-center gap-4 pc:gap-12 w-[335px] pc:w-[536px]">
         <Typography type="Headline2SemiBold" className="w-full text-gray-90 pc:pb-[10px] pc:border-b pc:border-gray-20">
           관심 직무
         </Typography>

@@ -10,6 +10,7 @@ import ListItem from '@/components/common/List/ListItem';
 import Card from '@/components/common/Card/Card';
 import type { CardChipProps } from '@/components/common/Card/CardChip';
 import useParticipationSummary from '@/hooks/useParticipationSummary';
+import { useMe } from '@/hooks/useMe';
 import useArchiveActivities from '@/hooks/useArchiveActivities';
 import useBookmarks from '@/hooks/useBookmarks';
 import { toggleBookmark } from '@/lib/bookmarks';
@@ -19,6 +20,7 @@ type CardJobs = ('기획' | '개발' | '마케팅' | '디자인' | 'AI' | '마�
 export default function PcProfile({ isStorybook = false }: { isStorybook?: boolean }) {
   const router = useRouter();
   const { data: summary } = useParticipationSummary();
+  const { data: me } = useMe();
   const { data: archives } = useArchiveActivities();
   const { data: bookmarks } = useBookmarks();
   const [removed, setRemoved] = useState<Record<string, boolean>>({});
@@ -42,12 +44,12 @@ export default function PcProfile({ isStorybook = false }: { isStorybook?: boole
   };
 
   return (
-    <div className={clsx('gap-[62px] w-[1100px] px-5', isStorybook ? 'flex' : 'hidden pc:flex')}>
-      <SNB Jobs={[]} />
+    <div className={clsx('gap-[62px] w-[1100px] px-5 pc:pt-10', isStorybook ? 'flex' : 'hidden pc:flex')}>
+      <SNB Jobs={me?.jobs ?? []} />
       <section className="max-w-[758px] w-full flex flex-col gap-[58px]">
         {/* 활동 결과 */}
         <div className="flex flex-col gap-4">
-          <ContentHeader title="활동 결과" />
+          <ContentHeader title="활동 결과" onClick={() => router.push('/calendar')} />
           <div className="flex justify-between">
             {results.map(({ title, value }) => (
               <div

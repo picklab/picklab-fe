@@ -34,6 +34,8 @@ const SNB = ({ Jobs }: SNBProps) => {
   ) => {
     // activeHref가 있고, 현재 경로가 activeHref로 시작하면 활성화
     if (activeHref && pathname.startsWith(activeHref)) return true;
+    // 마이페이지 메인(/profile) 진입 시 "MY 활동"(/profile/archive)을 기본 활성화
+    if (pathname === '/profile' && href === '/profile/archive') return true;
     // 현재 경로가 href와 정확히 일치하면 활성화
     if (pathname === href) return true;
     // 자식 메뉴 중 현재 경로와 일치하는 것이 있으면 활성화

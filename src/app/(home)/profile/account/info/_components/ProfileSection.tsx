@@ -404,7 +404,7 @@ const ProfileSection = () => {
   return (
     <>
     <section className="flex flex-col items-center pb-7 border-b border-gray-20 pc:rounded-[10px] pc:border pc:border-gray-30 pc:px-[58px] pc:pb-[45px] pc:pt-[20px]">
-      <div className="flex flex-col items-center gap-6 pc:gap-9 w-[335px] pc:w-[420px]">
+      <div className="flex flex-col items-center gap-6 pc:gap-9 w-[335px] pc:w-[536px]">
         <div className="w-full flex flex-col items-center gap-4">
           <div className="relative w-[100px] h-[100px]">
             <div className="w-full h-full rounded-full border border-gray-30 overflow-hidden">
@@ -413,12 +413,12 @@ const ProfileSection = () => {
             </div>
             <button
               type="button"
-              className="absolute right-0 bottom-0 translate-x-1/4 translate-y-1/4 w-8 h-8 rounded-full border border-gray-30 bg-gray-0 flex items-center justify-center shadow-sm"
+              className="absolute right-0 bottom-0 translate-x-1/4 translate-y-1/4 w-8 h-8 rounded-full border border-gray-30 bg-gray-0 flex items-center justify-center"
               onClick={handleAvatarClick}
               disabled={isUploadingImage}
               aria-label="프로필 이미지 변경"
             >
-              <Icon icon="camera" size={16} className="text-gray-70" />
+              <Icon icon="camera" size={20} className="text-gray-70" />
             </button>
             <input
               ref={fileInputRef}
@@ -451,7 +451,7 @@ const ProfileSection = () => {
                 placeholder={field.placeholder}
                 disabled={!editMode}
                 textBoxType="input"
-                className="w-full"
+                className="w-full !border-0 !text-gray-70"
                 value={form[field.key]}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField(field.key, e.target.value)}
               />

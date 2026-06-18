@@ -280,6 +280,15 @@ const EmptyReview = ({ className }: { className?: string }) => (
   </div>
 );
 
+// TODO(데모): 차트 디자인 확인용 임시 값 — 확정 후 stats={jobRelevance}로 원복하며 제거
+const DEMO_JOB_RELEVANCE: JobRelevanceStats = {
+  planning_avg_score: 4.5,
+  development_avg_score: 3.5,
+  marketing_avg_score: 2.5,
+  ai_avg_score: 4.0,
+  design_avg_score: 2.0,
+};
+
 // 직무 연관성 레이더: 12시(기획)부터 시계방향 72°씩 5축 정오각형 (figma 2409-26932)
 const RADAR_AXES = [
   { key: 'planning_avg_score', label: '기획' },
@@ -343,18 +352,41 @@ const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
   return (
     <div className="relative h-[230px] w-[260px]">
       <svg viewBox="0 0 340 300" className="h-full w-full">
+        {/* 1. 그리드 음영(채움) — 데이터 아래 */}
         {Array.from({ length: LEVELS }, (_, level) => {
           const radius = (R * (LEVELS - level)) / LEVELS;
           return (
             <path
-              key={level}
+              key={`grid-fill-${level}`}
               d={roundedPath(pointsOf(radius), (CORNER * radius) / R)}
               fill={gridFills[level]}
+              stroke="none"
+            />
+          );
+        })}
+        {/* 2. 데이터 폴리곤 (70% 투명) */}
+        <path
+          d={roundedPath(dataPts, CORNER)}
+          fill="#00BC7D"
+          fillOpacity="0.7"
+          stroke="#00BC7D"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        {/* 3. 그리드 오각형 윤곽선 — 데이터 위로 비치게 */}
+        {Array.from({ length: LEVELS }, (_, level) => {
+          const radius = (R * (LEVELS - level)) / LEVELS;
+          return (
+            <path
+              key={`grid-line-${level}`}
+              d={roundedPath(pointsOf(radius), (CORNER * radius) / R)}
+              fill="none"
               stroke="#E5E7EB"
               strokeWidth="1"
             />
           );
         })}
+        {/* 4. 점선 축 — 데이터 위로 비치게 */}
         {RADAR_AXES.map((axis, i) => {
           const p = pointAt(i, R);
           return (
@@ -370,14 +402,6 @@ const JobRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
             />
           );
         })}
-        <path
-          d={roundedPath(dataPts, CORNER)}
-          fill="#00BC7D"
-          fillOpacity="0.7"
-          stroke="#00BC7D"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
         {RADAR_AXES.map((axis, i) => {
           const base = pointAt(i, R + 30);
           const labelFirst = i === 0; // 상단(기획)만 라벨 위·숫자 아래
@@ -445,6 +469,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
     setReviewPage(1);
   };
   const { data: satisfaction } = useReviewSatisfactionStats(reviewActivityId, { enabled: reviewsEnabled });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO(데모): 차트 확인용, 원복 시 DEMO 제거하고 사용
   const { data: jobRelevance } = useReviewJobRelevanceStats(reviewActivityId, { enabled: reviewsEnabled });
   const satisfactionSummary = useMemo(() => aggregateSatisfaction(satisfaction), [satisfaction]);
   const reviews = reviewList?.items ?? [];
@@ -673,7 +698,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
         <section className="mt-[60px]">
           <div className="flex w-full items-start gap-20">
             <div className="flex h-[351px] w-[382px] shrink-0 items-center justify-center rounded-[20px] border border-gray-20 bg-gray-0 px-9 py-4">
-              <JobRadarChart stats={jobRelevance} />
+              <JobRadarChart stats={DEMO_JOB_RELEVANCE} />
             </div>
             <div className="flex w-[438px] flex-col gap-6">
               <div className="flex flex-col gap-5">
