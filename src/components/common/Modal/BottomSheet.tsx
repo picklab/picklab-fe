@@ -39,12 +39,12 @@ const BottomSheet = ({ isOpen, onClose, children }: PropsWithChildren<BottomShee
     <div className="fixed inset-0 z-50 flex items-end bg-black bg-opacity-50">
       <div
         ref={sheetRef}
-        className="w-full bg-white rounded-t-2xl p-4 animate-slide-up"
+        className="w-full bg-white rounded-t-2xl animate-slide-up"
         style={{
           boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
         }}
       >
-        <div className="w-12 h-1 mx-auto bg-gray-300 rounded-full mb-4" />
+        <div className="w-12 h-1 mx-auto bg-gray-300 rounded-full mt-2.5" />
         {children}
       </div>
     </div>,

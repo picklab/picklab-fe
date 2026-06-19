@@ -89,6 +89,11 @@ const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxP
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
+    // 부모로 항상 전달(빈 입력 포함) — 입력 비웠을 때 최근검색기록/인기검색어 재노출용
+    if (props.onChange) {
+      props.onChange(e);
+    }
+
     if (value.trim() === "") {
       // 입력값이 비어있으면 상태 초기화
       setFiltered([]);
@@ -96,11 +101,6 @@ const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxP
       setInput("");
       setSearchHelpMessage(props.helpMessage);
       return;
-    }
-
-    // 부모로 이벤트 전달
-    if (props.onChange) {
-      props.onChange(e);
     }
 
     setInput(value);

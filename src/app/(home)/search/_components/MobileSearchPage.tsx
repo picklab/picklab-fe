@@ -12,6 +12,7 @@ import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
 import Select from "@/components/common/Select/Select";
 import Icon from "@/components/common/Icon/Icon";
 import useSearchActivities from "@/hooks/useSearchActivities";
+import { JOB_TYPE_OPTIONS } from "@/constants/filters";
 
 const MENU_ITEMS = [
   { id: "all", label: "전체" },
@@ -48,7 +49,11 @@ export default function MobileSearchPage({ search }: { search: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const decodedSearch = decodeURIComponent(search);
-  const { data: searchedItems, loading, error } = useSearchActivities(decodedSearch);
+  const {
+    data: searchedItems,
+    loading,
+    error,
+  } = useSearchActivities(decodedSearch);
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>(
     {},
   );
@@ -150,7 +155,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
   };
 
   return (
-    <div className="mobile:flex pc:hidden flex-col gap-6 px-5 pb-[113px]">
+    <div className="mobile:flex pc:hidden flex-col gap-6">
       <Typography type="Heading1Semibold">{decodedSearch} 검색</Typography>
       <ArchiveMenu
         activeMenu={activeMenu}
@@ -160,17 +165,17 @@ export default function MobileSearchPage({ search }: { search: string }) {
       <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
         <button
           type="button"
-          className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0">
-          <Icon icon="threeDots" size={14} />
+          className="border border-gray-30 rounded-full cursor-pointer w-10 h-10 flex items-center justify-center shrink-0">
+          <Icon icon="filter" size={20} className="text-[#383838]" />
         </button>
         <button
           type="button"
-          className="bg-primary-60 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer shrink-0"
+          className="bg-primary-50 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shrink-0"
           onClick={() => {
             setSelectedCategory([]);
             setSelectedJobs([]);
           }}>
-          <Icon icon="largeRefresh" color="white" size={14} />
+          <Icon icon="largeRefresh" color="white" size={20} />
         </button>
         <Select
           size="xsmall"
@@ -204,13 +209,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
           dropdownClassName="!w-[172px]"
           className="!rounded-full !w-[111px] !h-[34px] !px-3 [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
           placeholder="직무유형"
-          options={[
-            { label: "기획", value: "planning" },
-            { label: "디자인", value: "design" },
-            { label: "개발", value: "development" },
-            { label: "마케팅", value: "marketing" },
-            { label: "AI", value: "ai" },
-          ]}
+          options={JOB_TYPE_OPTIONS}
           value={selectedJobs}
           onChange={(value) =>
             setSelectedJobs(Array.isArray(value) ? value : [])

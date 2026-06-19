@@ -8,7 +8,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       <main className="mx-auto pc:max-w-[1100px] mobile:max-w-[335px] mb-10">
         <Suspense fallback={<div>Loading activities...</div>}>{children}</Suspense>
       </main>
-      <Footer className="mobile:hidden" />
+      <Footer />
     </div>
   );
 }

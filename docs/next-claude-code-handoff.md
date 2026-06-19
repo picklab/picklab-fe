@@ -9,6 +9,88 @@
 - 리뷰 **작성 페이지**(3스텝+인증): PC/모바일 **구현 완료**
 - 리뷰 **작성 진입**: 공고 상세 "리뷰 작성하기" + GNB 연필 두 경로 완료
 
+## 세션 로그 (2026-06-19) — QA 3round-4.csv 진행 (PC 위주) + 모바일 탭/필터 정합
+
+> 작업 브랜치 **`dev`**. 이번 세션 변경은 **전부 미커밋**(아래 "미커밋 변경" 참고). dev 서버로 실렌더 확인하며 figma/PNG 기준 픽셀 정합 진행.
+
+### 이번 세션에 처리한 것 (issues/qa-issues-3round-4.csv)
+> CSV 56개(WEB 28 + MOBILE 28). 이번 세션 + 직전 커밋(4f5380d)으로 **WEB은 9~21·23·25·27~33·35·36 반영 완료**. CSV의 col[8](반영작업 여부) 갱신 완료.
+
+| 행 | 항목 | 결과 |
+|---|---|---|
+| 9~13 | 일정관리/활동결과(캘린더) | ✅ 이전 커밋 4f5380d |
+| 14 | 대외활동 top여백 40px | ✅ `PcActivites` `pt-10` |
+| 15 | 대외활동 카드 gap 8px | ✅ `NewActivityList` `categorySlug==='activities'`만 `gap-2`(홈/타카테고리 영향 없음) |
+| 16 | 필터 탭(주최기관 등) 위아래선+구분선삭제+17px | ✅ `SortTab` `variant="filter"` 신설(`border-y`/`Headline2Medium`/세로선 제거), `FilterSection`에서 filter variant 전달 |
+| 17 | 미선택 필터버튼 gray-filled | ✅ `FilterSection` 미선택 버튼 `!bg-gray-10 text-gray-50 15px` |
+| 18 | GNB 연필 → 리뷰쓰기 페이지 | ✅ **신규 라우트 `/review`**(활동 미선택 진입) + Step1 빈상태("선택된 활동이 없습니다"+"활동 선택하기"). PC/모바일 GNB 연필 `/profile/posts`→`/review` (3round-3 #58을 갱신) |
+| 19·20·21·23·25·28~33·36 | 마이페이지/프로필수정/푸터/회원가입 | ✅ 이전 커밋 4f5380d (top여백·관심직무·MY활동 기본선택·활동결과더보기·mailto·너비536·그림자삭제·카메라20·stroke삭제·gray70·푸터120·뒤로가기) |
+| 35 | 리뷰작성 top여백 40px + 페이지 디테일 | ✅ `ReviewWriteBody` `pc:pt-10` + Step1/헤더/버튼 디테일(아래) |
+
+### 리뷰쓰기 페이지 디테일 정합 (figma 2577-38195, PNG 기준) — `/review`·`/activity/[id]/review` 공용
+- "리뷰쓰기" 헤더: `pc:mt-[64px]`, 하단 보더선 `max-w-[600px]` 중앙, **PC X 버튼 제거**(모바일 뒤로가기는 유지) — `ReviewWriteShared.tsx`
+- "선택한 활동" 22px/600/gray-90, 빈 박스 `h-[58px] w-full`("선택된 활동이 없습니다")
+- "활동 선택하기/변경하기" 버튼: `h-[30px] px-3 py-1.5`, 13px/500/primary-60. 활동 있으면 "변경하기"·없으면 "선택하기"
+- "어떤 직무경험…?" 제목 **왼쪽 정렬** + `mt-12`, 제목↔직무필터 `gap-8`(32px)
+- 하단 버튼: **나가기 160×56**(bg gray-10 / text gray-50), **다음 w-full(flex-1)**, 텍스트 17px(`Headline2Medium`) — `ReviewWriteBody.tsx`
+
+### 모바일 탭/필터 정합 (CSV 44 "홈화면과 같은 양식" 관련)
+- **카테고리 탭(`MobileActivites` ArchiveMenu)**: full-bleed(`w-screen ml-[calc(50%-50vw)]`) → **`w-full`** + 버튼 `shrink-0`(으깨짐 수정). 베이스라인을 **`w-max min-w-full` 내부 래퍼**로 이동 → 마지막 탭까지 보더 안 끊김.
+- **홈 탭(`page.tsx` MobileHomeTabs)**: 동일하게 `w-max min-w-full` 내부 래퍼로 보더 끊김 수정. (홈·카테고리 탭은 **별도 컴포넌트**라 각각 수정 필요)
+- **모바일 인라인 필터줄(`MobileActivityList`)**: full-bleed → `w-full`. (동그라미 `...`/새로고침 32px·드롭다운 111×40은 기존부터 맞음)
+
+### ⚠️ 주의 / 미해결
+- **모바일 바텀시트(`MobileFilterSheet`)가 PC용 `FilterSection`을 재사용** → 16·17(WEB 항목) 수정이 모바일 시트에도 적용됨. 모바일 시트 별도 figma 확인 필요(다르면 variant 분리).
+- 리뷰쓰기 활동 미선택 상태로 "다음"까지 가면 제출 시 activityId 비어 실패 가능(검증 미추가).
+
+### 남은 작업 (3round-4)
+- **PC 미반영 4건**: 22(아카이브 더보기·이미 충족 가능성, 재확인), 24(저장공고 더보기 — **전용 목록 페이지 신규 필요**, figma 1136-74929), 26(검색 자동완성 드롭다운 figma 2582-33566 정합), 34(공고상세 옵션 호버, figma)
+- **모바일 미반영 28건(37~64)**: 전부 미착수. 푸터 추가(37), 메인 패딩/너비/검색(38~43), 카테고리 탭·필터 바텀시트(44~47), 공고상세 다수(48~56), 회원가입(57), 프로필 라우팅·데이터(58~64). **대부분 figma/PNG 필요.**
+- figma MCP는 Starter 플랜 호출 한도로 직접 추출 막힘 → **PNG 첨부** 또는 한도 회복 필요.
+
+---
+
+## 세션 로그 (2026-06-15) — QA 3round-3.csv 미반영 처리 + 리뷰 그래프 figma 정합
+
+> 작업 브랜치 **`dev`**. 이번 세션 변경은 **대부분 커밋 완료**, 단 **차트 데모 1건만 미커밋**(아래 ⚠️).
+
+### 처리한 것 (issues/qa-issues-3round-3.csv 미반영 항목)
+CSV 9~75행이 미반영이었음. 76행 이후는 전부 "반영". 처리 결과:
+
+| 행 | 항목 | 결과 | 커밋 |
+|---|---|---|---|
+| 9 | 회원가입 버튼 → /signup | 이미 연결됨(확인) | - |
+| 12 | 공고상세 이미지 확대 팝업(돋보기→2배 라이트박스, 딤드 클릭 닫기) | ✅ 신규 | f499554 |
+| 16 | 리뷰 세부평점 라벨(직무경험/혜택및복지/활동강도) 너비 80px(`inline-block w-20`) | ✅ | f499554 |
+| 19 | 리뷰 직무연관성 그래프 figma 정합 | ✅ **재작성**(아래) | 203200a + **미커밋** |
+| 20 | 추천/최근본 활동 슬라이드 "한 칸씩 scrollBy" 통일(card type도 scroll 기반) | ✅ | f499554 |
+| 26 | GNB 연필 아이콘 정렬(button→flex / Link 전환) | ✅ | f499554 |
+| 52 | GNB 프로필 클릭 → /profile | 이미 연결됨(확인) | - |
+| 58 | GNB 연필 클릭 → **/profile/posts(내가 작성한 리뷰)** 이동 | ✅ PC/모바일. 기존 ReviewWriteModal 오픈 제거(모달 파일은 데드코드로 잔존) | f499554 |
+| 61 | 작성글 수정 버튼 활성화 기준(미승인 REJECTED일 때만 수정 활성, 삭제는 항상) | ✅ figma 1136-75951로 검증 | f499554 |
+| 64 | 작성글 삭제 팝업 | ✅ 기존 DeleteReviewModal이 figma 1136-75789와 완전 일치(변경 불필요) | - |
+| 67 | 프로필수정 버튼 → /profile/account/info | 이미 충족(확인) | - |
+| 70 | 관심직무 "수정하기" → 같은 화면 인라인 편집 | 이미 충족(확인, figma 1136-78084와 동일 구조) | - |
+| 73 | 프로필 카메라 버튼 → "프로필 사진 등록" 팝업(드롭존+드래그&드롭+미리보기+등록) | ✅ 신규(PC) | f499554 |
+
+### 19번 그래프 재작성 상세 (JobRadarChart, figma 2409-26932)
+- 기존: 비정형 오각형 + **고정 좌표 데이터 폴리곤(점수 무반영 버그)** + 실선 축.
+- 변경(203200a + 미커밋): **정오각형**(12시 기획부터 시계방향 72°), **점수 기반 동적 폴리곤**, 채움 `#00BC7D` **fillOpacity 0.7**, **corner radius 13.85**(둥근 모서리 path 헬퍼 `roundedPath`), 동심 그리드 **4겹**(`#F9FAFB`/`#F3F4F6` 번갈아), **점선 축**, 큰 검정 숫자 라벨.
+- **미커밋 변경(레이어 재배치)**: 데이터 폴리곤(70% 투명)이 그리드/점선을 덮어 안 비치는 문제 → 렌더 순서를 **①그리드 음영(채움) → ②데이터 폴리곤 → ③그리드 오각형 윤곽선 → ④점선 축**으로 재배치해 채워진 색 안에서도 점선·오각형이 비치게 함.
+
+### 🔴🔴 다음 세션 가장 먼저 — 차트 데모값 원복 (미커밋)
+`PcActivityDetailPage.tsx`에 **차트 디자인 확인용 임시 데모값**이 켜져 있음. 이대로 빌드/배포하면 **모든 공고의 직무연관성 그래프가 항상 데모값(기획90/개발70/마케팅50/AI80/디자인40%)으로 표시됨**.
+- 원복 절차: ① `<JobRadarChart stats={DEMO_JOB_RELEVANCE} />` → `stats={jobRelevance}` ② `DEMO_JOB_RELEVANCE` 상수(주석 `TODO(데모)`) 삭제 ③ `jobRelevance` 선언 위 `eslint-disable-next-line ... -- TODO(데모)` 주석 삭제.
+- 원복 후 `yarn typecheck` + `npx eslint <file>` EXIT 0 확인하고 커밋. (점선 비침 레이어 재배치는 **유지**할 변경)
+
+### 남은 미반영 (2건)
+- **55행** — 프로필에서 "참여한 활동이 있을 시 리뷰작성 유도 화면 노출"(figma **1136-75658**). 현재 미구현. **시안 PNG 필요**(프로필 메인 섹션인지 별도 배너/페이지인지 불명).
+- **27·30·36·45·48·51행 — 일정관리(캘린더) 화면**: `/calendar` 라우트만 있고 화면 자체 없음. 월 캘린더 + 리스트/캘린더 토글 + 필터 드롭다운(전체·진행중·마감 / 지원여부) + 날짜 클릭 상세 + 활동결과 탭. **대형 신규 개발**.
+  - ⚠️ **캘린더 전용 API 없음**(api-spec 전체 47개 확인). 기존 API 조합 필요: `GET /v1/activities`(RecruitPeriod·recruitmentStatus), `GET /v1/activity-participations/results`(지원여부·활동결과 — **단 results 500 블로커**), `GET /v1/bookmarks`. → 일정관리 핵심(지원완료 표시·활동결과 탭)이 results 500에 막힘.
+  - figma UX 문서: `2-25064`(일정관리 UX), 화면 `2527-24643`/`2531-25140`/`2532-25408`/`1136-76521`.
+
+---
+
 ## 세션 로그 (2026-06-13) — UI 수정 + 백엔드 라이브 조사
 
 > 모두 **`dev` 브랜치에 머지·`origin/dev` push 완료**. (이전 `feat/my-reviews`를 dev로 fast-forward 머지)
@@ -306,11 +388,31 @@ figma 권한 막힘 → 사용자가 화면 PNG를 주면 작업하는 방식. �
 ### 백엔드 확인 대기 (누적)
 수료여부 저장/조회, helpful API, 만족도 전체평균, jobDetail 멀티 직렬화, 닉네임 중복 체크 API, 회원가입 새 enum(college/dropped_out/on_leave), 상세탭 공모분야·지원서 첨부 필드, **리뷰 응답(`MyReviewsResponse`/`MyReviewResponse`)에 `activity_id`(+title/organizer) 추가 — 리뷰 수정 기능 활성화에 필수**.
 
-## Recommended Next Prompt
+## Recommended Next Prompt (2026-06-15 갱신)
 
 ```text
 docs/next-claude-code-handoff.md 읽고 이어서 작업해줘.
-백엔드 답변이 오면 Main Remaining Work 1번(수료여부/helpful/만족도 전체평균)을 마무리하고,
-이어서 2번 리뷰 수정/삭제(기획 3-5)를 구현해줘.
-이미 구현된 리뷰 조회/통계/필터/작성/상세탭은 건드리지 말고, Connection Notes의 가정만 실응답으로 확정해줘.
+(맨 위 "세션 로그 (2026-06-15)" 섹션 + issues/qa-issues-3round-3.csv 기준)
+
+[가장 먼저 — 차트 데모값 원복 (미커밋 상태)]
+🔴 src/app/(home)/activity/[id]/_components/PcActivityDetailPage.tsx 에 리뷰 직무연관성 차트
+   확인용 데모값(DEMO_JOB_RELEVANCE)이 켜져 있음. 이대로면 실서비스 그래프가 항상 데모로 보임.
+   ① <JobRadarChart stats={DEMO_JOB_RELEVANCE} /> → stats={jobRelevance}
+   ② DEMO_JOB_RELEVANCE 상수(TODO(데모) 주석) 삭제
+   ③ jobRelevance 선언 위 eslint-disable-next-line(TODO(데모)) 주석 삭제
+   → yarn typecheck + npx eslint <file> EXIT 0 확인 후 커밋.
+   ※ "점선 비침 레이어 재배치"(그리드 음영→데이터→그리드 윤곽선→점선 축 순서)는 유지할 것.
+
+[그 다음 — issues/qa-issues-3round-3.csv 남은 미반영 2건]
+- 55행: 프로필에서 "참여 활동 있을 시 리뷰작성 유도 화면"(figma 1136-75658). 시안 PNG 받아서 구현.
+- 27·30·36·45·48·51행: 일정관리(캘린더) 화면 신규 개발. /calendar 라우트만 있고 화면 없음.
+  캘린더 전용 API 없음 → activities/activity-participations(results, 단 500 블로커)/bookmarks 조합.
+  figma UX 문서 2-25064 + 화면 2527-24643/2531-25140/2532-25408/1136-76521 받아서 진행.
+
+[참고 — 이미 처리됨, 건드리지 말 것]
+3round-3.csv 9·12·16·19·20·26·52·58·61·64·67·70·73행은 모두 완료/충족 확인됨(커밋 f499554, 203200a).
+연필 아이콘은 의도적으로 /profile/posts 이동으로 바꿈(리뷰 작성 모달 아님).
+
+[백엔드 대기 블로커 (results 무관 프론트 작업 우선)]
+results 500 / 리뷰 수정 activity_id / 알림 초기값 read / 인기검색어 랭킹 / 닉네임 중복확인.
 ```

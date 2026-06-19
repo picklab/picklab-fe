@@ -5,6 +5,7 @@ import { useState } from "react";
 import MobileFilterSheet from "./MobileFilterSheet";
 
 import clsx from "clsx";
+import Link from "next/link";
 import Typography from "@/components/common/Typography";
 import MobileActivityList from "./MobileActivityList";
 import Search from "@/components/common/Field/Search";
@@ -17,8 +18,8 @@ function getInitialMenu(activitySlug: ActivityRouteSlug): ActivityMenuId {
 
 export default function MobileActivites({ activitySlug }: { activitySlug: ActivityRouteSlug }) {
   const [selectedFilters, setSelectedFilters] = useState<ActivityPageFilters>({});
-  const [snbMenu, setSnbMenu] = useState<ActivityMenuId>(getInitialMenu(activitySlug));
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const activeMenu = getInitialMenu(activitySlug);
 
   const openSheet = () => setIsSheetOpen(true);
   const closeSheet = () => setIsSheetOpen(false);
@@ -40,9 +41,9 @@ export default function MobileActivites({ activitySlug }: { activitySlug: Activi
           placeholder="찾고 싶은 활동을 검색해보세요"
         />
       </div>
-      <ArchiveMenu snbMenu={snbMenu} setSnbMenu={setSnbMenu} />
+      <CategoryTabs activitySlug={activitySlug} />
       <MobileActivityList
-        activeMenu={snbMenu}
+        activeMenu={activeMenu}
         selectedFilters={selectedFilters}
         setSelectedFilters={setSelectedFilters}
         onFilterClick={openSheet}
@@ -51,39 +52,42 @@ export default function MobileActivites({ activitySlug }: { activitySlug: Activi
   );
 }
 
-const MENU_ITEMS = [
-  { id: "all", label: "전체", href: "#all" },
-  { id: "external-activity", label: "대외활동", href: "#external-activity" },
-  { id: "seminar", label: "강연/세미나", href: "#seminar" },
-  { id: "education", label: "교육", href: "#education" },
-  { id: "contest", label: "공모전/해커톤", href: "#contest" },
+// 홈 화면 탭바와 동일한 양식(라우트 이동). 홈 탭만 54px, 나머지 86px.
+const CATEGORY_TABS = [
+  { label: "홈", href: "/" },
+  { label: "대외활동", href: "/activities" },
+  { label: "강연/세미나", href: "/seminar" },
+  { label: "교육", href: "/education" },
+  { label: "공모전/해커톤", href: "/contest" },
 ] as const;
 
-interface ArchiveMenuProps {
-  snbMenu: ActivityMenuId;
-  setSnbMenu: (menu: ActivityMenuId) => void;
-}
-
-function ArchiveMenu({ snbMenu, setSnbMenu }: ArchiveMenuProps) {
+function CategoryTabs({ activitySlug }: { activitySlug: ActivityRouteSlug }) {
   return (
-    <div className="relative flex flex-row w-screen ml-[calc(50%-50vw)] px-5 h-[35px] overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
-      {MENU_ITEMS.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          id={item.id}
-          className={clsx(
-            "relative box-border flex justify-center items-center",
-            snbMenu === item.id &&
-              "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']"
-          )}
-          onClick={() => setSnbMenu(item.id)}
-        >
-          <Typography className="w-[86px] text-center" type="Body2Medium">
-            {item.label}
-          </Typography>
-        </button>
-      ))}
+    <div className="h-[35px] w-full overflow-x-auto hide-scrollbar">
+      <div className="relative flex h-full w-max min-w-full flex-row before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+        {CATEGORY_TABS.map((item) => {
+          const isActive = item.href === `/${activitySlug}`;
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={clsx(
+                "relative flex shrink-0 items-center justify-center",
+                isActive &&
+                  "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
+              )}
+            >
+              <Typography
+                className={clsx("text-center", item.href === "/" ? "w-[54px]" : "w-[86px]")}
+                type="Body2Medium"
+              >
+                {item.label}
+              </Typography>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

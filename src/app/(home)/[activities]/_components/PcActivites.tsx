@@ -28,7 +28,7 @@ export default function PcActivites({
   return (
     <div
       className={clsx(
-        "w-full px-5 pb-20 flex-col gap-10",
+        "w-full px-5 pb-20 pt-10 flex-col gap-10",
         isStorybook ? "flex" : "hidden pc:flex",
       )}
     >

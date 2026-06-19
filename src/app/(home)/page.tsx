@@ -27,8 +27,8 @@ const PC_NEW_ACTIVITY_PAGE_SIZE = 12;
 const MOBILE_STYLES = {
   CONTAINER: "flex flex-col pb-[113px]",
   FIRST_SECTION: "mt-5",
-  SECOND_SECTION: "mt-10",
-  THIRD_SECTION: "mt-[60px]",
+  SECOND_SECTION: "mt-9",
+  THIRD_SECTION: "mt-9",
 } as const;
 
 const PC_STYLES = {
@@ -85,7 +85,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 export function MobileLayout({ className, isLogin = true }: ResponsiveLayoutProps) {
   return (
     <div className={clsx(MOBILE_STYLES.CONTAINER, className)}>
-      <div className="py-[13px]">
+      <div>
         <Link href="/search" aria-label="검색 화면으로 이동">
           <Search
             status="default"
@@ -120,26 +120,28 @@ const MOBILE_HOME_TABS = [
 
 function MobileHomeTabs() {
   return (
-    <div className="relative mt-5 flex h-[35px] w-full flex-row overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
-      {MOBILE_HOME_TABS.map((item) => {
-        const isActive = item.href === "/";
+    <div className="mt-5 h-[35px] w-full overflow-x-auto hide-scrollbar">
+      <div className="relative flex h-full w-max min-w-full flex-row before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+        {MOBILE_HOME_TABS.map((item) => {
+          const isActive = item.href === "/";
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={clsx(
-              "relative flex shrink-0 items-center justify-center",
-              isActive &&
-                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
-            )}
-          >
-            <Typography className="w-[86px] text-center" type="Body2Medium">
-              {item.label}
-            </Typography>
-          </Link>
-        );
-      })}
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={clsx(
+                "relative flex shrink-0 items-center justify-center",
+                isActive &&
+                  "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
+              )}
+            >
+              <Typography className={clsx("text-center", isActive ? "w-[54px]" : "w-[86px]")} type="Body2Medium">
+                {item.label}
+              </Typography>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

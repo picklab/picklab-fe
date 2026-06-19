@@ -14,9 +14,12 @@ type SortTabProps = {
   paramKey?: string;
   onTabClick?: (value: string) => void;
   currentValue?: string;
+  // 'sort'(기본): 정렬 탭(텍스트 사이 구분선). 'filter': 필터 탭(위아래 선 + 17px + 구분선 없음, QA 3round-4 #16)
+  variant?: 'sort' | 'filter';
 };
 
-const SortTab = ({ options, paramKey = 'sort', onTabClick, currentValue }: SortTabProps) => {
+const SortTab = ({ options, paramKey = 'sort', onTabClick, currentValue, variant = 'sort' }: SortTabProps) => {
+  const isFilter = variant === 'filter';
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -36,19 +39,19 @@ const SortTab = ({ options, paramKey = 'sort', onTabClick, currentValue }: SortT
   };
 
   return (
-    <div className="flex items-center">
+    <div className={clsx('flex items-center', isFilter && 'gap-10 border-y border-gray-20 py-4')}>
       {options.map((option, index) => (
         <div key={option.value} role="tablist" className="flex items-center">
           {/* 🏷️ 추후 button 공통 컴포넌트 제작후 교체 예정 */}
           <button onClick={() => handleClick(option.value)} className="flex items-center">
             <Typography
-              type="Body3Medium"
+              type={isFilter ? 'Headline2Medium' : 'Body3Medium'}
               className={clsx('text-gray-50', currentTab === option.value && 'text-gray-90')}
             >
               {option.label}
             </Typography>
           </button>
-          {index < options.length - 1 && <div className="h-space-12 w-px bg-gray-50 mx-space-8" />}
+          {!isFilter && index < options.length - 1 && <div className="h-space-12 w-px bg-gray-50 mx-space-8" />}
         </div>
       ))}
     </div>

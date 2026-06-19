@@ -12,6 +12,7 @@ import { useState } from "react";
 import Select from "@/components/common/Select/Select";
 import { CardData } from "../../_components/constant";
 import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
+import { JOB_TYPE_OPTIONS } from "@/constants/filters";
 
 const CARD_CHIP_TYPES = ["대외활동", "강연/세미나", "교육", "공모전/해커톤"] as const;
 type CardChipType = (typeof CARD_CHIP_TYPES)[number];
@@ -77,13 +78,7 @@ export default function ActivityList({
             type="checkbox"
             functionOptionType="reset"
             className="!rounded-full !w-[98px] !h-[34px]"
-            options={[
-              { label: "기획", value: "planning" },
-              { label: "디자인", value: "design" },
-              { label: "개발", value: "development" },
-              { label: "마케팅", value: "marketing" },
-              { label: "AI", value: "ai" },
-            ]}
+            options={JOB_TYPE_OPTIONS}
             onChange={() => {}}
           />
         </div>

@@ -59,7 +59,7 @@ export const ACTIVITY_FILTERS = [
   },
   {
     title: "관련직무",
-    options: ["전체", "기획", "마케팅", "디자인", "개발", "기타"],
+    options: ["전체", "기획", "디자인", "개발", "마케팅", "AI"],
   },
 ];
 

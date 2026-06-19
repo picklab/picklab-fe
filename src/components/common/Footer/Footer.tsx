@@ -6,43 +6,116 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Footer = ({ className }: { className: string }) => {
+const Footer = ({ className }: { className?: string }) => {
   const firstColMenus = FOOTER_MENUS.slice(0, 2);
   const secondColMenus = FOOTER_MENUS.slice(2, 4);
   const thirdColMenus = FOOTER_MENUS.slice(4, 5);
 
   return (
-    <footer
-      className={clsx(
-        "w-full bg-gray-5 max-w-[1440px] mx-auto pt-[53px] pb-[53px] flex flex-col items-center gap-[64px]",
-        className,
-      )}
-    >
-      <div className="w-[1040px] flex justify-between items-start">
-        {/* Logo + Navigation */}
-        <div className="flex gap-[70px]">
-          <Link href="/" aria-label="홈으로 가기">
-            <Image
-              src="/imgs/footer_logo.png"
-              width={90}
-              height={40}
-              alt="Picklab 로고"
-            />
-          </Link>
+    <>
+      {/* PC 푸터 (기존 그대로) */}
+      <footer
+        className={clsx(
+          "mobile:hidden w-full bg-gray-5 max-w-[1440px] mx-auto pt-[53px] pb-[53px] flex flex-col items-center gap-[64px]",
+          className,
+        )}>
+        <div className="w-[1040px] flex justify-between items-start">
+          {/* Logo + Navigation */}
+          <div className="flex gap-[70px]">
+            <Link href="/" aria-label="홈으로 가기">
+              <Image
+                src="/imgs/footer_logo.png"
+                width={90}
+                height={40}
+                alt="Picklab 로고"
+              />
+            </Link>
 
-          {/* Navigation Groups */}
-          <nav className="flex gap-[76px]">
-            <FooterMenuGroup title="회사 소개 및 정보" menus={firstColMenus} />
-            <FooterMenuGroup
-              title="서비스 및 이용약관"
-              menus={secondColMenus}
-            />
-            <FooterMenuGroup title="기타" menus={thirdColMenus} />
-          </nav>
+            {/* Navigation Groups */}
+            <nav className="flex gap-[76px]">
+              <FooterMenuGroup
+                title="회사 소개 및 정보"
+                menus={firstColMenus}
+              />
+              <FooterMenuGroup
+                title="서비스 및 이용약관"
+                menus={secondColMenus}
+              />
+              <FooterMenuGroup title="기타" menus={thirdColMenus} />
+            </nav>
+          </div>
+
+          {/* Contact Info */}
+          <address className="not-italic flex flex-col gap-space-6">
+            <Typography type="Body3Medium" className="text-gray-60">
+              Contact
+            </Typography>
+            <div className="flex flex-col gap-space-2">
+              <div className="flex items-center">
+                <Typography
+                  type="Caption2Regular"
+                  className="w-[71px] text-gray-50">
+                  E-mail
+                </Typography>
+                <a href="mailto:pick.lab.studio@gmail.com">
+                  <Typography type="Caption2Regular" className="text-gray-50">
+                    pick.lab.studio@gmail.com
+                  </Typography>
+                </a>
+              </div>
+              <div className="flex items-center">
+                <Typography
+                  type="Caption2Regular"
+                  className="w-[71px] text-gray-50">
+                  Instagram
+                </Typography>
+                <Typography type="Caption2Regular" className="text-gray-50">
+                  @picklab.official
+                </Typography>
+              </div>
+            </div>
+          </address>
         </div>
 
-        {/* Contact Info */}
-        <address className="not-italic flex flex-col gap-space-6">
+        {/* Copyright */}
+        <Typography type="Caption2Regular" className="text-gray-40">
+          Copyright © PICKLAB. All rights reserved
+        </Typography>
+      </footer>
+
+      {/* 모바일 푸터 (figma 2423-30539) — 기기 전체 폭(375), 내용 좌측 정렬(안쪽 20px) */}
+      <footer className="pc:hidden flex w-full flex-col bg-white px-5 py-6 max-w-[375px] mx-auto">
+        <Link href="/" aria-label="홈으로 가기">
+          <Image
+            src="/imgs/footer_logo.png"
+            width={96}
+            height={24}
+            alt="Picklab 로고"
+          />
+        </Link>
+
+        {/* 메뉴 (그룹 제목 없이 3열) */}
+        <nav className="mt-5 flex justify-between" aria-label="푸터 메뉴">
+          {[firstColMenus, secondColMenus, thirdColMenus].map((column, idx) => (
+            <ul key={idx} className="flex flex-col gap-y-3 m-0">
+              {column.map((menu) => (
+                <li key={menu.label}>
+                  <Link href={menu.href || "/"}>
+                    <Typography
+                      type="Body4Regular"
+                      className="text-gray-50 cursor-pointer hover:text-gray-70 w-[97px]"
+                      tag="p">
+                      {menu.label}
+                    </Typography>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </nav>
+
+        {/* Contact */}
+        <address className="mt-10 not-italic flex flex-col gap-space-6">
           <Typography type="Body3Medium" className="text-gray-60">
             Contact
           </Typography>
@@ -50,8 +123,7 @@ const Footer = ({ className }: { className: string }) => {
             <div className="flex items-center">
               <Typography
                 type="Caption2Regular"
-                className="w-[71px] text-gray-50"
-              >
+                className="w-[71px] text-gray-50">
                 E-mail
               </Typography>
               <a href="mailto:pick.lab.studio@gmail.com">
@@ -63,8 +135,7 @@ const Footer = ({ className }: { className: string }) => {
             <div className="flex items-center">
               <Typography
                 type="Caption2Regular"
-                className="w-[71px] text-gray-50"
-              >
+                className="w-[71px] text-gray-50">
                 Instagram
               </Typography>
               <Typography type="Caption2Regular" className="text-gray-50">
@@ -73,13 +144,13 @@ const Footer = ({ className }: { className: string }) => {
             </div>
           </div>
         </address>
-      </div>
 
-      {/* Copyright */}
-      <Typography type="Caption2Regular" className="text-gray-40">
-        Copyright © PICKLAB. All rights reserved
-      </Typography>
-    </footer>
+        {/* Copyright */}
+        <Typography type="Caption2Regular" className="mt-10 text-gray-40">
+          Copyright © PICKLAB. All rights reserved
+        </Typography>
+      </footer>
+    </>
   );
 };
 

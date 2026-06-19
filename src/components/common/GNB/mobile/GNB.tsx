@@ -28,7 +28,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
               </Link>
             </li>
             <li className="flex items-center">
-              <Link href="/profile/posts" aria-label="내가 작성한 리뷰" className="flex items-center">
+              <Link href="/review" aria-label="리뷰쓰기" className="flex items-center">
                 <Icon size={24} icon="pencil" />
               </Link>
             </li>

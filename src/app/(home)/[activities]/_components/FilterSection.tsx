@@ -54,7 +54,7 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
 
   return (
     <div className="flex flex-col gap-6">
-      <SortTab options={tabOptions} onTabClick={(value) => setCurrentTab(value)} currentValue={currentTab} />
+      <SortTab options={tabOptions} onTabClick={(value) => setCurrentTab(value)} currentValue={currentTab} variant="filter" />
       <div className="flex flex-wrap gap-2.5">
         {currentOptions.map((option) => {
           const isSelected =
@@ -66,7 +66,11 @@ const FilterSection = ({ selectedFilters, setSelectedFilters }: FilterSectionPro
               size="base"
               buttonStyle={isSelected ? "filled" : "outlined"}
               isFullRounded={true}
-              className="rounded-full !min-w-[72px]"
+              className={`rounded-full !min-w-[72px] ${
+                isSelected
+                  ? ""
+                  : "!border-0 !bg-gray-10 hover:!bg-gray-20 [&_span]:!text-[15px] [&_span]:!font-medium [&_span]:!text-gray-50"
+              }`}
               onClick={() => handleSelectFilter(currentTab, option)}
             />
           );

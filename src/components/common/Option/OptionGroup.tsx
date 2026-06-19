@@ -16,6 +16,10 @@ export type OptionGroupProps = {
   className?: string;
   functionOptionType?: FunctionOptionProps['type'];
   textFieldValue?: string;
+  /** 입력어 접두 볼드 강조(자동완성용) */
+  query?: string;
+  /** 각 옵션(li)에 적용할 클래스(행 높이 등) */
+  itemClassName?: string;
 };
 
 export const OptionGroup = ({
@@ -28,6 +32,8 @@ export const OptionGroup = ({
   className,
   textFieldValue,
   functionOptionType,
+  query,
+  itemClassName,
 }: OptionGroupProps) => {
   const defaultFunctionOptionOnClickHandler = () => {
     // 초기화 버튼 시
@@ -63,6 +69,8 @@ export const OptionGroup = ({
           options={options}
           selectedValue={selectedValue}
           onClickHandler={onClickHandler}
+          query={query}
+          className={itemClassName}
         />
         {functionOptionType && (
           <FunctionOption

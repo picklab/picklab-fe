@@ -13,6 +13,7 @@ import Select from "@/components/common/Select/Select";
 import { CardData } from "../constant";
 import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
 import { useActivities, type ActivityEndpoint } from "@/hooks/useActivities";
+import { JOB_TYPE_OPTIONS } from "@/constants/filters";
 
 const CARD_CHIP_TYPES = ["대외활동", "강연/세미나", "교육", "공모전/해커톤"] as const;
 const JOB_TYPES = ["기획", "디자인", "개발", "마케팅", "AI"] as const;
@@ -145,13 +146,7 @@ export default function ActivityList({
             className="!rounded-full !w-[160px] [&_span]:text-[14px] [&_span]:font-medium [&_span]:text-[#101828]"
             dropdownClassName="!w-[160px] [&_ul]:!w-[160px]"
             placeholder="직무유형"
-            options={[
-              { label: "기획", value: "planning" },
-              { label: "디자인", value: "design" },
-              { label: "개발", value: "development" },
-              { label: "마케팅", value: "marketing" },
-              { label: "AI", value: "ai" },
-            ]}
+            options={JOB_TYPE_OPTIONS}
             value={selectedJobs}
             onChange={(value) => setSelectedJobs(Array.isArray(value) ? value : [])}
           />

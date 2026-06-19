@@ -90,7 +90,7 @@ export default function PcProfile({ isStorybook = false }: { isStorybook?: boole
 
         {/* 저장한 공고 */}
         <div className="flex flex-col gap-4">
-          <ContentHeader title="저장한 공고" />
+          <ContentHeader title="저장한 공고" onClick={() => router.push('/profile/bookmarks')} />
           {savedItems.length > 0 ? (
             <div className="flex gap-[14px] overflow-x-scroll hide-scrollbar">
               {savedItems.map((item) => (

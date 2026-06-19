@@ -67,14 +67,46 @@ const getActivityTags = (activityField: string) =>
 
 const InfoItem = ({ label, value }: { label: string; value: string }) => (
   <div className="flex items-start gap-4">
-    <Typography type="Caption1Regular" className="min-w-[54px] text-gray-50">
+    <Typography type="Body3Regular" className="min-w-[54px] text-gray-50">
       {label}
     </Typography>
-    <Typography type="Caption1Medium" className="text-gray-90 break-keep">
+    <Typography type="Body3Medium" className="text-gray-90 break-keep">
       {value || '-'}
     </Typography>
   </div>
 );
+
+// 모집기간: "시작 ~ 마감" 문자열을 시작일/마감일 2줄로 표기 (figma 1223-17370)
+const RecruitPeriodItem = ({ value }: { value: string }) => {
+  const [start, end] = value.split('~').map((part) => part.trim());
+  return (
+    <div className="flex items-start gap-4">
+      <Typography type="Body3Regular" className="min-w-[54px] text-gray-50">
+        모집기간
+      </Typography>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <Typography type="Body3Medium" className="text-gray-90">
+            시작일
+          </Typography>
+          <span className="text-gray-30">|</span>
+          <Typography type="Body3Medium" className="text-gray-90">
+            {start || '-'}
+          </Typography>
+        </div>
+        <div className="flex items-center gap-2">
+          <Typography type="Body3Medium" className="text-gray-90">
+            마감일
+          </Typography>
+          <span className="text-gray-30">|</span>
+          <Typography type="Body3Medium" className="text-gray-90">
+            {end || start || '-'}
+          </Typography>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const DetailSection = ({ title, value }: { title: string; value: string }) => (
   <div className="flex flex-col gap-2">
@@ -112,7 +144,7 @@ const ProgressRow = ({ label, value }: { label: string; value: number }) => (
       {label}
     </Typography>
     <div className="h-3 rounded-full bg-gray-10 overflow-hidden">
-      <div className="h-full rounded-full bg-primary-50" style={{ width: `${value}%` }} />
+      <div className="h-full rounded-full bg-[#A5ADBB]" style={{ width: `${value}%` }} />
     </div>
   </div>
 );
@@ -348,11 +380,11 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
   };
 
   return (
-    <div className="pc:hidden flex flex-col gap-4 pb-10">
+    <div className="pc:hidden flex flex-col gap-4 pt-5 pb-[88px]">
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <CardDayBadge text={activity.badgeText ?? '모집중'} variant="default" />
+          <div className="flex items-center gap-2">
+            <CardDayBadge text={activity.badgeText ?? '모집중'} variant="default" typoType="Caption1Regular" />
             <CardChip text={activity.activityType as '대외활동' | '교육' | '공모전/해커톤' | '강연/세미나'} />
           </div>
           <button
@@ -363,15 +395,15 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             onClick={handleBookmarkToggle}
             disabled={!activityId || isBookmarkLoading}
           >
-            <Icon icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'} size={18} className="text-gray-50" />
+            <Icon icon={isBookmarked ? 'bookmarkFill' : 'bookmarkLine'} size={20} className="text-gray-50" />
           </button>
         </div>
 
-        <Typography type="Heading1Semibold" className="text-gray-90 break-keep">
+        <Typography type="Heading1Bold" className="text-gray-90 break-keep">
           {activity.title}
         </Typography>
 
-        <Typography type="Body4Medium" className="text-gray-50">
+        <Typography type="Body4Medium" className="text-gray-90">
           {activity.organizer}
         </Typography>
 
@@ -393,13 +425,13 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
 
       <section className="flex flex-col gap-2">
         <InfoItem label="주최기관" value={activity.organizer} />
-        <InfoItem label="모집기간" value={activity.registrationPeriod} />
+        <RecruitPeriodItem value={activity.registrationPeriod} />
         <InfoItem label="모집인원" value={activity.recruitment} />
         <InfoItem label="모임지역" value={activity.region} />
         <InfoItem label="활동분야" value={activity.activityField} />
         <InfoItem label="활동기간" value={activity.activityPeriod} />
         <div className="flex items-start gap-4">
-          <Typography type="Caption1Regular" className="min-w-[54px] text-gray-50">
+          <Typography type="Body3Regular" className="min-w-[54px] text-gray-50">
             관심직무
           </Typography>
           <div className="flex flex-wrap gap-1">
@@ -412,7 +444,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
                 </span>
               ))
             ) : (
-              <Typography type="Caption1Regular" className="text-gray-50">
+              <Typography type="Body3Regular" className="text-gray-50">
                 -
               </Typography>
             )}
@@ -462,29 +494,6 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             </button>
           </div>
 
-          <div className="-mt-[54px] px-3 relative z-10">
-            <div className="grid grid-cols-2 gap-1 rounded border border-gray-20 bg-gray-0 p-1 shadow-sm">
-              <Link
-                href={activity.homepage || '#'}
-                target={activity.homepage ? '_blank' : undefined}
-                className="h-space-40 rounded-small bg-gray-5 inline-flex items-center justify-center"
-              >
-                <Typography type="Body2Medium" className="text-gray-90">
-                  홈페이지
-                </Typography>
-              </Link>
-              <Link
-                href={applyLink}
-                target="_blank"
-                className="h-space-40 rounded-small bg-primary-50 inline-flex items-center justify-center"
-              >
-                <Typography type="Body2Medium" className="text-gray-0">
-                  지원하기
-                </Typography>
-              </Link>
-            </div>
-          </div>
-
           {detailImages.map((image) => (
             <div key={image} className="relative w-full h-[430px] rounded-lg overflow-hidden bg-gray-10">
               <Image src={image} alt="공고 상세 이미지" fill sizes="335px" unoptimized className="object-contain" />
@@ -529,38 +538,16 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
       ) : (
         <section className="flex flex-col gap-4">
           <div>
-            <Typography type="Body1Semibold" className="text-gray-90">
+            <Typography type="Heading2Semibold" className="text-gray-90">
               직무 연관성
             </Typography>
-            <div className="relative mt-2">
+            <div className="mt-2">
               <MobileRadarChart stats={jobRelevance} />
-              <div className="absolute left-0 right-0 top-[58px] px-3">
-                <div className="grid grid-cols-2 gap-1 rounded border border-gray-20 bg-gray-0 p-1 shadow-sm">
-                  <Link
-                    href={activity.homepage || '#'}
-                    target={activity.homepage ? '_blank' : undefined}
-                    className="h-space-40 rounded-small bg-gray-5 inline-flex items-center justify-center"
-                  >
-                    <Typography type="Body2Medium" className="text-gray-90">
-                      홈페이지
-                    </Typography>
-                  </Link>
-                  <Link
-                    href={applyLink}
-                    target="_blank"
-                    className="h-space-40 rounded-small bg-primary-50 inline-flex items-center justify-center"
-                  >
-                    <Typography type="Body2Medium" className="text-gray-0">
-                      지원하기
-                    </Typography>
-                  </Link>
-                </div>
-              </div>
             </div>
           </div>
 
           <div>
-            <Typography type="Body1Semibold" className="text-gray-90 mb-2">
+            <Typography type="Heading2Semibold" className="text-gray-90 mb-2">
               활동 만족도 평가
             </Typography>
             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
@@ -569,11 +556,11 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
                   key={item}
                   type="button"
                   className={clsx(
-                    'h-[28px] rounded-full border px-3 whitespace-nowrap',
+                    'h-10 shrink-0 rounded-full border px-4 whitespace-nowrap',
                     index === 0 ? 'bg-primary-50 border-primary-50 text-gray-0' : 'bg-gray-0 border-gray-20 text-gray-70',
                   )}
                 >
-                  <Typography type="Caption2Medium">{item}</Typography>
+                  <Typography type="Body2Medium">{item}</Typography>
                 </button>
               ))}
             </div>
@@ -615,7 +602,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
           )}
 
           <div className="flex flex-col gap-3">
-            <Typography type="Heading1Semibold" className="text-gray-90">
+            <Typography type="Heading1Semibold" className="!text-[18px] text-gray-90">
               리뷰 {reviewCount}
             </Typography>
 
@@ -666,6 +653,30 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
           </div>
         </section>
       )}
+
+      {/* 하단 고정 플로팅 CTA (홈페이지/지원하기) */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-20 bg-gray-0 px-5 py-3 pc:hidden">
+        <div className="mx-auto flex max-w-[335px] gap-2">
+          <Link
+            href={activity.homepage || '#'}
+            target={activity.homepage ? '_blank' : undefined}
+            className="h-space-40 flex-1 rounded-small bg-gray-5 inline-flex items-center justify-center"
+          >
+            <Typography type="Body2Medium" className="text-gray-90">
+              홈페이지
+            </Typography>
+          </Link>
+          <Link
+            href={applyLink}
+            target="_blank"
+            className="h-space-40 flex-1 rounded-small bg-primary-50 inline-flex items-center justify-center"
+          >
+            <Typography type="Body2Medium" className="text-gray-0">
+              지원하기
+            </Typography>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

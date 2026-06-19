@@ -40,11 +40,11 @@ function FooterButton({
       disabled={disabled}
       className={
         variant === 'green'
-          ? 'h-space-48 w-full rounded-small bg-primary-50 hover:bg-primary-60 disabled:bg-gray-10'
-          : 'h-space-48 w-full rounded-small bg-gray-5 hover:bg-gray-10 disabled:opacity-60'
+          ? 'h-[56px] w-full flex-1 rounded-small bg-primary-50 hover:bg-primary-60 disabled:bg-gray-10'
+          : 'h-[56px] w-[160px] shrink-0 rounded-small bg-gray-10 hover:bg-gray-20 disabled:opacity-60'
       }
     >
-      <Typography type="Body2Medium" className={variant === 'green' ? 'text-gray-0' : 'text-gray-90'}>
+      <Typography type="Headline2Medium" className={variant === 'green' ? 'text-gray-0' : 'text-gray-50'}>
         {label}
       </Typography>
     </button>
@@ -99,7 +99,7 @@ export default function ReviewWriteBody({
     <>
       <ReviewWriteHeader onClose={() => setLeaveOpen(true)} />
 
-      <div className="mx-auto w-full max-w-[600px] px-4 py-8 pb-28 pc:pb-8">
+      <div className="mx-auto w-full max-w-[600px] px-4 py-8 pb-28 pc:pt-10 pc:pb-8">
         {step === 1 && (
           <Step1 form={form} onOpenChangeModal={isEdit ? undefined : () => setChangeOpen(true)} />
         )}

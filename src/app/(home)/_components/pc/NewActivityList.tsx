@@ -9,6 +9,7 @@ import Pagination from '@/components/common/Pagination/Pagination';
 import { useActivities } from '@/hooks/useActivities';
 import { getAllActivities, type ActivityPageFilters, type ActivityRouteSlug } from '@/lib/activity-data';
 import { toggleBookmark } from '@/lib/bookmarks';
+import { JOB_TYPE_OPTIONS } from '@/constants/filters';
 
 interface NewActivityListProps {
   title: string;
@@ -348,13 +349,7 @@ export default function NewActivityList({
                 portalDropdown
                 className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
                 placeholder="직무유형"
-                options={[
-                  { label: '기획', value: 'planning' },
-                  { label: '디자인', value: 'design' },
-                  { label: '개발', value: 'development' },
-                  { label: '마케팅', value: 'marketing' },
-                  { label: 'AI', value: 'ai' },
-                ]}
+                options={JOB_TYPE_OPTIONS}
                 value={selectedJobs}
                 onChange={(value) => {
                   setSelectedJobs(Array.isArray(value) ? value : []);
@@ -389,7 +384,7 @@ export default function NewActivityList({
           />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-5">
+      <div className={`grid grid-cols-4 ${categorySlug === 'activities' ? 'gap-2' : 'gap-5'}`}>
         {effectiveLoading
           ? Array.from({ length: CARDS_PER_PAGE }).map((_, i) => (
               <div key={i} className="h-[280px] rounded-lg bg-gray-10 animate-pulse" />

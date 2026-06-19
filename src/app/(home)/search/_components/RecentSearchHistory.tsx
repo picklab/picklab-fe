@@ -11,14 +11,22 @@ import {
 interface RecentSearchHistoryProps {
   /** 칩 텍스트 클릭 시 해당 검색어로 검색 이동 */
   onSelect: (keyword: string) => void;
+  /** true면 기록이 없어도 헤더는 항상 노출(칩만 숨김) */
+  alwaysShowHeader?: boolean;
+  /** 루트 컨테이너 클래스(폭 등). 기본 w-[308px] */
+  className?: string;
 }
 
-export default function RecentSearchHistory({ onSelect }: RecentSearchHistoryProps) {
+export default function RecentSearchHistory({
+  onSelect,
+  alwaysShowHeader = false,
+  className,
+}: RecentSearchHistoryProps) {
   const { items, refetch } = useSearchHistory();
   const [pending, setPending] = useState(false);
 
-  // 최근 검색기록이 없으면 섹션을 렌더하지 않는다(빈 상태 숨김)
-  if (items.length === 0) return null;
+  // 기록이 없을 때: alwaysShowHeader면 헤더만 노출, 아니면 섹션 통째 숨김
+  if (items.length === 0 && !alwaysShowHeader) return null;
 
   const handleDelete = async (id: number) => {
     if (pending) return;
@@ -38,27 +46,29 @@ export default function RecentSearchHistory({ onSelect }: RecentSearchHistoryPro
     setPending(true);
     try {
       await deleteAllSearchHistory();
-      refetch();
-    } catch (err) {
-      console.error(err);
+    } catch {
+      // 전체삭제 엔드포인트 미지원/실패 시 개별 삭제로 폴백
+      await Promise.all(items.map((item) => deleteSearchHistory(item.id).catch(() => {})));
     } finally {
+      refetch();
       setPending(false);
     }
   };
 
   return (
-    <div className="w-[308px]">
+    <div className={className ?? 'w-[308px]'}>
       <div className="flex items-center justify-between">
-        <span className="text-[16px] font-bold text-gray-90">최근 검색기록</span>
+        <span className="text-[16px] font-semibold text-gray-90">최근 검색기록</span>
         <button
           type="button"
           onClick={handleDeleteAll}
           disabled={pending}
-          className="text-[13px] text-gray-50 disabled:opacity-50"
+          className="text-[11px] text-gray-50 disabled:opacity-50"
         >
           전체삭제
         </button>
       </div>
+      {items.length > 0 && (
       <ul className="mt-3 flex flex-wrap gap-2">
         {items.map((item) => (
           <li key={item.id}>
@@ -83,6 +93,7 @@ export default function RecentSearchHistory({ onSelect }: RecentSearchHistoryPro
           </li>
         ))}
       </ul>
+      )}
     </div>
   );
 }

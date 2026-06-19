@@ -5,10 +5,10 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Search from "@/components/common/Field/Search";
-import Typography from "@/components/common/Typography";
 import type { OptionGroupProps } from "@/components/common/Option/OptionGroup";
 import { createSearchHistory } from "@/hooks/useSearchHistory";
 import RecentSearchHistory from "./RecentSearchHistory";
+import PopularSearchKeywords from "./PopularSearchKeywords";
 
 type AutocompleteResponse = {
   data?: {
@@ -86,10 +86,14 @@ export default function SearchEntryPage() {
           goSearch(value);
         }
       },
+      type: "iconWithText",
+      icon: "search",
+      query: keyword.trim(),
       width: "full",
-      className: "!w-full",
+      className: "!w-full !rounded-2xl",
+      itemClassName: "min-h-[56px]",
     }),
-    [goSearch, suggestions],
+    [goSearch, suggestions, keyword],
   );
 
   const showHistory = keyword.trim() === "";
@@ -100,7 +104,7 @@ export default function SearchEntryPage() {
 
   return (
     <>
-      <section className="mobile:flex pc:hidden flex-col gap-6 pb-[113px]">
+      <section className="mobile:flex pc:hidden flex-col pb-[113px]">
         <div className="pt-[13px]">
           <Search
             status="default"
@@ -113,11 +117,13 @@ export default function SearchEntryPage() {
             optionGroupProps={optionGroupProps}
           />
         </div>
-        <Typography type="Body2Medium" className="text-gray-60">
-          검색어를 입력해 관심 있는 활동을 찾아보세요.
-        </Typography>
-        {showHistory && <RecentSearchHistory onSelect={goSearch} />}
-        {/* TODO(인기검색어): 백엔드 랭킹+순위변동 API 필요 — 미구현 */}
+        {showHistory && (
+          <div className="mt-[31.8px] flex flex-col gap-6">
+            <RecentSearchHistory onSelect={goSearch} alwaysShowHeader className="w-full" />
+            <div className="h-px w-full bg-gray-20" />
+            <PopularSearchKeywords />
+          </div>
+        )}
       </section>
       <section className="mobile:hidden pc:flex min-h-[320px] flex-col items-center justify-center gap-6">
         <Search

@@ -234,18 +234,18 @@ export default function MobileActivityList({
       {title ? <Typography type={typoType}>{title}</Typography> : null}
 
       <div className="relative z-20 mt-5">
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center pb-1 w-screen ml-[calc(50%-50vw)] px-5">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center pb-1 w-full">
           <button
             type="button"
-            className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0"
+            className="border border-gray-30 rounded-full cursor-pointer w-10 h-10 flex items-center justify-center shrink-0"
             onClick={onFilterClick}>
-            <Icon icon="threeDots" size={14} />
+            <Icon icon="filter" size={20} className="text-[#383838]" />
           </button>
           <button
             type="button"
-            className="bg-primary-60 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer shrink-0"
+            className="bg-primary-50 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shrink-0"
             onClick={() => setSelectedFilters({})}>
-            <Icon icon="largeRefresh" color="white" size={14} />
+            <Icon icon="largeRefresh" color="white" size={20} />
           </button>
           <Select
             size="xsmall"
@@ -253,10 +253,10 @@ export default function MobileActivityList({
             type="checkbox"
           functionOptionType="reset"
             placeholder="주최기관"
-            wrapperClassName="!w-[111px]"
+            wrapperClassName="!w-[128px]"
             portalDropdown
             dropdownClassName="!w-[220px]"
-            className="!rounded-full !w-[111px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
+            className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "대기업", value: "대기업" },
               { label: "중견기업", value: "중견기업" },
@@ -280,10 +280,10 @@ export default function MobileActivityList({
             type="checkbox"
           functionOptionType="reset"
             placeholder="참여대상"
-            wrapperClassName="!w-[111px]"
+            wrapperClassName="!w-[128px]"
             portalDropdown
             dropdownClassName="!w-[172px]"
-            className="!rounded-full !w-[111px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
+            className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "제한 없음", value: "제한 없음" },
               { label: "대학생", value: "대학생" },
@@ -301,10 +301,10 @@ export default function MobileActivityList({
             type="checkbox"
           functionOptionType="reset"
             placeholder="활동분야"
-            wrapperClassName="!w-[111px]"
+            wrapperClassName="!w-[128px]"
             portalDropdown
             dropdownClassName="!w-[172px]"
-            className="!rounded-full !w-[111px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
+            className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
           options={[
               { label: "서포터즈", value: "서포터즈" },
               { label: "마케터", value: "마케터" },
@@ -324,10 +324,10 @@ export default function MobileActivityList({
             type="checkbox"
           functionOptionType="reset"
             placeholder="지역"
-            wrapperClassName="!w-[111px]"
+            wrapperClassName="!w-[128px]"
             portalDropdown
             dropdownClassName="!w-[172px]"
-            className="!rounded-full !w-[111px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
+            className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "온라인", value: "온라인" },
               { label: "서울", value: "서울" },
@@ -359,16 +359,16 @@ export default function MobileActivityList({
             type="checkbox"
           functionOptionType="reset"
             placeholder="직무"
-            wrapperClassName="!w-[111px]"
+            wrapperClassName="!w-[128px]"
             portalDropdown
             dropdownClassName="!w-[172px]"
-            className="!rounded-full !w-[111px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
+            className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "기획", value: "기획" },
-              { label: "마케팅", value: "마케팅" },
               { label: "디자인", value: "디자인" },
               { label: "개발", value: "개발" },
-              { label: "기타", value: "기타" },
+              { label: "마케팅", value: "마케팅" },
+              { label: "AI", value: "AI" },
             ]}
             value={selectedFilters["관련직무"] ?? []}
             onChange={(value) =>

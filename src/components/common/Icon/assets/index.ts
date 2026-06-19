@@ -34,9 +34,11 @@ import StarFill from '@/components/common/Icon/assets/StarFill';
 import ThreeDots from '@/components/common/Icon/assets/ThreeDots';
 import Eye from '@/components/common/Icon/assets/Eye';
 import CowBell from '@/components/common/Icon/assets/CowBell';
+import Filter from '@/components/common/Icon/assets/Filter';
 
 
 export const iconMap = {
+  filter: Filter,
   alertCircle: AlertCircle,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,

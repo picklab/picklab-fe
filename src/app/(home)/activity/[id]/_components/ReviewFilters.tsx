@@ -54,8 +54,8 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
   const toggle = (key: DropdownKey) => setOpen((cur) => (cur === key ? null : key));
 
   const triggerClass = isMobile
-    ? 'h-[30px] rounded-full border px-3 inline-flex items-center gap-1 shrink-0'
-    : 'h-space-40 w-[132px] rounded-full border bg-gray-0 px-[18px] inline-flex items-center justify-between gap-1';
+    ? 'h-[30px] w-[128px] rounded-full border px-3 inline-flex items-center justify-between gap-1 shrink-0'
+    : 'h-space-40 w-[132px] rounded-full border bg-gray-0 px-[18px] inline-flex items-center justify-between gap-1 transition-colors hover:bg-gray-5';
 
   const renderTrigger = (key: DropdownKey, label: string, active: boolean) => (
     <button
@@ -91,6 +91,18 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
 
   return (
     <div ref={rootRef} className="flex items-center gap-2">
+      {/* 모바일: 초기화 아이콘 좌측 상시 노출 (figma 2408-26119) */}
+      {isMobile && (
+        <button
+          type="button"
+          onClick={onReset}
+          aria-label="필터 초기화"
+          className="inline-flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-gray-30 bg-gray-0"
+        >
+          <Icon icon="largeRefresh" size={16} className="text-gray-50" />
+        </button>
+      )}
+
       {/* 관심 직무 (직군 탭 + 세부직무 멀티칩 + 적용하기) */}
       <div className="relative">
         {renderTrigger('job', jobLabel, Boolean(value.jobGroup) || value.jobDetails.length > 0)}
@@ -209,18 +221,15 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
         )}
       </div>
 
-      {/* 초기화 (적용된 필터가 있을 때만) */}
-      {countActiveFilters(value) > 0 && (
+      {/* PC: 초기화 (적용된 필터가 있을 때만, 우측). 모바일은 좌측 상시 노출로 대체 */}
+      {!isMobile && countActiveFilters(value) > 0 && (
         <button
           type="button"
           onClick={onReset}
           aria-label="필터 초기화"
-          className={clsx(
-            'inline-flex shrink-0 items-center justify-center rounded-full bg-primary-50',
-            isMobile ? 'h-[30px] w-[30px]' : 'h-space-40 w-space-40',
-          )}
+          className="inline-flex h-space-40 w-space-40 shrink-0 items-center justify-center rounded-full bg-primary-50"
         >
-          <Icon icon="largeRefresh" size={isMobile ? 14 : 18} className="text-gray-0" />
+          <Icon icon="largeRefresh" size={18} className="text-gray-0" />
         </button>
       )}
     </div>

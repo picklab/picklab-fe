@@ -98,28 +98,21 @@ export function ModalShell({ title, onClose, children, className }: ModalShellPr
 /** 헤더: 모바일 = 좌측 뒤로가기 + 가운데 제목, PC = 가운데 제목 + 우측 X. */
 export function ReviewWriteHeader({ onClose }: { onClose: () => void }) {
   return (
-    <div className="relative flex h-space-56 items-center justify-center border-b border-gray-20">
-      {/* 모바일: 좌측 뒤로가기 (PC 숨김) */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="뒤로가기"
-        className="absolute left-4 flex size-6 items-center justify-center pc:hidden"
-      >
-        <Icon icon="chevronLeft" size={24} className="text-gray-90" />
-      </button>
-      <Typography type="Heading1Semibold" className="text-gray-90">
-        리뷰쓰기
-      </Typography>
-      {/* PC: 우측 X (모바일 숨김) */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="닫기"
-        className="absolute right-4 hidden size-6 items-center justify-center pc:flex"
-      >
-        <Icon icon="xMark" size={24} className="text-gray-90" />
-      </button>
+    <div className="flex flex-col items-center pc:mt-[64px]">
+      <div className="relative flex h-space-56 w-full max-w-[600px] items-center justify-center border-b border-gray-20">
+        {/* 모바일: 좌측 뒤로가기 (PC 숨김) */}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="뒤로가기"
+          className="absolute left-4 flex size-6 items-center justify-center pc:hidden"
+        >
+          <Icon icon="chevronLeft" size={24} className="text-gray-90" />
+        </button>
+        <Typography type="Heading1Semibold" className="text-gray-90">
+          리뷰쓰기
+        </Typography>
+      </div>
     </div>
   );
 }

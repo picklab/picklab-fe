@@ -27,6 +27,8 @@ export interface OptionProps extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIEl
   focus?: boolean;
   icon?: IconType;
   type?: 'text' | 'checkbox' | 'iconWithText';
+  /** 입력어와 일치하는 접두 부분을 볼드로 강조(자동완성용). 미전달 시 일반 렌더 */
+  query?: string;
 }
 
 const styleClass = {
@@ -42,8 +44,21 @@ const OptionType = ({
   className,
   icon,
   type = 'text',
+  query,
   ...props
 }: OptionProps) => {
+  // 입력어와 접두 일치 시 일치 부분만 볼드 강조
+  const renderLabel = (label: string) => {
+    if (!query) return label;
+    if (!label.toLowerCase().startsWith(query.toLowerCase())) return label;
+    return (
+      <>
+        <span className="font-bold">{label.slice(0, query.length)}</span>
+        {label.slice(query.length)}
+      </>
+    );
+  };
+
   const [focusedIndex, setFocusedIndex] = useState(0); // 현재 키보드 포커스된 아이템의 인덱스
   const itemRefs = useRef<(HTMLElement | null)[]>([]); // 각 <li>에 접근하기 위한 ref 리스트
 
@@ -122,11 +137,11 @@ const OptionType = ({
             onKeyDown={(e: React.KeyboardEvent<HTMLLIElement>) => handleKeyDown(e, index, option.value)} // 키보드 이벤트 핸들링
             {...props}
           >
-            {type === 'text' && <Typography type="Body3Medium">{option.label}</Typography>}
+            {type === 'text' && <Typography type="Body3Medium">{renderLabel(option.label)}</Typography>}
             {type === 'iconWithText' && icon && (
-              <div className="flex gap-0.5">
-                <Icon icon={icon} size={18} />
-                <Typography type="Body3Medium">{option.label}</Typography>
+              <div className="flex items-center gap-2">
+                <Icon icon={icon} size={18} className="text-gray-40" />
+                <Typography type="Body3Medium">{renderLabel(option.label)}</Typography>
               </div>
             )}
             {type === 'checkbox' && (

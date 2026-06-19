@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import Avatar from '@/components/common/GNB/pc/Avatar';
 import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 import Typography from '@/components/common/Typography';
@@ -7,12 +8,17 @@ import { useMe } from '@/hooks/useMe';
 
 export default function MobileProfile() {
   const { data: meData } = useMe();
+  const router = useRouter();
 
   return (
     <section className="flex flex-row gap-4 items-center">
       <Avatar className="w-20 h-20" scale="lg" />
       <div className="flex flex-col w-[238.5px]">
-        <button className="flex flex-row items-center gap-2 w-full py-4 text-gray-90">
+        <button
+          type="button"
+          onClick={() => router.push('/profile/account/info')}
+          className="flex flex-row items-center gap-2 w-full py-4 text-gray-90"
+        >
           <Typography type="Heading2Semibold">{meData?.nickname || '사용자'}</Typography>
           <ChevronRight width={7.5} height={13.5} />
         </button>
