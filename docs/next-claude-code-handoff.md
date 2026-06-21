@@ -9,6 +9,117 @@
 - 리뷰 **작성 페이지**(3스텝+인증): PC/모바일 **구현 완료**
 - 리뷰 **작성 진입**: 공고 상세 "리뷰 작성하기" + GNB 연필 두 경로 완료
 
+## 세션 로그 (2026-06-21·3) — api-spec 갱신분 연결(리뷰수정·지원서첨부·캘린더 실데이터) + 🔴데모차트 원복
+
+> 작업 브랜치 **`dev`**. 백엔드 답장으로 풀린 블로커(리뷰수정 activity_id, 지원서 required_files, results 500)를 **프론트 연결**. `yarn typecheck`+변경파일 `eslint` EXIT 0. (이번 변경 미커밋)
+
+### ✅ 1. 캘린더 활동결과 — MOCK → 실데이터
+- `ActivityResultView.tsx`/`MobileActivityResultView.tsx`: `MOCK_ACTIVITIES` 제거 → `useActivityParticipationResults` 실데이터. `mapResult` 헬퍼(export) 공용. 날짜→'YY.MM.DD ~', 모집마감일→D-day 배지, **합격여부/수료여부 Select 저장**(낙관적+롤백): application-status/progress-status PATCH. **리뷰작성 버튼** `can_write_review`일 때만 활성 → `/activity/{activity_id}/review` 라우팅. 로딩/빈상태 처리. 북마크 아이콘 제거(results에 is_bookmarked 없음). `StatCards` 50-더미 폴백 제거.
+- 타입 `ActivityParticipationResult`에 날짜필드(`recruitment_*`,`activity_*`,`applied_at`) 추가.
+- **신규 프록시** `api/activity-participations/[participationId]/application-status/route.ts`(합격여부 PATCH).
+
+### ✅ 2. 리뷰 수정 — 진입 stub 해제 + edit 모드 연결
+- `MyReviewDetail` 타입에 **`activity_id` 추가**(api-spec `MyReviewResponse` 반영).
+- `Pc/MobileMyReviewsPage`: 수정 alert stub 제거 → `GET /api/reviews/{id}`로 activity_id 받아 `/activity/{activity_id}/review?edit={reviewId}` 라우팅(로딩 가드).
+- `review/page.tsx`(서버): `?edit=` 있으면 `fetchReviewDetail`(GET /v1/reviews/{id}) 서버패치 → `mode/reviewId/initialReviewDetail` 전달.
+- `Pc/MobileReviewWritePage`: edit props 받아 `myReviewDetailToFormState`로 프리필 변환 후 `ReviewWriteBody`(이미 edit 완전지원)로 전달. *(폼 인프라는 기존에 준비돼 있어 plumbing만 추가)*
+
+### ✅ 3. 지원서 첨부 — required_files 표시
+- `ActivityCardItem`에 `requiredFiles?: {name,url}[]` 추가. `activity/[id]/page.tsx`에서 `required_files`(Map) → 배열 정규화(url 있는 것만).
+- `Pc/MobileActivityDetailPage` "필수 지원서 양식" stub("파일 없음") → 파일 있으면 **다운로드 링크 칩**(밑줄, target=_blank), 없으면 "파일 없음" 폴백.
+
+### ✅ 5. 저장공고 진행여부 필터 — '마감' 0건 버그 수정
+- 원인: `useBookmarks`가 마감 공고를 클라이언트에서 항상 제외 → 페이지 필터가 '마감'=0건 하드코딩.
+- 수정: `useBookmarks`에 **`includeClosed` 옵션 + `BookmarkItem.isClosed` 플래그** 추가(기본 동작 보존). 저장공고 페이지는 `includeClosed:true`로 받고 `item.isClosed` 기준 진행중/마감 실제 구분. 다른 호출처(프로필 메인·캘린더)는 기본값 유지 → 회귀 없음.
+
+### ✅ 4. 만족도/직무연관성
+- **만족도 전체평균**: 이미 연동돼 있었음(`satisfactionSummary.total` + 직무경험/활동강도/혜택복지 ProgressRow). 추가 작업 없음.
+- 🔴 **데모차트 원복(중요 버그픽스)**: `PcActivityDetailPage`가 `JobRadarChart stats={DEMO_JOB_RELEVANCE}`로 **모든 공고에 데모값(기획4.5 등) 고정 표시 중이던 것**을 실데이터 `stats={jobRelevance}`로 교체. `DEMO_JOB_RELEVANCE` 상수 + eslint-disable 주석 제거. (2026-06-15 핸드오프가 "최우선 원복" 표시했던 미커밋 블로커가 잔존했던 것)
+
+### ⚠️ 검증/잔여
+- 토큰 만료로 통계(job-relevance/satisfaction) 실응답 shape 재확인은 못 함(기존 연동돼 동작하던 코드 + api-spec 일치로 갈음). 활동678 `required_files:null`(첨부 없음)만 확인 → 폴백 정상.
+- 리뷰 수정 end-to-end는 member 3에 리뷰가 없어 실측 못 함(타입/라우팅 정합으로 갈음). 리뷰 데이터 생기면 prefill→PUT 실측 권장.
+- 캘린더 합격/수료 Select: 백엔드가 progress-status는 ACCEPTED일 때만 허용 → REJECTED 상태서 수료 변경 시 400 가능(실패 시 알럿+롤백 처리됨).
+
+---
+
+## 세션 로그 (2026-06-21·2) — 백엔드 답변 반영(인기검색어·닉네임중복·me 초기값) + results 500 복구 확인
+
+> 작업 브랜치 **`dev`**. 원경님 백엔드 답변 6건을 api-spec.json + 프론트 코드와 대조 후, **백엔드 의존 없는 3건 구현**. 모든 변경 `yarn typecheck`+해당파일 `eslint` EXIT 0. **member 3 토큰으로 신규 API 전부 실응답 200 검증 완료**. (이번 변경 미커밋 — 사용자 커밋 대기)
+
+### ✅ 백엔드 답변 검증 결과 (api-spec.json 대조)
+- **results 500** → ActivityParticipationResultResponse에 `activity_id`·`participation_id`·`can_write_review`·`applied_at` 등 추가 확인. 프론트 타입/훅/사용처는 이미 이 필드 기준 구현됨.
+- **필터 ALL 미전송 규칙** → 프론트가 이미 "전체"=파라미터 미전송 방식이라 **지침과 일치(작업 불필요)**. field enum 매핑도 정확(서포터즈→SUPPORTERS 등). 단 **`LECTURE`(강연)·`ETC`(기타) 옵션 누락**, target `기타` 미매핑 — 디자인 필요 여부 확인 대기.
+- **members/me** → `email_agreement`(boolean), `notification_preferences{popular,bookmarked}` 추가 확인.
+- **인기검색어** → `GET /v1/search/popular-keywords` `{aggregated_at, keywords:[{rank,keyword,trend(UP/DOWN/SAME/NEW)}]}`.
+- **닉네임 중복** → `GET /v1/members/nickname-availability?nickname=` `{available}`.
+
+### ✅ 구현 3건 (백엔드 비의존)
+1. **인기검색어 실연동** — 신규 프록시 `api/search/popular-keywords/route.ts`(`optionalAuth`). `PopularSearchKeywords.tsx` 더미 제거→fetch, `trend`→`change`(UP→up/DOWN→down/SAME·NEW→none) 매핑, `aggregated_at`→"HH:MM 기준", **빈 집계 안내문** 추가.
+2. **닉네임 중복검사** — 신규 프록시 `api/members/nickname-availability/route.ts`(`optionalAuth`+`passSearchParams`). `Step2.tsx` 형식/중복 검증 분리, 형식 통과 시 **400ms 디바운스** 조회 → false면 `NICKNAME_DUPLICATE_MESSAGE`, true면 "사용 가능". 조회 실패는 가입 비차단.
+3. **me 초기값** — `useMe.ts` `MeData`에 `emailAgreement`·`notificationPreferences{popular,bookmarked}` 추가(snake/camel 정규화). `PcAccountPage` 이메일동의 초기값 동기화(강제 off 제거). `MobileAccountPage` 이메일동의 초기값 + **알림 토글 2개(인기공고/저장한공고) 신규 연결** — 백엔드 토글 시맨틱 `PATCH /v1/members/notifications {type:"POPULAR"|"BOOKMARKED"}`, 낙관적+롤백.
+
+### 🔬 member 3 토큰 실응답 검증 (전부 HTTP 200)
+- `results?page=1&size=10` → **200**(이전 500 복구). **임의 참여데이터 생성→검증→삭제로 end-to-end 실측**: POST 활동678 지원(201, participation_id=3, **activity_id=678 실값 확인**) → application-status ACCEPTED(200) → progress-status COMPLETED(200) → results에서 **`can_write_review` false→true 전환 확인**(COMPLETED 게이팅 일치) → DELETE 취소(200) → results 최종 빈목록(**테스트 데이터 정리 완료**).
+- `members/me` → `email_agreement:false`, `notification_preferences:{popular:true, bookmarked:true}`.
+- `popular-keywords` → `aggregated_at:"2026-06-21T18:00:00"`, `keywords:[]`(직전 1시간 집계 없음 → 빈 안내문 동작).
+- `nickname-availability?nickname=테스트닉` → `{available:true}`.
+- `summary` → 전부 0(참여 데이터 없음, results와 일관).
+
+### ⚠️ 다음 세션 미해결/확인 필요
+- **캘린더 `ActivityResultView.tsx` MOCK 교체**: results 500 복구 + activity_id/can_write_review 실측 완료 → MOCK(라인 13 TODO) 제거하고 `useActivityParticipationResults` 실데이터로 교체 가능(다음 작업 후보).
+- **필터 강연/기타 옵션**: `LECTURE`/`ETC`/target `기타` 옵션 추가 여부 디자인 확인.
+- **인기검색어 빈 데이터**: 운영 트래픽 쌓이면 채워짐(코드는 정상).
+
+---
+
+## 세션 로그 (2026-06-21) — QA 3round-4 모바일 전체(37~64) + WEB 잔여(24·26·34) + 버그픽스/직무필터 통일
+
+> 작업 브랜치 **`dev`**. 이번 세션 변경은 **전부 커밋 완료** → `7349103 fix: 디자인 작업` (39 files, +1166/-427). 워킹트리 클린(미커밋 0, untracked `issues/*.csv`만 있음). figma는 Starter 한도로 직접 추출 불가 → **사용자가 PNG 첨부**, 그 기준으로 픽셀 정합. 모든 변경 `yarn lint`+`yarn typecheck` 통과.
+
+### ✅ QA 3round-4 — WEB 9~36 + MOBILE 37~64 전부 처리 완료 (잔여 0)
+
+**모바일 메인/푸터/검색 (37~43)**
+- 37 모바일 푸터: `Footer.tsx`를 PC 블록(`mobile:hidden`, 기존 보존) + **모바일 블록 신규**(`pc:hidden`)로 분기. `layout.tsx` `<Footer className="mobile:hidden"/>`→`<Footer/>`. 최종: 푸터 **기기 전체폭(`w-full`)** + 내용 좌측정렬(`px-5 py-6`), 로고96×24, 메뉴 그룹제목 제거 3열(`justify-between`), 헤더/Contact/Copyright.
+- 38 검색바 래퍼 `py-[13px]` 제거 / 39 홈 탭만 `w-[54px]`(나머지 `w-[86px]`) `page.tsx` / 40 회색선(기해결) / 41·42 인기·따끈 섹션 `mt-10·mt-[60px]`→`mt-9`(36px)
+- 43 검색 진입(`SearchEntryPage`): 안내문 제거, `RecentSearchHistory` **헤더 상시노출**(`alwaysShowHeader`)·풀폭, **인기검색어 신규 `PopularSearchKeywords.tsx`**(1~10위 2열+순위변동 배지, **더미데이터·TODO**), 자동완성 `iconWithText`(돋보기+hover). 간격: 검색→최근 `31.8px`, 그외 24px.
+
+**모바일 카테고리/필터 (44~47)**
+- 44 `MobileActivites` ArchiveMenu(전체/in-page전환) → **홈스타일 라우트 탭**(`CategoryTabs`: 홈+4카테고리 Link, active=현재 슬러그)
+- 45 필터줄: **`filter` 아이콘 신규**(`Icon/assets/Filter.tsx`, 사용자 SVG, currentColor) — 좌 필터20px(회색테두리원형)·우 새로고침 `primary-50` 20px, 둘다 40px(`w-10 h-10`)
+- 46 드롭다운 `!w-[111px]`→`!w-[128px]`
+- 47 `MobileFilterSheet` **전면 재작성**: 드래그핸들→탭(주최기관/참여대상/활동분야/지역/직무, 초록밑줄)→칩(선택 초록/미선택 gray-10)→초기화/적용 버튼, `h-[460px]`. **PC `FilterSection`과 분리**(PC는 border-y 유지). `BottomSheet` `p-4` 제거(핸들만).
+
+**모바일 공고상세 (48~56)** — `MobileActivityDetailPage`/`ReviewFilters`
+- 48 GNB↔컨텐츠 `pt-5`·배지 `Caption1Regular`(12px) / 49 북마크 18→20px / 50 칩간격 `gap-1`→`gap-2` / 51 활동명 `Heading1Bold`·주최기관(부제) gray-90 / 52 info `Body3`(14px)·모집기간 `시작일|날짜 / 마감일|날짜`(RecruitPeriodItem, `~` split) / 53 홈페이지/지원하기 **하단 고정 플로팅 바**(인라인 오버레이 2곳 제거, 컨테이너 `pb-[88px]`) / 54 직무연관성·만족도 헤딩 `Heading2Semibold`(20px) / 55 만족도칩 base(h-10)·**막대색 `#A5ADBB`** / 56 리뷰N `!text-[18px]`·드롭다운 `w-[128px]`·**초기화 아이콘 좌측 상시노출**(아웃라인 회색, 모바일 variant만)
+
+**프로필/회원가입 (57~64)** — 대부분 기존 라우팅 확인됨
+- 57 회원가입(이미 `/signup`) / 58 관심직무(이미 `useMe().jobs`) / 59 **닉네임/프로필 클릭→프로필수정 `/profile/account/info` 신규 연결**(`MobileProfile`) / 60 스킵(해결됨) / 61 계정·62 알림·63 연필·64 캘린더(GNB 아이콘 기존 연결)
+
+**WEB 잔여 3건**
+- 24 **저장공고 전용 페이지 신규 `/profile/bookmarks/page.tsx`**(Card/Select/SortTab/Pagination/useBookmarks 재활용, 4열, 정렬 RECENTLY_BOOKMARKED 등) + PC 프로필 "저장한 공고" 더보기 연결(`PcProfilePage`)
+- 26 검색 자동완성 정합: `Option`에 옵셔널 `query`(접두 볼드)·`OptionGroup`에 `query`/`itemClassName` 추가, 드롭다운 `!rounded-2xl`·행 `min-h-[56px]`·돋보기 gray-40 (공유 컴포넌트 비침투 옵셔널)
+- 34 공고상세 리뷰필터 호버: `ReviewFilters` PC triggerClass에 `hover:bg-gray-5`
+
+**직무유형 필터 통일 (Set A)**
+- 공용상수 신규 **`src/constants/filters.ts` `JOB_TYPE_OPTIONS`**(기획·디자인·개발·마케팅·AI, 백엔드 jobTag 일치) → 검색결과/홈모바일/PC목록/저장공고/[activities]ActivityList **5개 화면 적용**
+- Set B 2곳 값 수정: `ACTIVITY_FILTERS.관련직무`(기타 제거·AI 추가), `MobileActivityList` 직무 Select(한글값, Set A)
+
+**버그픽스**
+- `ArrowUp.tsx` `fill-rule/clip-rule`→`fillRule/clipRule` (검색화면 React 경고 해소)
+- 검색 **전체삭제 실패** → `RecentSearchHistory` 전체삭제를 **전체API 시도→실패 시 개별삭제 폴백**(백엔드 `DELETE /v1/search/history` 미지원 추정)
+- 검색어 비웠을 때 최근검색기록/인기검색어 **재노출 안됨** → `Search.tsx` `onChange`가 빈입력 시 early return하며 `props.onChange` 미호출이 원인 → **빈입력도 항상 부모 전달**로 수정
+- `MobileSearchPage` 필터줄도 `filter` 아이콘으로 교체(45와 동일)
+
+### ⚠️ 다음 세션 미해결/확인 필요
+- **인기검색어**: 백엔드 **랭킹+순위변동(↑↓) API 미제공** → `PopularSearchKeywords` 현재 더미데이터. API 생기면 상수→응답 매핑 교체.
+- **검색 전체삭제**: 백엔드 `DELETE /v1/search/history`(전체) 동작 확인 필요. 현재 개별삭제 폴백으로 동작은 함.
+- **저장공고 진행여부 필터**: `useBookmarks`가 마감 공고를 이미 제외 → '마감' 선택 시 결과 0. 마감도 보이려면 hook/필터 조정.
+- **하단 플로팅 CTA**(공고상세): `fixed bottom-0`이라 스크롤 최하단서 모바일 푸터와 겹칠 수 있음(표준 동작, 페이지 자체는 `pb-[88px]`로 가림 방지).
+- **figma 미세값 미확정**(임의값 사용, 확인 권장): 인기검색어 배지 화살표 14px, 바텀시트 하단버튼 radius `rounded-xl`(12px), 56 초기화 아이콘 `largeRefresh` 사용, 34 호버색 `gray-5`.
+
+---
+
 ## 세션 로그 (2026-06-19) — QA 3round-4.csv 진행 (PC 위주) + 모바일 탭/필터 정합
 
 > 작업 브랜치 **`dev`**. 이번 세션 변경은 **전부 미커밋**(아래 "미커밋 변경" 참고). dev 서버로 실렌더 확인하며 figma/PNG 기준 픽셀 정합 진행.

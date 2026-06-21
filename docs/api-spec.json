@@ -2102,6 +2102,26 @@
         }
       }
     },
+    "/v1/search/popular-keywords": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "인기 검색어 조회",
+        "description": "직전 1시간 기준 인기 검색어 1~10위와 순위 변동을 조회합니다.",
+        "operationId": "getPopularKeywords",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperPopularSearchKeywordsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/search/history/recent-keywords": {
       "get": {
         "tags": ["Search"],
@@ -2374,6 +2394,63 @@
               "application/json;charset=UTF-8": {
                 "schema": {
                   "$ref": "#/components/schemas/ResponseWrapperGetSocialLoginsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/nickname-availability": {
+      "get": {
+        "tags": ["회원 API"],
+        "summary": "닉네임 사용 가능 여부 조회",
+        "description": "회원가입에 사용할 닉네임의 중복 여부를 확인합니다.",
+        "operationId": "checkNicknameAvailability",
+        "parameters": [
+          {
+            "name": "nickname",
+            "in": "query",
+            "description": "중복 확인할 닉네임",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "중복 확인할 닉네임",
+              "example": "picklab멤버",
+              "maxLength": 20,
+              "minLength": 1,
+              "pattern": "^[a-zA-Z0-9가-힣_.-]{1,20}$"
+            },
+            "example": "picklab멤버"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "닉네임 사용 가능 여부 조회에 성공했습니다.",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperNicknameAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "닉네임 형식이 올바르지 않습니다.",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperNicknameAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증되지 않은 사용자입니다.",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperNicknameAvailabilityResponse"
                 }
               }
             }
@@ -4943,6 +5020,59 @@
         },
         "required": ["groups", "keyword", "total_count"]
       },
+      "PopularSearchKeywordItem": {
+        "description": "인기 검색어 목록",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "format": "int32",
+            "description": "순위"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "trend": {
+            "type": "string",
+            "description": "순위 변동",
+            "enum": ["UP", "DOWN", "SAME", "NEW"]
+          }
+        },
+        "required": ["keyword", "rank", "trend"]
+      },
+      "PopularSearchKeywordsResponse": {
+        "description": "인기 검색어 응답",
+        "properties": {
+          "aggregated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "집계 기준 시각"
+          },
+          "keywords": {
+            "type": "array",
+            "description": "인기 검색어 목록",
+            "items": {
+              "$ref": "#/components/schemas/PopularSearchKeywordItem"
+            }
+          }
+        },
+        "required": ["aggregated_at", "keywords"]
+      },
+      "ResponseWrapperPopularSearchKeywordsResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PopularSearchKeywordsResponse"
+          }
+        },
+        "required": ["code", "message"]
+      },
       "PageResponseSearchHistoryResponse": {
         "properties": {
           "items": {
@@ -5218,6 +5348,11 @@
       "MyReviewResponse": {
         "description": "내 리뷰 단건 조회 응답",
         "properties": {
+          "activity_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "활동 ID"
+          },
           "job_group": {
             "type": "string",
             "description": "직무",
@@ -5304,6 +5439,7 @@
           }
         },
         "required": [
+          "activity_id",
           "benefit_score",
           "difficulty_score",
           "info_score",
@@ -5354,6 +5490,30 @@
           },
           "data": {
             "$ref": "#/components/schemas/GetSocialLoginsResponse"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "NicknameAvailabilityResponse": {
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "닉네임 사용 가능 여부"
+          }
+        },
+        "required": ["available"]
+      },
+      "ResponseWrapperNicknameAvailabilityResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/NicknameAvailabilityResponse"
           }
         },
         "required": ["code", "message"]
@@ -5440,16 +5600,39 @@
           },
           "employment": {
             "$ref": "#/components/schemas/EmploymentInfoResponse"
+          },
+          "email_agreement": {
+            "type": "boolean",
+            "description": "이메일 마케팅 수신 동의 여부"
+          },
+          "notification_preferences": {
+            "$ref": "#/components/schemas/NotificationPreferencesResponse"
           }
         },
         "required": [
           "education_level",
+          "email_agreement",
           "employment",
           "job_fields",
           "name",
           "nickname",
+          "notification_preferences",
           "selected_interested_jobs"
         ]
+      },
+      "NotificationPreferencesResponse": {
+        "description": "알림 수신 설정",
+        "properties": {
+          "popular": {
+            "type": "boolean",
+            "description": "인기 공고 알림 수신 여부"
+          },
+          "bookmarked": {
+            "type": "boolean",
+            "description": "저장한 공고 알림 수신 여부"
+          }
+        },
+        "required": ["bookmarked", "popular"]
       },
       "ResponseWrapperGetMemberMeResponse": {
         "properties": {
