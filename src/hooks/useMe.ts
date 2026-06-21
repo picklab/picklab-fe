@@ -7,6 +7,11 @@ type EmploymentInfo = {
   company: string;
 };
 
+export interface NotificationPreferences {
+  popular: boolean;
+  bookmarked: boolean;
+}
+
 export interface MeData {
   name: string;
   nickname: string;
@@ -18,6 +23,8 @@ export interface MeData {
   educationLevel: string;
   birthDate: string;
   employment: EmploymentInfo | null;
+  emailAgreement: boolean;
+  notificationPreferences: NotificationPreferences;
 }
 
 const JOB_LABELS: Record<string, string> = {
@@ -79,6 +86,12 @@ function normalizeMeData(payload: unknown): MeData {
   const legacyJobs = toStringArray(d.jobs ?? d.job_categories ?? d.jobCategories);
   const jobCodes = selectedInterestedJobs.length > 0 ? selectedInterestedJobs : jobFields.length > 0 ? jobFields : legacyJobs;
   const employment = d.employment && typeof d.employment === 'object' ? (d.employment as Record<string, unknown>) : null;
+  const prefs =
+    d.notification_preferences && typeof d.notification_preferences === 'object'
+      ? (d.notification_preferences as Record<string, unknown>)
+      : d.notificationPreferences && typeof d.notificationPreferences === 'object'
+        ? (d.notificationPreferences as Record<string, unknown>)
+        : {};
 
   return {
     name: typeof d.name === 'string' ? d.name : '',
@@ -113,6 +126,11 @@ function normalizeMeData(payload: unknown): MeData {
           company: typeof employment.company === 'string' ? employment.company : '',
         }
       : null,
+    emailAgreement: d.email_agreement === true || d.emailAgreement === true,
+    notificationPreferences: {
+      popular: prefs.popular === true,
+      bookmarked: prefs.bookmarked === true,
+    },
   };
 }
 

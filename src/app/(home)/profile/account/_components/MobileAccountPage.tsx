@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@/components/common/Button/Button';
 import Switch from '@/components/common/Control/Switch';
 import Avatar from '@/components/common/GNB/pc/Avatar';
@@ -13,9 +13,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 /**
- * 이메일 마케팅 수신 동의.
- * ⚠️ 백엔드에 현재 동의 여부를 읽을 GET이 없어(me 응답에도 없음) 초기 스위치 상태는
- *    기본 off로 시작한다. 백엔드가 조회를 제공하면 마운트 시 초기값을 채울 것.
+ * 이메일 마케팅 수신 동의 / 알림 설정.
+ * 초기값은 GET /v1/members/me 의 email_agreement, notification_preferences 로 채운다(useMe).
  */
 export default function MobileAccountPage() {
   const [snbMenu, setSnbMenu] = useState<'my-activity' | 'my-post' | 'account'>('my-activity');
@@ -24,6 +23,19 @@ export default function MobileAccountPage() {
 
   const [emailAgreement, setEmailAgreement] = useState(false);
   const [pending, setPending] = useState(false);
+
+  // 알림 설정(인기 공고/저장한 공고)
+  const [popular, setPopular] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [notiPending, setNotiPending] = useState<'POPULAR' | 'BOOKMARKED' | null>(null);
+
+  // me 로드 시 초기값 동기화
+  useEffect(() => {
+    if (!me) return;
+    setEmailAgreement(me.emailAgreement);
+    setPopular(me.notificationPreferences.popular);
+    setBookmarked(me.notificationPreferences.bookmarked);
+  }, [me]);
 
   const toggleEmailAgreement = async (next: boolean) => {
     if (pending) return;
@@ -42,6 +54,28 @@ export default function MobileAccountPage() {
       window.alert(error instanceof Error ? error.message : '이메일 마케팅 수신 동의 변경 중 오류가 발생했습니다.');
     } finally {
       setPending(false);
+    }
+  };
+
+  // 알림 토글: 백엔드는 type 만 받아 현재값을 뒤집는다(PATCH /v1/members/notifications)
+  const toggleNotification = async (type: 'POPULAR' | 'BOOKMARKED', next: boolean) => {
+    if (notiPending) return;
+    const setLocal = type === 'POPULAR' ? setPopular : setBookmarked;
+    setLocal(next); // 낙관적 업데이트
+    setNotiPending(type);
+    try {
+      const res = await fetch('/api/members/notifications', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type }),
+      });
+      if (!res.ok) throw new Error('알림 설정 변경에 실패했습니다.');
+    } catch (error) {
+      setLocal(!next); // 실패 시 롤백
+      window.alert(error instanceof Error ? error.message : '알림 설정 변경 중 오류가 발생했습니다.');
+    } finally {
+      setNotiPending(null);
     }
   };
 
@@ -129,7 +163,11 @@ export default function MobileAccountPage() {
               </Typography>
             </div>
             <div>
-              <Switch />
+              <Switch
+                checked={popular}
+                disabled={notiPending === 'POPULAR'}
+                onChange={(e) => toggleNotification('POPULAR', e.target.checked)}
+              />
             </div>
           </div>
           <div className="w-full flex flex-row justify-between py-1">
@@ -140,7 +178,11 @@ export default function MobileAccountPage() {
               </Typography>
             </div>
             <div>
-              <Switch />
+              <Switch
+                checked={bookmarked}
+                disabled={notiPending === 'BOOKMARKED'}
+                onChange={(e) => toggleNotification('BOOKMARKED', e.target.checked)}
+              />
             </div>
           </div>
         </div>

@@ -1,28 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Icon from "@/components/common/Icon/Icon";
 
 type RankChange = "up" | "down" | "none";
 
-// TODO(인기검색어): 백엔드 랭킹+순위변동 API 미제공 → 더미 데이터(figma 2107-20308 정합용).
-// API 생기면 이 상수를 응답 매핑으로 교체.
-const POPULAR_KEYWORDS: {
+interface PopularKeyword {
   rank: number;
   keyword: string;
   change: RankChange;
-}[] = [
-  { rank: 1, keyword: "검색어명", change: "up" },
-  { rank: 2, keyword: "검색어명", change: "down" },
-  { rank: 3, keyword: "검색어명", change: "none" },
-  { rank: 4, keyword: "검색어명", change: "up" },
-  { rank: 5, keyword: "검색어명", change: "up" },
-  { rank: 6, keyword: "검색어명", change: "up" },
-  { rank: 7, keyword: "검색어명", change: "down" },
-  { rank: 8, keyword: "검색어명", change: "none" },
-  { rank: 9, keyword: "검색어명", change: "up" },
-  { rank: 10, keyword: "검색어명", change: "up" },
-];
+}
+
+// 백엔드 trend(UP/DOWN/SAME/NEW) → UI change 매핑. (SAME/NEW는 변동 없음 '-' 표시)
+function trendToChange(trend: unknown): RankChange {
+  if (trend === "UP") return "up";
+  if (trend === "DOWN") return "down";
+  return "none";
+}
+
+// "2026-06-21T14:00:00" → "14:00 기준"
+function formatAggregatedAt(value: unknown): string {
+  if (typeof value !== "string") return "";
+  const match = value.match(/T(\d{2}):(\d{2})/);
+  return match ? `${match[1]}:${match[2]} 기준` : "";
+}
 
 function RankChangeBadge({ change }: { change: RankChange }) {
   if (change === "none") {
@@ -66,8 +68,41 @@ function RankItem({
 }
 
 export default function PopularSearchKeywords() {
-  const left = POPULAR_KEYWORDS.slice(0, 5);
-  const right = POPULAR_KEYWORDS.slice(5, 10);
+  const [keywords, setKeywords] = useState<PopularKeyword[]>([]);
+  const [aggregatedAt, setAggregatedAt] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/search/popular-keywords")
+      .then((res) => {
+        if (!res.ok) throw new Error("인기 검색어 조회 실패");
+        return res.json();
+      })
+      .then((json) => {
+        if (!active) return;
+        const data = json?.data ?? json;
+        const items = Array.isArray(data?.keywords) ? data.keywords : [];
+        setKeywords(
+          items.map((item: Record<string, unknown>) => ({
+            rank: typeof item.rank === "number" ? item.rank : 0,
+            keyword: typeof item.keyword === "string" ? item.keyword : "",
+            change: trendToChange(item.trend),
+          })),
+        );
+        setAggregatedAt(formatAggregatedAt(data?.aggregated_at));
+      })
+      .catch(() => {
+        if (!active) return;
+        setKeywords([]);
+        setAggregatedAt("");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const left = keywords.slice(0, 5);
+  const right = keywords.slice(5, 10);
 
   return (
     <div className="w-full">
@@ -75,20 +110,28 @@ export default function PopularSearchKeywords() {
         <span className="text-[16px] font-semibold text-gray-90">
           인기 검색어
         </span>
-        <span className="text-[11px] text-gray-50">00:00 기준</span>
+        {aggregatedAt && (
+          <span className="text-[11px] text-gray-50">{aggregatedAt}</span>
+        )}
       </div>
-      <div className="mt-3 flex gap-x-[55px]">
-        <ul className="flex flex-col gap-y-2 w-[140px]">
-          {left.map((item) => (
-            <RankItem key={item.rank} {...item} />
-          ))}
-        </ul>
-        <ul className="flex flex-col gap-y-2 w-[140px]">
-          {right.map((item) => (
-            <RankItem key={item.rank} {...item} />
-          ))}
-        </ul>
-      </div>
+      {keywords.length === 0 ? (
+        <p className="mt-3 text-[13px] text-gray-50">
+          아직 집계된 인기 검색어가 없어요.
+        </p>
+      ) : (
+        <div className="mt-3 flex gap-x-[55px]">
+          <ul className="flex flex-col gap-y-2 w-[140px]">
+            {left.map((item) => (
+              <RankItem key={item.rank} {...item} />
+            ))}
+          </ul>
+          <ul className="flex flex-col gap-y-2 w-[140px]">
+            {right.map((item) => (
+              <RankItem key={item.rank} {...item} />
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

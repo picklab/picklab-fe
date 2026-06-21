@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@/components/common/Button/Button';
 import Switch from '@/components/common/Control/Switch';
 import SNB from '@/components/common/SNB/SNB';
@@ -11,8 +11,7 @@ import { useRouter } from 'next/navigation';
 
 /**
  * 이메일 마케팅 수신 동의.
- * ⚠️ 백엔드에 현재 동의 여부를 읽을 GET이 없어(me 응답에도 없음) 초기 스위치 상태는
- *    기본 off로 시작한다. 백엔드가 조회를 제공하면 마운트 시 초기값을 채울 것.
+ * 초기값은 GET /v1/members/me 의 email_agreement 로 채운다(useMe).
  */
 export default function PcAccountPage() {
   const router = useRouter();
@@ -20,6 +19,11 @@ export default function PcAccountPage() {
 
   const [emailAgreement, setEmailAgreement] = useState(false);
   const [pending, setPending] = useState(false);
+
+  // me 로드 시 이메일 동의 초기값 동기화
+  useEffect(() => {
+    if (me) setEmailAgreement(me.emailAgreement);
+  }, [me]);
 
   const toggleEmailAgreement = async (next: boolean) => {
     if (pending) return;

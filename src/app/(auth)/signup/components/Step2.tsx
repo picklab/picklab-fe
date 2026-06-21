@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TextField from '@/components/common/Field/TextField';
 import Select from '@/components/common/Select/Select';
 import type { HelpMessageProps } from '@/components/common/Field/HelpMessage';
@@ -8,7 +8,7 @@ import {
   GRADUATION_OPTIONS,
   EMPLOYMENT_OPTIONS,
   EMPLOYED_STATUS_VALUE,
-  // NICKNAME_DUPLICATE_MESSAGE, // 중복 체크 API 생기면 연결
+  NICKNAME_DUPLICATE_MESSAGE,
 } from '../constants';
 import TitleTypography from './TitleTypography';
 
@@ -22,8 +22,8 @@ interface NicknameValidation {
   message?: string;
 }
 
-/** 닉네임 실시간 검증 (우선순위 순서대로 평가) */
-function validateNickname(value: string): NicknameValidation {
+/** 닉네임 형식 검증 (우선순위 순서대로 평가). 형식이 통과해야 중복 검사로 진행. */
+function validateNicknameFormat(value: string): NicknameValidation {
   // 입력 전(초기, 값 없음)엔 메시지 없이 default
   if (value.length === 0) {
     return { status: 'default' };
@@ -43,8 +43,7 @@ function validateNickname(value: string): NicknameValidation {
   if (value.length > NICKNAME_MAX_LENGTH) {
     return { status: 'error', message: '최대 20자까지 입력해주세요.' };
   }
-  // 중복 체크 API 생기면 연결 (NICKNAME_DUPLICATE_MESSAGE 사용)
-  return { status: 'success', message: '사용 가능한 닉네임입니다.' };
+  return { status: 'success' };
 }
 
 export default function Step2({ signupData, setSignupData }: StepProps) {
@@ -71,7 +70,51 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
 
   const { name, education, schoolName, graduationStatus, employmentStatus } = signupData.userInfo;
 
-  const nicknameValidation = useMemo(() => validateNickname(name), [name]);
+  const nicknameFormat = useMemo(() => validateNicknameFormat(name), [name]);
+
+  // 중복 검사 결과(형식 통과 시에만 디바운스로 조회)
+  const [availability, setAvailability] = useState<NicknameValidation>({ status: 'default' });
+
+  useEffect(() => {
+    // 형식이 통과하지 않으면 중복 검사 스킵
+    if (nicknameFormat.status !== 'success') {
+      setAvailability({ status: 'default' });
+      return;
+    }
+
+    let active = true;
+    setAvailability({ status: 'default', message: '닉네임 중복 확인 중...' });
+    const timer = setTimeout(() => {
+      fetch(`/api/members/nickname-availability?nickname=${encodeURIComponent(name)}`)
+        .then((res) => {
+          if (!res.ok) throw new Error('닉네임 중복 확인 실패');
+          return res.json();
+        })
+        .then((json) => {
+          if (!active) return;
+          const available = (json?.data ?? json)?.available;
+          setAvailability(
+            available
+              ? { status: 'success', message: '사용 가능한 닉네임입니다.' }
+              : { status: 'error', message: NICKNAME_DUPLICATE_MESSAGE },
+          );
+        })
+        .catch(() => {
+          if (!active) return;
+          // 조회 실패 시 형식만 통과한 상태로 둔다(가입 자체는 막지 않음)
+          setAvailability({ status: 'default' });
+        });
+    }, 400);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [name, nicknameFormat.status]);
+
+  // 형식 오류가 우선, 통과하면 중복 검사 결과를 표시
+  const nicknameValidation: NicknameValidation =
+    nicknameFormat.status === 'success' ? availability : nicknameFormat;
 
   // 최종학력 + 학교명이 둘 다 입력되면 성공 메시지
   const isEducationComplete = education.trim().length > 0 && schoolName.trim().length > 0;
