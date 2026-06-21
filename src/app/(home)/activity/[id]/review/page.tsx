@@ -4,9 +4,11 @@ import PcReviewWritePage from './_components/PcReviewWritePage';
 import MobileReviewWritePage from './_components/MobileReviewWritePage';
 import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
+import type { MyReviewDetail } from '@/types/review.types';
 
 interface ReviewWritePageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ edit?: string }>;
 }
 
 const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
@@ -98,6 +100,24 @@ async function fetchActivityDetail(id: string): Promise<ActivityCardItem | null>
   }
 }
 
+/** 수정 모드 프리필용: 내 리뷰 단건 조회. (비로그인/타인 리뷰면 null) */
+async function fetchReviewDetail(reviewId: string): Promise<MyReviewDetail | null> {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
+    if (!accessToken) return null;
+    const response = await fetch(`${BACKEND_URL}/v1/reviews/${reviewId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    });
+    if (!response.ok) return null;
+    const json = (await response.json()) as { data?: MyReviewDetail };
+    return json.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** 수료여부 저장용 participationId: 활동 결과 목록에서 activity_id 매칭. (미참여/비로그인이면 null) */
 async function fetchParticipationId(activityId: string): Promise<number | null> {
   try {
@@ -117,9 +137,14 @@ async function fetchParticipationId(activityId: string): Promise<number | null> 
   }
 }
 
-export default async function ReviewWritePage({ params }: ReviewWritePageProps) {
+export default async function ReviewWritePage({ params, searchParams }: ReviewWritePageProps) {
   const { id } = await params;
-  const [apiActivity, participationId] = await Promise.all([fetchActivityDetail(id), fetchParticipationId(id)]);
+  const { edit: editReviewId } = await searchParams;
+  const [apiActivity, participationId, reviewDetail] = await Promise.all([
+    fetchActivityDetail(id),
+    fetchParticipationId(id),
+    editReviewId ? fetchReviewDetail(editReviewId) : Promise.resolve(null),
+  ]);
   const rawActivity = apiActivity ? null : findActivityById(id);
 
   if (!apiActivity && !rawActivity) {
@@ -127,11 +152,16 @@ export default async function ReviewWritePage({ params }: ReviewWritePageProps) 
   }
 
   const activity = apiActivity ?? mapActivityToDetailItem(rawActivity!);
+  // edit 모드는 리뷰 단건 조회 성공 시에만 활성화(실패하면 일반 작성 모드로 폴백)
+  const editProps =
+    editReviewId && reviewDetail
+      ? { mode: 'edit' as const, reviewId: editReviewId, initialReviewDetail: reviewDetail }
+      : {};
 
   return (
     <>
-      <PcReviewWritePage activity={activity} activityId={id} participationId={participationId ?? undefined} />
-      <MobileReviewWritePage activity={activity} activityId={id} participationId={participationId ?? undefined} />
+      <PcReviewWritePage activity={activity} activityId={id} participationId={participationId ?? undefined} {...editProps} />
+      <MobileReviewWritePage activity={activity} activityId={id} participationId={participationId ?? undefined} {...editProps} />
     </>
   );
 }

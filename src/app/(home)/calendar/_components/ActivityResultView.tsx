@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import Button from '@/components/common/Button/Button';
@@ -8,9 +9,15 @@ import Select from '@/components/common/Select/Select';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import CardChip, { type CardChipProps } from '@/components/common/Card/CardChip';
 import useParticipationSummary from '@/hooks/useParticipationSummary';
+import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
+import type {
+  ActivityParticipationResult,
+  ApplicationStatus,
+  ParticipationProgressStatus,
+} from '@/types/review.types';
 
 // 활동 결과 탭 — figma 시안(activity-result). 통계 카드 + 지원한 활동 리스트.
-// 통계: useParticipationSummary(200). 리스트: activity-participations/results(500 블로커) → 목업 폴백.
+// 통계: useParticipationSummary. 리스트: activity-participations/results(실데이터).
 
 export const PASS_OPTIONS = [
   { value: '', label: '합격여부' },
@@ -31,6 +38,8 @@ export const FILTER_OPTIONS = [
 
 export interface ResultActivity {
   id: string;
+  participationId: number;
+  activityId: number;
   badgeText: string;
   badgeVariant: 'default' | 'deadline';
   activityType: CardChipProps['text'];
@@ -40,71 +49,58 @@ export interface ResultActivity {
   activityPeriod: string;
   pass: string;
   progress: string;
-  bookmarked: boolean;
+  canWriteReview: boolean;
 }
 
-// TODO(MOCK): 디자인 확인용 가데이터 — results API(500) 해소 시 실데이터로 교체.
-export const MOCK_ACTIVITIES: ResultActivity[] = [
-  {
-    id: 'result-1',
-    badgeText: '종료',
-    badgeVariant: 'default',
-    activityType: '공모전/해커톤',
-    title: 'BIAF2025 온라인서포터즈 애니_ON',
-    organizer: 'BIAF 조직위원회',
-    applyPeriod: 'YY.MM.DD ~ YY.MM.DD',
-    activityPeriod: 'YY.MM.DD ~ YY.MM.DD',
-    pass: '',
-    progress: '',
-    bookmarked: true,
-  },
-  {
-    id: 'result-2',
-    badgeText: '종료',
-    badgeVariant: 'default',
-    activityType: '대외활동',
-    title: 'Super Rookie Challenge Season 16 서포터즈 모집',
-    organizer: '(주)셰르파뮤직',
-    applyPeriod: 'YY.MM.DD ~ YY.MM.DD',
-    activityPeriod: 'YY.MM.DD ~ YY.MM.DD',
-    pass: 'ACCEPTED',
-    progress: 'COMPLETED',
-    bookmarked: true,
-  },
-  {
-    id: 'result-3',
-    badgeText: '오늘마감',
-    badgeVariant: 'deadline',
-    activityType: '대외활동',
-    title: '포항 방석리 어촌마을 살아보기 프로그램 참여자 모집(~6/9)',
-    organizer: '오션캠퍼스',
-    applyPeriod: 'YY.MM.DD ~ YY.MM.DD',
-    activityPeriod: 'YY.MM.DD ~ YY.MM.DD',
-    pass: '',
-    progress: '',
-    bookmarked: true,
-  },
-];
+// 'YYYY-MM-DD'(또는 datetime) ~ → 'YY.MM.DD ~ YY.MM.DD'
+function formatPeriod(start?: string | null, end?: string | null): string {
+  // slice(2,10): 연도 앞 2자리 제거 + 'T...' datetime 꼬리 방어
+  const fmt = (v?: string | null) => (v ? v.slice(2, 10).replace(/-/g, '.') : '');
+  const s = fmt(start);
+  const e = fmt(end);
+  if (s && e) return `${s} ~ ${e}`;
+  return s || e || '-';
+}
+
+// 모집 마감일 기준 배지 텍스트/변형
+function toBadge(endDate?: string | null): { text: string; variant: 'default' | 'deadline' } {
+  if (!endDate) return { text: '상시', variant: 'default' };
+  const today = new Date();
+  const end = new Date(endDate);
+  const diff = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (Number.isNaN(diff)) return { text: '상시', variant: 'default' };
+  if (diff < 0) return { text: '마감', variant: 'default' };
+  if (diff === 0) return { text: 'D-Day', variant: 'deadline' };
+  return { text: `D-${String(diff).padStart(2, '0')}`, variant: 'deadline' };
+}
+
+export function mapResult(item: ActivityParticipationResult): ResultActivity {
+  const badge = toBadge(item.recruitment_end_date);
+  return {
+    id: `result-${item.participation_id}`,
+    participationId: item.participation_id,
+    activityId: item.activity_id,
+    badgeText: badge.text,
+    badgeVariant: badge.variant,
+    activityType: item.activity_type as CardChipProps['text'],
+    title: item.title,
+    organizer: item.organizer,
+    applyPeriod: formatPeriod(item.recruitment_start_date, item.recruitment_end_date),
+    activityPeriod: formatPeriod(item.activity_start_date, item.activity_end_date),
+    pass: item.application_status === 'APPLIED' ? '' : item.application_status,
+    progress: item.progress_status === 'NOT_SELECTED' || item.progress_status === 'IN_PROGRESSING' ? '' : item.progress_status,
+    canWriteReview: item.can_write_review,
+  };
+}
 
 export function StatCards() {
   const { data: summary } = useParticipationSummary();
-  const total =
-    summary.applied_count + summary.accepted_count + summary.rejected_count + summary.completed_count;
-  // 데이터 없으면(미로그인/빈값) 디자인 확인용 목업(50) 폴백
-  const results =
-    total > 0
-      ? [
-          { title: '지원완료', value: summary.applied_count },
-          { title: '최종합격', value: summary.accepted_count },
-          { title: '불합격', value: summary.rejected_count },
-          { title: '수료완료', value: summary.completed_count },
-        ]
-      : [
-          { title: '지원완료', value: 50 },
-          { title: '최종합격', value: 50 },
-          { title: '불합격', value: 50 },
-          { title: '수료완료', value: 50 },
-        ];
+  const results = [
+    { title: '지원완료', value: summary.applied_count },
+    { title: '최종합격', value: summary.accepted_count },
+    { title: '불합격', value: summary.rejected_count },
+    { title: '수료완료', value: summary.completed_count },
+  ];
 
   return (
     <div className="flex gap-2 pc:gap-4">
@@ -124,8 +120,56 @@ export function StatCards() {
 }
 
 function ActivityResultCard({ activity }: { activity: ResultActivity }) {
+  const router = useRouter();
   const [pass, setPass] = useState(activity.pass);
   const [progress, setProgress] = useState(activity.progress);
+  const [passPending, setPassPending] = useState(false);
+  const [progressPending, setProgressPending] = useState(false);
+
+  // 합격여부 변경 → PATCH application-status (낙관적 + 롤백)
+  // 플레이스홀더('')는 서버에 unset 개념이 없어 무시(로컬도 안 비워 서버값 유지)
+  const handlePassChange = async (next: string) => {
+    if (passPending || next === pass || !next) return;
+    const prev = pass;
+    setPass(next);
+    setPassPending(true);
+    try {
+      const res = await fetch(`/api/activity-participations/${activity.participationId}/application-status`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ application_status: next as ApplicationStatus }),
+      });
+      if (!res.ok) throw new Error('합격 여부 변경 실패');
+    } catch {
+      setPass(prev);
+      window.alert('합격 여부 변경 중 오류가 발생했습니다.');
+    } finally {
+      setPassPending(false);
+    }
+  };
+
+  // 수료여부 변경 → PATCH progress-status (낙관적 + 롤백)
+  const handleProgressChange = async (next: string) => {
+    if (progressPending || next === progress || !next) return;
+    const prev = progress;
+    setProgress(next);
+    setProgressPending(true);
+    try {
+      const res = await fetch(`/api/activity-participations/${activity.participationId}/progress-status`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ progress_status: next as ParticipationProgressStatus }),
+      });
+      if (!res.ok) throw new Error('수료 여부 변경 실패');
+    } catch {
+      setProgress(prev);
+      window.alert('수료 여부 변경 중 오류가 발생했습니다.');
+    } finally {
+      setProgressPending(false);
+    }
+  };
 
   return (
     <div className="flex items-center gap-[91px] py-6">
@@ -153,14 +197,14 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
         <Select
           options={PASS_OPTIONS}
           value={pass}
-          onChange={(v) => setPass((v as string) ?? '')}
+          onChange={(v) => handlePassChange((v as string) ?? '')}
           width="small"
           size="small"
         />
         <Select
           options={PROGRESS_OPTIONS}
           value={progress}
-          onChange={(v) => setProgress((v as string) ?? '')}
+          onChange={(v) => handleProgressChange((v as string) ?? '')}
           width="small"
           size="small"
         />
@@ -186,7 +230,7 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
         </div>
       </div>
 
-      {/* 리뷰 작성 + 북마크 */}
+      {/* 리뷰 작성 (수료/중도포기 시에만 활성) */}
       <div className="flex shrink-0 items-center gap-4">
         <Button
           size="sm"
@@ -195,11 +239,8 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
           icon={{ icon: 'pencil', position: 'left' }}
           isFullRounded
           className="w-[134px]"
-        />
-        <Icon
-          icon={activity.bookmarked ? 'bookmarkFill' : 'bookmarkLine'}
-          size={24}
-          className={activity.bookmarked ? 'text-primary-50' : 'text-gray-40'}
+          disabled={!activity.canWriteReview}
+          onClick={() => router.push(`/activity/${activity.activityId}/review`)}
         />
       </div>
     </div>
@@ -208,6 +249,15 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
 
 export default function ActivityResultView() {
   const [filter, setFilter] = useState<string[]>([]);
+  const { data: results, loading } = useActivityParticipationResults();
+
+  const activities = useMemo(() => results.map(mapResult), [results]);
+
+  // 합격여부 체크박스 필터(ACCEPTED/REJECTED)
+  const filteredActivities = useMemo(() => {
+    if (filter.length === 0) return activities;
+    return activities.filter((a) => filter.includes(a.pass));
+  }, [activities, filter]);
 
   return (
     <div className="flex flex-col gap-[60px]">
@@ -231,11 +281,25 @@ export default function ActivityResultView() {
           />
         </div>
 
-        <div className="divide-y divide-gray-10 rounded-xl border border-gray-20 px-6">
-          {MOCK_ACTIVITIES.map((activity) => (
-            <ActivityResultCard key={activity.id} activity={activity} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex min-h-[160px] items-center justify-center">
+            <Typography type="Body2Medium" className="text-gray-50">
+              불러오는 중...
+            </Typography>
+          </div>
+        ) : filteredActivities.length === 0 ? (
+          <div className="flex min-h-[160px] items-center justify-center rounded-xl border border-gray-20">
+            <Typography type="Body2Medium" className="text-gray-50">
+              지원한 활동이 없어요.
+            </Typography>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-10 rounded-xl border border-gray-20 px-6">
+            {filteredActivities.map((activity) => (
+              <ActivityResultCard key={activity.id} activity={activity} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { deleteReview, useMyReviews } from '@/hooks/useMyReviews';
@@ -37,10 +38,12 @@ function formatCreatedAt(value?: string | null): string {
 }
 
 export default function MobileMyReviewsPage() {
+  const router = useRouter();
   const { data, loading, refetch } = useMyReviews();
   const [deleteTarget, setDeleteTarget] = useState<MyReviewItem | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | string | null>(null);
 
   const items = data?.items ?? [];
 
@@ -52,10 +55,23 @@ export default function MobileMyReviewsPage() {
     return () => window.removeEventListener('click', close);
   }, [openMenuId]);
 
-  // 수정: 백엔드 activity_id 연동 전까지 임시 안내
-  const handleEdit = () => {
-    // TODO(edit): 백엔드가 리뷰 응답에 activity_id 추가하면 작성 폼 edit 모드로 연결(이미 useReviewWriteForm mode="edit" 준비됨)
-    window.alert('수정 기능은 백엔드 활동 연동(activity_id) 후 제공됩니다.');
+  // 수정: 리뷰 단건 조회로 activity_id를 얻어 작성 폼 edit 모드로 이동
+  const handleEdit = async (reviewId: number | string) => {
+    if (editingId != null) return;
+    setEditingId(reviewId);
+    try {
+      const res = await fetch(`/api/reviews/${reviewId}`, { credentials: 'include' });
+      if (!res.ok) throw new Error('리뷰 정보를 불러오지 못했습니다.');
+      const json = await res.json();
+      const activityId = json?.data?.activity_id;
+      if (!activityId) throw new Error('연결된 활동 정보를 찾을 수 없습니다.');
+      router.push(`/activity/${activityId}/review?edit=${reviewId}`);
+    } catch (err) {
+      window.alert(err instanceof Error ? err.message : '리뷰 수정 화면으로 이동하지 못했습니다.');
+    } finally {
+      // 네비게이션 후/실패 후 모두 잠금 해제(뒤로가기로 캐시된 목록 복귀 시 버튼 영구 비활성 방지)
+      setEditingId(null);
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -166,7 +182,7 @@ export default function MobileMyReviewsPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setOpenMenuId(null);
-                          handleEdit();
+                          handleEdit(item.id);
                         }}
                         className="px-4 py-2 text-left hover:bg-gray-5"
                       >

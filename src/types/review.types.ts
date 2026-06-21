@@ -330,6 +330,7 @@ export interface MyReviewListData {
 
 /** GET /v1/reviews/{id} 의 data — 수정 폼 프리필용 단건 */
 export interface MyReviewDetail {
+  activity_id: number;
   job_group: ReviewJobGroup;
   job_detail: ReviewJobDetail;
   overall_score: number;
@@ -380,8 +381,13 @@ export interface ActivityParticipationResult {
   organizer: string;
   activity_type: string;
   thumbnail_url?: string | null;
+  recruitment_start_date?: string | null;
+  recruitment_end_date?: string | null;
+  activity_start_date?: string | null;
+  activity_end_date?: string | null;
   application_status: ApplicationStatus;
   progress_status: ParticipationProgressStatus;
   /** 리뷰 작성 가능 여부(progress_status ∈ {COMPLETED, DROPPED}) */
   can_write_review: boolean;
+  applied_at?: string | null;
 }
