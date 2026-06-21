@@ -26,10 +26,20 @@ type UseBookmarksParams = {
   activityType?: BookmarkCategory;
   sortType?: BookmarkSortType;
   size?: number;
+  /** true면 마감 공고도 포함해서 반환(진행여부 필터용). 기본 false=마감 제외(기존 동작). */
+  includeClosed?: boolean;
 };
 
-export function useBookmarks({ activityType, sortType = 'RECENTLY_BOOKMARKED', size = 100 }: UseBookmarksParams = {}) {
-  const [data, setData] = useState<ApiActivityItem[]>([]);
+/** 북마크 카드 + 마감 여부 플래그(진행여부 필터용). */
+export type BookmarkItem = ApiActivityItem & { isClosed: boolean };
+
+export function useBookmarks({
+  activityType,
+  sortType = 'RECENTLY_BOOKMARKED',
+  size = 100,
+  includeClosed = false,
+}: UseBookmarksParams = {}) {
+  const [data, setData] = useState<BookmarkItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -67,14 +77,13 @@ export function useBookmarks({ activityType, sortType = 'RECENTLY_BOOKMARKED', s
         const items = payload.data?.items ?? [];
 
         if (!cancelled) {
-          setData(
-            items
-              .filter((item) => !isClosedBackendActivity(item))
-              .map((item) => ({
-                ...mapBackendActivityToApiItem(item),
-                isBookmarked: item.is_bookmarked ?? true,
-              })),
-          );
+          const mapped: BookmarkItem[] = items.map((item) => ({
+            ...mapBackendActivityToApiItem(item),
+            isBookmarked: item.is_bookmarked ?? true,
+            isClosed: isClosedBackendActivity(item),
+          }));
+          // 기본은 마감 제외(기존 동작), includeClosed면 전체 반환
+          setData(includeClosed ? mapped : mapped.filter((m) => !m.isClosed));
         }
       } catch (err) {
         if (!cancelled) {
@@ -93,7 +102,7 @@ export function useBookmarks({ activityType, sortType = 'RECENTLY_BOOKMARKED', s
     return () => {
       cancelled = true;
     };
-  }, [activityType, size, sortType]);
+  }, [activityType, size, sortType, includeClosed]);
 
   return { data, loading, error };
 }

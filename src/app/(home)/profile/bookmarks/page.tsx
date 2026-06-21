@@ -57,7 +57,8 @@ export default function BookmarksPage() {
     selectedCategories.length === 1
       ? CATEGORY_TO_API[selectedCategories[0] as keyof typeof CATEGORY_TO_API]
       : undefined;
-  const { data, loading } = useBookmarks({ activityType, sortType: SORT_TO_API[sort], size: 100 });
+  // 진행여부 필터를 위해 마감 공고도 포함해서 받는다(카드별 isClosed로 구분).
+  const { data, loading } = useBookmarks({ activityType, sortType: SORT_TO_API[sort], size: 100, includeClosed: true });
 
   const resetAll = () => {
     setSelectedCategories([]);
@@ -73,8 +74,11 @@ export default function BookmarksPage() {
       const code = ACTIVITY_TYPE_TO_CODE[item.activityType] ?? 'external_activity';
       const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(code);
       const matchJob = jobLabels.length === 0 || item.jobs.some((job) => jobLabels.includes(job));
-      // 진행여부: 마감 카드는 useBookmarks에서 이미 제외 → '진행중'만 존재. '마감' 선택 시 결과 없음
-      const matchStatus = selectedStatus.length === 0 || selectedStatus.includes('ongoing');
+      // 진행여부: 카드별 isClosed로 진행중/마감 구분 (includeClosed로 마감도 받아옴)
+      const matchStatus =
+        selectedStatus.length === 0 ||
+        (selectedStatus.includes('ongoing') && !item.isClosed) ||
+        (selectedStatus.includes('closed') && item.isClosed);
       return matchCategory && matchJob && matchStatus;
     });
   }, [data, selectedCategories, selectedJobs, selectedStatus]);
