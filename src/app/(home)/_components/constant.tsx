@@ -22,6 +22,8 @@ export interface ActivityCardItem {
   viewCount?: number;
   saveCount?: number;
   isBookmarked?: boolean;
+  /** 필수 지원서 양식(필요 서류) — GET /v1/activities/{id} 의 required_files */
+  requiredFiles?: { name: string; url: string }[];
 }
 
 export const CardData: ActivityCardItem[] = [

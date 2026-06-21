@@ -43,6 +43,7 @@ interface BackendActivityDetail {
   is_bookmarked?: boolean | null;
   description?: string | null;
   benefits?: string | null;
+  required_files?: Record<string, { name?: string | null; url?: string | null }> | null;
 }
 
 interface BackendActivityDetailResponse {
@@ -124,6 +125,10 @@ function mapBackendDetailToActivity(raw: BackendActivityDetail): ActivityCardIte
   const jobs = (raw.job_tags ?? []).map((job) => JOB_LABELS[job] ?? job).filter(Boolean);
   const domains = (raw.domains ?? []).filter(Boolean);
   const activityFields = [...new Set([...domains, ...jobs])];
+  // required_files: { key: { name, url } } → 다운로드 가능한 배열로 정규화
+  const requiredFiles = Object.values(raw.required_files ?? {})
+    .map((file) => ({ name: file?.name ?? '', url: file?.url ?? '' }))
+    .filter((file) => file.url);
 
   return {
     detailLink: `/activity/${raw.id}`,
@@ -153,6 +158,7 @@ function mapBackendDetailToActivity(raw: BackendActivityDetail): ActivityCardIte
     viewCount: Number(raw.views ?? 0),
     saveCount: Number(raw.bookmarks ?? 0),
     isBookmarked: Boolean(raw.is_bookmarked),
+    requiredFiles,
   };
 }
 

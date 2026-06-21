@@ -524,13 +524,29 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
               <Typography type="Heading2Semibold" className="text-gray-90">
                 필수 지원서 양식
               </Typography>
-              {/* 지원서 첨부 파일 필드가 응답에 없어 현재는 "파일 없음"만 표시. 첨부 제공 시 다운로드 버튼으로 교체 */}
-              <div className="flex gap-2">
-                <span className="h-space-40 inline-flex items-center rounded-md border border-gray-20 bg-gray-0 px-space-16">
-                  <Typography type="Body2Medium" className="text-gray-50">
-                    파일 없음
-                  </Typography>
-                </span>
+              <div className="flex flex-wrap gap-2">
+                {activity.requiredFiles && activity.requiredFiles.length > 0 ? (
+                  activity.requiredFiles.map((file, index) => (
+                    <a
+                      key={`${file.url}-${index}`}
+                      href={file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="h-space-40 inline-flex items-center rounded-md border border-gray-20 bg-gray-0 px-space-16 hover:bg-gray-5"
+                    >
+                      <Typography type="Body2Medium" className="text-gray-70 underline">
+                        {file.name || '지원서 양식'}
+                      </Typography>
+                    </a>
+                  ))
+                ) : (
+                  <span className="h-space-40 inline-flex items-center rounded-md border border-gray-20 bg-gray-0 px-space-16">
+                    <Typography type="Body2Medium" className="text-gray-50">
+                      파일 없음
+                    </Typography>
+                  </span>
+                )}
               </div>
             </div>
           </section>

@@ -280,15 +280,6 @@ const EmptyReview = ({ className }: { className?: string }) => (
   </div>
 );
 
-// TODO(데모): 차트 디자인 확인용 임시 값 — 확정 후 stats={jobRelevance}로 원복하며 제거
-const DEMO_JOB_RELEVANCE: JobRelevanceStats = {
-  planning_avg_score: 4.5,
-  development_avg_score: 3.5,
-  marketing_avg_score: 2.5,
-  ai_avg_score: 4.0,
-  design_avg_score: 2.0,
-};
-
 // 직무 연관성 레이더: 12시(기획)부터 시계방향 72°씩 5축 정오각형 (figma 2409-26932)
 const RADAR_AXES = [
   { key: 'planning_avg_score', label: '기획' },
@@ -469,7 +460,6 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
     setReviewPage(1);
   };
   const { data: satisfaction } = useReviewSatisfactionStats(reviewActivityId, { enabled: reviewsEnabled });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO(데모): 차트 확인용, 원복 시 DEMO 제거하고 사용
   const { data: jobRelevance } = useReviewJobRelevanceStats(reviewActivityId, { enabled: reviewsEnabled });
   const satisfactionSummary = useMemo(() => aggregateSatisfaction(satisfaction), [satisfaction]);
   const reviews = reviewList?.items ?? [];
@@ -683,13 +673,29 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
               <Typography type="Title3Bold" className="text-gray-90">
                 필수 지원서 양식
               </Typography>
-              {/* 지원서 첨부 파일 필드가 응답에 없어 현재는 "파일 없음"만 표시. 첨부 제공 시 다운로드 버튼으로 교체 */}
-              <div className="flex gap-2">
-                <span className="h-space-40 inline-flex items-center rounded-md border border-gray-20 bg-gray-0 px-space-16">
-                  <Typography type="Body2Medium" className="text-gray-50">
-                    파일 없음
-                  </Typography>
-                </span>
+              <div className="flex flex-wrap gap-2">
+                {activity.requiredFiles && activity.requiredFiles.length > 0 ? (
+                  activity.requiredFiles.map((file, index) => (
+                    <a
+                      key={`${file.url}-${index}`}
+                      href={file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="h-space-40 inline-flex items-center gap-2 rounded-md border border-gray-20 bg-gray-0 px-space-16 hover:bg-gray-5"
+                    >
+                      <Typography type="Body2Medium" className="text-gray-70 underline">
+                        {file.name || '지원서 양식'}
+                      </Typography>
+                    </a>
+                  ))
+                ) : (
+                  <span className="h-space-40 inline-flex items-center rounded-md border border-gray-20 bg-gray-0 px-space-16">
+                    <Typography type="Body2Medium" className="text-gray-50">
+                      파일 없음
+                    </Typography>
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -698,7 +704,7 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
         <section className="mt-[60px]">
           <div className="flex w-full items-start gap-20">
             <div className="flex h-[351px] w-[382px] shrink-0 items-center justify-center rounded-[20px] border border-gray-20 bg-gray-0 px-9 py-4">
-              <JobRadarChart stats={DEMO_JOB_RELEVANCE} />
+              <JobRadarChart stats={jobRelevance} />
             </div>
             <div className="flex w-[438px] flex-col gap-6">
               <div className="flex flex-col gap-5">
