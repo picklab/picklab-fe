@@ -348,7 +348,9 @@ export function useReviewWriteForm({
         }
 
         if (onSuccess) onSuccess();
-        else router.push(`/activity/${activityId}`);
+        // 리뷰 신규 등록(인증없이 등록 포함) → 내 작성글 목록으로 이동. 수정은 기존대로 활동 상세로.
+        else if (mode === 'edit') router.push(`/activity/${activityId}`);
+        else router.push('/profile/posts');
       } catch (error) {
         console.error(`리뷰 ${mode === 'edit' ? '수정' : '등록'} 중 오류 발생:`, error);
         window.alert(`리뷰 ${mode === 'edit' ? '수정' : '등록'} 중 오류가 발생했습니다.`);
@@ -358,6 +360,14 @@ export function useReviewWriteForm({
     },
     [submitting, activityId, participationId, state, router, mode, reviewId, initialFileUrl, onSuccess],
   );
+
+  // 현재 스텝에서 '다음' 진행 가능 여부(비활성 처리용). 부작용 없는 순수 파생값.
+  const canProceed =
+    step === 1
+      ? Boolean(state.jobGroup && state.jobDetail)
+      : step === 2
+        ? Boolean(state.overallScore && state.infoScore && state.difficultyScore && state.benefitScore)
+        : true;
 
   return {
     mode,
@@ -371,6 +381,7 @@ export function useReviewWriteForm({
     activityId,
     jobDetailOptions,
     changeActivity,
+    canProceed,
     goNext,
     goPrev,
     leave,

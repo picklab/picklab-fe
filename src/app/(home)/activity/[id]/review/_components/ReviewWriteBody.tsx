@@ -27,12 +27,18 @@ function FooterButton({
   variant,
   onClick,
   disabled,
+  wide,
 }: {
   label: string;
   variant: 'gray' | 'green';
   onClick: () => void;
   disabled?: boolean;
+  /** 보조(gray) 버튼을 모바일에서 동일 폭(flex-1)으로 — step3 '인증없이 등록'(라벨 김, figma 1136-82502). PC는 120px 유지 */
+  wide?: boolean;
 }) {
+  const grayClass = wide
+    ? 'h-[56px] flex-1 rounded-small bg-gray-10 hover:bg-gray-20 disabled:opacity-60 pc:w-[120px] pc:flex-none'
+    : 'h-[56px] w-[120px] shrink-0 rounded-small bg-gray-10 hover:bg-gray-20 disabled:opacity-60';
   return (
     <button
       type="button"
@@ -41,7 +47,7 @@ function FooterButton({
       className={
         variant === 'green'
           ? 'h-[56px] w-full flex-1 rounded-small bg-primary-50 hover:bg-primary-60 disabled:bg-gray-10'
-          : 'h-[56px] w-[160px] shrink-0 rounded-small bg-gray-10 hover:bg-gray-20 disabled:opacity-60'
+          : grayClass
       }
     >
       <Typography type="Headline2Medium" className={variant === 'green' ? 'text-gray-0' : 'text-gray-50'}>
@@ -73,8 +79,10 @@ export default function ReviewWriteBody({
     onSuccess,
     onLeave,
   });
-  const { step, goNext, goPrev, leave, validateStep3, validateFile, uploadFile, submit, submitting } = form;
+  const { step, canProceed, goNext, goPrev, leave, validateStep3, validateFile, uploadFile, submit, submitting } = form;
   const isEdit = mode === 'edit';
+  // 스텝별 컨테이너 폭 (figma): 활동/직무경험(step1) 564px, 별점·radio·텍스트(step2/3) 466px
+  const contentMaxW = step === 1 ? 'max-w-[564px]' : 'max-w-[466px]';
 
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [changeOpen, setChangeOpen] = useState(false);
@@ -97,9 +105,9 @@ export default function ReviewWriteBody({
 
   return (
     <>
-      <ReviewWriteHeader onClose={() => setLeaveOpen(true)} />
+      <ReviewWriteHeader onClose={() => setLeaveOpen(true)} widthClassName={contentMaxW} />
 
-      <div className="mx-auto w-full max-w-[600px] px-4 py-8 pb-28 pc:pt-10 pc:pb-8">
+      <div className={`mx-auto w-full ${contentMaxW} px-4 py-8 pb-28 pc:pt-10 pc:pb-8`}>
         {step === 1 && (
           <Step1 form={form} onOpenChangeModal={isEdit ? undefined : () => setChangeOpen(true)} />
         )}
@@ -108,17 +116,17 @@ export default function ReviewWriteBody({
 
         {/* 모바일: 하단 고정 / PC: 인라인 */}
         <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-20 bg-gray-0 px-4 py-3 pc:static pc:mt-space-40 pc:border-0 pc:bg-transparent pc:p-0">
-          <div className="mx-auto flex w-full max-w-[600px] gap-2">
+          <div className={`mx-auto flex w-full ${contentMaxW} gap-2`}>
             {step === 1 && (
               <>
                 <FooterButton label="나가기" variant="gray" onClick={() => setLeaveOpen(true)} />
-                <FooterButton label="다음" variant="green" onClick={goNext} />
+                <FooterButton label="다음" variant="green" onClick={goNext} disabled={!canProceed} />
               </>
             )}
             {step === 2 && (
               <>
                 <FooterButton label="이전으로" variant="gray" onClick={goPrev} />
-                <FooterButton label="다음" variant="green" onClick={goNext} />
+                <FooterButton label="다음" variant="green" onClick={goNext} disabled={!canProceed} />
               </>
             )}
             {step === 3 && (
@@ -126,6 +134,7 @@ export default function ReviewWriteBody({
                 <FooterButton
                   label="인증없이 등록"
                   variant="gray"
+                  wide
                   onClick={handleRegisterWithoutCert}
                   disabled={submitting}
                 />

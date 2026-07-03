@@ -39,14 +39,19 @@ const SortTab = ({ options, paramKey = 'sort', onTabClick, currentValue, variant
   };
 
   return (
-    <div className={clsx('flex items-center', isFilter && 'gap-10 border-y border-gray-20 py-4')}>
+    <div className={clsx('flex items-center', isFilter && 'border-y border-gray-20 py-4')}>
       {options.map((option, index) => (
         <div key={option.value} role="tablist" className="flex items-center">
           {/* 🏷️ 추후 button 공통 컴포넌트 제작후 교체 예정 */}
-          <button onClick={() => handleClick(option.value)} className="flex items-center">
+          <button
+            onClick={() => handleClick(option.value)}
+            className={clsx('flex items-center justify-center', isFilter && 'w-[140px]')}
+          >
             <Typography
-              type={isFilter ? 'Headline2Medium' : 'Body3Medium'}
-              className={clsx('text-gray-50', currentTab === option.value && 'text-gray-90')}
+              type={isFilter ? 'Headline2SemiBold' : 'Body3Medium'}
+              className={clsx(
+                currentTab === option.value ? 'text-gray-90' : isFilter ? 'text-gray-40' : 'text-gray-50',
+              )}
             >
               {option.label}
             </Typography>

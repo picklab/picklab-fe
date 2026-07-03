@@ -26,10 +26,10 @@ const ORGANIZATION_LABELS: Record<string, string> = {
   SMALL_CORPORATION: '중소기업',
   STARTUP: '스타트업',
   PUBLIC_ORGANIZATION: '공공기관/공기업',
-  NON_PROFIT: '비영리단체/협회/재단',
+  NON_PROFIT: '비영리/협회/재단',
   FINANCIAL: '금융권',
   FINANCIAL_INSTITUTION: '금융권',
-  FOREIGN_CORPORATION: '외국계기업',
+  FOREIGN_CORPORATION: '외국계',
   HOSPITAL: '병원',
   ETC: '기타',
 };

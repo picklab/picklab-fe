@@ -19,7 +19,8 @@ export const GNBNavigationMenus = [
 export const SNBNavigationMenus: SNBNavigationMenusType[] = [
   {
     label: "MY 활동",
-    href: "/profile/archive",
+    href: "/profile",
+    activeHref: "/profile/archive",
   },
   {
     label: "작성글",
@@ -31,7 +32,7 @@ export const SNBNavigationMenus: SNBNavigationMenusType[] = [
     activeHref: "/profile/account",
     children: [
       { label: "계정관리", href: "/profile/account/info" },
-      { label: "알림관리", href: "/profile/account/notification" },
+      { label: "알림관리", href: "/profile/alarm" },
     ],
   },
 ] as const;

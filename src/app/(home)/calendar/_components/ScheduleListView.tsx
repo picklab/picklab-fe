@@ -13,8 +13,8 @@ import { toggleBookmark } from '@/lib/bookmarks';
 import type { ApplyFilter, ProgressFilter } from './filters';
 
 interface ScheduleListViewProps {
-  progressFilter: ProgressFilter;
-  applyFilter: ApplyFilter;
+  progressFilter: ProgressFilter[]; // 빈 배열 = 전체
+  applyFilter: ApplyFilter[]; // 빈 배열 = 모든 활동
 }
 
 const APPLIED_STATUSES = new Set(['APPLIED', 'ACCEPTED']);
@@ -150,13 +150,13 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
       .map((group) => ({
         ...group,
         items: group.items.filter((item) => {
-          if (progressFilter !== 'ALL') {
-            const match = progressFilter === 'CLOSED' ? item.isClosed : !item.isClosed;
-            if (!match) return false;
+          if (progressFilter.length > 0) {
+            const itemProgress = item.isClosed ? 'CLOSED' : 'ONGOING';
+            if (!progressFilter.includes(itemProgress)) return false;
           }
-          if (applyFilter !== 'ALL') {
-            const match = applyFilter === 'APPLIED' ? item.applied : !item.applied;
-            if (!match) return false;
+          if (applyFilter.length > 0) {
+            const itemApply = item.applied ? 'APPLIED' : 'NOT_APPLIED';
+            if (!applyFilter.includes(itemApply)) return false;
           }
           return true;
         }),
@@ -202,9 +202,12 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
   return (
     <div className="flex flex-col gap-6">
       {filteredGroups.map((group, groupIndex) => (
-        <div key={group.savedAt ?? `group-${groupIndex}`} className="flex flex-col gap-3 rounded-xl bg-gray-5 p-4 pc:p-6">
+        <div
+          key={group.savedAt ?? `group-${groupIndex}`}
+          className="flex flex-col gap-4 rounded-xl bg-gray-5 p-4 pc:p-6"
+        >
           {group.savedAt && (
-            <Typography type="Body3Medium" className="self-end text-gray-50">
+            <Typography type="Body3Medium" className="mb-4 self-end text-gray-50">
               공고저장 | {group.savedAt}
             </Typography>
           )}
@@ -222,8 +225,8 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
               }}
               className="flex cursor-pointer flex-col gap-3 rounded-lg bg-white p-4 pc:flex-row pc:items-center pc:gap-6 pc:px-6 pc:py-5"
             >
-              {/* 배지 + 칩 (기존 디자인 시스템 컴포넌트 재사용) */}
-              <div className="flex shrink-0 flex-col items-start gap-2 pc:w-[120px]">
+              {/* 배지 + 칩 (기존 디자인 시스템 컴포넌트 재사용). CSV 11 ②: 배지↔제목 36px(gap-6 24 + mr-3 12) */}
+              <div className="flex shrink-0 flex-col items-start gap-2 pc:mr-3 pc:w-[120px]">
                 <CardDayBadge
                   text={item.dday}
                   variant={item.isClosed ? 'deadline' : 'default'}

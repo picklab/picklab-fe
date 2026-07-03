@@ -172,9 +172,9 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
   };
 
   return (
-    <div className="flex items-center gap-[91px] py-6">
-      {/* 좌: 체크/배지/칩 + 제목/회사 */}
-      <div className="flex min-w-0 flex-1 flex-col gap-3">
+    <div className="flex items-center justify-between gap-6 py-6">
+      {/* 좌: 체크/배지/칩 + 제목/회사 (컨텐츠 너비 280px) */}
+      <div className="flex w-[280px] shrink-0 flex-col gap-3">
         <div className="flex items-center gap-2">
           <span className="flex h-[25px] w-[25px] items-center justify-center rounded-full bg-primary-50">
             <Icon icon="check" size={16} className="text-white" />
@@ -183,7 +183,7 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
           <CardChip text={activity.activityType} typoType="Caption1Medium" />
         </div>
         <div className="flex flex-col gap-1">
-          <Typography type="Headline2SemiBold" className="line-clamp-2 text-gray-90">
+          <Typography type="Body1Semibold" className="line-clamp-2 text-gray-90">
             {activity.title}
           </Typography>
           <Typography type="Body4Medium" className="text-gray-50">
@@ -192,7 +192,7 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
         </div>
       </div>
 
-      {/* 합격여부 / 수료여부 */}
+      {/* 합격여부 / 수료여부 — 합격(ACCEPTED) 선택 시 텍스트 info-50 */}
       <div className="flex shrink-0 flex-col gap-2">
         <Select
           options={PASS_OPTIONS}
@@ -200,6 +200,7 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
           onChange={(v) => handlePassChange((v as string) ?? '')}
           width="small"
           size="small"
+          className={pass === 'ACCEPTED' ? '[&>span]:!text-info-50' : undefined}
         />
         <Select
           options={PROGRESS_OPTIONS}
@@ -233,12 +234,11 @@ function ActivityResultCard({ activity }: { activity: ResultActivity }) {
       {/* 리뷰 작성 (수료/중도포기 시에만 활성) */}
       <div className="flex shrink-0 items-center gap-4">
         <Button
-          size="sm"
+          size="base"
           label="리뷰 작성하기"
           buttonStyle="outline-filled"
           icon={{ icon: 'pencil', position: 'left' }}
           isFullRounded
-          className="w-[134px]"
           disabled={!activity.canWriteReview}
           onClick={() => router.push(`/activity/${activity.activityId}/review`)}
         />
@@ -277,7 +277,7 @@ export default function ActivityResultView() {
             placeholder="합격여부"
             width="small"
             size="small"
-            className="!rounded-[100px]"
+            className="!rounded-[100px] [&>span]:!text-gray-90"
           />
         </div>
 
@@ -294,7 +294,7 @@ export default function ActivityResultView() {
             </Typography>
           </div>
         ) : (
-          <div className="divide-y divide-gray-10 rounded-xl border border-gray-20 px-6">
+          <div className="divide-y divide-gray-10 border-y border-gray-10">
             {filteredActivities.map((activity) => (
               <ActivityResultCard key={activity.id} activity={activity} />
             ))}

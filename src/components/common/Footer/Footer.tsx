@@ -83,8 +83,8 @@ const Footer = ({ className }: { className?: string }) => {
         </Typography>
       </footer>
 
-      {/* 모바일 푸터 (figma 2423-30539) — 기기 전체 폭(375), 내용 좌측 정렬(안쪽 20px) */}
-      <footer className="pc:hidden flex w-full flex-col bg-white px-5 py-6 max-w-[375px] mx-auto">
+      {/* 모바일 푸터 (figma 2423-30539) — 상단 divider + 컨테이너와 24px 간격, 기기 전체 폭(375) */}
+      <footer className="pc:hidden mt-6 flex w-full flex-col border-t border-gray-10 bg-white px-5 py-6 max-w-[375px] mx-auto">
         <Link href="/" aria-label="홈으로 가기">
           <Image
             src="/imgs/footer_logo.png"

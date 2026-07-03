@@ -31,7 +31,8 @@ import {
   toScorePercent,
   EMPTY_REVIEW_FILTER,
 } from '@/types/review.types';
-import type { ActivityReviewItem, JobRelevanceStats, ReviewFilterValue } from '@/types/review.types';
+import type { ActivityReviewItem, ReviewFilterValue } from '@/types/review.types';
+import JobRadarChart from './JobRadarChart';
 
 interface MobileActivityDetailPageProps {
   activity: ActivityCardItem;
@@ -76,34 +77,18 @@ const InfoItem = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-// 모집기간: "시작 ~ 마감" 문자열을 시작일/마감일 2줄로 표기 (figma 1223-17370)
+// 모집기간: "0000.00.00 ~ 0000.00.00" 단일줄 (CSV 46 2번)
 const RecruitPeriodItem = ({ value }: { value: string }) => {
   const [start, end] = value.split('~').map((part) => part.trim());
+  const text = start && end ? `${start} ~ ${end}` : start || end || '-';
   return (
     <div className="flex items-start gap-4">
       <Typography type="Body3Regular" className="min-w-[54px] text-gray-50">
         모집기간
       </Typography>
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <Typography type="Body3Medium" className="text-gray-90">
-            시작일
-          </Typography>
-          <span className="text-gray-30">|</span>
-          <Typography type="Body3Medium" className="text-gray-90">
-            {start || '-'}
-          </Typography>
-        </div>
-        <div className="flex items-center gap-2">
-          <Typography type="Body3Medium" className="text-gray-90">
-            마감일
-          </Typography>
-          <span className="text-gray-30">|</span>
-          <Typography type="Body3Medium" className="text-gray-90">
-            {end || start || '-'}
-          </Typography>
-        </div>
-      </div>
+      <Typography type="Body3Medium" className="text-gray-90 break-keep">
+        {text}
+      </Typography>
     </div>
   );
 };
@@ -121,16 +106,16 @@ const DetailSection = ({ title, value }: { title: string; value: string }) => (
 
 const hasDetailValue = (value?: string) => Boolean(value && value.trim() && value.trim() !== '-');
 
-const RatingStars = ({ value, outOf = 5 }: { value: number; outOf?: number }) => {
+const RatingStars = ({ value, outOf = 5, size = 22, gap = 'gap-1' }: { value: number; outOf?: number; size?: number; gap?: string }) => {
   const filled = Math.round(value);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={clsx('flex items-center', gap)}>
       {Array.from({ length: outOf }).map((_, index) => (
         <Icon
           key={index}
           icon="starFill"
-          size={22}
+          size={size}
           className={index < filled ? 'text-[#F7B731]' : 'text-gray-20'}
         />
       ))}
@@ -140,7 +125,7 @@ const RatingStars = ({ value, outOf = 5 }: { value: number; outOf?: number }) =>
 
 const ProgressRow = ({ label, value }: { label: string; value: number }) => (
   <div className="flex flex-col gap-2">
-    <Typography type="Body3Medium" className="text-gray-70">
+    <Typography type="Body2Semibold" className="text-gray-90">
       {label}
     </Typography>
     <div className="h-3 rounded-full bg-gray-10 overflow-hidden">
@@ -275,58 +260,6 @@ const ReviewListCard = ({
   );
 };
 
-const MobileRadarChart = ({ stats }: { stats: JobRelevanceStats | null }) => {
-  const score = (value?: number) => (stats ? toScorePercent(value) : 0);
-  return (
-    <div className="relative mx-auto h-[170px] w-[190px]">
-      <svg viewBox="0 0 190 170" className="h-full w-full">
-        <polygon points="95,12 154,48 132,124 58,124 36,48" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-        <polygon points="95,30 138,56 122,108 68,108 52,56" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-        <polygon points="95,46 124,62 114,92 76,92 66,62" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-        <polygon points="95,34 141,56 126,113 79,118 49,60" fill="#10B981" fillOpacity="0.7" stroke="#10B981" />
-        <line x1="95" y1="12" x2="95" y2="124" stroke="#E5E7EB" strokeWidth="1" />
-        <line x1="36" y1="48" x2="154" y2="48" stroke="#E5E7EB" strokeWidth="1" />
-        <line x1="58" y1="124" x2="154" y2="48" stroke="#E5E7EB" strokeWidth="1" />
-        <line x1="36" y1="48" x2="132" y2="124" stroke="#E5E7EB" strokeWidth="1" />
-      </svg>
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 text-center">
-        <Typography type="Caption1Regular" className="text-gray-50">
-          기획
-        </Typography>
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.planning_avg_score)}
-        </Typography>
-      </div>
-      <div className="absolute right-0 top-[40%] text-center">
-        <Typography type="Caption1Regular" className="text-gray-50">
-          개발
-        </Typography>
-      </div>
-      <div className="absolute right-2 bottom-1 text-center">
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.marketing_avg_score)}
-        </Typography>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          마케팅
-        </Typography>
-      </div>
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 text-center">
-        <Typography type="Body2Semibold" className="text-primary-50">
-          {score(stats?.ai_avg_score)}
-        </Typography>
-        <Typography type="Caption1Regular" className="text-gray-50">
-          AI
-        </Typography>
-      </div>
-      <div className="absolute left-0 top-[40%] text-center">
-        <Typography type="Caption1Regular" className="text-gray-50">
-          디자인
-        </Typography>
-      </div>
-    </div>
-  );
-};
-
 export default function MobileActivityDetailPage({ activity }: MobileActivityDetailPageProps) {
   const router = useRouter();
   const [tab, setTab] = useState<MobileTab>('detail');
@@ -426,7 +359,6 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
       <section className="flex flex-col gap-2">
         <InfoItem label="주최기관" value={activity.organizer} />
         <RecruitPeriodItem value={activity.registrationPeriod} />
-        <InfoItem label="모집인원" value={activity.recruitment} />
         <InfoItem label="모임지역" value={activity.region} />
         <InfoItem label="활동분야" value={activity.activityField} />
         <InfoItem label="활동기간" value={activity.activityPeriod} />
@@ -552,13 +484,14 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
           </section>
         </section>
       ) : (
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-6">
           <div>
             <Typography type="Heading2Semibold" className="text-gray-90">
               직무 연관성
             </Typography>
-            <div className="mt-2">
-              <MobileRadarChart stats={jobRelevance} />
+            {/* 직무연관성 차트 위·아래 간격 24px (CSV 49): 헤딩→차트 mt-6, 차트→다음 섹션 gap-6 */}
+            <div className="mt-6 rounded-[20px] border border-gray-20 bg-gray-0 p-4">
+              <JobRadarChart stats={jobRelevance} className="w-full aspect-[340/300]" />
             </div>
           </div>
 
@@ -582,13 +515,13 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             </div>
 
             <div className="mt-3 flex items-center gap-2">
-              <Typography type="Heading2Semibold" className="text-gray-90">
+              <Typography type="Title3Bold" className="text-gray-90">
                 {satisfactionSummary.total.toFixed(1)}
               </Typography>
-              <RatingStars value={toFiveScale(satisfactionSummary.total)} />
+              <RatingStars value={toFiveScale(satisfactionSummary.total)} size={36} gap="gap-[2px]" />
             </div>
 
-            <div className="mt-3 flex flex-col gap-3">
+            <div className="mt-5 flex flex-col gap-5">
               <ProgressRow label="직무 경험" value={toScorePercent(satisfactionSummary.jobExperience)} />
               <ProgressRow label="활동 강도" value={toScorePercent(satisfactionSummary.intensity)} />
               <ProgressRow label="혜택 및 복지" value={toScorePercent(satisfactionSummary.benefit)} />

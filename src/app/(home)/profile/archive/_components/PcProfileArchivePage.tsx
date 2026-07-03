@@ -4,7 +4,6 @@ import ListItem from '@/components/common/List/ListItem';
 import Typography from '@/components/common/Typography';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import Icon from '@/components/common/Icon/Icon';
 import { useRouter } from 'next/navigation';
 import useArchiveActivities from '@/hooks/useArchiveActivities';
@@ -51,12 +50,14 @@ export default function PcProfileArchivePage({ isStorybook = false }: { isStoryb
   return (
     <div className={clsx('w-full', isStorybook ? '' : 'mobile:hidden')}>
       <section className="flex flex-row items-center gap-1 mobile:w-[335px] mobile:relative mobile:py-4 mobile:border-b mobile:border-gray-20 pc:gap-2 pc:pb-0 pc:border-0 pc:w-full">
-        <Icon icon="chevronLeft" size={16} />
+        <button type="button" onClick={() => router.push('/profile')} aria-label="마이페이지로 이동">
+          <Icon icon="chevronLeft" size={16} />
+        </button>
         <Typography
           type="Heading2Semibold"
           className="text-gray-90 mobile:absolute mobile:left-1/2 mobile:-translate-x-1/2"
         >
-          프로필 수정
+          아카이브
         </Typography>
       </section>
       <div className="pc:flex mobile:hidden flex-col gap-8 justify-center mt-[42px]">
@@ -130,23 +131,33 @@ export default function PcProfileArchivePage({ isStorybook = false }: { isStoryb
 
 function ArchiveMenu({ snbMenu, setSnbMenu }: ArchiveMenuProps) {
   return (
-    <div className="flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar">
-      {MENU_ITEMS.map((item) => (
-        <Link
-          key={item.id}
-          href={item.href}
-          id={item.id}
-          className={clsx(
-            'box-border flex justify-center items-center border-b-[1.5px] border-gray-30',
-            snbMenu === item.id && '!border-primary-50 !border-b-[3px]',
-          )}
-          onClick={() => setSnbMenu(item.id)}
-        >
-          <Typography className="px-9 text-center" type="Heading2Medium">
-            {item.label}
-          </Typography>
-        </Link>
-      ))}
+    <div className="h-[35px] w-full overflow-x-auto hide-scrollbar">
+      {/* 전체 폭 하단 divider(before) + 선택 탭 밑줄(after) */}
+      <div className="relative flex h-full w-max min-w-full flex-row before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+        {MENU_ITEMS.map((item) => {
+          const active = snbMenu === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              id={item.id}
+              onClick={() => setSnbMenu(item.id)}
+              className={clsx(
+                'relative flex shrink-0 items-center justify-center',
+                active &&
+                  "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:bg-primary-50 after:content-['']",
+              )}
+            >
+              <Typography
+                className={clsx('px-9 text-center', active ? 'text-gray-90' : 'text-gray-40')}
+                type="Heading2Medium"
+              >
+                {item.label}
+              </Typography>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

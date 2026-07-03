@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import clsx from 'clsx';
+import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
 import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
@@ -23,8 +24,8 @@ const ACTIVITY_TYPE_LABELS: Record<string, string> = {
 
 // 수료여부(progress_status) → 한글 라벨
 const PROGRESS_LABELS: Record<ParticipationProgressStatus, string> = {
-  COMPLETED: '수료 완료',
-  DROPPED: '중도 하차',
+  COMPLETED: '수료완료',
+  DROPPED: '중도하차',
   IN_PROGRESSING: '진행 중',
   NOT_SELECTED: '-',
 };
@@ -63,9 +64,15 @@ export default function ActivityChangeModal({ onClose, onApply }: ActivityChange
   const { data, loading } = useActivityParticipationResults();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [query, setQuery] = useState('');
 
-  const items = data.filter((item) => item.can_write_review);
-  const selected = items.find((item) => item.participation_id === selectedId) ?? null;
+  const writable = useMemo(() => data.filter((item) => item.can_write_review), [data]);
+  const items = useMemo(() => {
+    const keyword = query.trim().toLowerCase();
+    if (!keyword) return writable;
+    return writable.filter((item) => item.title.toLowerCase().includes(keyword));
+  }, [writable, query]);
+  const selected = writable.find((item) => item.participation_id === selectedId) ?? null;
 
   const handleApply = () => {
     if (!selected) return;
@@ -81,18 +88,38 @@ export default function ActivityChangeModal({ onClose, onApply }: ActivityChange
 
   return (
     <>
-      <ModalShell title="어떤 활동으로 바꾸실 건가요?" onClose={onClose} className="w-full max-w-[720px]">
-        <div className="flex flex-col gap-4 px-space-24 pb-space-24 pt-space-16">
-          <div className="rounded-lg border border-gray-20">
-            <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr] border-b border-gray-20 bg-gray-5 px-4 py-3">
-              {['활동명', '주체기관·단체명', '활동구분', '수료여부'].map((h) => (
-                <Typography key={h} type="Body3Semibold" className="text-gray-70">
-                  {h}
-                </Typography>
-              ))}
+      <ModalShell title="어떤 활동에 참여하셨나요?" onClose={onClose} className="w-full max-w-[720px]">
+        <div className="flex flex-col gap-6 px-space-32 pb-space-32 pt-space-16">
+          {/* 활동명 검색 (클라이언트 필터) */}
+          <div className="flex items-center gap-2 rounded-xl border border-gray-20 px-5 py-4 focus-within:border-gray-40">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="활동명을 검색해 보세요!"
+              className="min-w-0 flex-1 bg-transparent text-gray-90 placeholder:text-gray-40 outline-none"
+            />
+            <Icon icon="search" size={24} className="shrink-0 text-gray-90" />
+          </div>
+
+          {/* 테이블 (상하 divider만, 행 단일 선택) */}
+          <div>
+            <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr] items-center border-b border-gray-20 px-2 py-3">
+              <Typography type="Body3Medium" className="text-center text-gray-50">
+                활동명
+              </Typography>
+              <Typography type="Body3Medium" className="text-center text-gray-50">
+                주체기관/단체명
+              </Typography>
+              <Typography type="Body3Medium" className="text-center text-gray-50">
+                활동구분
+              </Typography>
+              <Typography type="Body3Medium" className="text-center text-gray-50">
+                수료여부
+              </Typography>
             </div>
-            {/* 행 단일 선택. 최대 6개 표출, 6개 이상이면 스크롤(행 약 52px × 6 = 312px) */}
-            <div className="max-h-[312px] overflow-y-auto">
+            {/* 6개 초과 시 스크롤 */}
+            <div className="max-h-[360px] overflow-y-auto">
               {loading ? (
                 <div className="flex h-[160px] items-center justify-center">
                   <Typography type="Body3Regular" className="text-gray-40">
@@ -102,48 +129,57 @@ export default function ActivityChangeModal({ onClose, onApply }: ActivityChange
               ) : items.length === 0 ? (
                 <div className="flex h-[160px] items-center justify-center">
                   <Typography type="Body3Regular" className="text-gray-40">
-                    리뷰를 작성할 수 있는 활동이 없어요
+                    {writable.length === 0 ? '리뷰를 작성할 수 있는 활동이 없어요' : '검색 결과가 없어요'}
                   </Typography>
                 </div>
               ) : (
-                items.map((item) => (
-                  <button
-                    key={item.participation_id}
-                    type="button"
-                    onClick={() => setSelectedId(item.participation_id)}
-                    className={clsx(
-                      'grid h-[52px] w-full grid-cols-[2fr_1.5fr_1fr_1fr] items-center border-b border-gray-10 px-4 text-left transition-colors last:border-b-0',
-                      selectedId === item.participation_id ? 'bg-primary-5' : 'hover:bg-gray-5',
-                    )}
-                    aria-pressed={selectedId === item.participation_id}
-                  >
-                    <Typography
-                      type="Body3Medium"
+                items.map((item) => {
+                  const isSelected = selectedId === item.participation_id;
+                  return (
+                    <button
+                      key={item.participation_id}
+                      type="button"
+                      onClick={() => setSelectedId(item.participation_id)}
                       className={clsx(
-                        'truncate pr-2',
-                        selectedId === item.participation_id ? 'text-primary-60' : 'text-gray-90',
+                        'grid min-h-[64px] w-full grid-cols-[2fr_1.5fr_1fr_1fr] items-center border-b border-gray-10 px-2 py-3 text-left transition-colors last:border-b-0',
+                        isSelected ? 'bg-primary-5' : 'hover:bg-gray-5',
                       )}
+                      aria-pressed={isSelected}
                     >
-                      {item.title}
-                    </Typography>
-                    <Typography type="Body3Regular" className="truncate pr-2 text-gray-50">
-                      {item.organizer || '-'}
-                    </Typography>
-                    <Typography type="Body3Regular" className="text-gray-50">
-                      {ACTIVITY_TYPE_LABELS[item.activity_type] ?? item.activity_type}
-                    </Typography>
-                    <Typography type="Body3Regular" className="text-gray-50">
-                      {PROGRESS_LABELS[item.progress_status] ?? '-'}
-                    </Typography>
-                  </button>
-                ))
+                      <Typography
+                        type={isSelected ? 'Body3Semibold' : 'Body3Medium'}
+                        className="line-clamp-2 break-keep pr-2 text-gray-90"
+                      >
+                        {item.title}
+                      </Typography>
+                      <Typography type="Body3Regular" className="truncate px-2 text-center text-gray-50">
+                        {item.organizer || '-'}
+                      </Typography>
+                      <div className="flex justify-center">
+                        <span className="inline-flex items-center rounded-full bg-gray-10 px-2.5 py-1">
+                          <Typography type="Caption1Medium" className="text-gray-50">
+                            {ACTIVITY_TYPE_LABELS[item.activity_type] ?? item.activity_type}
+                          </Typography>
+                        </span>
+                      </div>
+                      <Typography type="Body3Regular" className="text-center text-gray-90">
+                        {PROGRESS_LABELS[item.progress_status] ?? '-'}
+                      </Typography>
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <button type="button" onClick={onClose} className="h-space-48 w-full rounded-small bg-gray-5 hover:bg-gray-10">
-              <Typography type="Body2Medium" className="text-gray-90">
+          {/* 하단 버튼 (가운데 정렬) */}
+          <div className="flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-[56px] w-[200px] rounded-small bg-gray-5 hover:bg-gray-10"
+            >
+              <Typography type="Body1Medium" className="text-gray-50">
                 나가기
               </Typography>
             </button>
@@ -151,10 +187,10 @@ export default function ActivityChangeModal({ onClose, onApply }: ActivityChange
               type="button"
               onClick={handleApply}
               disabled={!selected}
-              className="h-space-48 w-full rounded-small bg-primary-50 hover:bg-primary-60 disabled:bg-gray-10"
+              className="h-[56px] w-[200px] rounded-small bg-primary-50 hover:bg-primary-60 disabled:bg-gray-10"
             >
-              <Typography type="Body2Medium" className={selected ? 'text-gray-0' : 'text-gray-60'}>
-                적용하기
+              <Typography type="Body1Medium" className={selected ? 'text-gray-0' : 'text-gray-60'}>
+                작성하기
               </Typography>
             </button>
           </div>

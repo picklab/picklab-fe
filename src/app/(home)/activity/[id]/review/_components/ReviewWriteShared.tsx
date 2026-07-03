@@ -96,10 +96,21 @@ export function ModalShell({ title, onClose, children, className }: ModalShellPr
 }
 
 /** 헤더: 모바일 = 좌측 뒤로가기 + 가운데 제목, PC = 가운데 제목 + 우측 X. */
-export function ReviewWriteHeader({ onClose }: { onClose: () => void }) {
+export function ReviewWriteHeader({
+  onClose,
+  widthClassName = 'max-w-[600px]',
+}: {
+  onClose: () => void;
+  widthClassName?: string;
+}) {
   return (
     <div className="flex flex-col items-center pc:mt-[64px]">
-      <div className="relative flex h-space-56 w-full max-w-[600px] items-center justify-center border-b border-gray-20">
+      <div
+        className={clsx(
+          'relative flex h-[88px] w-full items-center justify-center border-b border-gray-20',
+          widthClassName,
+        )}
+      >
         {/* 모바일: 좌측 뒤로가기 (PC 숨김) */}
         <button
           type="button"
@@ -109,7 +120,7 @@ export function ReviewWriteHeader({ onClose }: { onClose: () => void }) {
         >
           <Icon icon="chevronLeft" size={24} className="text-gray-90" />
         </button>
-        <Typography type="Heading1Semibold" className="text-gray-90">
+        <Typography type="Heading2Semibold" className="text-gray-50">
           리뷰쓰기
         </Typography>
       </div>
@@ -120,7 +131,7 @@ export function ReviewWriteHeader({ onClose }: { onClose: () => void }) {
 /** 별점 5개. value 1~5, 0=미선택. */
 export function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-[2px]">
       {[1, 2, 3, 4, 5].map((n) => (
         <button key={n} type="button" onClick={() => onChange(n)} aria-label={`${n}점`}>
           <Icon
@@ -186,10 +197,13 @@ export function RatingRadio({ question, labels, value, onChange, error }: Rating
               <span
                 className={clsx(
                   'flex size-12 items-center justify-center rounded-full border-2 transition-colors pc:size-[58px]',
-                  selected ? 'border-[#F7AFA1] bg-[#F7AFA1]' : 'border-gray-30 bg-gray-0',
+                  selected ? 'border-[#F7AFA1] bg-[#F7AFA1]' : 'border-transparent bg-gray-5',
                 )}
               >
-                {selected && <span className="size-6 rounded-full bg-[#DE3412] pc:size-7" />}
+                {/* 미선택도 회색 내부 점 노출(도넛형) — figma 2579-35108 */}
+                <span
+                  className={clsx('size-6 rounded-full pc:size-7', selected ? 'bg-[#DE3412]' : 'bg-gray-20')}
+                />
               </span>
               <Typography type="Body4Regular" className={selected ? 'text-primary-60' : 'text-gray-50'}>
                 {label}

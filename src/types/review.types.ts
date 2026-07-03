@@ -149,24 +149,27 @@ export const PROGRESS_STATUS_LABELS: Record<ReviewProgressStatus, string> = {
 
 /** 리뷰 목록 필터 상태 */
 export interface ReviewFilterValue {
-  rating: number | null; // 활동 총 평점 1~5
-  jobGroup: ReviewJobGroup | null; // 관심 직군
-  jobDetails: ReviewJobDetail[]; // 관심 세부 직무 (멀티)
-  status: ReviewProgressStatus | null; // 수료 여부
+  rating: number[]; // 활동 총 평점 1~5 (다중 선택)
+  // 관심 직무 — PC(2409-27595)는 직군 탭(단일) + 세부직무(멀티), 모바일(2-25064)은 직군 플랫 체크박스(멀티)
+  jobGroup: ReviewJobGroup | null; // PC: 선택 직군(탭)
+  jobDetails: ReviewJobDetail[]; // PC: 세부 직무(멀티)
+  jobGroups: ReviewJobGroup[]; // 모바일: 직군 멀티(플랫)
+  status: ReviewProgressStatus[]; // 수료 여부 (다중 선택)
 }
 
 export const EMPTY_REVIEW_FILTER: ReviewFilterValue = {
-  rating: null,
+  rating: [],
   jobGroup: null,
   jobDetails: [],
-  status: null,
+  jobGroups: [],
+  status: [],
 };
 
-export const RATING_OPTIONS = [5, 4, 3, 2, 1] as const;
+export const RATING_OPTIONS = [1, 2, 3, 4, 5] as const;
 
 export const REVIEW_STATUS_OPTIONS: { value: ReviewProgressStatus; label: string }[] = [
-  { value: 'COMPLETED', label: '수료 완료' },
-  { value: 'DROPPED', label: '중도 하차' },
+  { value: 'COMPLETED', label: '수료완료' },
+  { value: 'DROPPED', label: '중도하차' },
 ];
 
 export const JOB_GROUP_OPTIONS: ReviewJobGroup[] = ['PLANNING', 'DESIGN', 'DEVELOPMENT', 'MARKETING', 'AI'];
@@ -183,10 +186,11 @@ export const JOB_DETAIL_BY_GROUP: Record<ReviewJobGroup, ReviewJobDetail[]> = {
 /** 적용된 필터 개수 (활성 여부 판단용) */
 export function countActiveFilters(filter: ReviewFilterValue): number {
   let count = 0;
-  if (filter.rating) count += 1;
+  count += filter.rating.length;
   if (filter.jobGroup) count += 1;
   count += filter.jobDetails.length;
-  if (filter.status) count += 1;
+  count += filter.jobGroups.length;
+  count += filter.status.length;
   return count;
 }
 

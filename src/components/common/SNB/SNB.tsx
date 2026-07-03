@@ -19,11 +19,16 @@ interface SNBProps {
   Jobs: string[]; // 관심 직무 리스트
 }
 
+// 관심직무 실데이터가 없을 때 노출할 임시(예시) 값
+const SAMPLE_INTEREST_JOBS = ["서비스기획", "PM/PO", "프론트엔드", "사업개발", "데이터분석"];
+
 const SNB = ({ Jobs }: SNBProps) => {
   const pathname = usePathname(); // 현재 경로 가져오기
   const router = useRouter();
   const { clientLogout } = useAuthClient();
   const { data: meData } = useMe();
+  // 관심직무가 비어있으면 임시 데이터로 대체 노출
+  const displayJobs = Jobs.length > 0 ? Jobs : SAMPLE_INTEREST_JOBS;
 
   // 섹션 활성화 여부 계산 함수
   const isSectionActive = (
@@ -34,9 +39,7 @@ const SNB = ({ Jobs }: SNBProps) => {
   ) => {
     // activeHref가 있고, 현재 경로가 activeHref로 시작하면 활성화
     if (activeHref && pathname.startsWith(activeHref)) return true;
-    // 마이페이지 메인(/profile) 진입 시 "MY 활동"(/profile/archive)을 기본 활성화
-    if (pathname === '/profile' && href === '/profile/archive') return true;
-    // 현재 경로가 href와 정확히 일치하면 활성화
+    // 현재 경로가 href와 정확히 일치하면 활성화 (MY활동 href=/profile → 프로필 메인에서 기본 활성)
     if (pathname === href) return true;
     // 자식 메뉴 중 현재 경로와 일치하는 것이 있으면 활성화
     if (children && children.some((child) => pathname === child.href)) return true;
@@ -91,13 +94,13 @@ const SNB = ({ Jobs }: SNBProps) => {
         </div>
         {/* 관심 직무 리스트 렌더링 */}
         <ul className="flex flex-wrap w-[200px] gap-1 justify-center items-center">
-          {Jobs.map((item, index) => (
+          {displayJobs.map((item, index) => (
             <li key={item} className="flex items-center gap-1 h-[19px]">
               <Typography type="Caption1Regular" className="text-primary-60">
                 {item}
               </Typography>
               {/* 마지막 아이템이 아니면 구분선 표시 */}
-              {index < Jobs.length - 1 && <Divider vertical className="!h-3" />}
+              {index < displayJobs.length - 1 && <Divider vertical className="!h-3" />}
             </li>
           ))}
         </ul>
@@ -111,19 +114,20 @@ const SNB = ({ Jobs }: SNBProps) => {
 
             return (
               <li key={href} className={clsx("flex flex-col px-2 py-space-10", active && "gap-space-10")}>
-                {/* 상위 메뉴 */}
-                <Link
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  className={clsx("flex h-[26px] items-center")}
-                >
-                  <Typography
-                    type="Headline1SemiBold"
-                    className={clsx(active ? "text-gray-90" : "text-gray-40", "hover:text-gray-90")}
-                  >
-                    {label}
-                  </Typography>
-                </Link>
+                {/* 상위 메뉴: 활성(현재 페이지)이면 클릭 이동 막기(비링크) */}
+                {active ? (
+                  <span aria-current="page" className="flex h-[26px] items-center cursor-default">
+                    <Typography type="Headline1SemiBold" className="text-gray-90">
+                      {label}
+                    </Typography>
+                  </span>
+                ) : (
+                  <Link href={href} className="flex h-[26px] items-center">
+                    <Typography type="Headline1SemiBold" className="text-gray-40 hover:text-gray-90">
+                      {label}
+                    </Typography>
+                  </Link>
+                )}
 
                 {/* 소분류(자식 메뉴) 렌더링 */}
                 {children && active && (

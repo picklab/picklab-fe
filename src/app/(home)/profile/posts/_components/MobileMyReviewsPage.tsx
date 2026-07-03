@@ -37,6 +37,38 @@ function formatCreatedAt(value?: string | null): string {
   return `${y}.${m}.${d}`;
 }
 
+// TODO(MOCK): 작성한 리뷰가 없을 때 화면 확인용 임시 데이터(figma 1136-76050). 실 리뷰가 생기면 자동으로 대체됨.
+// 음수 id = 목업 → 수정/삭제 비활성. 실데이터 연동 시 이 블록 삭제.
+const MOCK_MY_REVIEWS: MyReviewItem[] = [
+  {
+    id: -1,
+    title: 'K-Digital Training 국비지원 SW개발자 육성 프로그램 11기 후기',
+    organizer: '멋쟁이사자처럼',
+    organizer_type: '',
+    activity_type: 'EXTRACURRICULAR',
+    created_at: '2026-02-14T00:00:00',
+    approval_status: 'PENDING',
+  },
+  {
+    id: -2,
+    title: '2026 대학생 마케팅 서포터즈 활동 리뷰',
+    organizer: '링커리어',
+    organizer_type: '',
+    activity_type: 'EXTRACURRICULAR',
+    created_at: '2026-01-30T00:00:00',
+    approval_status: 'REJECTED',
+  },
+  {
+    id: -3,
+    title: '전국 대학생 IT 해커톤 참가 후기',
+    organizer: '한국디자인혁신협회',
+    organizer_type: '',
+    activity_type: 'COMPETITION',
+    created_at: '2026-01-10T00:00:00',
+    approval_status: 'APPROVED',
+  },
+];
+
 export default function MobileMyReviewsPage() {
   const router = useRouter();
   const { data, loading, refetch } = useMyReviews();
@@ -45,7 +77,9 @@ export default function MobileMyReviewsPage() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | string | null>(null);
 
-  const items = data?.items ?? [];
+  const realItems = data?.items ?? [];
+  // 실 리뷰가 없으면 목업 폴백(화면 확인용). 목업은 음수 id.
+  const items = !loading && realItems.length === 0 ? MOCK_MY_REVIEWS : realItems;
 
   // 케밥 메뉴 바깥 클릭 시 닫기
   useEffect(() => {
@@ -57,6 +91,7 @@ export default function MobileMyReviewsPage() {
 
   // 수정: 리뷰 단건 조회로 activity_id를 얻어 작성 폼 edit 모드로 이동
   const handleEdit = async (reviewId: number | string) => {
+    if (typeof reviewId === 'number' && reviewId < 0) return; // 목업은 수정 불가
     if (editingId != null) return;
     setEditingId(reviewId);
     try {
@@ -76,6 +111,11 @@ export default function MobileMyReviewsPage() {
 
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return;
+    if (deleteTarget.id < 0) {
+      // 목업은 삭제 API 호출 없이 닫기만
+      setDeleteTarget(null);
+      return;
+    }
     setSubmitting(true);
     try {
       await deleteReview(deleteTarget.id);
@@ -119,12 +159,6 @@ export default function MobileMyReviewsPage() {
         <div className="flex h-[200px] items-center justify-center">
           <Typography type="Body3Medium" className="text-gray-40">
             불러오는 중
-          </Typography>
-        </div>
-      ) : items.length === 0 ? (
-        <div className="flex h-[200px] items-center justify-center">
-          <Typography type="Body3Medium" className="text-gray-40">
-            작성한 리뷰가 없어요
           </Typography>
         </div>
       ) : (

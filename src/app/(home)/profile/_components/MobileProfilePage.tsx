@@ -44,7 +44,7 @@ export default function MobileProfilePage() {
   };
 
   return (
-    <div className="mobile:flex pc:hidden flex-col gap-4 justify-center">
+    <div className="mobile:flex pc:hidden flex-col gap-5 justify-center pt-4">
       <div className="flex flex-col gap-8">
         <MobileProfile />
         {/*snb menu */}
@@ -77,7 +77,7 @@ export default function MobileProfilePage() {
       <div className="flex flex-col gap-[52px]">
         {/* 활동 결과 */}
         <div className="flex flex-col gap-4">
-          <ContentHeader title="활동 결과" />
+          <ContentHeader title="활동 결과" onClick={() => router.push('/calendar?tab=result')} />
           <div className="flex justify-between">
             {results.map(({ title, value }) => (
               <div
@@ -118,7 +118,7 @@ export default function MobileProfilePage() {
 
         {/* 저장한 공고 */}
         <div className="flex flex-col gap-4">
-          <ContentHeader title="저장한 공고" />
+          <ContentHeader title="저장한 공고" onClick={() => router.push('/profile/bookmarks')} />
           {savedItems.length > 0 ? (
             <div className="grid grid-cols-2 gap-4">
               {savedItems.map((item) => (

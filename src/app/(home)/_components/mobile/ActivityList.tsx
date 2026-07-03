@@ -64,11 +64,9 @@ export default function ActivityList({
   }, [selectedJobs, selectedCategories]);
   const { data: apiData, loading } = useActivities(endpoint ?? "recommendations", activityParams);
 
-  const handleBookmarkToggle = async (activityId: string) => {
-    const current = bookmarkedMap[activityId] ?? false;
-
+  const handleBookmarkToggle = async (activityId: string, currentBookmarked: boolean) => {
     try {
-      const result = await toggleBookmark({ activityId, isBookmarked: current });
+      const result = await toggleBookmark({ activityId, isBookmarked: currentBookmarked });
       setBookmarkedMap((prev) => ({ ...prev, [activityId]: result.isBookmarked }));
     } catch (error) {
       const message = error instanceof Error ? error.message : "북마크 처리 중 오류가 발생했습니다.";
@@ -157,7 +155,7 @@ export default function ActivityList({
         className={clsx("flex overflow-x-scroll hide-scrollbar w-full", type === "card" ? "gap-4" : "flex-col gap-2")}
       >
         {hasApiData ? filteredItems.map((item) => {
-          const isBookmarked = bookmarkedMap[item.id] ?? false;
+          const isBookmarked = bookmarkedMap[item.id] ?? (item.isBookmarked ?? false);
           const jobs = item.jobs.filter((job): job is (typeof JOB_TYPES)[number] =>
             JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
           );
@@ -173,7 +171,7 @@ export default function ActivityList({
               companyName={item.organizer}
               title={item.title}
               jobs={jobs.length > 0 ? jobs : ["기획"]}
-              onBookmarkClick={() => handleBookmarkToggle(item.id)}
+              onBookmarkClick={() => handleBookmarkToggle(item.id, isBookmarked)}
               onCardClick={() => router.push(item.detailLink)}
             />
           ) : (
@@ -186,7 +184,7 @@ export default function ActivityList({
               saveCount={item.saveCount}
               isBookmarked={isBookmarked}
               onListClick={() => router.push(item.detailLink)}
-              onBookmarkClick={() => handleBookmarkToggle(item.id)}
+              onBookmarkClick={() => handleBookmarkToggle(item.id, isBookmarked)}
             />
           );
         }) : null}
@@ -213,7 +211,7 @@ export default function ActivityList({
                   companyName={item.organizer}
                   title={item.title}
                   jobs={["개발"]}
-                  onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+                  onBookmarkClick={() => activityId && handleBookmarkToggle(activityId, isBookmarked)}
                   onCardClick={() => router.push(item.detailLink)}
                 />
               ) : (
@@ -226,7 +224,7 @@ export default function ActivityList({
                   saveCount={10}
                   isBookmarked={isBookmarked}
                   onListClick={() => router.push(item.detailLink)}
-                  onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+                  onBookmarkClick={() => activityId && handleBookmarkToggle(activityId, isBookmarked)}
                 />
               );
             })

@@ -79,7 +79,7 @@ export default function PcMyReviewsPage() {
   };
 
   return (
-    <div className="hidden pc:flex gap-[62px] w-[1100px] px-5">
+    <div className="hidden pc:flex gap-[62px] w-[1100px] px-5 pc:pt-10">
       <SNB Jobs={[]} />
       <section className="max-w-[758px] w-full flex flex-col gap-6">
         <Typography tag="h1" type="Title3Bold" className="text-gray-90">

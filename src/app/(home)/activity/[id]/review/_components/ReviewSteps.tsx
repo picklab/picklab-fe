@@ -26,42 +26,78 @@ export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormRet
 
   return (
     <div className="flex flex-col gap-space-24">
-      <div className="flex items-center justify-between">
-        <Typography type="Heading1Semibold" className="text-gray-90">
-          선택한 활동
-        </Typography>
-        {onOpenChangeModal && (
-          <button
-            type="button"
-            onClick={onOpenChangeModal}
-            className="flex h-[30px] items-center justify-center rounded-full border border-primary-50 px-3 py-1.5 hover:bg-primary-5"
-          >
-            <Typography type="Body4Medium" className="whitespace-nowrap text-primary-60">
-              {activity.title ? '활동 변경하기' : '활동 선택하기'}
-            </Typography>
-          </button>
-        )}
+      {/* 모바일(figma 1136-82395): 카드 안에 제목/주최 + '활동 변경' 버튼 통합 */}
+      <div className="pc:hidden">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-20 bg-gray-5 px-5 py-4">
+          <div className="flex min-w-0 flex-col">
+            {activity.title ? (
+              <>
+                <Typography tag="p" type="Body1Semibold" className="truncate text-gray-90">
+                  {activity.title}
+                </Typography>
+                <Typography tag="p" type="Body3Regular" className="mt-1 truncate text-gray-50">
+                  {activity.organizer || '주최기관/단체명'}
+                </Typography>
+              </>
+            ) : (
+              <Typography tag="p" type="Body2Medium" className="text-gray-50">
+                선택된 활동이 없습니다.
+              </Typography>
+            )}
+          </div>
+          {onOpenChangeModal && (
+            <button
+              type="button"
+              onClick={onOpenChangeModal}
+              className="flex h-[36px] shrink-0 items-center justify-center rounded-full border border-primary-50 px-4 hover:bg-primary-5"
+            >
+              <Typography type="Body4Medium" className="whitespace-nowrap text-primary-60">
+                {activity.title ? '활동 변경' : '활동 선택'}
+              </Typography>
+            </button>
+          )}
+        </div>
       </div>
 
-      <div
-        className={`w-full rounded-lg border border-gray-20 bg-gray-5 px-5 ${
-          activity.title ? 'py-4' : 'flex h-[58px] items-center'
-        }`}
-      >
-        {activity.title ? (
-          <>
-            <Typography tag="p" type="Body1Semibold" className="text-gray-90">
-              {activity.title}
-            </Typography>
-            <Typography tag="p" type="Body3Regular" className="mt-1 text-gray-50">
-              {activity.organizer || '주최기관/단체명'}
-            </Typography>
-          </>
-        ) : (
-          <Typography tag="p" type="Body2Medium" className="text-gray-50">
-            선택된 활동이 없습니다.
+      {/* PC(figma 2577-38195): 제목 + 버튼 + 박스 (기존 구조 유지) */}
+      <div className="mobile:hidden flex flex-col gap-space-24">
+        <div className="flex items-center justify-between">
+          <Typography type="Heading1Semibold" className="text-gray-90">
+            {activity.title ? '선택한 활동' : '어떤 활동에 참여하셨나요?'}
           </Typography>
-        )}
+          {onOpenChangeModal && (
+            <button
+              type="button"
+              onClick={onOpenChangeModal}
+              className="flex h-[30px] items-center justify-center rounded-full border border-primary-50 px-3 py-1.5 hover:bg-primary-5"
+            >
+              <Typography type="Body4Medium" className="whitespace-nowrap text-primary-60">
+                {activity.title ? '활동 변경하기' : '활동 선택하기'}
+              </Typography>
+            </button>
+          )}
+        </div>
+
+        <div
+          className={`w-full rounded-lg border border-gray-20 bg-gray-5 px-5 ${
+            activity.title ? 'py-4' : 'flex h-[58px] items-center'
+          }`}
+        >
+          {activity.title ? (
+            <>
+              <Typography tag="p" type="Body1Semibold" className="text-gray-90">
+                {activity.title}
+              </Typography>
+              <Typography tag="p" type="Body3Regular" className="mt-1 text-gray-50">
+                {activity.organizer || '주최기관/단체명'}
+              </Typography>
+            </>
+          ) : (
+            <Typography tag="p" type="Body2Medium" className="text-gray-50">
+              선택된 활동이 없습니다.
+            </Typography>
+          )}
+        </div>
       </div>
 
       <div className="mt-12 flex flex-col gap-8">
@@ -72,7 +108,7 @@ export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormRet
         <div className="grid grid-cols-1 gap-4 pc:grid-cols-2">
         <div className="flex flex-col gap-1">
           <Typography type="Body3Medium" className="text-gray-90">
-            직무를 선택해주세요 <span className="text-danger-50">*</span>
+            직무 <span className="text-danger-50">*</span>
           </Typography>
           <Select
             placeholder="직무 선택"
@@ -82,11 +118,10 @@ export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormRet
             width="full"
             helpMessageStatus={errors.jobGroup ? 'error' : 'default'}
           />
-          <FieldError message={errors.jobGroup} />
         </div>
         <div className="flex flex-col gap-1">
           <Typography type="Body3Medium" className="text-gray-90">
-            세부직무를 선택해주세요 <span className="text-danger-50">*</span>
+            세부직무 <span className="text-danger-50">*</span>
           </Typography>
           <Select
             placeholder="세부직무 선택"
@@ -97,7 +132,6 @@ export function Step1({ form, onOpenChangeModal }: { form: UseReviewWriteFormRet
             disabled={!state.jobGroup}
             helpMessageStatus={errors.jobDetail ? 'error' : 'default'}
           />
-          <FieldError message={errors.jobDetail} />
         </div>
         </div>
       </div>

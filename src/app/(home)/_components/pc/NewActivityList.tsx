@@ -63,8 +63,8 @@ const ORGANIZER_LABEL_TO_TYPE: Record<string, string> = {
   중견기업: 'MEDIUM_CORPORATION',
   중소기업: 'SMALL_CORPORATION',
   '공공기관/공기업': 'PUBLIC_ORGANIZATION',
-  '외국계 기업': 'FOREIGN_CORPORATION',
-  '비영리단체/협회/재단': 'NON_PROFIT',
+  외국계: 'FOREIGN_CORPORATION',
+  '비영리/협회/재단': 'NON_PROFIT',
   스타트업: 'STARTUP',
   금융권: 'FINANCIAL_INSTITUTION',
   병원: 'HOSPITAL',
@@ -77,7 +77,7 @@ const normalizeOrg = (s: string) => s.replace(/\s/g, '');
 const TARGET_LABEL_TO_CODE: Record<string, string> = {
   '제한 없음': 'ALL',
   대학생: 'UNIVERSITY_STUDENT',
-  직장인: 'WORKER',
+  '직장인/일반인': 'WORKER',
 };
 // 활동분야 라벨 → 백엔드 field 코드 (1:1, 대문자 enum)
 const FIELD_LABEL_TO_CODE: Record<string, string> = {
@@ -88,25 +88,14 @@ const FIELD_LABEL_TO_CODE: Record<string, string> = {
   해외봉사: 'OVERSEAS_VOLUNTEER',
   국내봉사단: 'DOMESTIC_VOLUNTEER',
 };
-// 모집지역 라벨 → 백엔드 location 권역 코드(대문자 enum). 백엔드가 권역으로 묶어 개별 시·도를 권역에 매핑
-// (충북은 명시 안 됐으나 충청권으로 best-effort). "온라인"은 location이 아니라 format=ONLINE으로 전송
+// 모집지역 라벨 → 백엔드 location 권역 코드(대문자 enum). UX 2-25064: 권역 그룹 1:1 매핑.
+// "해외"는 백엔드 코드 미확정 → 미전송(보류).
 const REGION_LABEL_TO_LOCATION: Record<string, string> = {
-  서울: 'SEOUL_INCHEON',
-  인천: 'SEOUL_INCHEON',
-  경기: 'GYEONGGI_GANGWON',
-  강원: 'GYEONGGI_GANGWON',
-  대전: 'DAEJEON_SEJONG_CHUNGNAM',
-  세종: 'DAEJEON_SEJONG_CHUNGNAM',
-  충남: 'DAEJEON_SEJONG_CHUNGNAM',
-  충북: 'DAEJEON_SEJONG_CHUNGNAM',
-  부산: 'BUSAN_DAEGU_GYEONGSANG',
-  대구: 'BUSAN_DAEGU_GYEONGSANG',
-  울산: 'BUSAN_DAEGU_GYEONGSANG',
-  경북: 'BUSAN_DAEGU_GYEONGSANG',
-  경남: 'BUSAN_DAEGU_GYEONGSANG',
-  광주: 'GWANGJU_JEOLLA',
-  전남: 'GWANGJU_JEOLLA',
-  전북: 'GWANGJU_JEOLLA',
+  '서울/인천': 'SEOUL_INCHEON',
+  '경기/강원': 'GYEONGGI_GANGWON',
+  '대전/세종/충남': 'DAEJEON_SEJONG_CHUNGNAM',
+  '부산/대구/경상': 'BUSAN_DAEGU_GYEONGSANG',
+  '광주/전라': 'GWANGJU_JEOLLA',
   제주: 'JEJU',
 };
 const uniqueJoin = (codes: string[]) => Array.from(new Set(codes.filter(Boolean))).join(',');
@@ -132,7 +121,7 @@ export default function NewActivityList({
   // 선택한 직무유형(관련직무 칩 + 직무유형 Select)을 백엔드 jobTag 코드로 변환
   const selectedJobTags = useMemo(() => {
     const fromFilters = (selectedFilters['관련직무'] ?? [])
-      .filter((v) => v !== '전체')
+      .filter((v) => v !== '전체' && v !== '모두')
       .map((label) => JOB_LABEL_TO_TAG[label]);
     const fromSelect = selectedJobs.map((code) => JOB_CODE_TO_TAG[code]);
     return Array.from(new Set([...fromFilters, ...fromSelect].filter(Boolean)));
@@ -142,7 +131,7 @@ export default function NewActivityList({
   const selectedOrgTypes = useMemo(
     () =>
       (selectedFilters['주최기관'] ?? [])
-        .filter((v) => v !== '전체')
+        .filter((v) => v !== '전체' && v !== '모두')
         .map((label) => ORGANIZER_LABEL_TO_TYPE[label])
         .filter(Boolean),
     [selectedFilters],
@@ -152,7 +141,7 @@ export default function NewActivityList({
   const selectedTargets = useMemo(
     () =>
       (selectedFilters['참여대상'] ?? [])
-        .filter((v) => v !== '전체')
+        .filter((v) => v !== '전체' && v !== '모두')
         .map((label) => TARGET_LABEL_TO_CODE[label])
         .filter(Boolean),
     [selectedFilters],
@@ -160,7 +149,7 @@ export default function NewActivityList({
   const selectedFields = useMemo(
     () =>
       (selectedFilters['활동분야'] ?? [])
-        .filter((v) => v !== '전체')
+        .filter((v) => v !== '전체' && v !== '모두')
         .map((label) => FIELD_LABEL_TO_CODE[label])
         .filter(Boolean),
     [selectedFilters],
@@ -169,13 +158,11 @@ export default function NewActivityList({
   const selectedLocations = useMemo(
     () =>
       regionSelection
-        .filter((v) => v !== '전체')
+        .filter((v) => v !== '전체' && v !== '모두')
         .map((label) => REGION_LABEL_TO_LOCATION[label])
         .filter(Boolean),
     [regionSelection],
   );
-  // "온라인"은 location이 아니라 format=ONLINE으로 분리 전송
-  const selectedFormat = regionSelection.includes('온라인') ? 'ONLINE' : undefined;
 
   const activityParams = useMemo(
     () => ({
@@ -187,9 +174,8 @@ export default function NewActivityList({
       ...(selectedTargets.length > 0 ? { target: uniqueJoin(selectedTargets) } : {}),
       ...(selectedFields.length > 0 ? { field: uniqueJoin(selectedFields) } : {}),
       ...(selectedLocations.length > 0 ? { location: uniqueJoin(selectedLocations) } : {}),
-      ...(selectedFormat ? { format: selectedFormat } : {}),
     }),
-    [categorySlug, sort, selectedJobTags, selectedOrgTypes, selectedTargets, selectedFields, selectedLocations, selectedFormat],
+    [categorySlug, sort, selectedJobTags, selectedOrgTypes, selectedTargets, selectedFields, selectedLocations],
   );
   const { data: apiData, loading } = useActivities('latest', activityParams);
   const effectiveLoading = loading;
@@ -256,7 +242,7 @@ export default function NewActivityList({
 
       const filterEntries = Object.entries(mergedSelectedFilters).filter(([, values]) => values.length > 0);
       const matchesFilters = filterEntries.every(([filterName, values]) => {
-        const activeValues = values.filter((value) => value !== '전체');
+        const activeValues = values.filter((value) => value !== '전체' && value !== '모두');
         if (activeValues.length === 0) return true;
         if (filterName === '주최기관')
           return activeValues.some((v) => normalizeOrg(v) === normalizeOrg(item.companyType));

@@ -49,7 +49,7 @@ export default function PcProfile({ isStorybook = false }: { isStorybook?: boole
       <section className="max-w-[758px] w-full flex flex-col gap-[58px]">
         {/* 활동 결과 */}
         <div className="flex flex-col gap-4">
-          <ContentHeader title="활동 결과" onClick={() => router.push('/calendar')} />
+          <ContentHeader title="활동 결과" onClick={() => router.push('/calendar?tab=result')} />
           <div className="flex justify-between">
             {results.map(({ title, value }) => (
               <div

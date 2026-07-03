@@ -105,18 +105,18 @@ export default function MobileActivityList({
       중견기업: "MEDIUM_CORPORATION",
       중소기업: "SMALL_CORPORATION",
       "공공기관/공기업": "PUBLIC_ORGANIZATION",
-      "외국계 기업": "FOREIGN_CORPORATION",
-      "비영리단체/협회/재단": "NON_PROFIT",
+      외국계: "FOREIGN_CORPORATION",
+      "비영리/협회/재단": "NON_PROFIT",
       스타트업: "STARTUP",
       금융권: "FINANCIAL_INSTITUTION",
       병원: "HOSPITAL",
       기타: "ETC",
     };
-    // 참여대상(target) → 백엔드 코드 (대문자 enum, "기타"는 코드 없음)
+    // 참여대상(target) → 백엔드 코드 (대문자 enum)
     const targetLabelToCode: Record<string, string> = {
       "제한 없음": "ALL",
       대학생: "UNIVERSITY_STUDENT",
-      직장인: "WORKER",
+      "직장인/일반인": "WORKER",
     };
     // 활동분야(field) → 백엔드 코드 (1:1, 대문자 enum)
     const fieldLabelToCode: Record<string, string> = {
@@ -127,56 +127,43 @@ export default function MobileActivityList({
       해외봉사: "OVERSEAS_VOLUNTEER",
       국내봉사단: "DOMESTIC_VOLUNTEER",
     };
-    // 모집지역(location) → 백엔드 권역 코드 (대문자 enum, 개별 시·도를 권역에 매핑, 충북은 충청권 best-effort)
+    // 모집지역(location) → 백엔드 권역 코드 (UX 2-25064: 권역 그룹 1:1 매핑). "해외"는 백엔드 코드 미확정 → 미전송(보류)
     const regionLabelToLocation: Record<string, string> = {
-      서울: "SEOUL_INCHEON",
-      인천: "SEOUL_INCHEON",
-      경기: "GYEONGGI_GANGWON",
-      강원: "GYEONGGI_GANGWON",
-      대전: "DAEJEON_SEJONG_CHUNGNAM",
-      세종: "DAEJEON_SEJONG_CHUNGNAM",
-      충남: "DAEJEON_SEJONG_CHUNGNAM",
-      충북: "DAEJEON_SEJONG_CHUNGNAM",
-      부산: "BUSAN_DAEGU_GYEONGSANG",
-      대구: "BUSAN_DAEGU_GYEONGSANG",
-      울산: "BUSAN_DAEGU_GYEONGSANG",
-      경북: "BUSAN_DAEGU_GYEONGSANG",
-      경남: "BUSAN_DAEGU_GYEONGSANG",
-      광주: "GWANGJU_JEOLLA",
-      전남: "GWANGJU_JEOLLA",
-      전북: "GWANGJU_JEOLLA",
+      "서울/인천": "SEOUL_INCHEON",
+      "경기/강원": "GYEONGGI_GANGWON",
+      "대전/세종/충남": "DAEJEON_SEJONG_CHUNGNAM",
+      "부산/대구/경상": "BUSAN_DAEGU_GYEONGSANG",
+      "광주/전라": "GWANGJU_JEOLLA",
       제주: "JEJU",
     };
     const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
     const jobTags = (selectedFilters["관련직무"] ?? [])
-      .filter((v) => v !== "전체")
+      .filter((v) => v !== "전체" && v !== "모두")
       .map((label) => jobLabelToTag[label])
       .filter(Boolean);
     const orgTypes = (selectedFilters["주최기관"] ?? [])
-      .filter((v) => v !== "전체")
+      .filter((v) => v !== "전체" && v !== "모두")
       .map((label) => orgLabelToType[label])
       .filter(Boolean);
     const targets = uniq(
       (selectedFilters["참여대상"] ?? [])
-        .filter((v) => v !== "전체")
+        .filter((v) => v !== "전체" && v !== "모두")
         .map((label) => targetLabelToCode[label])
         .filter(Boolean),
     );
     const fields = uniq(
       (selectedFilters["활동분야"] ?? [])
-        .filter((v) => v !== "전체")
+        .filter((v) => v !== "전체" && v !== "모두")
         .map((label) => fieldLabelToCode[label])
         .filter(Boolean),
     );
     const regionSel = selectedFilters["모집지역"] ?? [];
     const locations = uniq(
       regionSel
-        .filter((v) => v !== "전체")
+        .filter((v) => v !== "전체" && v !== "모두")
         .map((label) => regionLabelToLocation[label])
         .filter(Boolean),
     );
-    // "온라인"은 location이 아니라 format=ONLINE으로 전송
-    const format = regionSel.includes("온라인") ? "ONLINE" : undefined;
     return {
       size: "200",
       sort: "LATEST",
@@ -188,7 +175,6 @@ export default function MobileActivityList({
       ...(targets.length > 0 ? { target: targets.join(",") } : {}),
       ...(fields.length > 0 ? { field: fields.join(",") } : {}),
       ...(locations.length > 0 ? { location: locations.join(",") } : {}),
-      ...(format ? { format } : {}),
     };
   }, [activitySlug, selectedFilters]);
   const { data: apiData, loading } = useActivities("latest", activityParams);
@@ -197,7 +183,7 @@ export default function MobileActivityList({
       apiData.filter((item) => {
         const filterEntries = Object.entries(selectedFilters).filter(([, values]) => values.length > 0);
         return filterEntries.every(([filterName, values]) => {
-          const activeValues = values.filter((value) => value !== "전체");
+          const activeValues = values.filter((value) => value !== "전체" && value !== "모두");
           if (activeValues.length === 0) return true;
           if (filterName === "주최기관")
             return activeValues.some((v) => v.replace(/\s/g, "") === item.companyType.replace(/\s/g, ""));
@@ -255,16 +241,16 @@ export default function MobileActivityList({
             placeholder="주최기관"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[220px]"
+            dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "대기업", value: "대기업" },
               { label: "중견기업", value: "중견기업" },
               { label: "중소기업", value: "중소기업" },
               { label: "공공기관/공기업", value: "공공기관/공기업" },
-              { label: "외국계 기업", value: "외국계 기업" },
-              { label: "비영리단체/협회/재단", value: "비영리단체/협회/재단" },
+              { label: "외국계", value: "외국계" },
               { label: "스타트업", value: "스타트업" },
+              { label: "비영리/협회/재단", value: "비영리/협회/재단" },
               { label: "금융권", value: "금융권" },
               { label: "병원", value: "병원" },
               { label: "기타", value: "기타" },
@@ -282,13 +268,12 @@ export default function MobileActivityList({
             placeholder="참여대상"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[172px]"
+            dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "제한 없음", value: "제한 없음" },
               { label: "대학생", value: "대학생" },
-              { label: "직장인", value: "직장인" },
-              { label: "기타", value: "기타" },
+              { label: "직장인/일반인", value: "직장인/일반인" },
             ]}
             value={selectedFilters["참여대상"] ?? []}
             onChange={(value) =>
@@ -303,7 +288,7 @@ export default function MobileActivityList({
             placeholder="활동분야"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[172px]"
+            dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
           options={[
               { label: "서포터즈", value: "서포터즈" },
@@ -326,27 +311,17 @@ export default function MobileActivityList({
             placeholder="지역"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[172px]"
+            dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
-              { label: "온라인", value: "온라인" },
-              { label: "서울", value: "서울" },
-              { label: "경기", value: "경기" },
-              { label: "인천", value: "인천" },
-              { label: "강원", value: "강원" },
-              { label: "대전", value: "대전" },
-              { label: "세종", value: "세종" },
-              { label: "충남", value: "충남" },
-              { label: "충북", value: "충북" },
-              { label: "광주", value: "광주" },
-              { label: "전남", value: "전남" },
-              { label: "전북", value: "전북" },
-              { label: "대구", value: "대구" },
-              { label: "경북", value: "경북" },
-              { label: "부산", value: "부산" },
-              { label: "울산", value: "울산" },
-              { label: "경남", value: "경남" },
+              { label: "모두", value: "모두" },
+              { label: "서울/인천", value: "서울/인천" },
+              { label: "경기/강원", value: "경기/강원" },
+              { label: "대전/세종/충남", value: "대전/세종/충남" },
+              { label: "부산/대구/경상", value: "부산/대구/경상" },
+              { label: "광주/전라", value: "광주/전라" },
               { label: "제주", value: "제주" },
+              { label: "해외", value: "해외" },
             ]}
             value={selectedFilters["모집지역"] ?? []}
             onChange={(value) =>
@@ -361,9 +336,10 @@ export default function MobileActivityList({
             placeholder="직무"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[172px]"
+            dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
+              { label: "모두", value: "모두" },
               { label: "기획", value: "기획" },
               { label: "디자인", value: "디자인" },
               { label: "개발", value: "개발" },

@@ -9,9 +9,14 @@ import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import CardChip, { type CardChipProps } from '@/components/common/Card/CardChip';
 import MobileCalendarView from './MobileCalendarView';
 import MobileActivityResultView from './MobileActivityResultView';
+import CalendarFilterDropdown from './CalendarFilterDropdown';
 import {
+  APPLY_ALL_LABEL,
   APPLY_OPTIONS,
+  APPLY_TRIGGER_LABEL,
+  PROGRESS_ALL_LABEL,
   PROGRESS_OPTIONS,
+  PROGRESS_TRIGGER_LABEL,
   type ApplyFilter,
   type ProgressFilter,
   type ScheduleTab,
@@ -112,13 +117,13 @@ function ScheduleCard({ item }: { item: MobileScheduleItem }) {
 export default function MobileCalendarPage() {
   const [tab, setTab] = useState<ScheduleTab>('SCHEDULE');
   const [viewMode, setViewMode] = useState<ScheduleViewMode>('LIST');
-  const [progressFilter, setProgressFilter] = useState<ProgressFilter>('ALL');
-  const [applyFilter, setApplyFilter] = useState<ApplyFilter>('ALL');
+  const [progressFilter, setProgressFilter] = useState<ProgressFilter[]>([]);
+  const [applyFilter, setApplyFilter] = useState<ApplyFilter[]>([]);
   const [sort, setSort] = useState('RECENT');
 
   const resetFilters = () => {
-    setProgressFilter('ALL');
-    setApplyFilter('ALL');
+    setProgressFilter([]);
+    setApplyFilter([]);
     setSort('RECENT');
   };
 
@@ -188,24 +193,24 @@ export default function MobileCalendarPage() {
               >
                 <Icon icon="largeRefresh" size={20} className="text-white" />
               </button>
-              <Select
-                options={PROGRESS_OPTIONS}
-                value={progressFilter}
-                onChange={(v) => setProgressFilter((v as ProgressFilter) ?? 'ALL')}
-                width="small"
-                size="small"
-                className="!rounded-[100px]"
-                wrapperClassName="shrink-0"
-              />
-              <Select
-                options={APPLY_OPTIONS}
-                value={applyFilter}
-                onChange={(v) => setApplyFilter((v as ApplyFilter) ?? 'ALL')}
-                width="small"
-                size="small"
-                className="!rounded-[100px]"
-                wrapperClassName="shrink-0"
-              />
+              <div className="shrink-0">
+                <CalendarFilterDropdown
+                  placeholder={PROGRESS_TRIGGER_LABEL}
+                  allLabel={PROGRESS_ALL_LABEL}
+                  options={PROGRESS_OPTIONS}
+                  selected={progressFilter}
+                  onChange={setProgressFilter}
+                />
+              </div>
+              <div className="shrink-0">
+                <CalendarFilterDropdown
+                  placeholder={APPLY_TRIGGER_LABEL}
+                  allLabel={APPLY_ALL_LABEL}
+                  options={APPLY_OPTIONS}
+                  selected={applyFilter}
+                  onChange={setApplyFilter}
+                />
+              </div>
               <Select
                 options={SORT_OPTIONS}
                 value={sort}

@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import GNBPC from "@/components/common/GNB/pc/GNB";
 import GNBMobile from "@/components/common/GNB/mobile/GNB";
+import Footer from "@/components/common/Footer/Footer";
 import { Providers } from "@/providers/providers";
 
 export const metadata: Metadata = {
@@ -57,6 +58,8 @@ export default async function RootLayout({
           </div>
           {children}
           {modal}
+          {/* 전역 푸터 — 모든 화면 노출 (figma 2423-30515 / 2423-30539) */}
+          <Footer />
         </Providers>
       </body>
     </html>
