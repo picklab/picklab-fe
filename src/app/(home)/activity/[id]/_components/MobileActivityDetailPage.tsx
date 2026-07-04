@@ -384,7 +384,8 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
         </div>
       </section>
 
-      <div className="border-b border-gray-20 flex mt-1">
+      {/* CSV 47: 관심직무↔탭 간격 40px, 탭 텍스트 Heading2Semibold */}
+      <div className="border-b border-gray-20 flex mt-10">
         <button
           type="button"
           onClick={() => setTab('detail')}
@@ -393,7 +394,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             tab === 'detail' ? 'border-primary-50 text-gray-90' : 'border-transparent text-gray-40',
           )}
         >
-          <Typography type="Body2Semibold">상세내용</Typography>
+          <Typography type="Heading2Semibold">상세내용</Typography>
         </button>
         <button
           type="button"
@@ -403,7 +404,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             tab === 'review' ? 'border-primary-50 text-gray-90' : 'border-transparent text-gray-40',
           )}
         >
-          <Typography type="Body2Semibold">리뷰</Typography>
+          <Typography type="Heading2Semibold">리뷰</Typography>
         </button>
       </div>
 
