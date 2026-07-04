@@ -113,6 +113,8 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
   const { data: bookmarks, loading } = useBookmarks();
   const { data: results } = useActivityParticipationResults();
   const [optimisticUnmarked, setOptimisticUnmarked] = useState<Set<string>>(new Set());
+  // 지원완료 토글 낙관적 오버라이드 (activityId → applied). undefined면 results 기반 item.applied 사용.
+  const [appliedOverride, setAppliedOverride] = useState<Record<string, boolean>>({});
 
   // activity_id → 지원완료 여부 맵
   const appliedMap = useMemo(() => {
@@ -163,6 +165,24 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
       }))
       .filter((group) => group.items.length > 0);
   }, [groups, progressFilter, applyFilter]);
+
+  // 지원완료 토글: activityId만으로 POST(지원완료 표시)/DELETE(취소). 낙관적 + 실패 롤백.
+  const handleToggleApplied = async (item: ScheduleItem) => {
+    if (item.id.startsWith('mock-')) return; // 목업은 토글 무시
+    const current = appliedOverride[item.id] ?? item.applied;
+    const next = !current;
+    setAppliedOverride((prev) => ({ ...prev, [item.id]: next }));
+    try {
+      const res = await fetch(`/api/activities/${item.id}/participations`, {
+        method: next ? 'POST' : 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('지원 여부 변경 실패');
+    } catch {
+      setAppliedOverride((prev) => ({ ...prev, [item.id]: current })); // 롤백
+      window.alert('지원 여부 변경 중 오류가 발생했습니다.');
+    }
+  };
 
   const handleBookmark = async (item: ScheduleItem) => {
     if (item.id.startsWith('mock-')) return; // 목업은 토글 무시
@@ -265,18 +285,30 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
                 </div>
               </div>
 
-              {/* 지원완료 상태 (results 기반, 비대화형 — 클릭 시 상세 이동) */}
-              <div
-                className={clsx(
-                  'flex h-[40px] w-[92px] shrink-0 items-center justify-center gap-0.5 rounded-full',
-                  item.applied ? 'bg-primary-50' : 'border border-gray-20',
-                )}
-              >
-                <Icon icon="check" size={16} className={item.applied ? 'text-white' : 'text-gray-40'} />
-                <Typography type="Body4Medium" className={item.applied ? 'text-white' : 'text-gray-40'}>
-                  지원완료
-                </Typography>
-              </div>
+              {/* 지원완료 토글 (CSV 12): 클릭 시 POST/DELETE participations로 지원여부 변경 */}
+              {(() => {
+                const applied = appliedOverride[item.id] ?? item.applied;
+                return (
+                  <button
+                    type="button"
+                    aria-pressed={applied}
+                    aria-label={applied ? '지원완료 취소' : '지원완료로 표시'}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleApplied(item);
+                    }}
+                    className={clsx(
+                      'flex h-[40px] w-[92px] shrink-0 items-center justify-center gap-0.5 rounded-full transition-colors',
+                      applied ? 'bg-primary-50 hover:bg-primary-60' : 'border border-gray-20 hover:bg-gray-5',
+                    )}
+                  >
+                    <Icon icon="check" size={16} className={applied ? 'text-white' : 'text-gray-40'} />
+                    <Typography type="Body4Medium" className={applied ? 'text-white' : 'text-gray-40'}>
+                      지원완료
+                    </Typography>
+                  </button>
+                );
+              })()}
 
               {/* 북마크 */}
               <Icon
