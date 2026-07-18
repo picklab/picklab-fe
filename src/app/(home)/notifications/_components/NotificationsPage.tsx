@@ -21,6 +21,9 @@ const TYPE_DESC: Record<NotificationType, string> = {
 // 'YYYY-MM-DD...' → 'YYYY.MM.DD'
 const formatDate = (v?: string) => (v ? v.slice(0, 10).replace(/-/g, '.') : '-');
 
+// 백엔드 알림 link는 `/activities/{id}`(복수)로 오는데 앱 상세 라우트는 `/activity/{id}`(단수) → 정규화.
+const normalizeLink = (link: string) => link.replace(/^\/activities\//, '/activity/');
+
 function DeleteAllButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
@@ -88,10 +91,12 @@ function NotificationRow({
 
 export default function NotificationsPage() {
   const router = useRouter();
-  const { data, loading, deleteAll, dismiss } = useNotifications();
+  const { data, loading, deleteAll, dismiss, markRead } = useNotifications();
 
-  const goLink = (link: string) => {
-    if (link) router.push(link);
+  // 알림 클릭 시 읽음 처리 후 링크 이동
+  const handleOpen = (item: NotificationItem) => {
+    markRead(item.id);
+    if (item.link) router.push(normalizeLink(item.link));
   };
 
   return (
@@ -135,7 +140,7 @@ export default function NotificationsPage() {
             <NotificationRow
               key={item.id}
               item={item}
-              onClick={() => goLink(item.link)}
+              onClick={() => handleOpen(item)}
               onDismiss={() => dismiss(item.id)}
             />
           ))}

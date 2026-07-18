@@ -28,36 +28,59 @@ interface NotificationPage {
 }
 
 /**
- * 알림 목록(GET /api/notifications, 최근 30일) + 전체삭제(DELETE) + 개별 닫기.
- * 개별 삭제 API가 없어(백엔드 미제공) X 버튼은 클라이언트 낙관적 제거로 처리한다.
+ * 알림 목록(GET /api/notifications, 최근 30일) + 전체삭제(DELETE) + 개별 삭제(DELETE /{id})
+ * + 읽음 처리(PATCH /{id}/read) + 실시간 구독(SSE /subscribe).
+ * 삭제/읽음은 낙관적 반영 후 실패 시 롤백.
  */
 export default function useNotifications() {
   const [data, setData] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // 목록 재조회 (최초 로드 + SSE push 시). notifications 목록은 0-based 페이징(page=1이면 빈 목록).
+  const fetchList = useCallback(async () => {
+    try {
+      const res = await fetch('/api/notifications?page=0&size=30', { credentials: 'include' });
+      if (!res.ok) throw new Error(`요청 실패: ${res.status}`);
+      const json = (await res.json()) as Wrapper<NotificationPage>;
+      setData(json.data?.items ?? []);
+      setError(null);
+    } catch (e) {
+      setError(e as Error);
+      setData([]);
+    }
+  }, []);
+
+  // 최초 로드
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/notifications?page=1&size=30', { credentials: 'include' });
-        if (!res.ok) throw new Error(`요청 실패: ${res.status}`);
-        const json = (await res.json()) as Wrapper<NotificationPage>;
-        if (!cancelled) setData(json.data?.items ?? []);
-      } catch (e) {
-        if (!cancelled) {
-          setError(e as Error);
-          setData([]);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
+    setLoading(true);
+    fetchList().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [fetchList]);
+
+  // 실시간 알림 구독(SSE). 백엔드는 named event(`connect` 핸드셰이크)로 push하므로,
+  // 알림 이벤트명 후보 + 기본 message 이벤트를 함께 구독하고 push 시 목록을 재조회한다.
+  useEffect(() => {
+    const es = new EventSource('/api/notifications/subscribe', { withCredentials: true });
+    const onPush = () => {
+      void fetchList();
+    };
+    es.addEventListener('message', onPush); // unnamed 기본 이벤트
+    ['notification', 'notifications', 'sse', 'alarm'].forEach((name) =>
+      es.addEventListener(name, onPush),
+    );
+    // 'connect'는 구독 성공 핸드셰이크라 무시(초기 로드로 이미 최신 상태)
+    es.onerror = () => {
+      // 로그아웃/네트워크 단절 시 재연결 폭주 방지 → 연결 종료(다음 진입 시 재구독)
+      es.close();
+    };
+    return () => es.close();
+  }, [fetchList]);
 
   // 전체삭제 (낙관적 + 실패 시 롤백)
   const deleteAll = useCallback(async () => {
@@ -75,10 +98,38 @@ export default function useNotifications() {
     });
   }, []);
 
-  // 개별 닫기 — 백엔드 단건 삭제 API 없음 → 클라 제거만
+  // 개별 삭제 (낙관적 제거 + 실패 시 롤백)
   const dismiss = useCallback((id: number) => {
-    setData((prev) => prev.filter((n) => n.id !== id));
+    setData((prev) => {
+      const backup = prev;
+      (async () => {
+        try {
+          const res = await fetch(`/api/notifications/${id}`, { method: 'DELETE', credentials: 'include' });
+          if (!res.ok) throw new Error();
+        } catch {
+          setData(backup);
+        }
+      })();
+      return prev.filter((n) => n.id !== id);
+    });
   }, []);
 
-  return { data, loading, error, deleteAll, dismiss };
+  // 읽음 처리 (낙관적 반영 + 실패 시 롤백). 이미 읽음이면 no-op.
+  const markRead = useCallback((id: number) => {
+    setData((prev) => {
+      if (!prev.some((n) => n.id === id && !n.is_read)) return prev;
+      const backup = prev;
+      (async () => {
+        try {
+          const res = await fetch(`/api/notifications/${id}/read`, { method: 'PATCH', credentials: 'include' });
+          if (!res.ok) throw new Error();
+        } catch {
+          setData(backup);
+        }
+      })();
+      return prev.map((n) => (n.id === id ? { ...n, is_read: true } : n));
+    });
+  }, []);
+
+  return { data, loading, error, deleteAll, dismiss, markRead };
 }
