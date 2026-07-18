@@ -32,9 +32,10 @@
 - ~~캘린더 월/일 뷰 + 일정목록 MOCK~~ → ✅ **완료(2026-07-18·2)**. 북마크 응답에 저장일/모집기간 필드 추가되어 `ScheduleListView`·`MobileCalendarPage`·`CalendarMonthView`·`MobileCalendarView`·`DayDetailPanel` 전부 실데이터 연결.
 - ~~`results` 500 블로커~~ → ✅ **해소 확인**. `GET /activity-participations/results?page=1&size=10` → **200**(page 1-base, page=0은 400). 활동결과·지원완료 토글 실동작 가능.
 - ~~[프론트 TODO] 알림 읽음 처리~~ → ✅ **완료(07-18·3)**. `markRead` 연결(클릭 시 읽음+이동), `PATCH /{id}/read` 200 실측. (전체읽음 버튼은 시안 없어 보류)
-- ~~[프론트 TODO] 실시간 알림(SSE)~~ → ✅ **연결(07-18·3)**. `EventSource` 구독+push 시 재조회. ⚠️ 실제 push 이벤트명 미관측(후보명 커버) → 백엔드에 이벤트명 1건 확인 권장.
+- ~~[프론트 TODO] 실시간 알림(SSE)~~ → ✅ **완료+실측(07-18·3)**. `EventSource` 구독+push 시 재조회. 이벤트명 `notification` **실측 확인**(테스트 발송→수신→삭제). 백엔드 문의 불필요.
 - ~~검색 전체삭제~~ → ✅ **이미 연결됨**(코드 확인). `RecentSearchHistory.tsx`가 `deleteAllSearchHistory()`(`DELETE /api/search/history`) 호출 중이고, 실패 시에만 개별삭제 폴백. `DELETE /v1/search/history` 스펙 존재 확인 → 전체삭제 경로가 이미 실동작. (선택: 불필요해진 폴백 정리 정도)
-- **[백엔드 문의] 필터 enum 2건** — ① "해외" location 코드 ② 강연(`LECTURE`)·기타(`ETC`)·target `기타` 매핑값. (장애 아님, enum 확정 문의 + 옵션 노출은 디자인 결정)
+- ~~[백엔드 문의] "해외" location 코드~~ → ✅ **완료(07-18·3)**. api-spec location enum에 `OVERSEAS` 이미 존재 확인(낡은 주석이 "미확정"으로 오기). `MobileActivityList`·`NewActivityList` 매핑에 `해외:OVERSEAS` 추가 → 해외 필터 실동작. **백엔드 문의 불필요.**
+- **[디자인 결정] 강연(`LECTURE`)·기타(`ETC`)·target `기타` 옵션 노출 여부** — enum 값은 앎 → UI 노출만 결정하면 매핑 추가.
 
 ### figma 미세값(확인 권장, 임의값 사용 중)
 인기검색어 배지 화살표 14px, 바텀시트 하단버튼 radius, 56 초기화 아이콘, 34 호버색 `gray-5`.
@@ -45,7 +46,7 @@
 
 ### ✅ 이번 세션
 - **알림 읽음 처리 연결**(`useNotifications`·`NotificationsPage`): `markRead(id)` 신설 → `PATCH /api/notifications/{id}/read`(낙관적+롤백). 알림 클릭 시 **읽음 처리 후 링크 이동**(`handleOpen`). 기존 `is_read→opacity-40` 시각과 연결(신규 UI 없음). ⚠️ 전체읽음(`read-all`)은 시안에 버튼이 없어 미추가(엔드포인트는 준비됨 — 필요 시 버튼만 붙이면 됨).
-- **실시간 알림 SSE 연결**(`useNotifications`): `EventSource('/api/notifications/subscribe')` 구독 → push 시 목록 재조회(`fetchList`). 백엔드가 **named event**(`event:connect` 핸드셰이크 확인)라 `message`+후보명(`notification`/`notifications`/`sse`/`alarm`) 다중 구독. `onerror`에서 close(로그아웃/단절 시 재연결 폭주 방지). ⚠️ **실제 알림 push 이벤트명은 미관측**(구독 중 새 알림 발생 안 함) → 후보명으로 커버, 안 맞으면 백엔드에 이벤트명 1건 확인 필요.
+- **실시간 알림 SSE 연결**(`useNotifications`): `EventSource('/api/notifications/subscribe')` 구독 → push 시 목록 재조회(`fetchList`). `onerror`에서 close(로그아웃/단절 시 재연결 폭주 방지). ✅ **이벤트명 확인 완료**: `/notifications/send`로 테스트 알림 발송하며 스트림 캡처 → 새 알림은 **`event:notification`**(연결 핸드셰이크는 `event:connect`)로 push됨을 실측. 코드도 후보 다중구독 → 확정값 `notification` 단일 구독으로 정리. **실시간 end-to-end 동작 확인**(테스트 알림 id 22 발송→수신→삭제 정리 완료).
 - **🐞 목록 페이징 버그 수정**: `/notifications` 목록은 **0-based**인데(실측: `page=0`→2건, `page=1`→빈 목록) 훅이 `page=1` 호출 중이라 **실데이터에서 알림이 항상 "없음"으로 표시되던 잠재 버그** 발견 → `page=0`으로 수정. (results는 1-base, notifications는 0-base로 서로 다름 주의)
 
 ### 🔬 실백엔드 검증 (member 3 토큰)
