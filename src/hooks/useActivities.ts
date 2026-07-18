@@ -28,6 +28,10 @@ export interface BackendActivityItem {
   recruitment_end_type?: BackendRecruitmentEndType | string | null;
   is_bookmarked?: boolean | null;
   dday?: number | null;
+  // 저장공고 목록(BookmarkedActivityItem) 전용 필드
+  recruitment_start_date?: string | null;
+  recruitment_end_date?: string | null;
+  bookmarked_at?: string | null;
 }
 
 interface BackendActivityListResponse {

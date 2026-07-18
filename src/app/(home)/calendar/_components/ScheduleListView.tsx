@@ -19,6 +19,19 @@ interface ScheduleListViewProps {
 
 const APPLIED_STATUSES = new Set(['APPLIED', 'ACCEPTED']);
 
+/** "2025-02-10" → "25.02.10" */
+function formatApplyDate(value?: string): string {
+  if (!value) return '-';
+  const m = value.match(/(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[1].slice(2)}.${m[2]}.${m[3]}` : value;
+}
+
+/** "2025-02-14" → "2025년 2월 14일" */
+function formatSavedAt(value: string): string {
+  const m = value.match(/(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[1]}년 ${Number(m[2])}월 ${Number(m[3])}일` : value;
+}
+
 // 목록형 카드의 표시 모델 (실데이터/목업 공통)
 interface ScheduleItem {
   id: string;
@@ -106,11 +119,11 @@ const MOCK_GROUPS: ScheduleGroup[] = [
 
 // 목록형 일정관리 카드 리스트 — figma 2527-24643.
 // 데이터: 저장공고(useBookmarks) + 지원여부(activity-participations/results).
-// TODO(데이터): ① 공고저장일 그룹핑(북마크 응답에 저장일 필드 없음) ② 지원 시작/마감일(응답에 모집 기간 필드 없음)
-//   → 백엔드 필드 제공 시 그룹 헤더/날짜 채움. ③ results 500 블로커 해소 시 지원여부 정상 반영.
+// ① 공고저장일 그룹핑(bookmarked_at) ② 지원 시작/마감일(recruitment_start/end_date) → 실데이터 반영 완료.
+// TODO: ③ results 500 블로커 해소 시 지원여부(applied) 정상 반영.
 export default function ScheduleListView({ progressFilter, applyFilter }: ScheduleListViewProps) {
   const router = useRouter();
-  const { data: bookmarks, loading } = useBookmarks();
+  const { data: bookmarks, loading } = useBookmarks({ includeClosed: true });
   const { data: results } = useActivityParticipationResults();
   const [optimisticUnmarked, setOptimisticUnmarked] = useState<Set<string>>(new Set());
   // 지원완료 토글 낙관적 오버라이드 (activityId → applied). undefined면 results 기반 item.applied 사용.
@@ -125,26 +138,36 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
     return map;
   }, [results]);
 
-  // 실 저장공고 → 단일 그룹(헤더 없음). 비어 있으면 목업 폴백.
+  // 실 저장공고 → 저장일(bookmarked_at)별 그룹핑. 비어 있으면 목업 폴백.
   const groups = useMemo<ScheduleGroup[]>(() => {
-    const realItems: ScheduleItem[] = bookmarks
-      .filter((item) => !optimisticUnmarked.has(item.id))
-      .map((item) => ({
+    const active = bookmarks.filter((item) => !optimisticUnmarked.has(item.id));
+    if (active.length === 0) return MOCK_GROUPS; // TODO(MOCK): 저장공고 없을 때만 폴백
+
+    const byDate = new Map<string, ScheduleItem[]>();
+    active.forEach((item) => {
+      const scheduleItem: ScheduleItem = {
         id: item.id,
         detailLink: item.detailLink,
         dday: item.registrationPeriod,
         activityType: item.activityType,
         organizer: item.organizer,
         title: item.title,
-        applyStart: '-',
-        applyEnd: '-',
-        applied: appliedMap.get(item.id) ?? false,
-        isClosed: item.registrationPeriod === '마감',
-      }));
+        applyStart: formatApplyDate(item.recruitmentStartDate),
+        applyEnd: formatApplyDate(item.recruitmentEndDate),
+        applied: appliedOverride[item.id] ?? appliedMap.get(item.id) ?? false,
+        isClosed: item.isClosed,
+      };
+      const key = item.bookmarkedAt ?? '';
+      const arr = byDate.get(key) ?? [];
+      arr.push(scheduleItem);
+      byDate.set(key, arr);
+    });
 
-    if (realItems.length === 0) return MOCK_GROUPS; // TODO(MOCK): 폴백
-    return [{ savedAt: null, items: realItems }];
-  }, [bookmarks, optimisticUnmarked, appliedMap]);
+    return Array.from(byDate.entries()).map(([date, items]) => ({
+      savedAt: date ? formatSavedAt(date) : null,
+      items,
+    }));
+  }, [bookmarks, optimisticUnmarked, appliedMap, appliedOverride]);
 
   // 필터 적용 후 빈 그룹 제거
   const filteredGroups = useMemo<ScheduleGroup[]>(() => {

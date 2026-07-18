@@ -6,29 +6,9 @@ import Icon from "@/components/common/Icon/Icon";
 import Typography from "@/components/common/Typography";
 import Chip from "@/components/common/Calendar/Chip";
 import DayDetailPanel from "./DayDetailPanel";
+import useCalendarEvents from "./useCalendarEvents";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
-
-type CalendarEventType = "start" | "end"; // 시작 / 마감
-
-interface CalendarEvent {
-  type: CalendarEventType;
-  title: string;
-}
-
-// TODO(MOCK): 디자인 확인용 가데이터 — 모집 시작/마감 API 필드 확정 시 실데이터로 교체.
-// 키: 'YYYY-MM-DD'. 기본 커서(2025.04)에서만 보이도록 4월 날짜에 배치.
-const MOCK_EVENTS: Record<string, CalendarEvent[]> = {
-  "2025-04-10": [
-    { type: "start", title: "활동명 1" },
-    { type: "end", title: "활동명 1" },
-  ],
-  "2025-04-19": [
-    { type: "start", title: "활동명 1" },
-    { type: "end", title: "활동명 1" },
-    { type: "end", title: "활동명 1" },
-  ],
-};
 
 function dateKey(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -42,10 +22,16 @@ interface DayCell {
 
 // 캘린더형 월 그리드 — figma(일정관리 UX 2-25064) + 사용자 제공 시안.
 export default function CalendarMonthView() {
-  // 시안 기준 2025.04부터 시작(가데이터). 화살표로 월 이동.
-  const [cursor, setCursor] = useState(() => new Date(2025, 3, 1));
+  // 현재 달부터 시작. 화살표로 월 이동.
+  const [cursor, setCursor] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   // 날짜 클릭 시 우측 상세 패널 노출(+ 캘린더 축소)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // 저장공고 모집기간 → 날짜별 시작/마감 이벤트
+  const { byDate } = useCalendarEvents();
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth(); // 0-indexed
@@ -144,7 +130,7 @@ export default function CalendarMonthView() {
 
           {/* 날짜 셀 */}
           {cells.map((cell, index) => {
-            const events = cell.key ? (MOCK_EVENTS[cell.key] ?? []) : [];
+            const events = cell.key ? (byDate.get(cell.key) ?? []) : [];
             const isSelected =
               cell.current &&
               selectedDate != null &&
@@ -197,6 +183,11 @@ export default function CalendarMonthView() {
         {selectedDate && (
           <DayDetailPanel
             date={selectedDate}
+            activities={
+              byDate.get(
+                dateKey(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()),
+              ) ?? []
+            }
             onClose={() => setSelectedDate(null)}
             onChangeDate={changeSelectedDate}
           />

@@ -30,8 +30,13 @@ type UseBookmarksParams = {
   includeClosed?: boolean;
 };
 
-/** 북마크 카드 + 마감 여부 플래그(진행여부 필터용). */
-export type BookmarkItem = ApiActivityItem & { isClosed: boolean };
+/** 북마크 카드 + 마감 여부 플래그(진행여부 필터용) + 저장일·모집기간(일정관리용). */
+export type BookmarkItem = ApiActivityItem & {
+  isClosed: boolean;
+  bookmarkedAt?: string; // 저장한 날짜 (YYYY-MM-DD)
+  recruitmentStartDate?: string; // 지원 시작일
+  recruitmentEndDate?: string; // 지원 마감일
+};
 
 export function useBookmarks({
   activityType,
@@ -81,6 +86,9 @@ export function useBookmarks({
             ...mapBackendActivityToApiItem(item),
             isBookmarked: item.is_bookmarked ?? true,
             isClosed: isClosedBackendActivity(item),
+            bookmarkedAt: item.bookmarked_at ?? undefined,
+            recruitmentStartDate: item.recruitment_start_date ?? undefined,
+            recruitmentEndDate: item.recruitment_end_date ?? undefined,
           }));
           // 기본은 마감 제외(기존 동작), includeClosed면 전체 반환
           setData(includeClosed ? mapped : mapped.filter((m) => !m.isClosed));

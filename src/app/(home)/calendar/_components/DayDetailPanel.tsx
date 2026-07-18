@@ -1,35 +1,14 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import Button from '@/components/common/Button/Button';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
-import CardChip, { type CardChipProps } from '@/components/common/Card/CardChip';
+import CardChip from '@/components/common/Card/CardChip';
+import type { CalendarEventItem } from './useCalendarEvents';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
-
-interface DayActivity {
-  id: string;
-  dday: string;
-  activityType: CardChipProps['text'];
-  title: string;
-  organizer: string;
-  applyPeriod: string;
-  applied: boolean;
-  bookmarked: boolean;
-}
-
-// TODO(MOCK): 디자인 확인용 가데이터 — 날짜별 활동 API 연동 시 교체.
-const MOCK_DAY_ACTIVITIES: DayActivity[] = Array.from({ length: 3 }, (_, i) => ({
-  id: `day-mock-${i}`,
-  dday: 'D-00',
-  activityType: '공모전/해커톤',
-  title: '[삼성전자] 스마트싱스 컴패니언즈 3기 모집',
-  organizer: '한화생명',
-  applyPeriod: 'YY.MM.DD ~ YY.MM.DD',
-  applied: true,
-  bookmarked: true,
-}));
 
 function formatHeader(date: Date): string {
   const y = date.getFullYear();
@@ -40,12 +19,14 @@ function formatHeader(date: Date): string {
 
 interface DayDetailPanelProps {
   date: Date;
+  activities: CalendarEventItem[];
   onClose: () => void;
   onChangeDate: (delta: number) => void;
 }
 
 // 캘린더 날짜 클릭 시 우측에 열리는 상세 패널 — 선택 날짜의 활동 카드 리스트.
-export default function DayDetailPanel({ date, onClose, onChangeDate }: DayDetailPanelProps) {
+export default function DayDetailPanel({ date, activities, onClose, onChangeDate }: DayDetailPanelProps) {
+  const router = useRouter();
   return (
     <div className="flex h-[598px] w-[417px] shrink-0 flex-col gap-5 rounded-2xl bg-gray-5 p-5">
       {/* 헤더: 날짜 네비(가운데 그룹) + 닫기(우측) */}
@@ -78,48 +59,68 @@ export default function DayDetailPanel({ date, onClose, onChangeDate }: DayDetai
 
       {/* 카드 리스트 */}
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
-        {MOCK_DAY_ACTIVITIES.map((activity) => (
-          <div key={activity.id} className="flex flex-col gap-4 rounded-2xl bg-gray-0 p-5">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-2">
-                <CardDayBadge text={activity.dday} variant="default" typoType="Caption1Medium" />
-                <CardChip text={activity.activityType} typoType="Caption1Medium" />
-              </div>
-              <Icon
-                icon={activity.bookmarked ? 'bookmarkFill' : 'bookmarkLine'}
-                size={24}
-                className={activity.bookmarked ? 'text-primary-50' : 'text-gray-40'}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <Typography type="Body1Semibold" className="text-gray-90">
-                {activity.title}
-              </Typography>
-              <Typography type="Body4Medium" className="text-gray-50">
-                {activity.organizer}
-              </Typography>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Typography type="Body4Medium" className="text-gray-50">
-                  지원기간 :
-                </Typography>
-                <Typography type="Body4Medium" className="text-gray-90">
-                  {activity.applyPeriod}
-                </Typography>
-              </div>
-              <Button
-                size="sm"
-                label="지원"
-                buttonStyle="filled"
-                icon={{ icon: 'check', position: 'left' }}
-                isFullRounded
-              />
-            </div>
+        {activities.length === 0 ? (
+          <div className="flex flex-1 items-center justify-center">
+            <Typography type="Body2Medium" className="text-gray-50">
+              이 날짜에 예정된 공고가 없어요.
+            </Typography>
           </div>
-        ))}
+        ) : (
+          activities.map((activity) => (
+            <div
+              key={`${activity.activityId}-${activity.type}`}
+              role="button"
+              tabIndex={0}
+              onClick={() => router.push(activity.detailLink)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  router.push(activity.detailLink);
+                }
+              }}
+              className="flex cursor-pointer flex-col gap-4 rounded-2xl bg-gray-0 p-5"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2">
+                  <CardDayBadge
+                    text={activity.dday}
+                    variant={activity.isClosed ? 'deadline' : 'default'}
+                    typoType="Caption1Medium"
+                  />
+                  <CardChip text={activity.activityType} typoType="Caption1Medium" />
+                </div>
+                <Icon icon="bookmarkFill" size={24} className="text-primary-50" />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <Typography type="Body1Semibold" className="text-gray-90">
+                  {activity.title}
+                </Typography>
+                <Typography type="Body4Medium" className="text-gray-50">
+                  {activity.organizer}
+                </Typography>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Typography type="Body4Medium" className="text-gray-50">
+                    지원기간 :
+                  </Typography>
+                  <Typography type="Body4Medium" className="text-gray-90">
+                    {activity.applyPeriod}
+                  </Typography>
+                </div>
+                <Button
+                  size="sm"
+                  label="지원"
+                  buttonStyle="filled"
+                  icon={{ icon: 'check', position: 'left' }}
+                  isFullRounded
+                />
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
