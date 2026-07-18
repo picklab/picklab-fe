@@ -88,8 +88,7 @@ const FIELD_LABEL_TO_CODE: Record<string, string> = {
   해외봉사: 'OVERSEAS_VOLUNTEER',
   국내봉사단: 'DOMESTIC_VOLUNTEER',
 };
-// 모집지역 라벨 → 백엔드 location 권역 코드(대문자 enum). UX 2-25064: 권역 그룹 1:1 매핑.
-// "해외"는 백엔드 코드 미확정 → 미전송(보류).
+// 모집지역 라벨 → 백엔드 location 권역 코드(대문자 enum). UX 2-25064: 권역 그룹 1:1 매핑(해외=OVERSEAS).
 const REGION_LABEL_TO_LOCATION: Record<string, string> = {
   '서울/인천': 'SEOUL_INCHEON',
   '경기/강원': 'GYEONGGI_GANGWON',
@@ -97,6 +96,7 @@ const REGION_LABEL_TO_LOCATION: Record<string, string> = {
   '부산/대구/경상': 'BUSAN_DAEGU_GYEONGSANG',
   '광주/전라': 'GWANGJU_JEOLLA',
   제주: 'JEJU',
+  해외: 'OVERSEAS',
 };
 const uniqueJoin = (codes: string[]) => Array.from(new Set(codes.filter(Boolean))).join(',');
 

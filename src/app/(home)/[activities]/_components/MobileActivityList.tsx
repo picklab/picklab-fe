@@ -127,7 +127,7 @@ export default function MobileActivityList({
       해외봉사: "OVERSEAS_VOLUNTEER",
       국내봉사단: "DOMESTIC_VOLUNTEER",
     };
-    // 모집지역(location) → 백엔드 권역 코드 (UX 2-25064: 권역 그룹 1:1 매핑). "해외"는 백엔드 코드 미확정 → 미전송(보류)
+    // 모집지역(location) → 백엔드 권역 코드 (UX 2-25064: 권역 그룹 1:1 매핑, 해외=OVERSEAS)
     const regionLabelToLocation: Record<string, string> = {
       "서울/인천": "SEOUL_INCHEON",
       "경기/강원": "GYEONGGI_GANGWON",
@@ -135,6 +135,7 @@ export default function MobileActivityList({
       "부산/대구/경상": "BUSAN_DAEGU_GYEONGSANG",
       "광주/전라": "GWANGJU_JEOLLA",
       제주: "JEJU",
+      해외: "OVERSEAS",
     };
     const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
     const jobTags = (selectedFilters["관련직무"] ?? [])
