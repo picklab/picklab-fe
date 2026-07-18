@@ -63,18 +63,14 @@ export default function useNotifications() {
     };
   }, [fetchList]);
 
-  // 실시간 알림 구독(SSE). 백엔드는 named event(`connect` 핸드셰이크)로 push하므로,
-  // 알림 이벤트명 후보 + 기본 message 이벤트를 함께 구독하고 push 시 목록을 재조회한다.
+  // 실시간 알림 구독(SSE). 백엔드는 새 알림을 named event `notification`으로 push한다
+  // (연결 직후 `connect` 핸드셰이크는 무시 — 초기 로드로 이미 최신 상태). push 시 목록 재조회.
   useEffect(() => {
     const es = new EventSource('/api/notifications/subscribe', { withCredentials: true });
     const onPush = () => {
       void fetchList();
     };
-    es.addEventListener('message', onPush); // unnamed 기본 이벤트
-    ['notification', 'notifications', 'sse', 'alarm'].forEach((name) =>
-      es.addEventListener(name, onPush),
-    );
-    // 'connect'는 구독 성공 핸드셰이크라 무시(초기 로드로 이미 최신 상태)
+    es.addEventListener('notification', onPush);
     es.onerror = () => {
       // 로그아웃/네트워크 단절 시 재연결 폭주 방지 → 연결 종료(다음 진입 시 재구독)
       es.close();
