@@ -2,8 +2,8 @@
 
 ## Current Goal
 
-> **상태(2026-06-22 기준)**: 백엔드 답변/ api-spec 갱신으로 풀린 블로커를 모두 프론트 연결 완료. **코드만으로 가능한 잔여 작업은 사실상 소진**. 남은 건 디자인 결정 또는 백엔드 추가 필드 대기.
-> 최신 작업은 **`dev` 브랜치 + `origin/dev` push 완료**(`dde7438`~`c42d636`, 5커밋). 워킹트리 클린(untracked `issues/*.csv`만).
+> **상태(2026-07-18·2 기준)**: 캘린더/일정관리 4개 화면 실데이터 연결 완료. **백엔드는 건강 — 과거 "백엔드 대기" 블로커(results 500·알림 읽음/SSE·검색 전체삭제) 전부 백엔드 준비 확인됨**(member 3 토큰 실호출 + api-spec 대조). 이제 남은 건 **프론트 연결 TODO**(알림 읽음·실시간 SSE·검색 전체삭제) + 디자인 결정 + 필터 enum 문의 2건. 코드 블로커 사실상 소진.
+> 최신 작업(07-18·1, 07-18·2)은 **미커밋**(워킹트리에 캘린더 실데이터 연결분). 그 이전 최신은 `dev` + `origin/dev` push 완료(`dde7438`~`c42d636`).
 
 공고 리뷰/활동 기능 프론트 구현이 사실상 마무리 단계입니다.
 
@@ -15,7 +15,8 @@
 
 ## 🎯 다음 세션 시작점 (DO FIRST)
 
-> 코드로 즉시 가능 → 디자인 결정 → 백엔드 대기 순. **백엔드 의존 없는 것부터.**
+> 코드로 즉시 가능 → 디자인 결정 → (백엔드 대기 없음). **백엔드 의존 없는 것부터.**
+> **2026-07-18·2 갱신**: 백엔드 블로커 없음 확인(results 200·알림/검색 엔드포인트 준비됨). 아래 C가 "대기"에서 "프론트 연결 TODO"로 바뀜 → 지금 바로 착수 가능한 실기능이 늘었다.
 
 ### A. 디자인 결정만 되면 코드 간단 (10~30분)
 1. **필터 강연/기타 옵션** — 백엔드 field enum `LECTURE`(강연)·`ETC`(기타), target `기타` 미매핑. 디자인에 옵션 노출 여부 확인 후 `NewActivityList`/`MobileActivityList` 매핑 테이블에 추가.
@@ -26,13 +27,162 @@
 - **리뷰 수정 end-to-end**: member 3엔 리뷰 0건이라 prefill→PUT 실측 못 함. 리뷰 보유 계정 토큰으로 `/activity/{id}/review?edit={reviewId}` 진입→프리필→수정 저장 확인.
 - **캘린더 합격/수료 Select 저장**: 참여 데이터로 PATCH 실측(특히 progress-status는 백엔드가 ACCEPTED일 때만 허용 → REJECTED 상태서 400 처리 확인).
 
-### C. 백엔드 추가 필드 대기 (코드는 준비/대기)
-- **캘린더 월/일 뷰 + 일정목록**(`ScheduleListView`·`MobileCalendarView`·`DayDetailPanel`) 아직 MOCK — 북마크 응답에 **저장일/모집기간 필드 없음** → 그룹헤더·지원시작/마감일 못 채움. 백엔드 필드 생기면 연결.
-- **실시간 알림(SSE)** — `/notifications` + subscribe 별도 설계.
-- **검색 전체삭제** — `DELETE /v1/search/history`(전체) 동작 확인(현재 개별삭제 폴백으로 동작).
+### C. ~~백엔드 추가 필드 대기~~ → 백엔드 검증 완료, **프론트 연결 TODO로 재분류** (2026-07-18·2)
+> member 3 토큰으로 실호출 + api-spec 대조 결과, 과거 "백엔드 대기" 항목은 **전부 백엔드에 준비돼 있음**. 남은 건 프론트 연결.
+- ~~캘린더 월/일 뷰 + 일정목록 MOCK~~ → ✅ **완료(2026-07-18·2)**. 북마크 응답에 저장일/모집기간 필드 추가되어 `ScheduleListView`·`MobileCalendarPage`·`CalendarMonthView`·`MobileCalendarView`·`DayDetailPanel` 전부 실데이터 연결.
+- ~~`results` 500 블로커~~ → ✅ **해소 확인**. `GET /activity-participations/results?page=1&size=10` → **200**(page 1-base, page=0은 400). 활동결과·지원완료 토글 실동작 가능.
+- ~~[프론트 TODO] 알림 읽음 처리~~ → ✅ **완료(07-18·3)**. `markRead` 연결(클릭 시 읽음+이동), `PATCH /{id}/read` 200 실측. (전체읽음 버튼은 시안 없어 보류)
+- ~~[프론트 TODO] 실시간 알림(SSE)~~ → ✅ **연결(07-18·3)**. `EventSource` 구독+push 시 재조회. ⚠️ 실제 push 이벤트명 미관측(후보명 커버) → 백엔드에 이벤트명 1건 확인 권장.
+- ~~검색 전체삭제~~ → ✅ **이미 연결됨**(코드 확인). `RecentSearchHistory.tsx`가 `deleteAllSearchHistory()`(`DELETE /api/search/history`) 호출 중이고, 실패 시에만 개별삭제 폴백. `DELETE /v1/search/history` 스펙 존재 확인 → 전체삭제 경로가 이미 실동작. (선택: 불필요해진 폴백 정리 정도)
+- **[백엔드 문의] 필터 enum 2건** — ① "해외" location 코드 ② 강연(`LECTURE`)·기타(`ETC`)·target `기타` 매핑값. (장애 아님, enum 확정 문의 + 옵션 노출은 디자인 결정)
 
 ### figma 미세값(확인 권장, 임의값 사용 중)
 인기검색어 배지 화살표 14px, 바텀시트 하단버튼 radius, 56 초기화 아이콘, 34 호버색 `gray-5`.
+
+## 세션 로그 (2026-07-18·3) — 알림 읽음 처리 + 실시간 SSE 연결 (+ 목록 페이징 버그 수정)
+
+> 브랜치 `dev`. **미커밋**. `yarn typecheck`+변경파일 `eslint` EXIT 0. member 3 토큰으로 실백엔드 검증.
+
+### ✅ 이번 세션
+- **알림 읽음 처리 연결**(`useNotifications`·`NotificationsPage`): `markRead(id)` 신설 → `PATCH /api/notifications/{id}/read`(낙관적+롤백). 알림 클릭 시 **읽음 처리 후 링크 이동**(`handleOpen`). 기존 `is_read→opacity-40` 시각과 연결(신규 UI 없음). ⚠️ 전체읽음(`read-all`)은 시안에 버튼이 없어 미추가(엔드포인트는 준비됨 — 필요 시 버튼만 붙이면 됨).
+- **실시간 알림 SSE 연결**(`useNotifications`): `EventSource('/api/notifications/subscribe')` 구독 → push 시 목록 재조회(`fetchList`). 백엔드가 **named event**(`event:connect` 핸드셰이크 확인)라 `message`+후보명(`notification`/`notifications`/`sse`/`alarm`) 다중 구독. `onerror`에서 close(로그아웃/단절 시 재연결 폭주 방지). ⚠️ **실제 알림 push 이벤트명은 미관측**(구독 중 새 알림 발생 안 함) → 후보명으로 커버, 안 맞으면 백엔드에 이벤트명 1건 확인 필요.
+- **🐞 목록 페이징 버그 수정**: `/notifications` 목록은 **0-based**인데(실측: `page=0`→2건, `page=1`→빈 목록) 훅이 `page=1` 호출 중이라 **실데이터에서 알림이 항상 "없음"으로 표시되던 잠재 버그** 발견 → `page=0`으로 수정. (results는 1-base, notifications는 0-base로 서로 다름 주의)
+
+### 🔬 실백엔드 검증 (member 3 토큰)
+- `PATCH /notifications/20/read` → **200**, 재조회 시 id 20 `is_read:false→true` 반영 확인(16은 미읽음 유지). 읽음 end-to-end OK.
+- `GET /notifications/subscribe`(SSE) → 200 스트림, `event:connect / data:SSE 연결이 성공했습니다.` 수신.
+- `GET /notifications?page=0` → 2건 정상.
+
+### ✅ 발견 + 처리: 알림 link 형식 불일치
+- 백엔드 `link`가 `/activities/678`(복수)인데 앱 상세 라우트는 `/activity/{id}`(단수) → 클릭 시 **404** 발생하던 문제.
+- **클라 정규화로 처리(방법 B)**: `NotificationsPage`에 `normalizeLink` — `link.replace(/^\/activities\//, '/activity/')`. **멱등**이라 백엔드가 나중에 `/activity/`로 고쳐도 이중변환 없음. 검증: `/activities/12/review`→`/activity/12/review`, `/activity/678`·`/search`는 그대로.
+- ⚠️ 근본 해결은 백엔드가 link 형식을 `/activity/{id}`로 내려주는 것(현재는 프론트 임시 보정).
+
+## 세션 로그 (2026-07-18·2) — 모바일 일정목록 + 달력형 이벤트 실데이터 연결
+
+> 브랜치 `dev`. **미커밋**. `yarn typecheck`+변경파일 `eslint` EXIT 0. 직전 세션(07-18·1)에서 "다음 세션 이어서"로 남긴 2건을 완결.
+
+### ✅ 이번 세션 — 저장공고 모집기간(api-spec 갱신분)으로 캘린더 4개 화면 실데이터화
+- **신규 공유 훅** `_components/useCalendarEvents.ts`: `useBookmarks({ includeClosed: true })` → 저장공고를 **날짜별 시작/마감 이벤트**(`byDate: Map<'YYYY-MM-DD', CalendarEventItem[]>`)로 변환. 이벤트당 모집시작(start)·마감(end) 2개 생성. `dday`=registrationPeriod, applyPeriod="YY.MM.DD ~ YY.MM.DD". PC 달력·모바일 달력·상세패널 3-consumer라 훅으로 추출(DRY 3진 아웃).
+- **① 모바일 일정목록**(`MobileCalendarPage.tsx`): `MOCK_GROUPS` 제거 → PC `ScheduleListView`와 **동일 방식**. 저장일(bookmarkedAt) 그룹핑·모집 시작/마감일·isClosed 배지·지원여부(results appliedMap)·진행/지원 필터·정렬(최근 저장순=API기본 / 마감임박순=recruitmentEndDate asc)·지원완료 토글(`/api/activities/{id}/participations` POST/DELETE 낙관적+롤백)·북마크 해제(낙관적)·로딩/빈상태. `ScheduleCard`에 onOpen/onToggleApplied/onBookmark prop 신설.
+- **② 달력형 이벤트**:
+  - `CalendarMonthView.tsx`(PC): `MOCK_EVENTS` 제거 → `byDate` 실이벤트. **커서 기본값 2025.04 → 현재 달**. 선택일 이벤트를 `DayDetailPanel activities`로 전달.
+  - `DayDetailPanel.tsx`: `MOCK_DAY_ACTIVITIES` 제거 → `activities: CalendarEventItem[]` prop 수신, 카드 클릭 시 상세(`detailLink`) 이동, isClosed 배지, 빈상태("이 날짜에 예정된 공고가 없어요").
+  - `MobileCalendarView.tsx`: `MOCK_EVENT_DAYS`·`MOCK_ACTIVITIES` 제거 → 이벤트 있는 날 점 표시(`eventDays`), 선택일 리스트(`dayActivities`), 필터칩(전체/진행 중/마감완료/지원완료/미지원) 실동작(results로 applied 판정), 지원 버튼 applied 반영(filled/outlined), 커서·선택일 기본값 오늘.
+
+### ⚠️ 판단/잔여
+- **PC `ScheduleListView`는 미변경**(이미 실데이터 동작 중, 회귀 방지). 그룹핑/토글 로직은 모바일에 별도 구현(2번째 중복이라 허용). 이벤트 파생 로직만 3-consumer라 훅 추출.
+- 커서 기본을 현재 달로 바꿔서, 저장공고 모집일이 다른 달이면 해당 화면은 네비게이션 전까지 빈 캘린더(정상 UX). 저장공고 0건이면 캘린더/목록 모두 빈상태.
+
+### 🔬 백엔드 실호출 검증 (member 3 토큰, HTTP 실측 — 500 없음)
+> BE `http://161.153.21.86:8080`. member 3은 북마크 1건(id 680)·참여 0건 상태.
+- **`results?page=1&size=10` → 200**(빈 목록). 과거 500 블로커 **해소 확인**. ⚠️ **page 1-base**(page=0 → 400). `summary` → 200(전부 0).
+- **`bookmarks` → 200**, item 680에 `recruitment_start_date:2026-05-31`·`recruitment_end_date:2026-06-14`·`recruitment_end_type:FIXED`·`bookmarked_at:2026-06-11`·`dday:-34` **전부 존재** → 이번 캘린더 작업 필드 의존성 실데이터로 충족 확인(단 dday<0=마감이라 목록엔 마감배지, 이벤트는 5~6월이라 현재달 커서에선 네비 후 표시).
+- **알림/검색 "백엔드 대기"였던 것 전부 준비 확인**: `GET /notifications`·`/recent` 200 / **`GET /notifications/subscribe`(SSE) 200 스트림 오픈** / api-spec에 `PATCH /notifications/{id}/read`·`read-all`·`DELETE /v1/search/history`(전체) 정의 존재. → 백엔드 요청 아님, **프론트 연결 TODO**(섹션 C).
+- 공개 엔드포인트(`activities/{id}`·`popular-keywords`·`autocomplete`) 200. **어떤 엔드포인트도 500 없음.**
+
+## 세션 로그 (2026-07-18) — api-spec 갱신 반영(알림 개별삭제·저장공고 모집기간) + 기능QA 문서
+
+> 브랜치 `dev`. **미커밋**. `yarn lint`+`typecheck` 통과.
+
+### ✅ 이번 세션
+- **api-spec.json 리뷰**: 백엔드가 2개 추가 — ① `DELETE /notifications/{notificationId}`(알림 개별삭제) ② `GET /v1/bookmarks` 응답을 `BookmarkedActivityItem`으로 확장(`recruitment_start_date`·`recruitment_end_date`·`recruitment_end_type`·`bookmarked_at`·organization·category·job_tags·dday 등)
+- **알림 개별삭제 연결**: 프록시 라우트 신규 `src/app/api/notifications/[id]/route.ts`(DELETE) + `useNotifications.dismiss` 실삭제(낙관적+롤백)
+- **저장공고→일정관리 실데이터화**: `BackendActivityItem`에 `recruitment_start_date/end_date/bookmarked_at` 추가 → `useBookmarks`의 `BookmarkItem`에 `bookmarkedAt/recruitmentStartDate/recruitmentEndDate` 매핑 → `ScheduleListView`(PC 일정 목록형) **저장일 그룹핑 + 모집 시작/마감일 표기 + isClosed 실값 + includeClosed:true**. 목업은 저장공고 없을 때만 폴백.
+- **문서**: `docs/기능QA.md`(구 api-feature-status.md, QA용 되는것/안되는것 표) 생성·갱신. `docs/api-feature-status.md`는 `기능QA.md`로 이름 변경됨.
+
+### ✅ 다음 세션 이어서 → 완료(07-18·2에서 처리)
+- ~~모바일 일정 목록(`MobileCalendarPage`) MOCK_GROUPS~~ → `useBookmarks` 실데이터 연결 완료
+- ~~달력형 이벤트(`CalendarMonthView`·`MobileCalendarView`) MOCK_EVENTS~~ → `useCalendarEvents` 훅으로 모집 시작/마감일 이벤트 연결 완료
+
+### ~~🔴 여전히 백엔드 대기~~ → 07-18·2에서 백엔드 검증, 전부 준비됨(프론트 연결만 남음)
+- ~~`activity-participations/results` 500~~ → ✅ **200 해소 확인**(member 3 토큰 실호출, page 1-base)
+- 알림 **읽음 표시**(`[id]/read`,`read-all`)·**실시간(SSE `subscribe`)** → 백엔드 엔드포인트 **존재/동작 확인**, 프론트 연결만 남음(섹션 C 참고)
+
+### ⏸️ 보류 중인 3round-5 PNG 배치 (별개)
+> 아래 "세션 로그 (2026-07-03)" 참고. PNG는 `/Users/kimbeomsu/Downloads/{node-id}.png`. 14개 미처리(활동선택 모달·활동결과 카드·푸터·모바일 리뷰쓰기 4종 등).
+
+---
+
+## 세션 로그 (2026-07-03) — QA 3round-5 진행 (코드-only + 스크린샷 정합)
+
+> 브랜치 `dev`. **전부 미커밋** (커밋은 나중에 하기로 함). 모든 변경 `yarn lint`+`yarn typecheck` 통과. figma는 사용자가 **node-id별 PNG를 `/Users/kimbeomsu/Downloads/{node-id}.png`** 로 제공(예: `2578-39326.png`).
+
+### ✅ 이번 세션 완료 (issues/qa-issues-3round-5.csv)
+- **버그**: 홈 모바일 북마크 오류(`_components/mobile/ActivityList.tsx` — `item.isBookmarked` 시드+토글 시 현재상태 전달)
+- **마이페이지**: SNB MY활동 href `/profile`+activeHref archive·활성 상단메뉴 비링크(클릭막기)·알림관리 `/profile/account/notification`(없음)→**`/profile/alarm`**(`menus.ts`,`SNB.tsx`) / 작성글 `pc:pt-10`(`PcMyReviewsPage`) / SNB 관심직무 fallback `SAMPLE_INTEREST_JOBS`(서비스기획·PM/PO·프론트엔드·사업개발·데이터분석) / 활동결과 더보기 → **`/calendar?tab=result`**(`CalendarPage` useSearchParams로 RESULT 탭 초기화)
+- **모바일 프로필**: `MobileProfilePage` `pt-4`(GNB 16px) / `MobileProfile` 관심직무 fallback 동일
+- **리뷰쓰기**: 타이틀 `Heading2Semibold` gray-50 / 헤더 `h-[88px]` / Step1 문구 활동 미선택 시 "어떤 활동에 참여하셨나요?" / 컨테이너 **스텝별 폭**(step1 `max-w-[564px]`/step2·3 `max-w-[466px]`, `ReviewWriteHeader` widthClassName prop) / **다음 버튼 비활성**(`canProceed` 파생값) / 보조버튼(나가기 등) `w-[120px]` / 인증없이등록 → **`/profile/posts`**(create 모드, `useReviewWriteForm`) / 미선택 radio 도넛형(2579-35108) / Select 오류 = 빨간 테두리만·헬프메시지 제거(2579-31938) / 별 간격 `gap-[2px]`(StarRating)
+- **공고상세(PC)**: 정보영역 2컬럼 재구성(**모집인원·마감일자 삭제**, **참여대상 추가**, 모집기간 시작/마감 2줄 `RecruitPeriodItem`) / 그래프 초록 폴리곤 최상단+1.5배(차트 345×390, 박스 420×452) / **총평점·수료여부 드롭다운 다중선택 체크박스**+패널 초기화(`ReviewFilterValue.rating`/`status` **배열화** → `types/review.types.ts`, `useActivityReviews.ts` 반복 파라미터, `ReviewFilters` `CheckSquare`/`PanelResetButton`) / 활동명 `Title2Bold`+`max-w-[561px]` / 접수기간→모집기간·공고직무→관련직무 / 홈페이지·지원하기 버튼 `w-[148px]` / 상세·리뷰 탭 `Heading2Semibold` / 만족도 `Heading1Semibold` gray-80 / 만족도 라벨 `w-[80px]`
+- **카테고리 탭 140px**: `SortTab` filter variant — 탭 `w-[140px]`·가운데정렬·`Headline2SemiBold`·선택 gray-90/미선택 gray-40·gap 제거
+- **아카이브(PC)**: 제목 "프로필 수정"(버그)→"아카이브"·뒤로가기 chevron→`/profile`·탭 전체 divider(before)+active 밑줄(after)+미선택 gray-40
+- **모바일 카테고리 드롭다운**: 옵션그룹 너비 트리거와 맞춰 `!w-[128px]`
+
+### ✅ 중간 규모 4종 완료 (2026-07-03 이어서, 미커밋 · typecheck+eslint EXIT 0)
+- `1136-76672`/`1136-74141`/`1136-75047` **모바일 프로필 더보기 3종**(`MobileProfilePage`): 활동결과 더보기→`/calendar?tab=result`·저장한공고 더보기→`/profile/bookmarks` 추가(아카이브는 기존 `/profile/archive`). 두 라우트·`?tab=result` 핸들링 모두 기존 존재 확인.
+- `2409-27906` **모바일 리뷰 만족도 평가**(`MobileActivityDetailPage`): 점수 숫자 `Title3Bold`·별 36×36(`RatingStars` size/gap prop 신설 → 리뷰카드 별점 영향 없음, gap 2px)·점수↔막대 간격 mt-5(20px)+막대 gap-5·`ProgressRow` 라벨 `Body2Semibold` gray-90.
+- `2706-35242` **모바일 리뷰 직무연관성 그래프**: 조잡한 수제 오각형(`MobileRadarChart`) 제거 → PC의 `JobRadarChart`를 **공용 컴포넌트 `JobRadarChart.tsx`로 추출**(className prop으로 크기 주입). PC=고정, 모바일=`w-full aspect-[340/300]`+rounded 박스로 폭 fill. PC 인라인 정의·`RADAR_AXES`·미사용 `JobRelevanceStats` import 제거.
+- `2696-34096` **일정관리 드롭다운/옵션명**: 단일 Select → **체크박스 다중선택 드롭다운**(`CalendarFilterDropdown.tsx` 신규, 리뷰필터 CheckSquare 디자인). 진행여부(트리거 '전체' / 옵션 전체·진행 중·마감)·지원여부(트리거 '지원여부' / 옵션 모든 활동·지원 완료·미지원). `filters.ts` 타입 배열화(빈 배열=전체), `ScheduleListView` 필터 로직 배열 대응. 모바일 `MobileCalendarPage`도 동일 컴포넌트로 교체(공유 타입 정합, 모바일 LIST는 아직 MOCK).
+
+### ⏳ 남은 3round-5 — 대규모 재디자인 (각각 별도 배치 권장)
+- ✅ **완료** `2578-39326` **활동선택 모달**(`ActivityChangeModal.tsx`, 미커밋): 제목 "어떤 활동에 참여하셨나요?"·**활동명 검색바 신규**(클라 필터, search 아이콘)·헤더 "주체기관/단체명"·활동구분 gray 칩·수료여부(수료완료/중도하차)·선택행 primary-5+활동명 볼드(line-clamp-2)·하단 버튼 가운데정렬 나가기(gray)/작성하기(green, 56×200)·컨테이너 패딩 32px. 데이터=results(can_write_review)·selectedId는 검색필터와 무관하게 유지. 변경 시 데이터 손실 guard(ConfirmDialog)는 유지. typecheck+eslint EXIT 0. ⚠️ `ReviewWriteBody` 공용이라 모바일도 이 모달 렌더(모바일 리뷰쓰기 재디자인 1136-82xxx에서 별도 정합 권장).
+- ✅ **완료** `1136-76553` 일정관리 **활동결과 카드**(`ActivityResultView.tsx`, 미커밋): 리스트 외곽선 제거→상하 divider(`border-y`+`divide-y` gray-10)·컨텐츠 블록 `w-[280px]`·활동명 `Body1Semibold`·row `justify-between`·합격(ACCEPTED) 선택 시 Select 텍스트 `[&>span]:!text-info-50`·Select 디폴트 gray-30/gray-40는 기존 그대로 충족·리뷰버튼 `size="base"`(패딩 좌12/우16/상하8·Body2Medium, w 고정 제거)→리뷰쓰기 라우팅 기존 유지·상단 필터 '합격여부' 텍스트 gray-90(`[&>span]`). typecheck+eslint EXIT 0. ⚠️ 시안 우측 북마크 아이콘은 results 응답에 `is_bookmarked` 없어 미추가(CSV 항목에도 없음).
+- ✅ **완료** `2423-30515`/`2423-30539` **모든 화면 푸터**(미커밋): `Footer`를 **root `layout.tsx`로 이동**(GNB와 동일 전역 렌더 패턴, `{children}{modal}` 뒤) → auth/callback 등 모든 화면 노출. `(home)/layout.tsx`의 중복 `<Footer/>` 제거. PC 푸터는 이미 2423-30515와 레이아웃 일치(그룹 제목은 `FooterMenuGroup`에서 aria-label 전용·비표시)라 변경 없음. **모바일 푸터**: `border-t border-gray-10` + `mt-6`(상단 divider+24px 간격, 2423-30539). typecheck+eslint EXIT 0. ⚠️ 모바일 gap은 `(home)/(auth) main`의 기존 `mb-10`(40px)과 겹쳐(margin collapse) 홈에선 실효 ~40px일 수 있음(정확히 24px 필요 시 각 main mb 조정 필요, 회귀 우려로 미변경).
+- ✅ **완료** `1136-82395`/`82414`/`82505`/`82502` **모바일 리뷰쓰기 4종**(미커밋): `ReviewWriteBody`/`ReviewSteps`는 PC/모바일 **공용**이라 스텝 콘텐츠(직무/세부직무/수료여부 Select, 총평점 별점+칩, 5단 라디오 3종, "활동이 관심직무에 도움…")는 이미 82414/82505와 대응. **모바일 특화 정합(PC 회귀 없이)**: ① Step1 활동카드 — 모바일은 카드 안에 제목/주최+"활동 변경" 버튼 통합(`pc:hidden`), PC는 기존 제목+버튼+박스 유지(`mobile:hidden`) ② 라벨 "직무를 선택해주세요*"→"직무*"/"세부직무*"(공통, 82395) ③ Step3 버튼(82502) — `FooterButton wide` 신설: 모바일 "인증없이 등록" `flex-1`(동일폭), PC `w-[120px]` 유지. 인증 라우팅은 기존과 동일(인증하기→`CertificationUploadModal`(인증 화면)·인증없이 등록→submit→`/profile/posts`). typecheck+eslint EXIT 0. ⚠️ "플로팅 삭제"는 현재 모바일 하단 버튼바가 `fixed bottom-0`(별도 FAB 없음)이라 전체 페이지 PNG(82395/82414 하단 고정)와 일치로 판단해 유지. 라벨 단축은 PC에도 적용됨(더 깔끔, 저위험).
+
+### ✅ CSV 45 — 카테고리 필터 옵션명(2-25064) 완료 (2026-07-03, 미커밋)
+> 사용자가 2-25064 카테고리 필터 캡처 제공 → 5개 필터 옵션명 정합. **주요 결정**: 온라인 제거·해외 보류(백엔드 코드 미확정), 주최기관·참여대상·활동분야는 '전체' 없음·지역·직무만 '모두'.
+- 옵션명: 주최기관(외국계·비영리/협회/재단), 참여대상(직장인/일반인, 기타 제거), 지역(**개별 시·도→권역 그룹**: 서울/인천·경기/강원·대전/세종/충남·부산/대구/경상·광주/전라·제주·해외), 직무('모두' 추가).
+- 수정 파일: `constants.ts`(ACTIVITY_FILTERS)·`MobileActivityList.tsx`(인라인 옵션+매핑+전체/모두 필터+온라인/format 제거)·`NewActivityList.tsx`(매핑+필터+format 제거)·`useActivities.ts`+`activity/[id]/page.tsx`+`review/page.tsx`(역매핑 라벨 FOREIGN/NON_PROFIT 정합 — **주최기관 클라 보정 필터가 companyType과 비교하므로 필수**). 지역 권역 매핑은 1:1(SEOUL_INCHEON 등). "해외"는 매핑 없어 미전송. typecheck+eslint EXIT 0.
+- ⚠️ **백엔드 확인 필요**: "해외" location 코드(현재 미전송). 온라인 필터 제거로 `format=ONLINE` 경로 삭제됨.
+
+### ✅ CSV 38(WEB)·52(MOBILE) — 리뷰 필터 완료 (2026-07-03, 미커밋)
+> **PC와 모바일이 서로 다른 디자인**임(초반 오해로 둘 다 플랫으로 바꿨다가 정정). 리뷰 필터는 PC/모바일 공용 `ReviewFilters.tsx`를 **variant로 분기**.
+- **관심직무**: PC(`2409-27595`)=직군 탭 + 세부직무 멀티칩 + 적용하기 / 모바일(`2-25064`)=직군 플랫 체크박스(멀티).
+- **총 평점 / 수료여부**: PC·모바일 동일한 체크박스 다중선택. 총평점 1~5점(오름차순), 수료여부 "수료완료/중도하차"(공백 제거).
+- **트리거 크기**: PC 132×40 / 모바일 128×40(앱 카테고리 필터 pill과 동일, CSV 51의 102px는 이걸로 대체). 모바일 초기화 40×40 primary.
+- `review.types.ts` `ReviewFilterValue`: `jobGroup(단일)+jobDetails[]`(PC) **+ `jobGroups[]`(모바일)** 셋 다 보유. `countActiveFilters`/`EMPTY_REVIEW_FILTER` 정합.
+- `useActivityReviews.ts`: PC=`jobGroup`(단일)+`jobDetail`(멀티), 모바일=`jobGroup`(멀티) 모두 `jobGroup`/`jobDetail` 파라미터로 직렬화(각 variant가 자기 필드만 세팅해 충돌 없음). typecheck+eslint EXIT 0.
+
+### ✅ CSV 24·60 — 알림 화면(1136-74415/74433) 완료 (2026-07-03, 미커밋)
+> GNB 종 아이콘(PC·모바일)이 **이미 `/notifications` 링크**였으나 페이지가 없어 404였음 → 페이지 신규 생성으로 연결.
+- 신규 `src/hooks/useNotifications.ts`: `GET /api/notifications?page=1&size=30`(api-spec `PageResponseNotificationResponse`) + `deleteAll`(DELETE /notifications, 낙관적+롤백) + `dismiss`(개별 X — **백엔드 단건 삭제 API 없어 클라 낙관적 제거만**).
+- 신규 `src/app/(home)/notifications/page.tsx` + `_components/NotificationsPage.tsx`(PC/모바일 반응형): 제목 "알림" + 전체삭제(모바일=제목옆 "전체삭제"/PC=안내바 우측 "알림 전체삭제") + "최근 30일…" 안내바 + 알림 카드(카테고리 초록·제목·문구·날짜·X, 읽음=opacity-40, 클릭→link).
+- ⚠️ `NotificationResponse`에 **본문 필드 없음**(id/title/type/link/is_read/created_at만) → 카테고리 라벨·보조문구는 `type`(ACTIVITY_CREATED/DEADLINE_REMINDER/POPULAR_ACTIVITY) 기준 매핑. typecheck+eslint EXIT 0.
+
+### ✅ CSV 8 — 모바일 작성글 목업(1136-76050) 완료 (2026-07-03, 미커밋)
+> `MobileMyReviewsPage`에 실 리뷰 0건일 때 **목업 3개(승인중/미승인/승인 = PENDING/REJECTED/APPROVED) 폴백**. 음수 id → 수정/삭제 no-op. 실 리뷰 생기면 자동 대체. `TODO(MOCK)` 주석 표시. typecheck+eslint EXIT 0.
+
+### ✅ CSV 49·56·57 — 미세 간격 완료 (2026-07-03, 미커밋)
+> 사용자가 "해당 부분" 위치 구두 확정. **49**: 모바일 리뷰탭 직무연관성 차트 위·아래 24px(`MobileActivityDetailPage` 섹션 `gap-6`+차트 `mt-6`). **56**: `MobileProfile` 아바타↔이름 `gap-4`→`gap-6`(24px). **57**: `MobileProfilePage` 외곽 `gap-4`→`gap-5`(탭↔활동결과 20px). typecheck+eslint EXIT 0.
+
+### ✅ CSV 46 — 모바일 공고상세(정정) 완료 (2026-07-03, 미커밋)
+> ⚠️ **최초 일괄 반영 표기 오류 정정**: 46을 "3round-4가 모바일 공고상세를 손봤으니 됐겠지"라 추정해 반영 표기했으나 실제 미완료였음(사용자가 지적). 정정 완료.
+- **1번(모집인원 삭제)**: `MobileActivityDetailPage` 정보영역에서 `모집인원` InfoItem 제거(PC와 동일 방향).
+- **2번(모집기간 형식)**: `RecruitPeriodItem`을 "시작일|날짜 / 마감일|날짜" 2줄 → **"0000.00.00 ~ 0000.00.00" 단일줄**로 변경(CSV 46 지시가 기존 figma 1223-17370 2줄을 대체). typecheck+eslint EXIT 0.
+
+> ✅ **감사 완료(2026-07-03)**: 추정-반영 34행을 서브에이전트로 코드 전수 대조 → **46 외 명백한 오표기 없음**. 유일하게 CSV 47(모바일 공고상세)만 추가 발견 → 정정 완료(아래). 나머지는 실제 반영 확인됨.
+
+### ✅ CSV 47 — 모바일 공고상세(감사서 발견·정정) 완료 (2026-07-03, 미커밋)
+> 감사 중 47이 46처럼 미완료로 드러남(추정 표기였음). 사용자 위치 확정 후 처리.
+> **1번(40px)**: 관심직무(정보영역 끝)↔상세내용/리뷰 탭 간격 → 탭 컨테이너 `mt-1`→`mt-10`. **2번**: 상세내용/리뷰 탭 텍스트 `Body2Semibold`→`Heading2Semibold`. typecheck+eslint EXIT 0.
+
+### ✅ CSV 10 — 일정관리 탭 간격 완료 (2026-07-03, 미커밋)
+> `CalendarPage`: 일정관리 탭↔목록형/캘린더형 토글 32px(SCHEDULE 탭 `mb-6`→`mb-8`), 토글 밑 16px(토글행 `mb-[50px]`→`mb-4`). typecheck+eslint EXIT 0.
+
+### ✅ CSV 11·12 — 일정관리 간격 + 지원완료 토글 완료 (2026-07-03, 미커밋)
+> **🎉 CSV 59/59 전부 반영 완료** (미반영 0).
+- **CSV 11 간격**(`ScheduleListView`, 사용자 위치 확정): ①헤더↔첫카드 32px(헤더 `mb-4`+그룹 `gap-4`)·②배지↔제목 36px(배지 컬럼 `pc:mr-3`+카드 `pc:gap-6`)·③카드↔카드 16px(그룹 `gap-4`).
+- **CSV 11-④·12 지원완료 토글**: ⚠️ **"백엔드 필요"는 오판이었음** — api-spec에 `POST /v1/activities/{activityId}/participations`("활동 지원 완료 표시")·`DELETE`("취소")가 **이미 있음**(body 없음, activityId만). 저장공고는 activityId 보유 → 프론트만으로 완결. 신규 프록시 `api/activities/[id]/participations/route.ts`(POST+DELETE) + `ScheduleListView` 버튼을 `<div>`→`<button>`(POST/DELETE, 낙관적 `appliedOverride`+롤백). 초기상태는 기존 `results`(appliedMap), 새로고침 후에도 results로 영속. typecheck+eslint EXIT 0.
+
+### ✅ 3round-5 전체 완료
+> CSV 반영여부: **59 반영 / 0 미반영**. 코드로 가능한 모든 항목 처리 완료. 남은 백엔드 대기 항목 없음.
+- **아카이브 임시데이터 1개+**(CSV 30에 포함, 스타일은 반영): 샘플 콘텐츠 결정 필요(원하면 작성글처럼 목업 폴백 가능).
+
+### 다음 세션 시작법
+> `docs/next-claude-code-handoff.md`의 "세션 로그 (2026-07-03)" 읽고 3round-5 남은 작업 이어서 해줘. PNG는 `/Users/kimbeomsu/Downloads/{node-id}.png`에 있어. "중간 규모"부터 하자.
+
+---
 
 ## 세션 로그 (2026-06-21·3) — api-spec 갱신분 연결(리뷰수정·지원서첨부·캘린더 실데이터) + 🔴데모차트 원복
 

@@ -2616,7 +2616,7 @@
             "content": {
               "application/json;charset=UTF-8": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResponseWrapperPageResponseActivityItemWithBookmark"
+                  "$ref": "#/components/schemas/ResponseWrapperPageResponseBookmarkedActivityItem"
                 }
               }
             }
@@ -2626,7 +2626,7 @@
             "content": {
               "application/json;charset=UTF-8": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResponseWrapperPageResponseActivityItemWithBookmark"
+                  "$ref": "#/components/schemas/ResponseWrapperPageResponseBookmarkedActivityItem"
                 }
               }
             }
@@ -3304,6 +3304,38 @@
           },
           "500": {
             "description": "서버 오류입니다.",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperUnit"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{notificationId}": {
+      "delete": {
+        "tags": ["알림"],
+        "summary": "알림 삭제 처리",
+        "description": "현재 로그인한 사용자의 특정 알림을 삭제 처리합니다.",
+        "operationId": "deleteByMember",
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "description": "알림 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "알림 삭제 처리 성공",
             "content": {
               "application/json;charset=UTF-8": {
                 "schema": {
@@ -5733,6 +5765,147 @@
             "items": {
               "$ref": "#/components/schemas/JobResponse"
             }
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "BookmarkedActivityItem": {
+        "description": "요소 리스트",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "활동 ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "활동명"
+          },
+          "organization": {
+            "type": "string",
+            "description": "주최기관/단체명"
+          },
+          "organizer_type": {
+            "type": "string",
+            "description": "주최기관 유형"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "활동 시작일"
+          },
+          "recruitment_start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "지원 시작일"
+          },
+          "recruitment_end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "지원 마감일"
+          },
+          "category": {
+            "type": "string",
+            "description": "활동 유형 (EXTRACURRICULAR, COMPETITION, SEMINAR, EDUCATION)"
+          },
+          "job_tags": {
+            "type": "array",
+            "description": "직무 태그 목록",
+            "items": {
+              "type": "string",
+              "description": "직무 태그 목록"
+            }
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "description": "활동 썸네일 이미지 URL"
+          },
+          "view_count": {
+            "type": "integer",
+            "format": "int64",
+            "description": "조회수"
+          },
+          "recruitment_end_type": {
+            "type": "string",
+            "description": "모집 종료 유형 (FIXED: 날짜 지정, ALWAYS_OPEN: 상시모집, CLOSE_ON_HIRE: 채용시마감)",
+            "enum": ["FIXED", "ALWAYS_OPEN", "CLOSE_ON_HIRE"]
+          },
+          "dDay": {
+            "type": "integer",
+            "format": "int64",
+            "writeOnly": true
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "description": "북마크 여부"
+          },
+          "bookmarked_at": {
+            "type": "string",
+            "format": "date",
+            "description": "북마크한 날짜"
+          },
+          "dday": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "bookmarked_at",
+          "category",
+          "id",
+          "is_bookmarked",
+          "job_tags",
+          "organizer_type",
+          "recruitment_end_type",
+          "recruitment_start_date",
+          "start_date",
+          "title",
+          "view_count"
+        ]
+      },
+      "PageResponseBookmarkedActivityItem": {
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "요소 리스트",
+            "items": {
+              "$ref": "#/components/schemas/BookmarkedActivityItem"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "description": "페이지 번호 (1부터 시작)"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "description": "페이지 크기"
+          },
+          "total_pages": {
+            "type": "integer",
+            "format": "int32",
+            "description": "전체 페이지 수"
+          },
+          "total_elements": {
+            "type": "integer",
+            "format": "int64",
+            "description": "전체 요소 개수"
+          }
+        },
+        "required": ["items", "page", "size", "total_elements", "total_pages"]
+      },
+      "ResponseWrapperPageResponseBookmarkedActivityItem": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageResponseBookmarkedActivityItem"
           }
         },
         "required": ["code", "message"]
