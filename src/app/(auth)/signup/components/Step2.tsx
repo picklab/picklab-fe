@@ -169,17 +169,20 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
           />
         </div>
 
-        <TextField
-          label="전공"
-          id="signup-major"
-          placeholder="전공명 입력"
-          status="default"
-          labelStatus="default"
-          scale="base"
-          className="w-full"
-          value={signupData.userInfo.major}
-          onChange={(e) => handleInputChange('major', e.target.value)}
-        />
+        {/* PIC-89: 최종학력 선택 시 전공 필드 자동 노출 */}
+        {education.trim().length > 0 && (
+          <TextField
+            label="전공"
+            id="signup-major"
+            placeholder="전공명 입력"
+            status="default"
+            labelStatus="default"
+            scale="base"
+            className="w-full"
+            value={signupData.userInfo.major}
+            onChange={(e) => handleInputChange('major', e.target.value)}
+          />
+        )}
 
         <Select
           label="졸업여부"
