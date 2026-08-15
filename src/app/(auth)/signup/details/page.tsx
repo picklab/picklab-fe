@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LeaveConfirmModal from "@/components/common/Modal/LeaveConfirmModal";
@@ -110,6 +110,13 @@ export default function SignupPage() {
     interests: [],
   });
 
+  // PIC-93/94: 가입 완료(Step4) 도달 시 5초 후 로그인된 홈으로 자동 이동
+  useEffect(() => {
+    if (currentStep !== 4) return;
+    const timer = setTimeout(() => router.push("/"), 5000);
+    return () => clearTimeout(timer);
+  }, [currentStep, router]);
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -161,8 +168,22 @@ export default function SignupPage() {
     }
   };
 
+  // PIC-87/88: 회원정보/관심직무 입력값이 있으면 이탈 안내 팝업, 없으면(약관동의 단계 등) 바로 이동
+  const hasInput =
+    Object.values(signupData.userInfo).some((value) => value.trim().length > 0) ||
+    signupData.interests.length > 0;
+
+  // PIC-79: 나가기 → 간편회원가입 화면(/signup)
+  const handleLeaveClick = () => {
+    if (hasInput) {
+      setIsLeaveModalOpen(true);
+    } else {
+      router.push("/signup");
+    }
+  };
+
   const handleLeaveConfirm = () => {
-    router.push("/signin");
+    router.push("/signup");
   };
 
   const handleSignupComplete = async () => {
@@ -260,12 +281,13 @@ export default function SignupPage() {
       {/* Current Step Content */}
       {renderStep()}
 
-      {/* Navigation Buttons */}
-      <div className="flex h-space-48 w-[429px] justify-between">
+      {/* Navigation Buttons (가입완료 화면에서는 숨김) */}
+      {currentStep !== 4 && (
+        <div className="flex h-space-48 w-[429px] justify-between">
         <button
           type="button"
           className="flex h-space-48 w-[140px] items-center justify-center rounded-small bg-gray-10 px-[18px] py-[14px]"
-          onClick={() => setIsLeaveModalOpen(true)}>
+          onClick={handleLeaveClick}>
           <Typography type="Heading2Medium" className="text-gray-50">
             나가기
           </Typography>
@@ -285,7 +307,8 @@ export default function SignupPage() {
             {nextButtonLabel}
           </Typography>
         </button>
-      </div>
+        </div>
+      )}
       <LeaveConfirmModal
         isOpen={isLeaveModalOpen}
         onClose={() => setIsLeaveModalOpen(false)}
