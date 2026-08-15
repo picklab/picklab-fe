@@ -25,11 +25,21 @@ export default function AuthCallbackPage() {
         },
         body: JSON.stringify({ code, provider }), // provider도 함께 보냅니다.
       })
-        .then((response) => {
+        .then(async (response) => {
           if (response.ok) {
             console.log("Code exchanged and tokens set successfully.");
             clientLogin();
-            router.push("/"); // 성공하면 메인 페이지로 이동
+            // PIC-74: 신규 유저(온보딩 미완료 = 닉네임 없음)면 회원가입 폼으로, 기존 유저면 홈으로
+            try {
+              const meRes = await fetch("/api/members/me", { credentials: "include" });
+              const meJson = await meRes.json().catch(() => null);
+              const nickname = meJson?.data?.nickname;
+              const needsOnboarding =
+                meRes.ok && (typeof nickname !== "string" || nickname.trim() === "");
+              router.push(needsOnboarding ? "/signup/details" : "/");
+            } catch {
+              router.push("/"); // me 조회 실패 시 홈으로 폴백
+            }
           } else {
             console.error("Failed to exchange code for tokens.");
             router.push("/signin?error=token_exchange_failed");
