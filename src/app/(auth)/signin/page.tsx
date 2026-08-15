@@ -1,9 +1,12 @@
 "use client";
 
 import Typography from "@/components/common/Typography";
+import Icon from "@/components/common/Icon/Icon";
 import { clsx } from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const SOCIAL_LOGIN_IMAGES = [
   {
@@ -45,6 +48,48 @@ export default function AuthPage() {
     <div className="flex flex-col items-center gap-[72px]">
       <AuthHeader />
       <AuthContent />
+      {/* 소셜 로그인 실패 시 오류 팝업 (PIC-61). 콜백이 /signin?error=... 로 리다이렉트 */}
+      <Suspense fallback={null}>
+        <LoginErrorModal />
+      </Suspense>
+    </div>
+  );
+}
+
+// 소셜 로그인 실패 시 전체화면 오류 팝업 (figma 2810-34794). error 쿼리 파라미터가 있으면 노출.
+function LoginErrorModal() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasError = searchParams.get("error") != null;
+
+  if (!hasError) return null;
+
+  // 닫으면 error 파라미터 제거 → 간편로그인 화면 복귀
+  const handleClose = () => router.replace("/signin");
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-gray-0"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="login-error-title"
+    >
+      <button
+        type="button"
+        onClick={handleClose}
+        aria-label="닫기"
+        className="absolute right-5 top-5 flex size-10 items-center justify-center pc:right-8 pc:top-8"
+      >
+        <Icon icon="xMark" size={24} className="text-gray-90" />
+      </button>
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+        <Typography tag="h1" type="Heading1Semibold" id="login-error-title" className="text-gray-90">
+          로그인 오류
+        </Typography>
+        <Typography tag="p" type="Body4Regular" className="whitespace-pre-line text-gray-50">
+          {"기존 방법으로 다시 시도해 보시거나\n새 계정을 만들어 주세요."}
+        </Typography>
+      </div>
     </div>
   );
 }

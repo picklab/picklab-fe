@@ -27,17 +27,17 @@ export default function AuthCallbackPage() {
             router.push('/'); // 성공하면 메인 페이지로 이동
           } else {
             console.error('Failed to exchange code for tokens.');
-            router.push('/auth/signin?error=token_exchange_failed');
+            router.push('/signin?error=token_exchange_failed');
           }
         })
         .catch(error => {
           console.error('Error during code exchange:', error);
-          router.push('/auth/signin?error=network_error');
+          router.push('/signin?error=network_error');
         });
 
     } else {
       // 코드가 없는 경우 에러 페이지로 리다이렉트
-      router.push('/auth/signin?error=no_code_received');
+      router.push('/signin?error=no_code_received');
     }
   }, [router, searchParams, params]); // 의존성 배열에 params 추가
 
