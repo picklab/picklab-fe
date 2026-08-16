@@ -283,10 +283,10 @@ export default function SignupPage() {
 
       {/* Navigation Buttons (가입완료 화면에서는 숨김) */}
       {currentStep !== 4 && (
-        <div className="flex h-space-48 w-[429px] justify-between">
+        <div className="flex h-space-48 mobile:w-[327px] pc:w-[429px] gap-3 justify-between">
         <button
           type="button"
-          className="flex h-space-48 w-[140px] items-center justify-center rounded-small bg-gray-10 px-[18px] py-[14px]"
+          className="flex h-space-48 w-[140px] shrink-0 items-center justify-center rounded-small bg-gray-10 px-[18px] py-[14px]"
           onClick={handleLeaveClick}>
           <Typography type="Heading2Medium" className="text-gray-50">
             나가기
@@ -294,7 +294,7 @@ export default function SignupPage() {
         </button>
         <button
           type="button"
-          className={`flex h-space-48 w-[272px] items-center justify-center rounded-small px-[18px] py-[14px] ${
+          className={`flex h-space-48 flex-1 pc:flex-none pc:w-[272px] items-center justify-center rounded-small px-[18px] py-[14px] ${
             canProceed
               ? "bg-primary-50 hover:bg-primary-60 active:bg-primary-70"
               : "bg-gray-10"
