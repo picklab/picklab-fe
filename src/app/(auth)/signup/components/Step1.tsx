@@ -33,7 +33,7 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
   return (
     <>
       <TitleTypography
-        title="약관내용을 확인하신 후, 동의해주세요!"
+        title="약관 내용을 확인하신 후, 동의해주세요!"
         description="동의 후 회원가입을 진행할 수 있습니다."
       />
 

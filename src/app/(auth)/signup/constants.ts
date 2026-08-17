@@ -43,8 +43,6 @@ export const EMPLOYMENT_OPTIONS = [
   { label: '구직 중', value: 'job_seeking' },
   { label: '프리랜서', value: 'freelancer' },
   { label: '학생', value: 'student' },
-  { label: '휴직', value: 'on_leave' }, // 백엔드 enum 확인 필요
-  { label: '기타', value: 'other' },
 ];
 
 /** 재직상태가 "재직 중"일 때만 직장명 입력을 활성화 */
