@@ -55,9 +55,14 @@ function SignupHeader() {
   return (
     <div className="flex flex-col gap-4 items-center mobile:mt-[60px] pc:mt-[120px]">
       <Image src="/imgs/logo_mobile.png" alt="PICKLAB" width={86} height={22} />
-      <Typography tag="h1" type="Title2Bold" id="signup-header-title" className="text-gray-40">
-        회원가입
-      </Typography>
+      <div className="flex flex-col gap-[10px] items-center">
+        <Typography tag="h1" type="Title2Bold" id="signup-header-title">
+          간편 회원가입
+        </Typography>
+        <Typography tag="p" type="Body2Regular" id="signup-header-description" className="text-gray-50">
+          소셜 로그인으로 간편하게 로그인할 수 있습니다.
+        </Typography>
+      </div>
     </div>
   );
 }
