@@ -13,11 +13,11 @@ export default function TitleTypography({
 }: TitleTypographyProps) {
   return (
     <>
-      <div className="flex flex-col gap-2 items-center text-center pc:hidden">
-        <Typography tag="h1" type="Title2Bold" id="signup-title" className="break-keep">
+      <div className="flex flex-col gap-1 items-center text-center pc:hidden">
+        <Typography tag="h1" type="Heading2Bold" id="signup-title" className="break-keep">
           {title}
         </Typography>
-        <Typography tag="p" type="Body2Medium" id="signup-description" className={descriptionClassName}>
+        <Typography tag="p" type="Body3Medium" id="signup-description" className={descriptionClassName}>
           {description}
         </Typography>
       </div>
