@@ -31,16 +31,18 @@ export interface CheckBoxLabelProps extends CheckBoxProps {
   id: string;
   name?: string;
   value: string;
+  /** 라벨 타이포 override (미지정 시 scale 기본값 사용) */
+  labelType?: TypographyType;
 }
 
-const CheckBoxLabel = ({ label, id, name, value, scale = 'sm', disabled, ...props }: CheckBoxLabelProps) => {
+const CheckBoxLabel = ({ label, id, name, value, scale = 'sm', disabled, labelType, ...props }: CheckBoxLabelProps) => {
   const { wrapper, typography, typoStyle } = scaleClass[scale];
 
   return (
     <label htmlFor={id} className={clsx('flex gap-2 items-center', wrapper, disabled && 'cursor-not-allowed')}>
       <CheckBox id={id} name={name} value={value} scale={scale} disabled={disabled} {...props} />
       <Typography
-        type={typography}
+        type={labelType ?? typography}
         className={clsx(typoStyle, disabled ? 'text-gray-40 cursor-not-allowed' : 'text-gray-90 cursor-pointer')}
       >
         {label}

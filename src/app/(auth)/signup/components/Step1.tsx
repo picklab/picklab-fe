@@ -45,6 +45,7 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
             id="signup-terms-all"
             value="all"
             scale="md"
+            labelType="Headline2SemiBold"
             color="primary"
             checked={signupData.terms.all}
             onChange={handleAllTermsChange}
@@ -61,6 +62,7 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
                   id={`signup-terms-${term.key}`}
                   value={term.key}
                   scale="sm"
+                  labelType="Body3Regular"
                   color="primary"
                   checked={signupData.terms[term.key]}
                   onChange={handleTermChange(term.key)}
@@ -82,7 +84,7 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
                 <div
                   id={`signup-terms-${term.key}-body`}
                   hidden={!isOpen}
-                  className="max-h-[150px] overflow-y-auto rounded-md border border-gray-20 bg-gray-5 p-4"
+                  className="h-[100px] overflow-y-auto rounded-[4px] bg-gray-10 p-4"
                 >
                   <LegalDocument doc={term.doc} variant="embed" />
                 </div>
