@@ -63,7 +63,7 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
       />
 
       {/* list 간격 10px */}
-      <div className="mx-auto flex w-full max-w-[420px] flex-col gap-[10px]">
+      <div className="mx-auto flex w-full max-w-[420px] flex-col gap-7">
         {/* 선택한 관심직무 (small-outlined-primary 칩, 8px 간격, 2줄) */}
         <div className="flex flex-col gap-5">
           <Typography tag="p" type="Body2Medium" id="signup-description">
@@ -92,7 +92,7 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
             직무 분야
           </Typography>
 
-          <div className="flex flex-wrap gap-[7.5px]">
+          <div className="flex flex-wrap gap-3">
             {JOB_AREAS.map((job, index) => {
               const isSelected = selectedCategory === job.alt;
               return (
@@ -104,7 +104,10 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
                   onClick={() => handleCategorySelect(job.alt)}
                 >
                   <Image src={job.src} alt={job.alt} width={48} height={48} />
-                  <Typography tag="p" type="Body2Medium" className={isSelected ? 'text-gray-80' : 'text-gray-50'}>
+                  <Typography
+                    tag="p"
+                    type={isSelected ? 'Headline2SemiBold' : 'Headline2Regular'}
+                    className={isSelected ? 'text-gray-90' : 'text-gray-50'}>
                     {job.alt}
                   </Typography>
                 </div>
