@@ -22,8 +22,8 @@ export interface HelpMessageProps extends Omit<TypographyProps, 'type' | 'childr
 const HelpMessage = ({ title, status = 'default', ...props }: HelpMessageProps) => {
   return (
     <Typography
-      // 기본적으로 Body3Medium 텍스트 스타일 사용
-      type="Body3Medium"
+      // Figma 정합: 도움말 텍스트는 Body4Regular(13px)
+      type="Body4Regular"
       // 에러 상태일 경우, 스크린 리더가 즉시 읽도록 role과 aria-live 추가
       role={status === 'error' ? 'alert' : undefined}
       aria-live={status === 'error' ? 'assertive' : status === 'success' ? 'polite' : undefined}
