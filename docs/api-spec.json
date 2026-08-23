@@ -30,6 +30,10 @@
       "description": "리뷰 통계 관련 API 입니다."
     },
     {
+      "name": "University",
+      "description": "대학교 API"
+    },
+    {
       "name": "회원 API",
       "description": "회원 관련 작업을 하는 API"
     },
@@ -2070,12 +2074,56 @@
         }
       }
     },
+    "/v1/universities": {
+      "get": {
+        "tags": ["University"],
+        "summary": "대학교 검색",
+        "description": "회원가입 학교명 자동완성을 위한 대학교 목록을 검색합니다. query가 없거나 공백이면 빈 목록을 반환합니다.",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "서울"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "반환할 최대 개수. 기본 10, 최대 20",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperUniversitySearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/search": {
       "get": {
         "tags": ["Search"],
         "summary": "통합 검색",
         "description": "키워드로 전체 도메인을 검색합니다. 카테고리별 건수와 미리보기 항목(최대 5개)을 반환합니다.",
-        "operationId": "search",
+        "operationId": "search_1",
         "parameters": [
           {
             "name": "keyword",
@@ -4912,6 +4960,51 @@
           }
         },
         "required": ["application_status"]
+      },
+      "ResponseWrapperUniversitySearchResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UniversitySearchResponse"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "UniversityResponse": {
+        "description": "대학교 검색 항목",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "대학교 ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "대학교명",
+            "example": "서울대학교"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "UniversitySearchResponse": {
+        "description": "대학교 검색 응답",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "대학교 검색 결과",
+            "items": {
+              "$ref": "#/components/schemas/UniversityResponse"
+            }
+          }
+        },
+        "required": ["items"]
       },
       "ActivityItemWithBookmark": {
         "description": "활동 목록",

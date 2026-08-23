@@ -1,0 +1,195 @@
+/,,,,,개발자 전달용 피그마 : https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2104-23870&t=MlhrLKl52ZbixSEe-1,,,,
+프로젝트 명,픽랩,,,,,,,,
+작성자,이다은,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,사전 조건 (Precondition),디스플레이,재현 경로 ,재현 결과 (이미지),기대 결과,발생 빈도,반영작업 여부,비고
+,,비로그인,WEB,메인화면,,"회원가입 버튼 클릭 시, 간편회원가입 화면으로 이동
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-72980&t=NKYRlJ0nguLkzXJf-1",100,미반영,
+,,비로그인,WEB,메인화면  > 공고상세,,"돋보기 버튼 클릭시 이미지 2배수하여 팝업으로 노출
+딤드처리된 부분 클릭시 공고상세 화면로 돌아가게 수정
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2510-23083&t=NKYRlJ0nguLkzXJf-1",100,미반영,
+,,비로그인,WEB,메인화면  > 공고상세,,"직무경험, 활동강도, 혜택및복지 의 너비값을 80px로 수정하여 노출",100,미반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,"그래프 디자인 디자인됨과 동일하게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2409-26932&t=NKYRlJ0nguLkzXJf-1",100,미반영,
+,,로그인,WEB,메인화면,,"하단에 있는 '인기 대외활동' 의 슬라이드 인터랙션과 동일하게 수정하여 노출
+
+[수정이 필요한 섹션]
+- 00직무를 위한 추천 활동
+- 최근에 본 활동
+",100,미반영,
+,,로그인,WEB,메인화면,,연필 아이콘의 위치를 다른 아이콘과 맞추어 노출,100,미반영,
+,,로그인,WEB,메인화면,,"캘린더 아이콘 클릭 시 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2527-24643&t=ANKwkX6tmmg9Ht6C-1",100,미반영,
+,,로그인,WEB,메인화면 > 일정관리,,"캘린더형' 클릭 시, 아래 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2531-25140&t=ANKwkX6tmmg9Ht6C-1 
+
+*꼭 읽어주세요! 일정관리 화면의 ux문서입니다*
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=Z8mwHd3kuDpoc66F-1 ",100,미반영,
+,,로그인,WEB,메인화면 > 일정관리,,"드롭다운 옵션명
+
+1. 전체
+1.1 진행중
+1.2 마감
+
+2. 지원여부
+2.1 미지원
+2.2 지원완료",100,미반영,
+,,로그인,WEB,메인화면 > 일정관리_캘린더형,,"캘린더의 날짜를 클릭 시, 링크의 화면처럼 표시되어 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-25408&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,로그인,WEB,메인화면 > 일정관리 > 활동결과,,"활동결과 탭메뉴 클릭 시, 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76521&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,로그인,WEB,메인화면 > 일정관리 > 활동결과,,해당 드롭다운은 사용자가 직접 선택할 수 있게 노출,100,미반영,
+,,로그인,WEB,메인화면 ,,"GNB에서 프로필 클릭 시, 링크에 있는 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75610&t=ANKwkX6tmmg9Ht6C-1",100,미반영,
+,,로그인,WEB,메인화면 > 프로필,이미지 없습니다,"유저가 참여한 활동이 있을 시, 아래 링크의 화면이 노출되게 하여 리뷰작성을 유도하도록 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75658&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,로그인,WEB,메인화면 ,,"GNB에 연필아이콘 클릭 시, 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75951&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,로그인,WEB,메인화면 > 작성글 화면,,"수정/삭제 버튼 활성화 기준
+- 승인중, 승인완료 : 수정 버튼 비활성화
+- 미승인: 수정,삭제 버튼 활성화",100,미반영,
+,,로그인,WEB,메인화면 > 작성글 화면,,"작성글의 삭제버튼을 눌렀을 때 링크의 팝업 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75789&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,로그인,WEB,메인화면 > 프로필 > 프로필 수정,,"프로필수정 버튼 클릭 시, 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-78084&t=ANKwkX6tmmg9Ht6C-1",100,미반영,
+,,로그인,WEB,메인화면 > 프로필 > 프로필 수정,,"관심직무의 '수정하기' 버튼 클릭 시, 링크 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-78019&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,로그인,WEB,메인화면 > 프로필 > 프로필 수정,,"프로필의 카메라 버튼 클릭 시, 링크의 팝업이 나타날 수 있게 수정하여 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26124&t=ANKwkX6tmmg9Ht6C-1 ",100,미반영,
+,,비로그인,MOBILE,메인화면,,"배너와 tab bar 위치 변경하여 노출
+*추가 요청: 혹시 탭 메뉴의 너비를 최대한 좁게해서 모든 메뉴명이 보이게 할 수 있을까요?",100,반영,
+,,비로그인,WEB,메인화면,,"한 칸씩 넘어가게 인터랙션 수정되어 노출
+속도는 현재 속도로 유지
+
+링크: https://www.notion.so/369e05946bce800199dbe81763b2ccd5?source=copy_link",100,반영,
+,,비로그인,WEB,메인화면,,"드롭다운 레이블은 아래와 같이 맞춰주세요
+
+2개 선택했을 때 : 활동유형 2 / 직무유형 2",100,반영,
+,,비로그인,WEB,메인화면,,체크박스 클릭으로도 선택이 가능하게 변경되어 노출,100,반영,
+,,비로그인,WEB,메인화면,,"opton 창이 켜진 상태에서 스크롤 시,
+optioon 창은 사라지게 노출",100,반영,
+,,비로그인,WEB,메인화면,,"GNB 하단에 border 추가하여 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-108247&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면 > 대외활동 ,,"피그마 파일의 디자인과 동일하게 개발하여 노출
+선택된 버튼은 크기 변경이 되지 않게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82622&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면 > 대외활동 ,,"페이지네이션은 컴포넌트로 된 것 만 사용하여 노출
+
+현재 기준으로 페이지네이션과 footer과의 여백은 2배로 수정하여 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82622&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면 > 강연/세미나 ,,"피그마 파일의 디자인과 동일하게 개발하여 노출
+선택된 버튼은 크기 변경이 되지 않게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면 > 교육,,"피그마 파일의 디자인과 동일하게 개발하여 노출
+선택된 버튼은 크기 변경이 되지 않게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면 > 공모전/해커톤,,"피그마 파일의 디자인과 동일하게 개발하여 노출
+선택된 버튼은 크기 변경이 되지 않게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인,,"PICKLAB 회원가입 으로 수정하여 노출
+
+클릭 시, 링크에 첨부된 화면으로 이동
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-72980&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의,,"프로세스 바의 가운데 선을 추가하여 노출
+
+전분적으로 링크 참고하여 디자인 반영하여 노출
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=kcWmPIgSu19RsYvO-1
+
+스크린 스펙 내용 (꼭 확인해주세요!
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2374-18440&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의 > 회원정보,,"프로새스 바의 가운데 선 추가하여 노출
+현재 화면에 해당하는 단계만 primary 적용
+primay 컴포넌트의 레이븥은 gray-60 적용
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2369-19653&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의 > 회원정보 ,,"간격 8px로 수정하여 노출
+서브텍스트 컬러는 gray- 50으로 수정하여 노출
+
+-> 회원정보, 회원정보, 관심직무 화면에서 모두 적용해주세요
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2369-19653&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의 > 회원정보 ,,"링크 참고하여 버튼 수정하여 노출
+
+링크:https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2369-19653&t=kcWmPIgSu19RsYvO-1
+
+스크린 스펙 (꼭 확인해주세요!)
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2374-19696&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의 > 회원정보 ,,option 너비가 드롭다운의 너비와 동일하게 수정하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의 > 회원정보 > 관심직무,,"5개 이상 선택 시, 에러문구 노출되는 조건 적용
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-80910&t=kcWmPIgSu19RsYvO-1",100,반영,
+,,비로그인,WEB,메인화면  > 간편로그인 > 간편 회원가입 > 약관동의 > 회원정보 > 관심직무,,"다음으로 버튼 클리 시, 회원가입 완료 화면으로 이동 및 로그인된 상태로 홈화면으로 이동",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세,,top padding을 40px로 수정하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세,,gap 12px로 수정하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세,,"공고이름 font size: 28px(title2 Bold)
+기관명 font size: 20px(Heading 2 Medium)
+
+으로 수정하여 노출
+",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세,,font size: 14px(Body 3 Medium) 사용하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세,,이미지 없을 경우  텍스트 내용만 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 상세내용,,"타이틀 font size: 24px( Title 3 Bold )
+
+단락별 간격: 36px
+",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,"
+디자인 참고하여 수정하여 노출
+
+피그마 화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2408-26558&t=qhHjSk3mhrpHNVpD-1",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,"삭제하여 노출
+
+피그마 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2408-26558&t=qhHjSk3mhrpHNVpD-1",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,50px로 수정하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,24px로 수정하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,너비값: 132px로 수정하여 노출,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,"좌우: 40px / 위아래: 28px
+
+수정하야 노출",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,"총 평점 font size: 24px (Title 3 Bold) 로 수정하여 노출.
+
+총 평점의 별점 사이즈: 40px로 수정하여 노출",100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,20px로 수정하여 노츌,100,반영,
+,,비로그인,WEB,메인화면  > 공고상세 > 리뷰,,"내용 블러처리 + 버튼 추가하여 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2408-26558&t=MiiZ000QA2YZGhnN-1",100,반영,
+,,비로그인,MOBILE,메인화면 > 간편 로그인,,margin-top : 60px 으로 변경되어 노출,100,반영,
+,,비로그인,MOBILE,메인화면 > 로그인 > 회원가입,,간편 회원가입' 모바일버전 노출,100,반영,
+,,비로그인,MOBILE,메인화면,,드롭다운 너비 160px로 노출,100,반영,
+,,비로그인,MOBILE,메인화면,,00직무를 위한 추천 활동' 섹션 비노출,100,반영,
+,,비로그인,MOBILE,메인화면,,tab bar의 회색라인이 끝까지 보여지게 노출,100,반영,
+,,비로그인,MOBILE,메인화면,,"검색바 클릭시 'search' 화면으로 노출
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2107-20308&t=EUy8M3mb7S08aaXf-1",100,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,
+,,,,,,,,반영,

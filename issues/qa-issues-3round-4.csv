@@ -1,0 +1,206 @@
+/,,,,,개발자 전달용 피그마 : https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2104-23870&t=MlhrLKl52ZbixSEe-1,반영 확인용 링크: https://picklab-fe.vercel.app/ ,,,
+프로젝트 명,픽랩,,,,,,,,
+작성자,이다은,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,사전 조건 (Precondition),디스플레이,재현 경로 ,재현 결과 (이미지),기대 결과,발생 빈도,반영작업 여부,비고
+,,로그인,WEB,메인화면 > 일정관리,,"캘린더형' 클릭 시, 아래 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2531-25140&t=ANKwkX6tmmg9Ht6C-1 
+
+*꼭 읽어주세요! 일정관리 화면의 ux문서입니다*
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=Z8mwHd3kuDpoc66F-1 ",100,반영,
+,,로그인,WEB,메인화면 > 일정관리,,"드롭다운 옵션명
+
+1. 전체
+1.1 진행중
+1.2 마감
+
+2. 지원여부
+2.1 미지원
+2.2 지원완료",100,반영,
+,,로그인,WEB,메인화면 > 일정관리_캘린더형,,"캘린더의 날짜를 클릭 시, 링크의 화면처럼 표시되어 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-25408&t=ANKwkX6tmmg9Ht6C-1 ",100,반영,
+,,로그인,WEB,메인화면 > 일정관리 > 활동결과,,"활동결과 탭메뉴 클릭 시, 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76521&t=ANKwkX6tmmg9Ht6C-1 ",100,반영,
+,,로그인,WEB,메인화면 > 일정관리 > 활동결과,,해당 드롭다운은 사용자가 직접 선택할 수 있게 노출,100,반영,
+,,"비로그인, 로그인",WEB,메인화면 > 대외활동,,top 여백: 40px 로 수정하여 노출,100,반영,
+,,"비로그인, 로그인",WEB,메인화면 > 대외활동,,간격 8px 로 수정하여 노출,100,반영,
+,,"비로그인, 로그인",WEB,"메인화면 > 대외활동
+메인화면 > 강연세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤
+",,"위아래로 선 추가하여 노출
+텍스트 사이에 있는 선 모두 삭제
+텍스트 크기: 17px로 수정
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2376-22193&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,"비로그인, 로그인",WEB,"메인화면 > 대외활동
+메인화면 > 강연세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤
+",,"미선택된 버튼의 상태값 아래와 같이 수정하여 노출
+- gray / filled / hover",100,반영,
+,,로그인,WEB,메인화면,,"클릭 시 아래 링크의 화면으로 이동될 수 있게 수정
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2577-38195&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"top 여백: 40px 로 수정하여 노출
+
+링크; https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26406&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"임시 정보를 아래와 같이 넣어서 노출
+- 서비스기획, PM/PO, 프론트엔드, 사업개발, 데이터분석
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26406&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"MY활동 의 메뉴가 선택된 상태가 디폴트 화면으로 수정하여 노출
+
+작성글 클릭 시 아래의 링크로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75951&t=91V88ug3mBJnDGg3-1 
+
+계정 클릭 시 아래의 링크로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2581-33284&t=TFucAJoE5uca7ZNj-1 
+
+계정-알림관리 클릭 시 아래의 링크로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2581-33438&t=TFucAJoE5uca7ZNj-1 
+
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26406&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"더보기 버튼 추가하여 노출
+더보기 클릭 시, 아래 링크의 화면으로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76521&t=91V88ug3mBJnDGg3-1 
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26406&t=91V88ug3mBJnDGg3-1 ",100,미반영,아카이브 더보기-이미 충족(확인)
+,,로그인,WEB,메인화면 > 마이페이지,,"유저가 수료완료한 활동만 표시됩니다.
+
+더보기 클릭 시, 아래 링크의 화면으로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-73882&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"북마크한 공고만 표시됩니다.
+
+더보기 버튼 추가하여 노출
+더보기 클릭 시, 아래 링크의 화면으로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-74929&t=91V88ug3mBJnDGg3-1 
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26406&t=91V88ug3mBJnDGg3-1 ",100,미반영,저장공고 전용 목록 페이지 신규 필요(미작업)
+,,로그인,WEB,메인화면,,클릭 시 픽랩이메일로 메일자동실행으로 메일투 링크되게 노출,100,반영,
+,,로그인,WEB,메인화면,,"입력시 연관된 검색어 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2582-33566&t=TFucAJoE5uca7ZNj-1 ",100,미반영,"자동완성 동작은 연동됨, 드롭다운 figma 정합 필요"
+,,로그인,WEB,메인화면,,"GNB의 종 아이콘 클릭 시 아래 링크화면으로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-74415&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,"top 여백: 40px 로 수정하여 노출
+
+링크; https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-78084&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,너비값 536px 로 수정하여 노출,100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,"그림자 삭제하여 노출
+
+카메라 아이콘 20px/20px 로 수정하여 노출",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,"stroke 삭제
+
+입력필드의 텍스트 컬러: gray 70 으로 수정",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,푸터와의 간격 120px로 수정하여 노출,100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,클릭 시 이전 화면으로 이동되게 수정,100,반영,
+,,로그인,WEB,메인화면 > 공고 상세,,"옵션  마우스 호버 처리하여 노출
+*옆에 있는 필터링 모두 적용",100,미반영,공고상세 옵션 호버 - figma 필요
+,,로그인,WEB,메인화면 > 리뷰작성,,"top 여백: 40px 로 수정하여 노출
+
+링크; https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2577-38195&t=TFucAJoE5uca7ZNj-1 
+
+* UX 문서입니다! 꼭! 읽어주세요!*
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,비로그인,WEB,메인화면,,"회원가입 버틍 클릭 시 아래의 링크화면으로 이동
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-72980&t=TFucAJoE5uca7ZNj-1 
+
+* 관련 UX문서 입니다. 꼭! 읽어주세요!*
+https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,"비로그인,로그인",MOBILE,모든 화면,,"모든 화면에 푸터 추가하여 노출
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2423-30539&t=I4xQSo3ckXPsyZCs-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면,,패딩 삭제하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면,,너비 54px로 수정하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면,,회색 선 fill로 채워서 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면,,top margin : 36px 으로 수정하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면,,top margin : 36px 으로 수정하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면,,"검색이 처음 일 경우 + 검색바의 인풋 클릭 시 아래 링크로 화면 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2107-20308&t=TFucAJoE5uca7ZNj-1 
+
+검색 1번 이상일 경우 + 검색바의 인풋 클릭 시 아래 링크로 화면 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2594-34191&t=TFucAJoE5uca7ZNj-1 
+
+검색어를 입력할 때 아래 링크의 화면 노출
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2107-20418&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,"메인화면 > 대외활동
+메인화면 > 강연/세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤",,"대외활동 tab 클릭 시, 탭메뉴까지 홈화면과 같은 양식으로 유지하여 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2594-34529&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,"메인화면 > 대외활동
+메인화면 > 강연/세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤",,"- 왼쪽 버튼-은 필터 아이콘으로 수정, 아이콘 크기 20px로 노출
+
+- 오른쪽 버튼은 컬러 50으로 수정, 새로고침 아이콘 크기 20px로 노출
+
+화면링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2594-34529&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,"메인화면 > 대외활동
+메인화면 > 강연/세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤",,너비 128px로 수정하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,"메인화면 > 대외활동
+메인화면 > 강연/세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤",,"- 미선택 버튼은 gray-filled-hover 사용
+- 탭메뉴 디자인은 홈화면의 탭과 스타일 동일하게 수정
+- 최하단의 초기화 아이콘 버튼 삭제
+- 최하단에 초기화, 적용하기 버튼 추가
+- 바텀 시트의 높이값은 460px 로 수정
+
+디자인이 조금 수정되어 아래 링크의 화면으로 수정하여 노출
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82832&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"- GNB와 컨텐츠간의 간격 20px 추가하여 노출
+- 모집중 텍스트 크기 12px로 수정",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,20px로 수정하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,간격값을 8px으로 수정하여 노출,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"- 활동명 텍스트 한단계 더 볼드로 수정하여 노출
+- 주최기관 텍스트 컬러는 활동명과 동일하게 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1223-17347&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"- 텍스트 14px로 수정하여 노출 (직무 배지 제외)
+- 모집기간의 표기를 아래 링크와 동일하게 수정하여 노출
+  -> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1223-17370&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,플로팅 버튼으로 디스플레이 하단에 고정,100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"직무 연관성', '활동 만족도평가' 텍스트 크기 20px로 수정하여 노출",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"- 디자인이 조금 수정되어 있습니다. 아래 링크를 참고해주세요
+- 버튼 크기 base 로 수정하여 노출
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2409-27883&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"- 리뷰 0 -> 텍스트 크기 18px로 수정하여 노출
+- 필터 드롭다운 좌측에 초기화 아이콘 버튼 추가
+- 드롭다운 너비값 128px 로 수정하여 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2408-26119&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,비로그인,MOBILE,메인화면 > 로그인,,"회원가입 링크버튼 클릭 시 아래의 링크 화면으로 이동합니다.
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-73065&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"관심직무의 데이터가 추가하여 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75719&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"해당 부분 클릭 시 아래 링크의 화면으로 이동되게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-78484&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"클릭 시 아래의 링크 화면 노출
+
+화면 링크 : https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76050&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"계정' 클릭 시 아래 링크의 화면 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-73577&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"알림 버튼 클릭 시 아래 링크의 화면으로 이동
+
+링크 화면: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-74433&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"연필 아이콘 클릭 시, 아래 링크의 화면으로 이동
+
+링크 화면: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82537&t=TFucAJoE5uca7ZNj-1 ",100,미반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"캘린더 아이콘 클릭 시, 아래 링크의 화면으로 이동
+
+링크 화면: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76568&t=TFucAJoE5uca7ZNj-1 ",100,미반영,

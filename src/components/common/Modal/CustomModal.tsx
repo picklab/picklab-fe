@@ -29,7 +29,6 @@ const CustomModal = ({
 }: ModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const modalWidth = `w-[${width}px]`;
 
   // ESC 키로 닫기
   useEffect(() => {
@@ -64,7 +63,8 @@ const CustomModal = ({
     >
       <div
         ref={dialogRef}
-        className={`flex flex-col bg-gray-0 rounded-2xl px-14 py-[26px] gap-11 ${modalWidth}`}
+        className="flex flex-col bg-gray-0 rounded-2xl px-14 py-[26px] gap-11"
+        style={{ width }}
         tabIndex={-1}
       >
         {/* Header */}

@@ -26,7 +26,8 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
   const handleTermChange = (key: keyof typeof signupData.terms) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     const newTerms = { ...signupData.terms, [key]: checked };
-    newTerms.all = newTerms.age && newTerms.service && newTerms.privacy;
+    newTerms.all =
+      newTerms.age && newTerms.service && newTerms.privacy && newTerms.marketing;
     setSignupData((prev) => ({ ...prev, terms: newTerms }));
   };
 

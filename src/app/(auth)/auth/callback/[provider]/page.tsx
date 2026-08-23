@@ -5,6 +5,8 @@
 import { useAuthClient } from "@/contexts/AuthContext";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useEffect } from "react";
+import Image from "next/image";
+import Typography from "@/components/common/Typography";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -55,10 +57,19 @@ export default function AuthCallbackPage() {
     }
   }, [router, searchParams, params]); // 의존성 배열에 params 추가
 
+  // Figma 정합(2835:34670 "로그인 확인 중"): 로딩 이미지 + 제목 Title2Bold(28px) +
+  // 설명 Body4Regular(13px). 스텝 인디케이터 없음.
   return (
-    <div>
-      <p>인증 처리 중...</p>
-      <p>잠시만 기다려 주세요.</p>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8">
+      <Image src="/imgs/loading.png" alt="loading" width={60} height={60} />
+      <div className="flex flex-col gap-3 items-center text-center">
+        <Typography tag="h1" type="Title2Bold" className="break-keep">
+          로그인 확인 중
+        </Typography>
+        <Typography tag="p" type="Body4Regular" className="text-gray-50">
+          로그인 정보를 확인하고 있습니다.
+        </Typography>
+      </div>
     </div>
   );
 }

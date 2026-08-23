@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import TextField from '@/components/common/Field/TextField';
 import Select from '@/components/common/Select/Select';
-import type { HelpMessageProps } from '@/components/common/Field/HelpMessage';
+import HelpMessage, { type HelpMessageProps } from '@/components/common/Field/HelpMessage';
+import { OptionGroup } from '@/components/common/Option/OptionGroup';
+import type { OptionType } from '@/components/common/Option/Option';
 import type { StepProps } from '../types';
 import {
   EDUCATION_OPTIONS,
@@ -118,8 +120,51 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
 
   // 최종학력 + 학교명이 둘 다 입력되면 성공 메시지
   const isEducationComplete = education.trim().length > 0 && schoolName.trim().length > 0;
-  const schoolStatus: FieldStatus = isEducationComplete ? 'success' : 'default';
-  const schoolHelpMessage = isEducationComplete ? '최종학력이 입력되었습니다.' : undefined;
+
+  // PIC-82: 학교명 자동완성 — 입력 시 /v1/universities 검색, 목록에 없으면 '직접 추가하기'
+  const [schoolOptions, setSchoolOptions] = useState<OptionType[]>([]);
+  const [isSchoolOpen, setIsSchoolOpen] = useState(false);
+  const suppressSchoolFetch = useRef(false);
+
+  useEffect(() => {
+    // 옵션 선택 직후엔 재검색/재오픈 방지
+    if (suppressSchoolFetch.current) {
+      suppressSchoolFetch.current = false;
+      return;
+    }
+    const query = schoolName.trim();
+    if (query === '') {
+      setSchoolOptions([]);
+      setIsSchoolOpen(false);
+      return;
+    }
+    let active = true;
+    const timer = setTimeout(() => {
+      fetch(`/api/universities?query=${encodeURIComponent(query)}&size=20`)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error('대학교 검색 실패'))))
+        .then((json) => {
+          if (!active) return;
+          const items = (json?.data?.items ?? []) as { id: number; name: string }[];
+          setSchoolOptions(items.map((u) => ({ value: u.name, label: u.name })));
+          setIsSchoolOpen(true);
+        })
+        .catch(() => {
+          if (active) setSchoolOptions([]);
+        });
+    }, 300);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [schoolName]);
+
+  // 대학교 선택 또는 '직접 추가하기'(입력값 그대로) → 학교명 확정 후 드롭다운 닫기
+  const handleSchoolSelect = (value?: string | string[]) => {
+    const selected = Array.isArray(value) ? value[0] : value;
+    suppressSchoolFetch.current = true;
+    handleInputChange('schoolName', selected ?? '');
+    setIsSchoolOpen(false);
+  };
 
   // 졸업여부 선택 시 성공 메시지
   const isGraduationSelected = graduationStatus.trim().length > 0;
@@ -144,29 +189,59 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
           value={name}
           onChange={(e) => handleInputChange('name', e.target.value)}
         />
-        <div className="flex gap-2">
-          <Select
-            label="최종학력"
-            id="signup-education"
-            options={EDUCATION_OPTIONS}
-            value={education}
-            onChange={(value) => handleInputChange('education', value)}
-            labelStatus="require"
-            width="small"
-          />
-          <TextField
-            label=" "
-            labelStatus="default"
-            id="signup-school"
-            placeholder="학교명"
-            status={schoolStatus}
-            helpMessage={schoolHelpMessage}
-            scale="base"
-            icon="search"
-            className="w-full placeholder:!text-[#A5ADBB]"
-            value={schoolName}
-            onChange={(e) => handleInputChange('schoolName', e.target.value)}
-          />
+        {/* Figma 정합(1136:81054): '최종학력이 입력되었습니다.' 성공 메시지는 왼쪽 최종학력
+            Select 아래에 위치. Select width="small"(140px)에 helpMessage로 넣으면 폭이 좁아
+            메시지가 줄바꿈/잘림되므로, row를 묶고 그 아래에 직접 배치한다. */}
+        <div className="flex flex-col gap-1">
+          <div className="flex gap-2 items-start">
+            <Select
+              label="최종학력"
+              id="signup-education"
+              options={EDUCATION_OPTIONS}
+              value={education}
+              onChange={(value) => handleInputChange('education', value)}
+              labelStatus="require"
+              width="small"
+            />
+            <div className="relative w-full">
+              <TextField
+                label=" "
+                labelStatus="default"
+                id="signup-school"
+                placeholder="학교명"
+                status="default"
+                scale="base"
+                icon="search"
+                className="w-full placeholder:!text-[#A5ADBB]"
+                value={schoolName}
+                onChange={(e) => handleInputChange('schoolName', e.target.value)}
+                onFocus={() => {
+                  if (schoolName.trim() !== '') setIsSchoolOpen(true);
+                }}
+                onBlur={() => {
+                  // 옵션 클릭이 먼저 처리되도록 지연 후 닫기
+                  setTimeout(() => setIsSchoolOpen(false), 150);
+                }}
+              />
+              {/* PIC-82: 검색어 있을 때만 드롭다운(연관 대학교 + 하단 '직접 추가하기'). figma 1136:81091 */}
+              {isSchoolOpen && schoolName.trim() !== '' && (
+                <div className="absolute left-0 right-0 top-full z-20">
+                  <OptionGroup
+                    width="full"
+                    options={schoolOptions}
+                    selectedValue={schoolName}
+                    onClickHandler={handleSchoolSelect}
+                    textFieldValue={schoolName}
+                    functionOptionType="selfplus"
+                    query={schoolName}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          {isEducationComplete && (
+            <HelpMessage title="최종학력이 입력되었습니다." status="success" />
+          )}
         </div>
 
         {/* PIC-89: 최종학력 선택 시 전공 필드 자동 노출 */}

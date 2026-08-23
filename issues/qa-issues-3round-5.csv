@@ -1,0 +1,284 @@
+/,,,,,개발자 전달용 피그마 : https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2104-23870&t=MlhrLKl52ZbixSEe-1,반영 확인용 링크: https://picklab-fe.vercel.app/ ,,,
+프로젝트 명,픽랩,,,,,,,,
+작성자,이다은,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,사전 조건 (Precondition),디스플레이,재현 경로 ,재현 결과 (이미지),기대 결과,발생 빈도,반영작업 여부,비고
+,,로그인,MOBILE,메인화면 > 프로필,,"클릭 시 아래의 링크 화면을 확인 할 수 있게 임시데이터 1개 이상 추가하여 노출
+
+화면 링크 : https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76050&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,WEB,메인화면 > 일정관리,,"드롭다운 및 옵션명 수정된 부분 반영하여 노출
+수정된 부분은 아래 링크 확인
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2696-34096&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,로그인,WEB,메인화면 > 일정관리,,"1번 간격: 32px
+2번 간격: 16px
+
+로 수정하여 노출",100,반영,
+,,로그인,WEB,메인화면 > 일정관리,,"1번 간격: 32px
+2번 간격: 36px
+3번 간격: 16px
+
+4번 작동 기준: 사용자가 버튼을 눌러 활동의 지원완료로 바꿀 수 있습니다. 반대로도 작동이 가능해야됩니다.",100,반영,
+,,로그인,WEB,메인화면 > 일정관리,,"아래 내용을 토대로 작동되게 수정하여 노출
+
+1번 작동 기준
+- 버튼의 의미: 유저가 지원을 한 활동인 것을 인지시키기 위함
+- 작동 기준: 유저가 클릭함에 따라 버튼 활성/비활 달라질 수 있게 작동
+                   (활동 지원 여부를 유저 스스로 바꾸어야 합니다.)",100,반영,
+,,로그인,WEB,메인화면 > 일정관리 > 활동결과,,합격여부' 폰트 컬러 gray-90 사용하여 노츌,100,반영,
+,,로그인,WEB,메인화면 > 일정관리 > 활동결과,,"1번: 외곽라인 제거, 상하로 divider만 넣어 노출
+
+2번: 아래의 상태로 수정하여 노출
+- 컨텐츠 너비 280px로 수정
+- 활동명 텍스트 -> body/1/semibold 사용
+
+3번: '합격' 선택시 -> information-50 컬러 사용
+        (링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76553&t=cZE4gSacvJonrQ0O-1 )
+
+4번: 디폴트 값은 아래와 같이 맞추어 노출
+- 외곽선: gray-30
+- 텍스트 컬러: gray-40
+
+5번: 버튼 구성요소를 아래와 같이 수정하여 노출
+- 상하 패딩: 8px
+- 좌 채딩: 12px
+- 우 패딩: 16px
+- 텍스트 크기: body/2/medium 사용
+- 클릭 시 아래 링크의 화면으로 이동
+  (링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2577-38195&t=cZE4gSacvJonrQ0O-1 )
+
+
+",100,반영,
+,,"비로그인, 로그인",WEB,"메인화면 > 대외활동
+메인화면 > 강연세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤
+",,"1번: 아래 상태로 수정하여 노출
+- 각 탭별로 너비 140px 로 수정하여 노출
+- 선택된 탭은 headline/2/semibold 상태 + gray-90 컬러
+
+2번은 아래 상태로 수정하여 노출
+-  headline/2/semibold 상태 + gray-40 컬러
+",100,반영,
+,,"비로그인, 로그인",WEB,"메인화면 > 대외활동
+메인화면 > 강연세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤
+",,Align vertical centers 맞추어 노출,100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,"1번: 해당 택스트 내용은 이미 선택된 활동을 변경할 때 노출하고 지금은 활동 미선택 상태에서 들어왔으니 '어떤 활동에 참여하셨나요?' 로 문구 수정하여 노출
+
+2번: 삭제
+
+3번: 아래 피그마 링크의 디자인과 동일하게 수정하여 노출
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2578-39326&t=cZE4gSacvJonrQ0O-1 
+
+4번: 버튼 너비 120px 로 수정
+
+*전체 컨테이너의 상하좌우 패딩: 32px로 수정 및 컨테이너 너비 564px에 최대한 맞출 수 있게 노출",100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,"오류 표시는 아래 링크와 동일하게 표출되게 수정하여 노출
+- 헬프 메시지는 노출하지 않습니다.
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2579-31938&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,"아래와 같은 상태로 수정하여 해당 타이틀이 들어가는 모든 페이지에 반영하여 노출
+- 텍스트 크기:  heading/2/semibold
+- 텍스트 컬러: gray-50",100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,높이 88px로 수정하여 노출,100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,"1번에 해당하는 부분은 아래와 같은 상태로 수정하여 노출
+- 텍스트 가운데 정렬
+- 폰트: headline/1/semibold 사용
+- 컬러: gray-90
+
+2번
+- radio 너비 58px로 수정하여 노출
+- 활성 radio 일 때 하단 텍스트 컬러 gray-90 사용
+- 미선택 radio 디자인 링크와 동일하게 수정하여 노출
+  (링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2579-35108&t=cZE4gSacvJonrQ0O-1 )
+
+3번
+- 전체 컨테이너 너비값: 466 px로 수정하여 노출 (팝업 제외한 리뷰쓰기 모든 화면에 적용)
+- 2개 버튼 묶은 너비값도 466px 로 수정
+- 아무것도 선택하지 않은 상태에서는 '다음' 버튼 비활성화",100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,"- 텍스트 가운데 정렬
+- 폰트: headline/1/semibold 사용
+- 컬러: gray-90
+
+2번
+- radio 너비 58px로 수정하여 노출
+- 활성 radio 일 때 하단 텍스트 컬러 gray-90 사용
+- 미선택 radio 디자인 링크와 동일하게 수정하여 노출
+  (링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2579-35108&t=cZE4gSacvJonrQ0O-1  )",100,반영,
+,,로그인,WEB,메인화면 > 리뷰쓰기,,"- '인증하기' 클릭 시 아래 링크 화면으로 이동되게 수정하여 노출
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2577-37685&t=cZE4gSacvJonrQ0O-1 )
+
+- '인증없이 등록' 클릭 시 아래 링크 화면으로 이동
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75951&t=cZE4gSacvJonrQ0O-1 )",100,반영,
+,,로그인,WEB,메인화면,,"GNB의 종 아이콘 클릭 시 아래 링크화면으로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-74415&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,"비로그인, 로그인",WEB,메인화면,,클릭 시 픽랩이메일로 메일자동실행으로 메일투 링크되게 노출,100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"임시 정보를 아래와 같이 넣어서 노출
+- 서비스기획, PM/PO, 프론트엔드, 사업개발, 데이터분석
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2532-26406&t=91V88ug3mBJnDGg3-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"MY활동 의 메뉴가 선택된 상태가 디폴트 화면으로 수정하여 노출
+
+MY활동 메뉴가 클릭된 상태에서는 클릭작동 안되게 수정 (연결되는 화면 없음)
+
+작성글 클릭 시 아래의 링크로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75951&t=91V88ug3mBJnDGg3-1 
+
+계정 클릭 시 아래의 링크로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2581-33284&t=TFucAJoE5uca7ZNj-1 
+
+계정-알림관리 클릭 시 아래의 링크로 이동
+-> https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2581-33438&t=TFucAJoE5uca7ZNj-1 
+",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 작성글,,GNB와의 컨테이너 간격 40px 추가하여 노출,100,반영,
+,,로그인,WEB,메인화면 > 마이페이지,,"더보기' 클릭 시 아래 링크의 화면으로 이동되게 수정하여 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76521&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 아카이브,,"1번
+- '아카이브' 로 텍스트 변경
+- 버튼 클릭 시 마이페이지로 이동되게 수정
+
+2번
+- 미선택 탭의 텍스트 컬러: gray-40 사용
+- 전체 탭의 하단 바(divider) 추가하여 선이 끝까지 갈 수 있게 수정
+
+3번: 임시 데이터 1개 이상 추가",100,반영,
+,,로그인,WEB,메인화면,,"입력시 연관된 검색어 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2582-33566&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,컨테이너 너비값 536px 로 수정하여 노출,100,반영,
+,,로그인,WEB,메인화면 > 마이페이지 > 프로필 수정,,입력된 내용의 텍스트 컬러: gray 70 으로 수정,100,반영,
+,,로그인,WEB,메인화면 > 공고 상세,,"1번
+- 텍스트 크기: title/2/blod 사용
+- 타이틀이 561px 넘어가면 줄 내림
+
+2번: 해당 내용 삭제
+
+3번: '모집기간' 으로 수정 및 디자인과 동일하게 개발 반영
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2409-26967&t=cZE4gSacvJonrQ0O-1 )
+
+4번: 해당 내용 삭제
+
+5번: '관련직무' 로 수정하여 노출
+
+6번: '홈페이지' '지원하기' 버튼의 너비를 148px로 수정하여 노출",100,반영,
+,,로그인,WEB,메인화면 > 공고 상세,,상세내용' '리뷰'  텍스트 크기 : heading/2/semibold 사용,100,반영,
+,,로그인,WEB,메인화면 > 공고 상세 > 리뷰,,"- 그래프 1.5배 하여 크기 수정
+- 초록색 그래프가 제일 위로 올라가게 하여 수정
+
+관련 화면: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2409-26998&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,로그인,WEB,메인화면 > 공고 상세 > 리뷰,,"1번
+- 텍스트 크기: heading/1/semibold
+- 텍스크 컬러: gray-80
+
+2번
+- 텍스트 너비 80px로 수정",100,반영,
+,,로그인,WEB,메인화면 > 공고 상세 > 리뷰,,"아래 링크의 디자인과 동일하게 개발하여 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2409-27595&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,로그인,WEB,메인화면 > 공고 상세 > 리뷰,,"총평점' 드롭다운 클릭 시 표출되는 디자인을 아래 링크의 디자인과 동일하게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1223-17338&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,로그인,WEB,메인화면 > 공고 상세 > 리뷰,,"수료여부' 드롭다운 클릭 시 표출되는 디자인을 아래 링크의 디자인과 동일하게 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1223-17341&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,비로그인,WEB,메인화면,,"회원가입 버틍 클릭 시 아래의 링크화면으로 이동
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-72980&t=TFucAJoE5uca7ZNj-1 
+
+* 관련 UX문서 입니다. 꼭! 읽어주세요!*
+https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,"비로그인, 로그인",WEB,모든 화면,,"모든 화면에 푸터 추가하여 노출
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2423-30515&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,"비로그인,로그인",MOBILE,모든 화면,,"푸터 상단에 divider 추가하여 노출, 컨테이너와의 간격은 24px
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2423-30539&t=I4xQSo3ckXPsyZCs-1 ",100,반영,
+,,"비로그인,로그인",MOBILE,"메인화면 > 대외활동
+메인화면 > 강연/세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤",,드롭다운 너비에 맞게 옵션그룹 너비 수정하여 노출,100,반영,
+,,"비로그인,로그인",MOBILE,"메인화면 > 대외활동
+메인화면 > 강연/세미나
+메인화면 > 교육
+메인화면 > 공모전/해커톤",,"주최기관, 참여대상, 활동분야, 지역 의 옵션명을 아래의 링크와 동일하게 맞추어 수정
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"1번: 해당 부분 삭제
+
+2번: 0000.00.00.~ 0000.00.00 -> 형식으로 노출",100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세,,"1번: 간격 40px로 수정
+
+2번
+- 텍스트 크기: heading/2/semibold 사용
+",100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세 > 리뷰,,"web에 노출되는 그래프와 같은 형태를 유지 및 링크의 형태로 노출
+크기는 모바일 너비에 맞게 fill로 맞추기
+
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2706-35242&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세 > 리뷰,,해당 부분의 간격 24px로 수정,100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세 > 리뷰,,"1번
+- 간격 20px로 수정
+
+2번
+- 별점 숫자 텍스크 크기: title/3/bold 사용
+- 별 그래픽 크기: 36px X 36px 수정
+
+3번
+- 아래의 링크의 디자인과 동일하게 수정
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2409-27906&t=cZE4gSacvJonrQ0O-1 )",100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세 > 리뷰,,"- 초기화버튼 primary 컬러 적용
+- 드롭다운 너비값 102px 로 수정하여 노출
+- 드롭다운 작동되게 수정",100,반영,
+,,"비로그인,로그인",MOBILE,메인화면 > 공고상세 > 리뷰,,"아래 링크의 옵션명 노출
+
+링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=2-25064&t=cZE4gSacvJonrQ0O-1 ",100,반영,
+,,비로그인,MOBILE,메인화면 > 로그인,,"회원가입 링크버튼 클릭 시 아래의 링크 화면으로 이동합니다.
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-73065&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"1번
+GNB 아래 16px 간격 추가",100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"관심직무의 임시 데이터가 추가하여 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75719&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,해당 부분 간격 24px로 수정,100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,해당 부분 간격 20px로 수정,100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"1번
+- 더보기 > 버튼 추가
+- 더보기 클릭 시 아래 링크 화면으로 이동
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76672&t=cZE4gSacvJonrQ0O-1 )
+
+2번
+- 클릭 시 아래 링크 화면으로 이동
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-74141&t=cZE4gSacvJonrQ0O-1 )
+
+3번
+- 더보기 > 버튼 추가
+- 더보기 클릭 시 아래 링크 화면으로 이동
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-75047&t=cZE4gSacvJonrQ0O-1 )",100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"계정' 클릭 시 아래 링크의 화면 노출
+
+화면 링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-73577&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,MOBILE,메인화면 > 프로필,,"알림 버튼 클릭 시 아래 링크의 화면으로 이동
+
+링크 화면: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-74433&t=TFucAJoE5uca7ZNj-1 ",100,반영,
+,,로그인,MOBILE,메인화면 > 리뷰쓰기,,"아래 링크의 디자인과 동일하게 노출
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82395&t=cZE4gSacvJonrQ0O-1 )",100,반영,
+,,로그인,MOBILE,메인화면 > 리뷰쓰기,,"아래 링크의 디자인과 동일하게 노출
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82414&t=cZE4gSacvJonrQ0O-1ㅍ )",100,반영,
+,,로그인,MOBILE,메인화면 > 리뷰쓰기,,별들의 간격 2px로 수정,100,반영,
+,,로그인,MOBILE,메인화면 > 리뷰쓰기,,"아래 링크의 디자인과 동일하게 노출
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82505&t=cZE4gSacvJonrQ0O-1 )",100,반영,
+,,로그인,MOBILE,메인화면 > 리뷰쓰기,,"- 플로팅 버튼 삭제
+- 아래 링크의 디자인과 동일하게 버튼 노출
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82502&t=cZE4gSacvJonrQ0O-1 )
+
+- '인증하기' 클릭 시 아래 링크 화면으로 이동
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-82577&t=cZE4gSacvJonrQ0O-1 )
+
+- '인증없이 등록' 클릭 시 아래 링크 화면으로 이동
+(링크: https://www.figma.com/design/7PEqXV7XjAN2R6l1nnbAI9/PICKLAB_%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%A0%84%EB%8B%AC?node-id=1136-76050&t=cZE4gSacvJonrQ0O-1 )",100,반영,
+,,로그인,MOBILE,메인화면 ,,"북마크 클릭 시 오류 팝업이 표출됩니다.
+기능이 작동할 수 있게 수정하여 노출",100,반영,

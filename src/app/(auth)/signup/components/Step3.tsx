@@ -55,10 +55,11 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
 
   return (
     <div className="flex flex-col gap-8">
+      {/* 서브텍스트: 평소 기본색, 5개 초과 선택 시도 시에만 빨간색 */}
       <TitleTypography
         title="관심 있는 직무를 선택해 주세요!"
         description="최대 5개까지 선택 가능합니다."
-        descriptionClassName="text-danger-50"
+        descriptionClassName={showLimitError ? 'text-danger-50' : 'text-gray-50'}
       />
 
       {/* list 간격 10px */}
