@@ -38,7 +38,7 @@ export default function Step1({ signupData, setSignupData }: StepProps) {
         description="동의 후 회원가입을 진행할 수 있습니다."
       />
 
-      <div className="flex flex-col gap-6 w-full px-1">
+      <div className="flex flex-col gap-6 w-full">
         <div className="h-[47px] border-b border-gray-20">
           <CheckBoxLabel
             label="전체 동의합니다."

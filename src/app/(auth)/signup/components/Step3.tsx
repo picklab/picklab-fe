@@ -63,7 +63,7 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
       />
 
       {/* list 간격 10px */}
-      <div className="mx-auto flex w-full max-w-[420px] flex-col gap-7">
+      <div className="flex w-full flex-col gap-7">
         {/* 선택한 관심직무 (small-outlined-primary 칩, 8px 간격, 2줄) */}
         <div className="flex flex-col gap-5">
           <Typography tag="p" type="Body2Medium" id="signup-description">

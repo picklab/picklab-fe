@@ -246,7 +246,7 @@ export default function SignupPage() {
   const nextButtonLabel = getNextButtonLabel(currentStep, isSubmitting);
 
   return (
-    <div className="flex flex-col gap-12 items-center max-w-[429px] mx-auto pt-12">
+    <div className="flex flex-col gap-12 items-center max-w-[429px] mx-auto pt-12 mobile:px-5">
       {/* Step Indicator */}
       <div className="relative flex justify-center gap-[14px]">
         <div
@@ -283,10 +283,10 @@ export default function SignupPage() {
 
       {/* Navigation Buttons (가입완료 화면에서는 숨김) */}
       {currentStep !== 4 && (
-        <div className="flex h-space-48 mobile:w-[327px] pc:w-[429px] gap-3 justify-between">
+        <div className="flex h-space-48 mobile:w-full pc:w-[429px] gap-3 justify-between">
         <button
           type="button"
-          className="flex h-space-48 w-[140px] shrink-0 items-center justify-center rounded-small bg-gray-10 px-[18px] py-[14px]"
+          className="flex h-space-48 mobile:w-[110px] pc:w-[140px] shrink-0 items-center justify-center rounded-small bg-gray-10 px-[18px] py-[14px]"
           onClick={handleLeaveClick}>
           <Typography type="Heading2Medium" className="text-gray-50">
             나가기
