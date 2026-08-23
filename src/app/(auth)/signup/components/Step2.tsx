@@ -97,7 +97,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
           const available = (json?.data ?? json)?.available;
           setAvailability(
             available
-              ? { status: 'success', message: '사용 가능한 닉네임입니다.' }
+              ? { status: 'success', message: '사용가능한 닉네임입니다.' }
               : { status: 'error', message: NICKNAME_DUPLICATE_MESSAGE },
           );
         })
@@ -176,7 +176,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
     <>
       <TitleTypography title="회원관련 정보를 입력해주세요!" description="필수가 아닌 것은 넘어가셔도 됩니다." />
 
-      <div className="w-full flex flex-col gap-2 px-[4.5px]">
+      <div className="w-full flex flex-col gap-4 px-[4.5px]">
         <TextField
           label="닉네임"
           id="signup-name"
@@ -268,7 +268,7 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
           value={graduationStatus}
           onChange={(value) => handleInputChange('graduationStatus', value)}
           labelStatus="require"
-          helpMessage={isGraduationSelected ? '졸업여부가 입력되었습니다.' : undefined}
+          helpMessage={isGraduationSelected ? '졸업여부가 입력되었습니다' : undefined}
           helpMessageStatus="success"
         />
 
@@ -281,12 +281,14 @@ export default function Step2({ signupData, setSignupData }: StepProps) {
             onChange={handleEmploymentChange}
             labelStatus="default"
             width="small"
+            wrapperClassName="!w-[110px]"
+            className="!w-[110px]"
           />
           <TextField
             label=" "
             labelStatus="default"
             id="signup-company"
-            placeholder="현재소속 및 재직명"
+            placeholder="현재소속 및 직장명"
             status="default"
             scale="base"
             className={`!w-full ${isCompanyEnabled ? 'placeholder:!text-[#A5ADBB]' : ''}`}
