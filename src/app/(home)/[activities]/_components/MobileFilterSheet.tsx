@@ -49,7 +49,12 @@ const MobileFilterSheet = ({ isOpen, onClose, selectedFilters, setSelectedFilter
     <BottomSheet isOpen={isOpen} onClose={onClose}>
       <div className="flex h-[460px] flex-col px-5 pb-[42px] pt-4">
         {/* 카테고리 탭 (초록 밑줄) */}
-        <div className="relative flex justify-between before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+        <div className="relative flex justify-between">
+          {/* 하단 베이스라인: 활성 초록(3px)과 동일한 3px 트랙 안에 회색 1.5px를 세로 중앙 배치.
+              서브픽셀(bottom-0.75px)이 기기에서 반올림돼 안 먹히므로 flex items-center로 중앙정렬. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[3px] items-center">
+            <div className="h-[1.5px] w-full bg-gray-30" />
+          </div>
           {ACTIVITY_FILTERS.map((filter) => {
             const isActive = filter.title === currentTab;
             return (
@@ -58,9 +63,9 @@ const MobileFilterSheet = ({ isOpen, onClose, selectedFilters, setSelectedFilter
                 type="button"
                 onClick={() => setCurrentTab(filter.title)}
                 className={clsx(
-                  'relative pb-2.5',
+                  'relative z-10 pb-2.5',
                   isActive &&
-                    "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:bg-[#00BC7D] after:content-['']",
+                    "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-[#00BC7D] after:content-['']",
                 )}
               >
                 <span className="text-[15px] font-semibold text-gray-90">

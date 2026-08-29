@@ -170,7 +170,9 @@ export default function MobileActivityList({
       sort: "LATEST",
       // 활동 목록은 실데이터 기준이라 mock fallback을 항상 끈다.
       fallbackOnEmpty: "false",
-      ...(activitySlug !== "all" ? { category: CATEGORY_TO_API[activitySlug] } : {}),
+      ...(activitySlug !== "all"
+        ? { category: CATEGORY_TO_API[activitySlug] }
+        : {}),
       ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
       ...(orgTypes.length > 0 ? { organizerType: orgTypes.join(",") } : {}),
       ...(targets.length > 0 ? { target: targets.join(",") } : {}),
@@ -182,13 +184,25 @@ export default function MobileActivityList({
   const items = useMemo(
     () =>
       apiData.filter((item) => {
-        const filterEntries = Object.entries(selectedFilters).filter(([, values]) => values.length > 0);
+        const filterEntries = Object.entries(selectedFilters).filter(
+          ([, values]) => values.length > 0,
+        );
         return filterEntries.every(([filterName, values]) => {
-          const activeValues = values.filter((value) => value !== "전체" && value !== "모두");
+          const activeValues = values.filter(
+            (value) => value !== "전체" && value !== "모두",
+          );
           if (activeValues.length === 0) return true;
           if (filterName === "주최기관")
-            return activeValues.some((v) => v.replace(/\s/g, "") === item.companyType.replace(/\s/g, ""));
-          if (filterName === "관련직무") return item.jobs.some((job) => activeValues.includes(job));
+            return activeValues.some(
+              (v) =>
+                v.replace(/\s/g, "") === item.companyType.replace(/\s/g, ""),
+            );
+          if (filterName === "관련직무")
+            return item.jobs.some((job) => activeValues.includes(job));
+          // [임시 방어] 활동분야는 대외활동 전용 속성인데 백엔드가 교육·공모전에서 field를
+          // 무시하고 전체를 반환한다(필터 안 먹는 것처럼 보임). 대외활동이 아닌 항목을 제외한다.
+          // TODO(기획 2-25064): 카테고리별 필터 노출 스펙 확정 / TODO(백엔드): 교육·공모전 field 일관 처리.
+          if (filterName === "활동분야") return item.activityType === "대외활동";
           return true;
         });
       }),
@@ -224,13 +238,13 @@ export default function MobileActivityList({
         <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center pb-1 w-full">
           <button
             type="button"
-            className="border border-gray-30 rounded-full cursor-pointer w-10 h-10 flex items-center justify-center shrink-0"
+            className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0"
             onClick={onFilterClick}>
             <Icon icon="filter" size={20} className="text-[#383838]" />
           </button>
           <button
             type="button"
-            className="bg-primary-50 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shrink-0"
+            className="bg-primary-50 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer shrink-0"
             onClick={() => setSelectedFilters({})}>
             <Icon icon="largeRefresh" color="white" size={20} />
           </button>
@@ -238,11 +252,11 @@ export default function MobileActivityList({
             size="xsmall"
             width="xsmall"
             type="checkbox"
-          functionOptionType="reset"
+            functionOptionType="reset"
             placeholder="주최기관"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[128px]"
+            dropdownClassName="!w-[128px] [&_ul]:!w-full"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "대기업", value: "대기업" },
@@ -258,18 +272,20 @@ export default function MobileActivityList({
             ]}
             value={selectedFilters["주최기관"] ?? []}
             onChange={(value) =>
-              setSelectedFilters((prev) => updateFilter(prev, "주최기관", value))
+              setSelectedFilters((prev) =>
+                updateFilter(prev, "주최기관", value),
+              )
             }
           />
           <Select
             size="small"
             width="small"
             type="checkbox"
-          functionOptionType="reset"
+            functionOptionType="reset"
             placeholder="참여대상"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[128px]"
+            dropdownClassName="!w-[128px] [&_ul]:!w-full"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "제한 없음", value: "제한 없음" },
@@ -278,20 +294,22 @@ export default function MobileActivityList({
             ]}
             value={selectedFilters["참여대상"] ?? []}
             onChange={(value) =>
-              setSelectedFilters((prev) => updateFilter(prev, "참여대상", value))
+              setSelectedFilters((prev) =>
+                updateFilter(prev, "참여대상", value),
+              )
             }
           />
           <Select
             size="small"
             width="small"
             type="checkbox"
-          functionOptionType="reset"
+            functionOptionType="reset"
             placeholder="활동분야"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[128px]"
+            dropdownClassName="!w-[128px] [&_ul]:!w-full"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
-          options={[
+            options={[
               { label: "서포터즈", value: "서포터즈" },
               { label: "마케터", value: "마케터" },
               { label: "멘토링", value: "멘토링" },
@@ -301,18 +319,20 @@ export default function MobileActivityList({
             ]}
             value={selectedFilters["활동분야"] ?? []}
             onChange={(value) =>
-              setSelectedFilters((prev) => updateFilter(prev, "활동분야", value))
+              setSelectedFilters((prev) =>
+                updateFilter(prev, "활동분야", value),
+              )
             }
           />
           <Select
             size="small"
             width="small"
             type="checkbox"
-          functionOptionType="reset"
+            functionOptionType="reset"
             placeholder="지역"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[128px]"
+            dropdownClassName="!w-[128px] [&_ul]:!w-full"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "서울/인천", value: "서울/인천" },
@@ -325,18 +345,20 @@ export default function MobileActivityList({
             ]}
             value={selectedFilters["모집지역"] ?? []}
             onChange={(value) =>
-              setSelectedFilters((prev) => updateFilter(prev, "모집지역", value))
+              setSelectedFilters((prev) =>
+                updateFilter(prev, "모집지역", value),
+              )
             }
           />
           <Select
             size="small"
             width="small"
             type="checkbox"
-          functionOptionType="reset"
+            functionOptionType="reset"
             placeholder="직무"
             wrapperClassName="!w-[128px]"
             portalDropdown
-            dropdownClassName="!w-[128px]"
+            dropdownClassName="!w-[128px] [&_ul]:!w-full"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
               { label: "기획", value: "기획" },
@@ -347,7 +369,9 @@ export default function MobileActivityList({
             ]}
             value={selectedFilters["관련직무"] ?? []}
             onChange={(value) =>
-              setSelectedFilters((prev) => updateFilter(prev, "관련직무", value))
+              setSelectedFilters((prev) =>
+                updateFilter(prev, "관련직무", value),
+              )
             }
           />
         </div>
@@ -356,13 +380,14 @@ export default function MobileActivityList({
       <div
         className={clsx(
           "w-full",
-          type === "card"
-            ? "grid grid-cols-2 gap-4"
-            : "flex flex-col gap-2",
+          type === "card" ? "grid grid-cols-2 gap-4" : "flex flex-col gap-2",
         )}>
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="h-[250px] rounded-lg bg-gray-10 animate-pulse" />
+            <div
+              key={index}
+              className="h-[250px] rounded-lg bg-gray-10 animate-pulse"
+            />
           ))
         ) : items.length === 0 ? (
           <div

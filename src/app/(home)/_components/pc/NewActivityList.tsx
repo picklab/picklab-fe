@@ -286,6 +286,13 @@ export default function NewActivityList({
           );
         if (filterName === "관련직무")
           return item.jobs.some((job) => activeValues.includes(job));
+        // [임시 방어] 활동분야(서포터즈/해외봉사 등)는 대외활동 전용 속성인데,
+        // 백엔드가 교육·공모전 카테고리에서 field 파라미터를 무시하고 전체를 반환한다.
+        // (예: 교육 field=OVERSEAS_VOLUNTEER → 14개 그대로 노출) 그래서 필터가 안 먹는 것처럼 보임.
+        // 응답 item에 활동분야 정보가 없어 값으로는 못 거르므로, 대외활동이 아닌 항목을 제외한다.
+        // TODO(기획 2-25064): 카테고리별 필터 노출 스펙 확정 필요 — 활동분야를 대외활동 탭에만 노출할지 결정.
+        // TODO(백엔드): 교육·공모전에서 field 파라미터 무시 대신 일관 처리(적용 or 400) 필요.
+        if (filterName === "활동분야") return item.activityType === "대외활동";
         if (filterName === "활동유형") return true;
         return true;
       });

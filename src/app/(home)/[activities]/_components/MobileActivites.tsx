@@ -9,15 +9,25 @@ import Link from "next/link";
 import Typography from "@/components/common/Typography";
 import MobileActivityList from "./MobileActivityList";
 import Search from "@/components/common/Field/Search";
-import type { ActivityMenuId, ActivityPageFilters, ActivityRouteSlug } from "@/lib/activity-data";
+import type {
+  ActivityMenuId,
+  ActivityPageFilters,
+  ActivityRouteSlug,
+} from "@/lib/activity-data";
 
 function getInitialMenu(activitySlug: ActivityRouteSlug): ActivityMenuId {
   if (activitySlug === "activities") return "external-activity";
   return activitySlug;
 }
 
-export default function MobileActivites({ activitySlug }: { activitySlug: ActivityRouteSlug }) {
-  const [selectedFilters, setSelectedFilters] = useState<ActivityPageFilters>({});
+export default function MobileActivites({
+  activitySlug,
+}: {
+  activitySlug: ActivityRouteSlug;
+}) {
+  const [selectedFilters, setSelectedFilters] = useState<ActivityPageFilters>(
+    {},
+  );
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const activeMenu = getInitialMenu(activitySlug);
 
@@ -64,7 +74,11 @@ const CATEGORY_TABS = [
 function CategoryTabs({ activitySlug }: { activitySlug: ActivityRouteSlug }) {
   return (
     <div className="h-[35px] w-full overflow-x-auto hide-scrollbar">
-      <div className="relative flex h-full w-max min-w-full flex-row before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+      <div className="relative flex h-full w-max min-w-full flex-row">
+        {/* 하단 베이스라인: 활성 초록(3px)과 동일한 3px 트랙 안에 회색 1.5px를 세로 중앙 배치 */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-[3px] items-center">
+          <div className="h-[1.5px] w-full bg-gray-30" />
+        </div>
         {CATEGORY_TABS.map((item) => {
           const isActive = item.href === `/${activitySlug}`;
 
@@ -73,15 +87,16 @@ function CategoryTabs({ activitySlug }: { activitySlug: ActivityRouteSlug }) {
               key={item.href}
               href={item.href}
               className={clsx(
-                "relative flex shrink-0 items-center justify-center",
+                "relative z-10 flex shrink-0 items-center justify-center",
                 isActive &&
-                  "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
-              )}
-            >
+                  "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-primary-50 after:content-['']",
+              )}>
               <Typography
-                className={clsx("text-center", item.href === "/" ? "w-[54px]" : "w-[86px]")}
-                type="Body2Medium"
-              >
+                className={clsx(
+                  "text-center",
+                  item.href === "/" ? "w-[54px]" : "w-[86px]",
+                )}
+                type="Body2Medium">
                 {item.label}
               </Typography>
             </Link>

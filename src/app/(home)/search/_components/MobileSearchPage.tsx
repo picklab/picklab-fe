@@ -165,12 +165,12 @@ export default function MobileSearchPage({ search }: { search: string }) {
       <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
         <button
           type="button"
-          className="border border-gray-30 rounded-full cursor-pointer w-10 h-10 flex items-center justify-center shrink-0">
+          className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0">
           <Icon icon="filter" size={20} className="text-[#383838]" />
         </button>
         <button
           type="button"
-          className="bg-primary-50 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shrink-0"
+          className="bg-primary-50 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer shrink-0"
           onClick={() => {
             setSelectedCategory([]);
             setSelectedJobs([]);

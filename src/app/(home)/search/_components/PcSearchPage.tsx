@@ -32,15 +32,27 @@ function toTabCategory(activityType: string): SearchTab {
   return "activities";
 }
 
-export default function PcSearchPage({ search, isStorybook = false }: { search: string; isStorybook?: boolean }) {
+export default function PcSearchPage({
+  search,
+  isStorybook = false,
+}: {
+  search: string;
+  isStorybook?: boolean;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   // 카드별 북마크 상태(낙관적 업데이트): { [activityId]: boolean }
   const [bookmarkMap, setBookmarkMap] = useState<Record<string, boolean>>({});
   const decodedSearch = decodeURIComponent(search);
-  const { data: searchedItems, loading, error } = useSearchActivities(decodedSearch);
+  const {
+    data: searchedItems,
+    loading,
+    error,
+  } = useSearchActivities(decodedSearch);
   const requestedTab = (searchParams.get("tab") ?? "all") as SearchTab;
-  const activeTab = TAB_LIST.some((tab) => tab.value === requestedTab) ? requestedTab : "all";
+  const activeTab = TAB_LIST.some((tab) => tab.value === requestedTab)
+    ? requestedTab
+    : "all";
   const requestedPage = Number(searchParams.get("page") ?? "1");
 
   const tabCounts = useMemo(() => {
@@ -61,17 +73,31 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
 
   const visibleItems = useMemo(() => {
     if (activeTab === "all") return searchedItems;
-    return searchedItems.filter((item) => toTabCategory(item.activityType) === activeTab);
+    return searchedItems.filter(
+      (item) => toTabCategory(item.activityType) === activeTab,
+    );
   }, [activeTab, searchedItems]);
 
-  const totalPage = Math.max(1, Math.ceil(visibleItems.length / SEARCH_PAGE_SIZE));
-  const activePage = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPage) : 1;
-  const pagedItems = visibleItems.slice((activePage - 1) * SEARCH_PAGE_SIZE, activePage * SEARCH_PAGE_SIZE);
+  const totalPage = Math.max(
+    1,
+    Math.ceil(visibleItems.length / SEARCH_PAGE_SIZE),
+  );
+  const activePage = Number.isFinite(requestedPage)
+    ? Math.min(Math.max(requestedPage, 1), totalPage)
+    : 1;
+  const pagedItems = visibleItems.slice(
+    (activePage - 1) * SEARCH_PAGE_SIZE,
+    activePage * SEARCH_PAGE_SIZE,
+  );
 
   return (
-    <div className={clsx("w-[1100px] px-5 flex-col gap-10", isStorybook ? "flex" : "hidden pc:flex")}>
+    <div
+      className={clsx(
+        "w-[1100px] px-5 flex-col gap-3",
+        isStorybook ? "flex" : "hidden pc:flex",
+      )}>
       <div className="flex flex-col gap-6">
-        <Typography type="Headline1SemiBold">{decodedSearch} 검색 결과</Typography>
+        <Typography type="Headline1SemiBold">‘{decodedSearch}’ 검색</Typography>
         <div role="tablist" className="flex">
           {TAB_LIST.map((tab) => (
             <BoxTab
@@ -85,7 +111,7 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
             />
           ))}
         </div>
-        <Typography type="Body2Medium" className="text-gray-60">
+        <Typography type="Body2Medium" className="text-gray-60 pt-4">
           총 {visibleItems.length}건
         </Typography>
       </div>
@@ -112,34 +138,56 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
         <>
           <div className="grid grid-cols-4 gap-5">
             {pagedItems.map((item) => {
-              const jobs = item.jobs.filter((job): job is (typeof JOB_TYPES)[number] =>
-                JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
+              const jobs = item.jobs.filter(
+                (job): job is (typeof JOB_TYPES)[number] =>
+                  JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
               );
 
               // 낙관적 상태가 있으면 우선 적용, 없으면 백엔드 응답값 사용
-              const currentBookmarked = bookmarkMap[item.id] ?? (item.isBookmarked ?? false);
+              const currentBookmarked =
+                bookmarkMap[item.id] ?? item.isBookmarked ?? false;
 
               return (
                 <Card
                   key={item.id}
                   imageUrl={item.thumbnailImage || "/imgs/cat.jpg"}
-                  chipText={(item.activityType as "대외활동" | "강연/세미나" | "교육" | "공모전/해커톤") || "대외활동"}
+                  chipText={
+                    (item.activityType as
+                      | "대외활동"
+                      | "강연/세미나"
+                      | "교육"
+                      | "공모전/해커톤") || "대외활동"
+                  }
                   badgeText={item.registrationPeriod || "D-01"}
                   badgeVariant="default"
                   isBookmarked={currentBookmarked}
                   companyName={item.organizer}
                   title={item.title}
-                  jobs={(jobs.length > 0 ? jobs : ["기획"]) as ("기획" | "디자인" | "개발" | "마케팅" | "AI")[]}
+                  jobs={
+                    (jobs.length > 0 ? jobs : ["기획"]) as (
+                      | "기획"
+                      | "디자인"
+                      | "개발"
+                      | "마케팅"
+                      | "AI"
+                    )[]
+                  }
                   onBookmarkClick={async () => {
                     const prev = currentBookmarked;
                     // 낙관적 업데이트: 즉시 상태 반영
                     setBookmarkMap((m) => ({ ...m, [item.id]: !prev }));
                     try {
-                      await toggleBookmark({ activityId: item.id, isBookmarked: prev });
+                      await toggleBookmark({
+                        activityId: item.id,
+                        isBookmarked: prev,
+                      });
                     } catch (error) {
                       // 실패 시 롤백
                       setBookmarkMap((m) => ({ ...m, [item.id]: prev }));
-                      const message = error instanceof Error ? error.message : "북마크 처리 중 오류가 발생했습니다.";
+                      const message =
+                        error instanceof Error
+                          ? error.message
+                          : "북마크 처리 중 오류가 발생했습니다.";
                       window.alert(message);
                     }
                   }}
@@ -149,7 +197,9 @@ export default function PcSearchPage({ search, isStorybook = false }: { search: 
             })}
           </div>
 
-          {totalPage > 1 && <Pagination totalPage={totalPage} activePage={activePage} />}
+          {totalPage > 1 && (
+            <Pagination totalPage={totalPage} activePage={activePage} />
+          )}
         </>
       )}
     </div>
