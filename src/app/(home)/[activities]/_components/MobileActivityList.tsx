@@ -315,7 +315,6 @@ export default function MobileActivityList({
             dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
-              { label: "모두", value: "모두" },
               { label: "서울/인천", value: "서울/인천" },
               { label: "경기/강원", value: "경기/강원" },
               { label: "대전/세종/충남", value: "대전/세종/충남" },
@@ -340,7 +339,6 @@ export default function MobileActivityList({
             dropdownClassName="!w-[128px]"
             className="!rounded-full !w-[128px] !h-[40px] !px-3 [&_span]:text-[15px] [&_span]:font-medium [&_span]:text-[#101828]"
             options={[
-              { label: "모두", value: "모두" },
               { label: "기획", value: "기획" },
               { label: "디자인", value: "디자인" },
               { label: "개발", value: "개발" },

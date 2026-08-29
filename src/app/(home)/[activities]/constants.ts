@@ -35,7 +35,6 @@ export const ACTIVITY_FILTERS = [
   {
     title: "모집지역",
     options: [
-      "모두",
       "서울/인천",
       "경기/강원",
       "대전/세종/충남",
@@ -47,7 +46,7 @@ export const ACTIVITY_FILTERS = [
   },
   {
     title: "관련직무",
-    options: ["모두", "기획", "디자인", "개발", "마케팅", "AI"],
+    options: ["기획", "디자인", "개발", "마케팅", "AI"],
   },
 ];
 
