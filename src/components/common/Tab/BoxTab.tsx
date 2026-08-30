@@ -24,17 +24,19 @@ const BoxTab = ({
   className,
   ...props
 }: BoxTabProps) => {
-  const activeTypoType = active ? "Headline1SemiBold" : "Body1Medium";
+  // Figma: 라벨은 17px Medium(활성·비활성 동일), 숫자는 20px(활성 SemiBold / 비활성 Medium)
+  const notiType = active ? "Heading2Semibold" : "Heading2Medium";
 
   return (
     <Link
       href={href}
       className={clsx(
-        // 구분선은 각 박스의 border-r 하나로 처리(겹침 없음 → 서브픽셀 삐짐 없음). 그룹 왼쪽 끝은 first:border-l.
-        "box-tab relative box-border flex h-[90px] w-full flex-col items-center justify-center border-y-2 border-r-2 border-gray-30 bg-white text-gray-50 first:border-l-2",
-        // 활성 강조는 outline(레이아웃에 영향 없이 박스 위에 그려져 이웃과 겹치거나 삐지지 않음).
-        active &&
-          "z-10 text-primary-50 outline outline-2 -outline-offset-2 outline-primary-50",
+        // 각 경계에 border를 하나만 둔다: 왼쪽 border로 구분선(겹침 없음 → 이중선·삐짐 없음),
+        // 마지막 박스만 오른쪽 border로 그룹 끝을 닫는다.
+        "box-tab relative box-border flex h-[90px] w-full flex-col items-center justify-center border-y-2 border-l-2 border-gray-30 bg-white text-gray-50 last:border-r-2",
+        // 활성 박스는 자기 사방(위/아래/왼쪽 + 오른쪽)을 초록 border로. 오른쪽도 자기 border라야
+        // 모서리(border-y와 만나는 지점)까지 초록으로 꽉 찬다. 다음 박스의 왼쪽 border는 부모에서 제거해 이중선 방지.
+        active && "text-primary-50 !border-primary-50 border-r-2",
         className,
       )}
       role="tab"
@@ -43,8 +45,8 @@ const BoxTab = ({
       tabIndex={active ? 0 : -1}
       id={id}
       {...props}>
-      <Typography type={activeTypoType}>{label}</Typography>
-      <Typography type={activeTypoType}>{`+${notiNumber}`}</Typography>
+      <Typography type="Headline2Medium">{label}</Typography>
+      <Typography type={notiType}>{`+${notiNumber}`}</Typography>
     </Link>
   );
 };

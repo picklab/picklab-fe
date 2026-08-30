@@ -62,7 +62,11 @@ const TabView = ({ items, searchParams }: TabViewProps) => {
   return (
     <>
       {/* 탭 리스트 렌더링 */}
-      <div role="tablist" aria-orientation="horizontal" className="flex cursor-pointer">
+      <div
+        role="tablist"
+        aria-orientation="horizontal"
+        className="flex cursor-pointer [&>[aria-selected=true]+*]:!border-l-0">
+
         {items.map((item) => {
           const commonProps = {
             id: item.id,

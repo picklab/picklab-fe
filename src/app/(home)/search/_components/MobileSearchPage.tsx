@@ -314,16 +314,20 @@ function ArchiveMenu({
   tabCounts: Record<MenuId, number>;
 }) {
   return (
-    <div className="relative flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar before:absolute before:left-0 before:right-0 before:bottom-0 before:h-[1.5px] before:bg-gray-30 before:content-['']">
+    <div className="relative flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar">
+      {/* 하단 베이스라인: 활성 초록(3px)과 동일한 3px 트랙 안에 회색 1.5px를 세로 중앙 배치 */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-[3px] items-center">
+        <div className="h-[1.5px] w-full bg-gray-30" />
+      </div>
       {MENU_ITEMS.map((item) => (
         <Link
           key={item.id}
           href={`/search/${search}?tab=${item.id}`}
           id={item.id}
           className={clsx(
-            "relative box-border flex shrink-0 justify-center items-center",
+            "relative z-10 box-border flex shrink-0 justify-center items-center",
             activeMenu === item.id &&
-              "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:translate-y-1/2 after:bg-primary-50 after:content-['']",
+              "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-primary-50 after:content-['']",
           )}>
           <Typography className="w-[86px] text-center" type="Body2Medium">
             {item.label}

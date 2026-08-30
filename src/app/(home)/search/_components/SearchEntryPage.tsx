@@ -40,9 +40,12 @@ export default function SearchEntryPage() {
           keyword: trimmedKeyword,
           limit: "10",
         });
-        const response = await fetch(`/api/search/autocomplete?${params.toString()}`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          `/api/search/autocomplete?${params.toString()}`,
+          {
+            signal: controller.signal,
+          },
+        );
 
         if (!response.ok) {
           setSuggestions([]);
@@ -105,21 +108,24 @@ export default function SearchEntryPage() {
   return (
     <>
       <section className="mobile:flex pc:hidden flex-col pb-[113px]">
-        <div className="pt-[13px]">
-          <Search
-            status="default"
-            wrapperClassName="w-full"
-            className="!w-full !rounded-[6px] !border-[#00BC7D] hover:!border-[#00BC7D] active:!border-[#00BC7D] focus:!border-[#00BC7D]"
-            iconClassName="!text-[#00BC7D]"
-            placeholder="찾고 싶은 활동을 검색해보세요"
-            autoFocus
-            onChange={handleChange}
-            optionGroupProps={optionGroupProps}
-          />
-        </div>
+        <Search
+          status="default"
+          wrapperClassName="w-full"
+          className="!w-full !rounded-[6px] !border-[#00BC7D] hover:!border-[#00BC7D] active:!border-[#00BC7D] focus:!border-[#00BC7D]"
+          iconClassName="!text-[#00BC7D]"
+          placeholder="찾고 싶은 활동을 검색해보세요"
+          autoFocus
+          onChange={handleChange}
+          optionGroupProps={optionGroupProps}
+        />
+
         {showHistory && (
           <div className="mt-[31.8px] flex flex-col gap-6">
-            <RecentSearchHistory onSelect={goSearch} alwaysShowHeader className="w-full" />
+            <RecentSearchHistory
+              onSelect={goSearch}
+              alwaysShowHeader
+              className="w-full"
+            />
             <div className="h-px w-full bg-gray-20" />
             <PopularSearchKeywords />
           </div>

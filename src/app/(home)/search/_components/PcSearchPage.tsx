@@ -97,8 +97,10 @@ export default function PcSearchPage({
         isStorybook ? "flex" : "hidden pc:flex",
       )}>
       <div className="flex flex-col gap-6">
-        <Typography type="Headline1SemiBold">‘{decodedSearch}’ 검색</Typography>
-        <div role="tablist" className="flex">
+        <Typography type="Heading1Semibold">‘{decodedSearch}’ 검색</Typography>
+        <div
+          role="tablist"
+          className="flex [&>[aria-selected=true]+*]:!border-l-0">
           {TAB_LIST.map((tab) => (
             <BoxTab
               key={tab.value}
@@ -136,7 +138,7 @@ export default function PcSearchPage({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid grid-cols-4 gap-[21px]">
             {pagedItems.map((item) => {
               const jobs = item.jobs.filter(
                 (job): job is (typeof JOB_TYPES)[number] =>

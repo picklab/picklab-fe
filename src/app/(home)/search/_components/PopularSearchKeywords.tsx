@@ -111,7 +111,7 @@ export default function PopularSearchKeywords() {
           인기 검색어
         </span>
         {aggregatedAt && (
-          <span className="text-[11px] text-gray-50">{aggregatedAt}</span>
+          <span className="text-[12px] font-medium text-gray-50">{aggregatedAt}</span>
         )}
       </div>
       {keywords.length === 0 ? (
