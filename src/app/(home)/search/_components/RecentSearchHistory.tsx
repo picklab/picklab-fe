@@ -63,7 +63,7 @@ export default function RecentSearchHistory({
           type="button"
           onClick={handleDeleteAll}
           disabled={pending}
-          className="text-[11px] text-gray-50 disabled:opacity-50"
+          className="text-[12px] font-medium text-gray-50 disabled:opacity-50"
         >
           전체삭제
         </button>
