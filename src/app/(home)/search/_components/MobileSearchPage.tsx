@@ -9,10 +9,8 @@ import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Card from "@/components/common/Card/mobile/Card";
 import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
-import Select from "@/components/common/Select/Select";
 import Icon from "@/components/common/Icon/Icon";
 import useSearchActivities from "@/hooks/useSearchActivities";
-import { JOB_TYPE_OPTIONS } from "@/constants/filters";
 
 const MENU_ITEMS = [
   { id: "all", label: "전체" },
@@ -21,28 +19,18 @@ const MENU_ITEMS = [
   { id: "education", label: "교육" },
   { id: "contest", label: "공모전/해커톤" },
 ] as const;
+// 전체 탭에서 카테고리별 미리보기로 노출할 섹션(전체 제외)
+const CATEGORY_SECTIONS = MENU_ITEMS.filter((item) => item.id !== "all");
 const JOB_TYPES = ["기획", "디자인", "개발", "마케팅", "AI"] as const;
+const PREVIEW_COUNT = 3;
 
 type MenuId = (typeof MENU_ITEMS)[number]["id"];
-
-function parseDate(value?: string | null): number {
-  if (!value) return 0;
-  const timestamp = new Date(value).getTime();
-  return Number.isNaN(timestamp) ? 0 : timestamp;
-}
 
 function toTabCategory(activityType: string): MenuId {
   if (activityType === "강연/세미나") return "seminar";
   if (activityType === "교육") return "education";
   if (activityType === "공모전/해커톤") return "contest";
   return "activities";
-}
-
-function getDeadlineRank(badgeText: string): number {
-  if (badgeText === "마감") return Number.NEGATIVE_INFINITY;
-  if (badgeText === "D-Day") return 0;
-  if (badgeText.startsWith("D-")) return Number(badgeText.slice(2));
-  return 999;
 }
 
 export default function MobileSearchPage({ search }: { search: string }) {
@@ -57,9 +45,6 @@ export default function MobileSearchPage({ search }: { search: string }) {
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>(
     {},
   );
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
-  const [sort, setSort] = useState<string>("latest");
   const requestedTab = (searchParams.get("tab") ?? "all") as MenuId;
   const activeMenu = MENU_ITEMS.some((item) => item.id === requestedTab)
     ? requestedTab
@@ -81,57 +66,16 @@ export default function MobileSearchPage({ search }: { search: string }) {
     return counts;
   }, [searchedItems]);
 
-  const visibleItems = useMemo(() => {
-    const tabFiltered =
+  // 개별 탭: 해당 카테고리만 노출 (필터/정렬은 Figma에 없어 제거)
+  const visibleItems = useMemo(
+    () =>
       activeMenu === "all"
         ? searchedItems
         : searchedItems.filter(
             (item) => toTabCategory(item.activityType) === activeMenu,
-          );
-
-    const filtered = tabFiltered.filter((item) => {
-      const matchesCategory =
-        selectedCategory.length === 0 ||
-        selectedCategory.includes("all") ||
-        selectedCategory.includes(toTabCategory(item.activityType));
-
-      const matchesJob =
-        selectedJobs.length === 0 ||
-        item.jobs.some((job) =>
-          selectedJobs.includes(
-            job === "기획"
-              ? "planning"
-              : job === "디자인"
-                ? "design"
-                : job === "개발"
-                  ? "development"
-                  : job === "마케팅"
-                    ? "marketing"
-                    : "ai",
           ),
-        );
-
-      return matchesCategory && matchesJob;
-    });
-
-    return [...filtered].sort((a, b) => {
-      if (sort === "soon") {
-        return (
-          getDeadlineRank(a.registrationPeriod) -
-          getDeadlineRank(b.registrationPeriod)
-        );
-      }
-      if (sort === "remain") {
-        return (
-          getDeadlineRank(b.registrationPeriod) -
-          getDeadlineRank(a.registrationPeriod)
-        );
-      }
-      const aDate = parseDate(a.registrationPeriod);
-      const bDate = parseDate(b.registrationPeriod);
-      return bDate - aDate;
-    });
-  }, [activeMenu, searchedItems, selectedCategory, selectedJobs, sort]);
+    [activeMenu, searchedItems],
+  );
 
   const handleBookmarkToggle = async (activityId: string) => {
     const current = bookmarkedMap[activityId] ?? false;
@@ -154,151 +98,114 @@ export default function MobileSearchPage({ search }: { search: string }) {
     }
   };
 
+  const renderCard = (item: (typeof searchedItems)[number]) => {
+    const activityId = extractActivityId(item.detailLink);
+    const isBookmarked = activityId
+      ? (bookmarkedMap[activityId] ?? false)
+      : false;
+    const jobs = item.jobs.filter((job): job is (typeof JOB_TYPES)[number] =>
+      JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
+    );
+
+    return (
+      <Card
+        imageUrl={item.thumbnailImage || "/imgs/cat.jpg"}
+        chipText={
+          (item.activityType as
+            | "대외활동"
+            | "강연/세미나"
+            | "교육"
+            | "공모전/해커톤") || "대외활동"
+        }
+        badgeText={item.registrationPeriod || "D-01"}
+        badgeVariant="default"
+        isBookmarked={isBookmarked}
+        companyName={item.organizer}
+        title={item.title}
+        jobs={jobs.length > 0 ? jobs : ["기획"]}
+        onCardClick={() => router.push(item.detailLink)}
+        onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+      />
+    );
+  };
+
+  const stateBox = (message: string) => (
+    <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
+      <Typography type="Body2Medium" className="text-gray-50">
+        {message}
+      </Typography>
+    </div>
+  );
+
   return (
     <div className="mobile:flex pc:hidden flex-col gap-5">
-      <Typography type="Heading1Semibold">‘{decodedSearch}’ 검색</Typography>
+      <Typography type="Heading1Semibold" className="text-gray-80">
+        ‘{decodedSearch}’ 검색
+      </Typography>
       <ArchiveMenu
         activeMenu={activeMenu}
         search={search}
         tabCounts={tabCounts}
       />
-      <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
-        <button
-          type="button"
-          className="border border-gray-30 rounded-full cursor-pointer w-8 h-8 flex items-center justify-center shrink-0">
-          <Icon icon="filter" size={20} className="text-[#383838]" />
-        </button>
-        <button
-          type="button"
-          className="bg-primary-50 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer shrink-0"
-          onClick={() => {
-            setSelectedCategory([]);
-            setSelectedJobs([]);
-          }}>
-          <Icon icon="largeRefresh" color="white" size={20} />
-        </button>
-        <Select
-          size="xsmall"
-          width="xsmall"
-          type="checkbox"
-          functionOptionType="reset"
-          wrapperClassName="!w-[98px]"
-          portalDropdown
-          dropdownClassName="!w-[160px]"
-          className="!rounded-full !w-[98px] !h-[34px] [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
-          placeholder="전체"
-          options={[
-            { label: "전체", value: "all" },
-            { label: "대외활동", value: "activities" },
-            { label: "강연/세미나", value: "seminar" },
-            { label: "교육", value: "education" },
-            { label: "공모전/해커톤", value: "contest" },
-          ]}
-          value={selectedCategory}
-          onChange={(value) =>
-            setSelectedCategory(Array.isArray(value) ? value : [])
-          }
-        />
-        <Select
-          size="xsmall"
-          width="xsmall"
-          type="checkbox"
-          functionOptionType="reset"
-          wrapperClassName="!w-[111px]"
-          portalDropdown
-          dropdownClassName="!w-[172px]"
-          className="!rounded-full !w-[111px] !h-[34px] !px-3 [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
-          placeholder="직무유형"
-          options={JOB_TYPE_OPTIONS}
-          value={selectedJobs}
-          onChange={(value) =>
-            setSelectedJobs(Array.isArray(value) ? value : [])
-          }
-        />
-      </div>
-      <Typography type="Body2Medium" className="text-gray-60">
-        총 {visibleItems.length}건
-      </Typography>
-
-      <div className="flex items-center justify-between">
-        <Typography type="Body2Medium" className="text-gray-60">
-          {MENU_ITEMS.find((item) => item.id === activeMenu)?.label ?? "전체"}{" "}
-          {visibleItems.length}건
-        </Typography>
-        <Select
-          size="xsmall"
-          width="xsmall"
-          placeholder="최신순"
-          options={[
-            { label: "최신순", value: "latest" },
-            { label: "마감 임박순", value: "soon" },
-            { label: "여유 있는순", value: "remain" },
-          ]}
-          value={sort}
-          onChange={(value) =>
-            setSort(typeof value === "string" ? value : "latest")
-          }
-          className="!w-auto !min-w-[88px] !h-[34px] !border-none !px-0 [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
-          wrapperClassName="!w-auto"
-          dropdownClassName="!w-[124px]"
-          portalDropdown
-        />
-      </div>
 
       {loading ? (
-        <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
-          <Typography type="Body2Medium" className="text-gray-50">
-            검색 결과를 불러오는 중입니다.
-          </Typography>
-        </div>
+        stateBox("검색 결과를 불러오는 중입니다.")
       ) : error ? (
-        <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
-          <Typography type="Body2Medium" className="text-gray-50">
-            검색 결과를 불러오지 못했습니다.
-          </Typography>
-        </div>
-      ) : visibleItems.length === 0 ? (
-        <div className="flex h-[220px] items-center justify-center rounded-lg bg-gray-5">
-          <Typography type="Body2Medium" className="text-gray-50">
-            검색 결과가 없습니다.
-          </Typography>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-4">
-          {visibleItems.map((item) => {
-            const activityId = extractActivityId(item.detailLink);
-            const isBookmarked = activityId
-              ? (bookmarkedMap[activityId] ?? false)
-              : false;
-            const jobs = item.jobs.filter(
-              (job): job is (typeof JOB_TYPES)[number] =>
-                JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
-            );
+        stateBox("검색 결과를 불러오지 못했습니다.")
+      ) : activeMenu === "all" ? (
+        searchedItems.length === 0 ? (
+          stateBox("검색 결과가 없습니다.")
+        ) : (
+          // 전체 탭: 카테고리별 미리보기(최대 3개) + 모두 보기
+          <div className="flex flex-col gap-10">
+            {CATEGORY_SECTIONS.map((cat) => {
+              const catItems = searchedItems.filter(
+                (item) => toTabCategory(item.activityType) === cat.id,
+              );
+              if (catItems.length === 0) return null;
 
-            return (
-              <Card
-                key={item.id}
-                imageUrl={item.thumbnailImage || "/imgs/cat.jpg"}
-                chipText={
-                  (item.activityType as
-                    | "대외활동"
-                    | "강연/세미나"
-                    | "교육"
-                    | "공모전/해커톤") || "대외활동"
-                }
-                badgeText={item.registrationPeriod || "D-01"}
-                badgeVariant="default"
-                isBookmarked={isBookmarked}
-                companyName={item.organizer}
-                title={item.title}
-                jobs={jobs.length > 0 ? jobs : ["기획"]}
-                onCardClick={() => router.push(item.detailLink)}
-                onBookmarkClick={() =>
-                  activityId && handleBookmarkToggle(activityId)
-                }
-              />
-            );
-          })}
+              return (
+                <section key={cat.id} className="flex flex-col gap-3">
+                  <Typography type="Body1Medium" className="text-gray-60">
+                    {cat.label} {catItems.length}건
+                  </Typography>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="flex w-full gap-[14px] overflow-x-auto hide-scrollbar">
+                      {catItems.slice(0, PREVIEW_COUNT).map((item) => (
+                        <div key={item.id} className="shrink-0">
+                          {renderCard(item)}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        router.push(`/search/${search}?tab=${cat.id}`)
+                      }
+                      className="flex h-10 items-center justify-center gap-1 rounded-full bg-gray-10 py-2 pl-4 pr-3">
+                      <Typography type="Body2Medium" className="text-gray-50">
+                        모두 보기
+                      </Typography>
+                      <Icon
+                        icon="chevronRight"
+                        size={20}
+                        className="text-gray-50"
+                      />
+                    </button>
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        )
+      ) : visibleItems.length === 0 ? (
+        stateBox("검색 결과가 없습니다.")
+      ) : (
+        // 개별 탭: 해당 카테고리 전체 2열 grid
+        <div className="grid grid-cols-2 gap-4">
+          {visibleItems.map((item) => (
+            <div key={item.id}>{renderCard(item)}</div>
+          ))}
         </div>
       )}
     </div>
@@ -308,33 +215,44 @@ export default function MobileSearchPage({ search }: { search: string }) {
 function ArchiveMenu({
   activeMenu,
   search,
+  tabCounts,
 }: {
   activeMenu: MenuId;
   search: string;
   tabCounts: Record<MenuId, number>;
 }) {
   return (
-    <div className="w-full h-[35px] overflow-x-auto hide-scrollbar">
-      <div className="relative flex h-full w-max min-w-full flex-row">
-        {/* 하단 베이스라인: 3px 트랙 안 1.5px 회색 세로 중앙. 스크롤 콘텐츠 전체 폭(w-max) 기준이라 끝까지 채워짐 */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-[3px] items-center">
-          <div className="h-[1.5px] w-full bg-gray-30" />
-        </div>
-        {MENU_ITEMS.map((item) => (
-          <Link
-            key={item.id}
-            href={`/search/${search}?tab=${item.id}`}
-            id={item.id}
-            className={clsx(
-              "relative z-10 box-border flex shrink-0 justify-center items-center",
-              activeMenu === item.id &&
-                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-primary-50 after:content-['']",
-            )}>
-            <Typography className="w-[86px] text-center" type="Body2Medium">
-              {item.label}
-            </Typography>
-          </Link>
-        ))}
+    <div className="w-full overflow-x-auto hide-scrollbar">
+      <div className="flex w-max min-w-full">
+        {MENU_ITEMS.map((item) => {
+          const isActive = activeMenu === item.id;
+          return (
+            <Link
+              key={item.id}
+              href={`/search/${search}?tab=${item.id}`}
+              id={item.id}
+              className="flex shrink-0 flex-col gap-2">
+              <div className="flex items-center justify-center px-9">
+                <Typography
+                  type="Body2Semibold"
+                  className="whitespace-nowrap text-gray-90">
+                  {item.label} {tabCounts[item.id]}
+                </Typography>
+              </div>
+              {/* 3px 트랙 안에서 세로 중앙 정렬 → 활성 3px / 비활성 1.5px의 세로 중심이 일치 */}
+              <div className="flex h-[3px] w-full items-center">
+                <div
+                  className={clsx(
+                    "w-full",
+                    isActive
+                      ? "h-[3px] rounded-full bg-primary-50"
+                      : "h-[1.5px] bg-gray-30",
+                  )}
+                />
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

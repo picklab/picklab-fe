@@ -49,28 +49,36 @@ const MobileFilterSheet = ({ isOpen, onClose, selectedFilters, setSelectedFilter
     <BottomSheet isOpen={isOpen} onClose={onClose}>
       <div className="flex h-[460px] flex-col px-5 pb-[42px] pt-4">
         {/* 카테고리 탭 (초록 밑줄) */}
-        <div className="relative flex justify-between">
-          {/* 하단 베이스라인: 활성 초록(3px)과 동일한 3px 트랙 안에 회색 1.5px를 세로 중앙 배치.
-              서브픽셀(bottom-0.75px)이 기기에서 반올림돼 안 먹히므로 flex items-center로 중앙정렬. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[3px] items-center">
-            <div className="h-[1.5px] w-full bg-gray-30" />
-          </div>
+        {/* 탭: 주최기관/참여대상/활동분야 flex-1(균등) + 지역/직무 w-56 고정. 밑줄은 탭 폭 전체 */}
+        <div className="flex">
           {ACTIVITY_FILTERS.map((filter) => {
             const isActive = filter.title === currentTab;
+            const isShort =
+              filter.title === '모집지역' || filter.title === '관련직무';
             return (
               <button
                 key={filter.title}
                 type="button"
                 onClick={() => setCurrentTab(filter.title)}
                 className={clsx(
-                  'relative z-10 pb-2.5',
-                  isActive &&
-                    "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-[#00BC7D] after:content-['']",
+                  'flex flex-col gap-2',
+                  isShort ? 'w-[56px] shrink-0' : 'flex-1 min-w-0',
                 )}
               >
-                <span className="text-[15px] font-semibold text-gray-90">
+                <span className="text-center text-[15px] font-semibold text-gray-90">
                   {TAB_LABELS[filter.title] ?? filter.title}
                 </span>
+                {/* 3px 트랙 안 세로 중앙: 활성 3px(초록) / 비활성 1.5px(회색) */}
+                <div className="flex h-[3px] w-full items-center">
+                  <div
+                    className={clsx(
+                      'w-full',
+                      isActive
+                        ? 'h-[3px] rounded-full bg-primary-50'
+                        : 'h-[1.5px] bg-gray-30',
+                    )}
+                  />
+                </div>
               </button>
             );
           })}
