@@ -155,8 +155,8 @@ export default function MobileSearchPage({ search }: { search: string }) {
   };
 
   return (
-    <div className="mobile:flex pc:hidden flex-col gap-6">
-      <Typography type="Heading1Semibold">{decodedSearch} 검색</Typography>
+    <div className="mobile:flex pc:hidden flex-col gap-5">
+      <Typography type="Heading1Semibold">‘{decodedSearch}’ 검색</Typography>
       <ArchiveMenu
         activeMenu={activeMenu}
         search={search}
@@ -314,26 +314,28 @@ function ArchiveMenu({
   tabCounts: Record<MenuId, number>;
 }) {
   return (
-    <div className="relative flex flex-row w-full h-[35px] overflow-x-auto hide-scrollbar">
-      {/* 하단 베이스라인: 활성 초록(3px)과 동일한 3px 트랙 안에 회색 1.5px를 세로 중앙 배치 */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-[3px] items-center">
-        <div className="h-[1.5px] w-full bg-gray-30" />
+    <div className="w-full h-[35px] overflow-x-auto hide-scrollbar">
+      <div className="relative flex h-full w-max min-w-full flex-row">
+        {/* 하단 베이스라인: 3px 트랙 안 1.5px 회색 세로 중앙. 스크롤 콘텐츠 전체 폭(w-max) 기준이라 끝까지 채워짐 */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-[3px] items-center">
+          <div className="h-[1.5px] w-full bg-gray-30" />
+        </div>
+        {MENU_ITEMS.map((item) => (
+          <Link
+            key={item.id}
+            href={`/search/${search}?tab=${item.id}`}
+            id={item.id}
+            className={clsx(
+              "relative z-10 box-border flex shrink-0 justify-center items-center",
+              activeMenu === item.id &&
+                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-primary-50 after:content-['']",
+            )}>
+            <Typography className="w-[86px] text-center" type="Body2Medium">
+              {item.label}
+            </Typography>
+          </Link>
+        ))}
       </div>
-      {MENU_ITEMS.map((item) => (
-        <Link
-          key={item.id}
-          href={`/search/${search}?tab=${item.id}`}
-          id={item.id}
-          className={clsx(
-            "relative z-10 box-border flex shrink-0 justify-center items-center",
-            activeMenu === item.id &&
-              "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-primary-50 after:content-['']",
-          )}>
-          <Typography className="w-[86px] text-center" type="Body2Medium">
-            {item.label}
-          </Typography>
-        </Link>
-      ))}
     </div>
   );
 }

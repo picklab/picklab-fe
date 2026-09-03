@@ -42,7 +42,7 @@ export default function MobileActivites({
         selectedFilters={selectedFilters}
         setSelectedFilters={setSelectedFilters}
       />
-      <div className="py-[13px]">
+      <div className="pb-5">
         <Search
           status="default"
           wrapperClassName="w-full"

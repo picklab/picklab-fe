@@ -93,7 +93,7 @@ export default function PcSearchPage({
   return (
     <div
       className={clsx(
-        "w-[1100px] px-5 flex-col gap-3",
+        "w-[1100px] px-5 flex-col gap-3 pt-10",
         isStorybook ? "flex" : "hidden pc:flex",
       )}>
       <div className="flex flex-col gap-6">
