@@ -364,7 +364,7 @@ export function useReviewWriteForm({
   // 현재 스텝에서 '다음' 진행 가능 여부(비활성 처리용). 부작용 없는 순수 파생값.
   const canProceed =
     step === 1
-      ? Boolean(state.jobGroup && state.jobDetail)
+      ? Boolean(activity.title && state.jobGroup && state.jobDetail)
       : step === 2
         ? Boolean(state.overallScore && state.infoScore && state.difficultyScore && state.benefitScore)
         : true;
