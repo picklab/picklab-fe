@@ -197,12 +197,12 @@ export function RatingRadio({ question, labels, value, onChange, error }: Rating
               <span
                 className={clsx(
                   'flex size-12 items-center justify-center rounded-full border-2 transition-colors pc:size-[58px]',
-                  selected ? 'border-[#F7AFA1] bg-[#F7AFA1]' : 'border-transparent bg-gray-5',
+                  selected ? 'border-primary-10 bg-primary-10' : 'border-transparent bg-gray-5',
                 )}
               >
                 {/* 미선택도 회색 내부 점 노출(도넛형) — figma 2579-35108 */}
                 <span
-                  className={clsx('size-6 rounded-full pc:size-7', selected ? 'bg-[#DE3412]' : 'bg-gray-20')}
+                  className={clsx('size-6 rounded-full pc:size-7', selected ? 'bg-primary-60' : 'bg-gray-20')}
                 />
               </span>
               <Typography type="Body4Regular" className={selected ? 'text-primary-60' : 'text-gray-50'}>
