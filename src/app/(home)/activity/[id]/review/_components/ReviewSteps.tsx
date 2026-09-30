@@ -252,7 +252,6 @@ export function Step3({ form }: { form: UseReviewWriteFormReturn }) {
         onChange={(v) => setField('summary', v)}
         max={limits.SUMMARY_MAX}
         counterMax={limits.SUMMARY_MAX}
-        enforceMax={false}
         error={errors.summary}
       />
       <ReviewTextArea
