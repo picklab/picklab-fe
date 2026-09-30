@@ -361,13 +361,24 @@ export function useReviewWriteForm({
     [submitting, activityId, participationId, state, router, mode, reviewId, initialFileUrl, onSuccess],
   );
 
-  // 현재 스텝에서 '다음' 진행 가능 여부(비활성 처리용). 부작용 없는 순수 파생값.
+  // 현재 스텝에서 '다음'/제출 진행 가능 여부(버튼 비활성 처리용). 부작용 없는 순수 파생값.
+  // step 3은 validateStep3와 동일 조건(필수항목: 한 줄 평·장점·단점·직무연관성, tips는 선택)을 부작용 없이 판정.
   const canProceed =
     step === 1
       ? Boolean(activity.title && state.jobGroup && state.jobDetail)
       : step === 2
         ? Boolean(state.overallScore && state.infoScore && state.difficultyScore && state.benefitScore)
-        : true;
+        : Boolean(
+            state.summary.trim().length >= 1 &&
+              state.summary.length <= SUMMARY_MAX &&
+              state.strength.length >= TEXT_MIN &&
+              state.strength.length <= TEXT_MAX &&
+              state.weakness.length >= TEXT_MIN &&
+              state.weakness.length <= TEXT_MAX &&
+              (state.tips.length === 0 ||
+                (state.tips.length >= TEXT_MIN && state.tips.length <= TEXT_MAX)) &&
+              state.jobRelevanceScore,
+          );
 
   return {
     mode,

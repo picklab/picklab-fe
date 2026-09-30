@@ -136,9 +136,14 @@ export default function ReviewWriteBody({
                   variant="gray"
                   wide
                   onClick={handleRegisterWithoutCert}
-                  disabled={submitting}
+                  disabled={submitting || !canProceed}
                 />
-                <FooterButton label="인증하기" variant="green" onClick={handleOpenUpload} disabled={submitting} />
+                <FooterButton
+                  label="인증하기"
+                  variant="green"
+                  onClick={handleOpenUpload}
+                  disabled={submitting || !canProceed}
+                />
               </>
             )}
           </div>
