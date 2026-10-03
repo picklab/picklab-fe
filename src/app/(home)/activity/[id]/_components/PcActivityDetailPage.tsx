@@ -158,9 +158,18 @@ const ProgressRow = ({ label, value }: { label: string; value: number }) => (
   </div>
 );
 
-const JobFilterChip = ({ label, isActive = false }: { label: string; isActive?: boolean }) => (
+const JobFilterChip = ({
+  label,
+  isActive = false,
+  onClick,
+}: {
+  label: string;
+  isActive?: boolean;
+  onClick?: () => void;
+}) => (
   <button
     type="button"
+    onClick={onClick}
     className={clsx(
       'h-[26px] rounded-full border px-3 inline-flex items-center justify-center',
       isActive ? 'border-primary-50 bg-primary-50 text-gray-0' : 'border-gray-40 bg-gray-0 text-gray-90',
@@ -349,7 +358,20 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
   };
   const { data: satisfaction } = useReviewSatisfactionStats(reviewActivityId, { enabled: reviewsEnabled });
   const { data: jobRelevance } = useReviewJobRelevanceStats(reviewActivityId, { enabled: reviewsEnabled });
-  const satisfactionSummary = useMemo(() => aggregateSatisfaction(satisfaction), [satisfaction]);
+  // 만족도 직무 칩: 리뷰가 존재하는 job_detail만 노출, null = 전체
+  // (리뷰가 없으면 API가 job_detail null 항목 1건을 내려주므로 제외)
+  const [satisfactionJob, setSatisfactionJob] = useState<string | null>(null);
+  const satisfactionJobs = useMemo(
+    () => Array.from(new Set(satisfaction.map((it) => it.job_detail).filter(Boolean))),
+    [satisfaction],
+  );
+  const satisfactionSummary = useMemo(
+    () =>
+      aggregateSatisfaction(
+        satisfactionJob ? satisfaction.filter((it) => it.job_detail === satisfactionJob) : satisfaction,
+      ),
+    [satisfaction, satisfactionJob],
+  );
   const reviews = reviewList?.items ?? [];
   const reviewCount = reviewList?.total_elements ?? 0;
   const reviewTotalPages = reviewList?.total_pages ?? 0;
@@ -605,8 +627,18 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
                   활동 만족도 평가
                 </Typography>
                 <div className="flex gap-2">
-                  {['전체', 'PM/PO', '프론트엔드', '머신러닝 엔지니어'].map((item, index) => (
-                    <JobFilterChip key={item} label={item} isActive={index === 0} />
+                  <JobFilterChip
+                    label="전체"
+                    isActive={satisfactionJob === null}
+                    onClick={() => setSatisfactionJob(null)}
+                  />
+                  {satisfactionJobs.map((job) => (
+                    <JobFilterChip
+                      key={job}
+                      label={jobDetailLabel(job)}
+                      isActive={satisfactionJob === job}
+                      onClick={() => setSatisfactionJob(job)}
+                    />
                   ))}
                 </div>
               </div>

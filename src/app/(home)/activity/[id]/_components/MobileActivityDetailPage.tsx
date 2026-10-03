@@ -293,7 +293,20 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
   };
   const { data: satisfaction } = useReviewSatisfactionStats(reviewActivityId, { enabled: reviewsEnabled });
   const { data: jobRelevance } = useReviewJobRelevanceStats(reviewActivityId, { enabled: reviewsEnabled });
-  const satisfactionSummary = useMemo(() => aggregateSatisfaction(satisfaction), [satisfaction]);
+  // 만족도 직무 칩: 리뷰가 존재하는 job_detail만 노출, null = 전체
+  // (리뷰가 없으면 API가 job_detail null 항목 1건을 내려주므로 제외)
+  const [satisfactionJob, setSatisfactionJob] = useState<string | null>(null);
+  const satisfactionJobs = useMemo(
+    () => Array.from(new Set(satisfaction.map((it) => it.job_detail).filter(Boolean))),
+    [satisfaction],
+  );
+  const satisfactionSummary = useMemo(
+    () =>
+      aggregateSatisfaction(
+        satisfactionJob ? satisfaction.filter((it) => it.job_detail === satisfactionJob) : satisfaction,
+      ),
+    [satisfaction, satisfactionJob],
+  );
   const reviews = reviewList?.items ?? [];
   const reviewCount = reviewList?.total_elements ?? 0;
   const reviewTotalPages = reviewList?.total_pages ?? 0;
@@ -501,16 +514,19 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
               활동 만족도 평가
             </Typography>
             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-              {['전체', '프론트엔드', 'PM/PO', '머신러닝 엔지니어'].map((item, index) => (
+              {[null, ...satisfactionJobs].map((job) => (
                 <button
-                  key={item}
+                  key={job ?? 'ALL'}
                   type="button"
+                  onClick={() => setSatisfactionJob(job)}
                   className={clsx(
                     'h-10 shrink-0 rounded-full border px-4 whitespace-nowrap',
-                    index === 0 ? 'bg-primary-50 border-primary-50 text-gray-0' : 'bg-gray-0 border-gray-20 text-gray-70',
+                    satisfactionJob === job
+                      ? 'bg-primary-50 border-primary-50 text-gray-0'
+                      : 'bg-gray-0 border-gray-20 text-gray-70',
                   )}
                 >
-                  <Typography type="Body2Medium">{item}</Typography>
+                  <Typography type="Body2Medium">{job ? jobDetailLabel(job) : '전체'}</Typography>
                 </button>
               ))}
             </div>
