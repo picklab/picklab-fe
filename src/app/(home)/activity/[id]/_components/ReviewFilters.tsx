@@ -84,20 +84,25 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
 
   const toggle = (key: DropdownKey) => setOpen((cur) => (cur === key ? null : key));
 
+  // 모바일 트리거: Figma 3011-38998 (128×40, pl18/pr13, border #A5ADBB, chevron 24 gray-90)
   const triggerClass = isMobile
-    ? 'h-10 w-[128px] rounded-full border bg-gray-0 px-3 inline-flex items-center justify-between gap-1 shrink-0'
+    ? 'h-10 w-[128px] rounded-full border bg-gray-0 pl-[18px] pr-[13px] inline-flex items-center justify-between gap-1 shrink-0'
     : 'h-space-40 w-[132px] rounded-full border bg-gray-0 px-[18px] inline-flex items-center justify-between gap-1 transition-colors hover:bg-gray-5';
 
   const renderTrigger = (key: DropdownKey, label: string, active: boolean) => (
     <button
       type="button"
       onClick={() => toggle(key)}
-      className={clsx(triggerClass, active ? 'border-primary-50' : 'border-gray-30')}
+      className={clsx(triggerClass, active ? 'border-primary-50' : isMobile ? 'border-[#A5ADBB]' : 'border-gray-30')}
     >
       <Typography type="Body2Medium" className={active ? 'text-primary-60' : 'text-gray-90'}>
         {label}
       </Typography>
-      <Icon icon="chevronDown" size={20} className={active ? 'text-primary-60' : 'text-gray-50'} />
+      <Icon
+        icon="chevronDown"
+        size={isMobile ? 24 : 20}
+        className={active ? 'text-primary-60' : isMobile ? 'text-gray-90' : 'text-gray-50'}
+      />
     </button>
   );
 
@@ -121,18 +126,6 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
 
   return (
     <div ref={rootRef} className="flex items-center gap-2">
-      {/* 모바일: 초기화 아이콘 좌측 상시 노출 (primary) */}
-      {isMobile && (
-        <button
-          type="button"
-          onClick={onReset}
-          aria-label="필터 초기화"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary-50 bg-gray-0"
-        >
-          <Icon icon="largeRefresh" size={18} className="text-primary-50" />
-        </button>
-      )}
-
       {/* 관심 직무 */}
       <div className="relative">
         {renderTrigger('job', jobLabel, jobActive)}
@@ -297,7 +290,7 @@ export default function ReviewFilters({ value, onChange, onReset, variant = 'pc'
         )}
       </div>
 
-      {/* PC: 초기화 (적용된 필터가 있을 때만, 우측). 모바일은 좌측 상시 노출로 대체 */}
+      {/* PC: 초기화 (적용된 필터가 있을 때만, 우측). 모바일은 새로고침 버튼 삭제(Figma 3011-37592) */}
       {!isMobile && countActiveFilters(value) > 0 && (
         <button
           type="button"
