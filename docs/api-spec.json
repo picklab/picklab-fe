@@ -18,6 +18,10 @@
   ],
   "tags": [
     {
+      "name": "파일 관련 API",
+      "description": "OCI Object Storage를 이용한 파일 업로드 API"
+    },
+    {
       "name": "활동 그룹 API",
       "description": "활동 그룹 관련 API"
     },
@@ -30,10 +34,6 @@
       "description": "리뷰 통계 관련 API 입니다."
     },
     {
-      "name": "University",
-      "description": "대학교 API"
-    },
-    {
       "name": "회원 API",
       "description": "회원 관련 작업을 하는 API"
     },
@@ -44,10 +44,6 @@
     {
       "name": "소셜 로그인 API",
       "description": "소셜 로그인을 관리하는 API"
-    },
-    {
-      "name": "파일 관련 API",
-      "description": "Ncloud Object Storage를 이용한 파일 업로드 API"
     },
     {
       "name": "리뷰 API",
@@ -64,6 +60,10 @@
     {
       "name": "Search",
       "description": "검색 API"
+    },
+    {
+      "name": "School",
+      "description": "학교 API"
     }
   ],
   "paths": {
@@ -121,7 +121,7 @@
       "put": {
         "tags": ["리뷰 API"],
         "summary": "리뷰 수정",
-        "description": "본인이 작성한 리뷰를 수정합니다.",
+        "description": "\n본인이 작성한 리뷰를 수정합니다.\n활동 변경 후 인증 자료를 연결하려면 해당 활동으로 새로 업로드합니다.\n인증 자료 교체 시 PENDING, 제거 시 REJECTED로 변경됩니다. 기존 키와 활동을 유지하면 승인 상태도 유지됩니다.\n",
         "operationId": "updateReview",
         "parameters": [
           {
@@ -167,7 +167,7 @@
             }
           },
           "404": {
-            "description": "리뷰 정보를 찾을 수 없습니다.",
+            "description": "리뷰 또는 업로드된 인증 자료 파일을 찾을 수 없습니다.",
             "content": {
               "application/json;charset=UTF-8": {
                 "schema": {
@@ -557,7 +557,7 @@
       "post": {
         "tags": ["리뷰 API"],
         "summary": "리뷰 등록",
-        "description": "해당 공고에 대한 리뷰를 등록 합니다",
+        "description": "\n해당 활동에 대한 리뷰를 등록합니다.\n인증 자료는 REVIEW 카테고리로 업로드한 파일의 objectKey를 전달합니다.\n인증 자료가 있으면 PENDING, 없으면 REJECTED로 저장됩니다.\n",
         "operationId": "create",
         "requestBody": {
           "content": {
@@ -572,6 +572,26 @@
         "responses": {
           "200": {
             "description": "리뷰 등록에 성공했습니다.",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperUnit"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청입니다.",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperUnit"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "요청한 정보 또는 인증 자료 파일을 찾을 수 없습니다.",
             "content": {
               "application/json;charset=UTF-8": {
                 "schema": {
@@ -886,8 +906,8 @@
     "/v1/files/presigned-url": {
       "post": {
         "tags": ["파일 관련 API"],
-        "summary": "Presigend URL 발급",
-        "description": "Ncloud Object Storage에 파일 업로드를 위한 Presigned URL을 발급합니다.",
+        "summary": "PUT Presigned URL 발급",
+        "description": "\n파일 업로드용 Presigned URL과 임시 객체 키를 발급합니다.\nURL은 10분간 유효하며, 파일 확장자에 맞는 Content-Type으로 파일 본문을 PUT 전송합니다.\n",
         "operationId": "getPresignedUrl",
         "requestBody": {
           "content": {
@@ -2076,7 +2096,7 @@
     },
     "/v1/universities": {
       "get": {
-        "tags": ["University"],
+        "tags": ["School"],
         "summary": "대학교 검색",
         "description": "회원가입 학교명 자동완성을 위한 대학교 목록을 검색합니다. query가 없거나 공백이면 빈 목록을 반환합니다.",
         "operationId": "search",
@@ -2566,6 +2586,50 @@
         }
       }
     },
+    "/v1/high-schools": {
+      "get": {
+        "tags": ["School"],
+        "summary": "고등학교 검색",
+        "description": "회원가입 학교명 자동완성을 위한 고등학교 목록을 검색합니다. query가 없거나 공백이면 빈 목록을 반환합니다.",
+        "operationId": "search_2",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "서울"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "반환할 최대 개수. 기본 10, 최대 20",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseWrapperHighSchoolSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/bookmarks": {
       "get": {
         "tags": ["activity-bookmark-controller"],
@@ -2831,7 +2895,7 @@
       "get": {
         "tags": ["리뷰 API"],
         "summary": "특정 활동에 대한 리뷰 리스트 조회",
-        "description": "\n특정 활동에 대한 리뷰 리스트를 조회합니다.\n\n요청 파라미터:\n- page: 페이지 번호 (1부터 시작, 기본값 1)\n- size: 한번에 가져올 데이터 개수 (1~100, 기본값 10)\n- rating: 활동 총 평점 필터 (1~5)\n- jobGroup: 관심 직무 필터 (대분류 전체 리스트)\n- jobDetail: 관심 직무 필터 (세부 직무 리스트)\n- status: 수료 상태 필터 (IN_PROGRESSING, COMPLETED, DROPPED)\n\n로그인 여부에 따라 응답 데이터가 달라집니다.\n",
+        "description": "\n특정 활동의 승인된 리뷰(APPROVED) 리스트를 조회합니다.\n\n요청 파라미터:\n- page: 페이지 번호 (1부터 시작, 기본값 1)\n- size: 한번에 가져올 데이터 개수 (1~100, 기본값 10)\n- rating: 활동 총 평점 필터 (1~5)\n- jobGroup: 관심 직무 필터 (대분류 전체 리스트)\n- jobDetail: 관심 직무 필터 (세부 직무 리스트)\n- status: 수료 상태 필터 (IN_PROGRESSING, COMPLETED, DROPPED)\n\n로그인 여부에 따라 응답 데이터가 달라집니다.\n",
         "operationId": "getReviewsByActivity",
         "parameters": [
           {
@@ -3511,9 +3575,10 @@
             "maximum": 5,
             "minimum": 1
           },
-          "url": {
+          "object_key": {
             "type": "string",
-            "description": "리뷰 인증 자료 URL"
+            "description": "인증 자료 객체 키. 유지 시 기존 키, 교체 시 업로드한 임시 키를 전달합니다. null 또는 빈 값은 인증 자료 제거입니다.",
+            "example": "temp/review/1/10/abcd1234_20261002_120000.jpg"
           },
           "job_category": {
             "$ref": "#/components/schemas/ReviewJobCategoryDto"
@@ -3800,9 +3865,10 @@
             "maximum": 5,
             "minimum": 1
           },
-          "url": {
+          "object_key": {
             "type": "string",
-            "description": "리뷰 인증 자료 URL"
+            "description": "업로드가 완료된 REVIEW 인증 자료의 임시 객체 키 (선택)",
+            "example": "temp/review/1/10/abcd1234_20261002_120000.jpg"
           },
           "job_category": {
             "$ref": "#/components/schemas/ReviewJobCategoryDto"
@@ -3956,10 +4022,9 @@
           },
           "category": {
             "type": "string",
-            "description": "이미지가 업로드 되는 카테고리",
+            "description": "업로드 파일 카테고리",
             "enum": ["PROFILE", "ARCHIVE", "REVIEW"],
-            "example": "PROFILE",
-            "minLength": 1
+            "example": "PROFILE"
           },
           "file_size": {
             "type": "integer",
@@ -3970,7 +4035,7 @@
           "activity_id": {
             "type": "integer",
             "format": "int64",
-            "description": "리뷰 및 아카이브와 관련된 활동 ID, PROFILE 카테고리인 경우 null",
+            "description": "관련 활동 ID (REVIEW 및 ARCHIVE 필수, PROFILE 미사용)",
             "example": 1
           }
         },
@@ -3980,10 +4045,15 @@
         "properties": {
           "presigned_url": {
             "type": "string",
-            "description": "PUT요청용 Presgined Url"
+            "description": "파일 업로드용 Presigned URL (PUT, 유효기간 10분)"
+          },
+          "object_key": {
+            "type": "string",
+            "description": "업로드 대상의 임시 객체 키",
+            "example": "temp/profile/1/abcd1234_20261002_120000.jpg"
           }
         },
-        "required": ["presigned_url"]
+        "required": ["object_key", "presigned_url"]
       },
       "ResponseWrapperCreatePresignedurlResponse": {
         "properties": {
@@ -5558,9 +5628,10 @@
             "type": "string",
             "description": "꿀팁"
           },
-          "url": {
+          "object_key": {
             "type": "string",
-            "description": "인증자료 URL"
+            "description": "인증 자료의 영구 객체 키. 인증 자료 유지 시 수정 요청에 그대로 전달합니다.",
+            "example": "review/1/10/abcd1234_20261002_120000.jpg"
           }
         },
         "required": [
@@ -5858,6 +5929,51 @@
             "items": {
               "$ref": "#/components/schemas/JobResponse"
             }
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "HighSchoolResponse": {
+        "description": "고등학교 검색 항목",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "고등학교 ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "고등학교명",
+            "example": "서울고등학교"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "HighSchoolSearchResponse": {
+        "description": "고등학교 검색 응답",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "고등학교 검색 결과",
+            "items": {
+              "$ref": "#/components/schemas/HighSchoolResponse"
+            }
+          }
+        },
+        "required": ["items"]
+      },
+      "ResponseWrapperHighSchoolSearchResponse": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/HighSchoolSearchResponse"
           }
         },
         "required": ["code", "message"]
