@@ -673,25 +673,27 @@ export default function PcActivityDetailPage({ activity }: PcActivityDetailPageP
                   리뷰를 불러오는 중이에요...
                 </Typography>
               </div>
+            ) : !isAuthenticated ? (
+              // 비로그인(PIC-156, 3009-35257): 리뷰 목록 자리에 로그인 유도 박스
+              <div className="flex flex-col items-center justify-center rounded-[10px] border border-gray-20 px-[40px] py-[60px]">
+                <Typography type="Heading1Semibold" className="text-gray-60">
+                  로그인이 필요합니다
+                </Typography>
+              </div>
             ) : reviews.length > 0 ? (
-              isAuthenticated ? (
-                // 로그인(2-25064): 전체 공개 — 다건 + 페이지네이션
-                <>
-                  <div className="flex flex-col gap-6">
-                    {reviews.map((review) => (
-                      <ReviewCard key={review.id} review={review} />
-                    ))}
+              // 로그인(2-25064): 전체 공개 — 다건 + 페이지네이션
+              <>
+                <div className="flex flex-col gap-6">
+                  {reviews.map((review) => (
+                    <ReviewCard key={review.id} review={review} />
+                  ))}
+                </div>
+                {reviewTotalPages > 1 && (
+                  <div className="mt-4 flex justify-center">
+                    <Pagination totalPage={reviewTotalPages} activePage={reviewPage} onPageChange={setReviewPage} />
                   </div>
-                  {reviewTotalPages > 1 && (
-                    <div className="mt-4 flex justify-center">
-                      <Pagination totalPage={reviewTotalPages} activePage={reviewPage} onPageChange={setReviewPage} />
-                    </div>
-                  )}
-                </>
-              ) : (
-                // 비로그인(2408-26558): 대표 1개 블러 + "리뷰 작성하고 전체보기"
-                <ReviewCard review={reviews[0]} locked onWrite={goReviewWrite} />
-              )
+                )}
+              </>
             ) : (
               <EmptyReview className="h-[200px]" />
             )}
