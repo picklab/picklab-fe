@@ -32,7 +32,7 @@ export default function MobileReviewWritePage({
         mode={mode}
         reviewId={reviewId}
         initialState={initialState}
-        initialFileUrl={initialReviewDetail?.url ?? undefined}
+        initialObjectKey={initialReviewDetail?.object_key ?? undefined}
       />
     </div>
   );

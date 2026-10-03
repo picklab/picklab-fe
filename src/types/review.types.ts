@@ -348,7 +348,8 @@ export interface MyReviewDetail {
   strength: string;
   weakness: string;
   tips?: string | null;
-  url?: string | null;
+  /** 인증 자료의 영구 객체 키. 유지 시 수정 요청에 그대로 전달 */
+  object_key?: string | null;
 }
 
 /** PUT /v1/reviews/{id} body (ReviewUpdateRequest). 작성 페이로드와 동일 구조. */
@@ -363,7 +364,8 @@ export interface ReviewUpdatePayload {
   strength: string;
   weakness: string;
   tips?: string;
-  url?: string;
+  /** 인증 자료 객체 키. 유지=기존 키, 교체=업로드한 임시 키, null/빈 값=제거 */
+  object_key?: string | null;
   job_category: {
     job_group: ReviewJobGroup;
     job_detail?: ReviewJobDetail;

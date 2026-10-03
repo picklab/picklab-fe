@@ -16,7 +16,7 @@ interface ReviewWriteBodyProps {
   mode?: ReviewFormMode;
   reviewId?: string | number;
   initialState?: Partial<ReviewWriteState>;
-  initialFileUrl?: string | null;
+  initialObjectKey?: string | null;
   participationId?: number | string | null;
   onSuccess?: () => void;
   onLeave?: () => void;
@@ -63,7 +63,7 @@ export default function ReviewWriteBody({
   mode = 'create',
   reviewId,
   initialState,
-  initialFileUrl,
+  initialObjectKey,
   participationId,
   onSuccess,
   onLeave,
@@ -74,7 +74,7 @@ export default function ReviewWriteBody({
     mode,
     reviewId,
     initialState,
-    initialFileUrl,
+    initialObjectKey,
     participationId,
     onSuccess,
     onLeave,
@@ -97,9 +97,9 @@ export default function ReviewWriteBody({
   };
 
   const handleRegisterWithCert = async (file: File) => {
-    const url = await uploadFile(file);
-    if (!url) return;
-    await submit(url);
+    const objectKey = await uploadFile(file);
+    if (!objectKey) return;
+    await submit(objectKey);
     setUploadOpen(false);
   };
 

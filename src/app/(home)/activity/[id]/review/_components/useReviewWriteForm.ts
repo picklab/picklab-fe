@@ -80,8 +80,8 @@ interface UseReviewWriteFormArgs {
   reviewId?: string | number;
   /** edit 모드 프리필 초기값 (MyReviewDetail → ReviewWriteState 변환분). */
   initialState?: Partial<ReviewWriteState>;
-  /** edit 모드에서 새 인증자료를 올리지 않을 때 유지할 기존 인증자료 URL. */
-  initialFileUrl?: string | null;
+  /** edit 모드에서 새 인증자료를 올리지 않을 때 유지할 기존 인증자료 object_key (내 리뷰 단건 조회 응답). */
+  initialObjectKey?: string | null;
   /** 수료여부 저장용 활동 참여 id(GET activity-participations/results에서 activity_id 매칭). */
   participationId?: number | string | null;
   /** 제출 성공 후 동작. 미지정 시 활동 상세로 이동(작성 기본 동작). */
@@ -90,8 +90,11 @@ interface UseReviewWriteFormArgs {
   onLeave?: () => void;
 }
 
-/** presigned 업로드 응답 파싱 (archiveRecordOptions.parsePresignedUploadInfo 로직 복제). */
-function parsePresignedUploadInfo(payload: unknown): { uploadUrl: string; fileUrl?: string } | null {
+/**
+ * presigned 업로드 응답 파싱 (archiveRecordOptions.parsePresignedUploadInfo 기반).
+ * 리뷰 인증자료는 URL 대신 object_key로 등록하므로 object_key가 없으면 실패 처리.
+ */
+function parsePresignedUploadInfo(payload: unknown): { uploadUrl: string; objectKey: string } | null {
   const unwrap = (p: unknown) => {
     if (!p || typeof p !== 'object') return p;
     const record = p as Record<string, unknown>;
@@ -108,13 +111,9 @@ function parsePresignedUploadInfo(payload: unknown): { uploadUrl: string; fileUr
       (typeof record.presigned_url === 'string' && record.presigned_url) ||
       (typeof record.putUrl === 'string' && record.putUrl) ||
       (typeof record.url === 'string' && record.url);
-    if (!uploadUrl) continue;
-    const fileUrl =
-      (typeof record.fileUrl === 'string' && record.fileUrl) ||
-      (typeof record.publicUrl === 'string' && record.publicUrl) ||
-      (typeof record.downloadUrl === 'string' && record.downloadUrl) ||
-      undefined;
-    return { uploadUrl, fileUrl };
+    const objectKey = typeof record.object_key === 'string' && record.object_key;
+    if (!uploadUrl || !objectKey) continue;
+    return { uploadUrl, objectKey };
   }
   return null;
 }
@@ -133,7 +132,7 @@ export function useReviewWriteForm({
   mode = 'create',
   reviewId,
   initialState,
-  initialFileUrl,
+  initialObjectKey,
   participationId: initialParticipationId = null,
   onSuccess,
   onLeave,
@@ -239,7 +238,7 @@ export function useReviewWriteForm({
     return null;
   }, []);
 
-  /** 파일 presigned 업로드. 성공 시 최종 URL 반환. */
+  /** 파일 presigned 업로드. PUT 성공 시 발급 응답의 object_key 반환. */
   const uploadFile = useCallback(
     async (file: File): Promise<string | null> => {
       const presignedResponse = await fetch('/api/files/presigned-url', {
@@ -273,14 +272,14 @@ export function useReviewWriteForm({
         window.alert('파일 업로드에 실패했습니다.');
         return null;
       }
-      return presignedInfo.fileUrl || presignedInfo.uploadUrl.split('?')[0];
+      return presignedInfo.objectKey;
     },
     [activityId],
   );
 
-  /** 리뷰 제출. url(인증자료) 선택. */
+  /** 리뷰 제출. objectKey(인증자료) 선택. */
   const submit = useCallback(
-    async (url?: string): Promise<void> => {
+    async (objectKey?: string): Promise<void> => {
       if (submitting) return;
       setSubmitting(true);
       try {
@@ -302,9 +301,9 @@ export function useReviewWriteForm({
           // 수료여부(progress_status)는 리뷰 body가 아니라 아래 progress-status PATCH로 별도 저장.
         };
         if (state.tips.trim().length > 0) payload.tips = state.tips;
-        // 새 인증자료가 있으면 그 URL을, edit에서 미교체면 기존 URL을 유지한다.
-        if (url) payload.url = url;
-        else if (mode === 'edit' && initialFileUrl) payload.url = initialFileUrl;
+        // 새 인증자료가 있으면 업로드한 키를, edit에서 미교체면 기존 키를 유지한다.
+        if (objectKey) payload.object_key = objectKey;
+        else if (mode === 'edit' && initialObjectKey) payload.object_key = initialObjectKey;
 
         if (mode === 'edit') {
           if (reviewId == null) {
@@ -358,7 +357,7 @@ export function useReviewWriteForm({
         setSubmitting(false);
       }
     },
-    [submitting, activityId, participationId, state, router, mode, reviewId, initialFileUrl, onSuccess],
+    [submitting, activityId, participationId, state, router, mode, reviewId, initialObjectKey, onSuccess],
   );
 
   // 현재 스텝에서 '다음'/제출 진행 가능 여부(버튼 비활성 처리용). 부작용 없는 순수 파생값.
