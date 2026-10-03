@@ -150,10 +150,9 @@ export const PROGRESS_STATUS_LABELS: Record<ReviewProgressStatus, string> = {
 /** 리뷰 목록 필터 상태 */
 export interface ReviewFilterValue {
   rating: number[]; // 활동 총 평점 1~5 (다중 선택)
-  // 관심 직무 — PC(2409-27595)는 직군 탭(단일) + 세부직무(멀티), 모바일(2-25064)은 직군 플랫 체크박스(멀티)
-  jobGroup: ReviewJobGroup | null; // PC: 선택 직군(탭)
-  jobDetails: ReviewJobDetail[]; // PC: 세부 직무(멀티)
-  jobGroups: ReviewJobGroup[]; // 모바일: 직군 멀티(플랫)
+  // 관심 직무 — PC/모바일 공통 직군 탭(단일) + 세부직무(멀티) (Figma 3011-36687)
+  jobGroup: ReviewJobGroup | null; // 선택 직군(탭)
+  jobDetails: ReviewJobDetail[]; // 세부 직무(멀티)
   status: ReviewProgressStatus[]; // 수료 여부 (다중 선택)
 }
 
@@ -161,11 +160,15 @@ export const EMPTY_REVIEW_FILTER: ReviewFilterValue = {
   rating: [],
   jobGroup: null,
   jobDetails: [],
-  jobGroups: [],
   status: [],
 };
 
-export const RATING_OPTIONS = [1, 2, 3, 4, 5] as const;
+/** 총 평점 필터 칩 구간 (Figma 3011-36716) → rating 파라미터 값 묶음 */
+export const RATING_RANGE_OPTIONS: { label: string; values: number[] }[] = [
+  { label: '5점~4점', values: [5, 4] },
+  { label: '3점~2점', values: [3, 2] },
+  { label: '1점 이하', values: [1] },
+];
 
 export const REVIEW_STATUS_OPTIONS: { value: ReviewProgressStatus; label: string }[] = [
   { value: 'COMPLETED', label: '수료완료' },
@@ -189,7 +192,6 @@ export function countActiveFilters(filter: ReviewFilterValue): number {
   count += filter.rating.length;
   if (filter.jobGroup) count += 1;
   count += filter.jobDetails.length;
-  count += filter.jobGroups.length;
   count += filter.status.length;
   return count;
 }

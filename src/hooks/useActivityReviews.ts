@@ -53,11 +53,10 @@ export function useActivityReviews(
       try {
         const params = new URLSearchParams({ page: String(page), size: String(size) });
         const parsedFilter: ReviewFilterValue | undefined = filterKey ? JSON.parse(filterKey) : undefined;
-        // rating/status는 반복 파라미터. 관심직무는 PC=jobGroup(단일)+jobDetail(멀티), 모바일=jobGroup(멀티) → 모두 jobGroup 파라미터로
+        // rating/status는 반복 파라미터. 관심직무는 jobGroup(단일)+jobDetail(멀티)
         parsedFilter?.rating?.forEach((r) => params.append('rating', String(r)));
         if (parsedFilter?.jobGroup) params.append('jobGroup', parsedFilter.jobGroup);
         parsedFilter?.jobDetails?.forEach((detail) => params.append('jobDetail', detail));
-        parsedFilter?.jobGroups?.forEach((g) => params.append('jobGroup', g));
         parsedFilter?.status?.forEach((s) => params.append('status', s));
 
         const json = await fetchJson<ReviewListData>(`/api/activities/${activityId}/reviews?${params.toString()}`);
