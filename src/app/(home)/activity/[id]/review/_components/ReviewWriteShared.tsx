@@ -205,7 +205,8 @@ export function RatingRadio({ question, labels, value, onChange, error }: Rating
                   className={clsx('size-6 rounded-full pc:size-7', selected ? 'bg-primary-60' : 'bg-gray-20')}
                 />
               </span>
-              <Typography type="Body4Regular" className={selected ? 'text-primary-60' : 'text-gray-50'}>
+              {/* 선택 시에도 라벨은 active 색 없이 회색 유지 (PIC-150 코멘트) */}
+              <Typography type="Body4Regular" className="text-gray-50">
                 {label}
               </Typography>
             </button>
