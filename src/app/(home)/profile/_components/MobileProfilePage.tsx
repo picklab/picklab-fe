@@ -66,7 +66,7 @@ export default function MobileProfilePage() {
             <Typography type="Headline2SemiBold">작성글</Typography>
           </Link>
           <Link
-            href="/profile/account/info"
+            href="/profile/account"
             className="box-border w-full flex px-space-10 justify-center border-b-[1.5px] border-gray-30"
           >
             <Typography type="Headline2SemiBold">계정</Typography>

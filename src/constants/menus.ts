@@ -28,10 +28,10 @@ export const SNBNavigationMenus: SNBNavigationMenusType[] = [
   },
   {
     label: "계정",
-    href: "/profile/account/info",
+    href: "/profile/account",
     activeHref: "/profile/account",
     children: [
-      { label: "계정관리", href: "/profile/account/info" },
+      { label: "계정관리", href: "/profile/account" },
       { label: "알림관리", href: "/profile/alarm" },
     ],
   },
