@@ -9,6 +9,7 @@ import Select from '@/components/common/Select/Select';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import CardChip from '@/components/common/Card/CardChip';
 import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
+import CalendarFilterDropdown from './CalendarFilterDropdown';
 import type { ApplicationStatus, ParticipationProgressStatus } from '@/types/review.types';
 import {
   FILTER_OPTIONS,
@@ -177,18 +178,17 @@ export default function MobileActivityResultView() {
         <Typography type="Headline1SemiBold" className="text-[#1E2939]">
           지원한 활동
         </Typography>
-        <Select
-          options={FILTER_OPTIONS}
-          value={filter}
-          onChange={(v) => setFilter((v as string[]) ?? [])}
-          type="checkbox"
-          functionOptionType="reset"
-          placeholder="합격여부"
-          width="xsmall"
-          size="xsmall"
-          className="!h-[34px] !w-[98px] !justify-start !gap-1 !rounded-[100px] !pl-3 !pr-2 [&_span]:!text-[14px] [&_svg]:!h-4 [&_svg]:!w-4"
-          wrapperClassName="!w-[98px]"
-        />
+        {/* PC와 동일하게 전체/합격/불합격, 초기화 없음 — 버튼은 기존 모바일 크기 유지 (PIC-142: PIC-166/167 모바일) */}
+        <div className="self-start">
+          <CalendarFilterDropdown
+            placeholder="합격여부"
+            allLabel="전체"
+            options={FILTER_OPTIONS}
+            selected={filter}
+            onChange={setFilter}
+            triggerClassName="!h-[34px] !w-[98px] !justify-start !pl-3 !pr-2 [&>span]:!text-[14px] [&_svg]:!h-4 [&_svg]:!w-4"
+          />
+        </div>
 
         {loading ? (
           <div className="flex min-h-[140px] items-center justify-center">
