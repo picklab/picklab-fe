@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
@@ -36,7 +35,6 @@ const APPLIED_STATUSES = new Set(['APPLIED', 'ACCEPTED']);
 
 interface MobileScheduleItem {
   id: string;
-  detailLink: string;
   dday: string;
   activityType: CardChipProps['text'];
   title: string;
@@ -66,29 +64,19 @@ function formatSavedAt(value: string): string {
   return m ? `${m[1]}년 ${Number(m[2])}월 ${Number(m[3])}일` : value;
 }
 
+// 카드 자체는 클릭 불가 — 지원완료 버튼·북마크만 동작 (PIC-142: PIC-165 모바일 동일 적용)
 function ScheduleCard({
   item,
-  onOpen,
   onToggleApplied,
   onBookmark,
 }: {
   item: MobileScheduleItem;
-  onOpen: () => void;
   onToggleApplied: () => void;
   onBookmark: () => void;
 }) {
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onOpen();
-        }
-      }}
-      className="flex w-[160px] cursor-pointer flex-col gap-3 rounded-xl border border-gray-20 bg-white p-[14px]"
+      className="flex w-[160px] flex-col gap-3 rounded-xl border border-gray-20 bg-white p-[14px]"
     >
       <div className="flex items-center gap-2">
         <CardDayBadge
@@ -162,7 +150,6 @@ function ScheduleCard({
 
 // 모바일 일정관리 화면 — figma PROFILE-004-001-002.
 export default function MobileCalendarPage() {
-  const router = useRouter();
   const [tab, setTab] = useState<ScheduleTab>('SCHEDULE');
   const [viewMode, setViewMode] = useState<ScheduleViewMode>('LIST');
   const [progressFilter, setProgressFilter] = useState<ProgressFilter[]>([]);
@@ -199,7 +186,6 @@ export default function MobileCalendarPage() {
     active.forEach((item) => {
       const scheduleItem: MobileScheduleItem = {
         id: item.id,
-        detailLink: item.detailLink,
         dday: item.registrationPeriod,
         activityType: item.activityType as CardChipProps['text'],
         title: item.title || '-',
@@ -399,7 +385,6 @@ export default function MobileCalendarPage() {
                         <ScheduleCard
                           key={item.id}
                           item={item}
-                          onOpen={() => router.push(item.detailLink)}
                           onToggleApplied={() => handleToggleApplied(item)}
                           onBookmark={() => handleBookmark(item)}
                         />
