@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button/Button';
 import CheckBoxLabel from '@/components/common/CheckBox/CheckBoxLabel';
+import TextBox from '@/components/common/Field/TextBox';
 import RadioLabel from '@/components/common/Control/RadioLabel';
 import Typography from '@/components/common/Typography';
 import { useAuthClient } from '@/contexts/AuthContext';
@@ -30,6 +31,8 @@ export default function WithdrawPage() {
   const { clientLogout } = useAuthClient();
   const [agreed, setAgreed] = useState(false);
   const [reason, setReason] = useState<WithdrawalReason | ''>('');
+  // '기타' 선택 시 상세 사유 (기획: 500자 이내, 선택 입력 / API detail)
+  const [detail, setDetail] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleWithdraw = async () => {
@@ -51,7 +54,10 @@ export default function WithdrawPage() {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
+        body: JSON.stringify({
+          reason,
+          ...(reason === 'ETC' && detail.trim() ? { detail: detail.trim() } : {}),
+        }),
       });
       if (!surveyRes.ok) throw new Error('탈퇴 설문 제출에 실패했습니다.');
 
@@ -123,15 +129,27 @@ export default function WithdrawPage() {
             </div>
             <div className="flex flex-col gap-5 w-full">
               {REASONS.map((item) => (
-                <RadioLabel
-                  key={item.id}
-                  label={item.label}
-                  id={item.id}
-                  name="withdrawal-reason"
-                  value={item.value}
-                  checked={reason === item.value}
-                  onChange={() => setReason(item.value)}
-                />
+                <div key={item.id} className="flex flex-col gap-[14px]">
+                  <RadioLabel
+                    label={item.label}
+                    id={item.id}
+                    name="withdrawal-reason"
+                    value={item.value}
+                    checked={reason === item.value}
+                    onChange={() => setReason(item.value)}
+                  />
+                  {/* 기타 선택 시 입력란 (figma 3025-44824 / 모바일 3025-45059) */}
+                  {item.value === 'ETC' && reason === 'ETC' && (
+                    <TextBox
+                      textBoxType="input"
+                      placeholder="기타 이유를 작성해주세요"
+                      maxLength={500}
+                      value={detail}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => setDetail(e.target.value)}
+                      className="!w-full placeholder:!text-[#A5ADBB] placeholder:font-medium"
+                    />
+                  )}
+                </div>
               ))}
             </div>
           </section>
