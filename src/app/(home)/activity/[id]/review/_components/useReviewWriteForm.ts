@@ -284,7 +284,8 @@ export function useReviewWriteForm({
       setSubmitting(true);
       try {
         const payload: Record<string, unknown> = {
-          activity_id: Number(activityId),
+          // 수정(PUT)은 활동 변경 불가라 activity_id를 보내지 않는다.
+          ...(mode === 'edit' ? {} : { activity_id: Number(activityId) }),
           overall_score: state.overallScore,
           info_score: state.infoScore,
           difficulty_score: state.difficultyScore,

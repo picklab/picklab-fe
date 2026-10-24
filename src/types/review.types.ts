@@ -352,9 +352,8 @@ export interface MyReviewDetail {
   object_key?: string | null;
 }
 
-/** PUT /v1/reviews/{id} body (ReviewUpdateRequest). 작성 페이로드와 동일 구조. */
+/** PUT /v1/reviews/{id} body (ReviewUpdateRequest). 작성 페이로드에서 activity_id 제외(활동 변경 불가). */
 export interface ReviewUpdatePayload {
-  activity_id: number;
   overall_score: number;
   info_score: number;
   difficulty_score: number;
