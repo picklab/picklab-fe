@@ -9,6 +9,7 @@ import Select from '@/components/common/Select/Select';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import CardChip, { type CardChipProps } from '@/components/common/Card/CardChip';
 import useParticipationSummary from '@/hooks/useParticipationSummary';
+import CalendarFilterDropdown from './CalendarFilterDropdown';
 import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
 import type {
   ActivityParticipationResult,
@@ -268,16 +269,14 @@ export default function ActivityResultView() {
           <Typography type="Title3Bold" className="text-gray-90">
             지원한 활동
           </Typography>
-          <Select
-            options={FILTER_OPTIONS}
-            value={filter}
-            onChange={(v) => setFilter((v as string[]) ?? [])}
-            type="checkbox"
-            functionOptionType="reset"
+          {/* 일정관리 필터와 동일한 드롭다운: 전체/합격/불합격, 초기화 없음 (PIC-166/167) */}
+          <CalendarFilterDropdown
+            variant="pc"
             placeholder="합격여부"
-            width="small"
-            size="small"
-            className="!rounded-[100px] [&>span]:!text-gray-90"
+            allLabel="전체"
+            options={FILTER_OPTIONS}
+            selected={filter}
+            onChange={setFilter}
           />
         </div>
 
