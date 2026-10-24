@@ -75,55 +75,66 @@ export default function WithdrawPage() {
   return (
     <div className="flex flex-col items-center max-w-[1440px]">
       <div className="w-full max-w-[460px] flex flex-col gap-10 pt-10 pb-30 mx-auto">
-        <div className="w-full flex flex-col gap-12">
+        {/* 모바일은 figma 3025-45029 실측값을 mobile: 로 덮어씀 (PC 유지) */}
+        <div className="w-full flex flex-col gap-12 mobile:gap-[84px]">
           {/*회원 탈퇴 안내 */}
-          <section className="flex flex-col w-full gap-[38px] pc:pb-12 pc:border-b pc:border-gray-20">
-            <div className="w-full flex flex-col items-center gap-2">
-              <Typography type="Title2Bold">탈퇴안내</Typography>
-              <Typography type="Body2Medium">PICKLAB 회원탈퇴를 신청하기 전 안내사항을 꼭 확인해주세요!</Typography>
+          <section className="flex flex-col w-full gap-[38px] mobile:gap-5 pc:pb-12 pc:border-b pc:border-gray-20">
+            <div className="w-full flex flex-col items-center gap-2 mobile:items-start">
+              <Typography type="Title2Bold" className="mobile:hidden">
+                탈퇴안내
+              </Typography>
+              <Typography type="Body2Medium" className="mobile:text-left mobile:text-xl mobile:font-semibold mobile:leading-[136.4%] mobile:text-gray-90">
+                PICKLAB 회원탈퇴를 신청하기 전<br className="pc:hidden" /> 안내사항을 꼭 확인해주세요!
+              </Typography>
             </div>
             <div className="w-full flex flex-col gap-2">
               <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold">탈퇴한 계정은 복구 및 재사용이 불가능</Typography>
-                <Typography type="Caption2Regular">
+                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">탈퇴한 계정은 복구 및 재사용이 불가능</Typography>
+                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
                   본인을 포함해 누구도 다시 사용할 수 없으니 신중하게 결정해 주세요.
                 </Typography>
               </div>
               <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold">개인정보 및 이용 기록 복구 불가능</Typography>
-                <Typography type="Caption2Regular">
+                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">개인정보 및 이용 기록 복구 불가능</Typography>
+                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
                   회원님의 개인정보 및 이용 기록은 모두 삭제되며 복구할 수 없습니다.
                 </Typography>
               </div>
               <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold">리뷰와 댓글은 직접 삭제</Typography>
-                <Typography type="Caption2Regular">
+                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">리뷰와 댓글은 직접 삭제</Typography>
+                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
                   PICKLAB에 작성하신 리뷰와 댓글은 탈퇴 후에도 남아 있으니 필요한 경우 직접 삭제해 주세요.
                 </Typography>
               </div>
               <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold">개인정보는 탈퇴 후 30일간만 보관</Typography>
-                <Typography type="Caption2Regular">
+                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">개인정보는 탈퇴 후 30일간만 보관</Typography>
+                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
                   개인정보는 탈퇴일로부터 30일간 보관 후 개인정보처리방침에 따라 안전하게 삭제됩니다.
                 </Typography>
               </div>
             </div>
-            <CheckBoxLabel
-              id="withdrawal-agreement"
-              value="agree"
-              label="위 안내사항을 확인했으며, 동의합니다."
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-            />
+            <div className="mobile:flex mobile:justify-center mobile:[&_span]:text-2xs mobile:[&_span]:leading-[146.7%]">
+              <CheckBoxLabel
+                id="withdrawal-agreement"
+                value="agree"
+                label="위 안내사항을 확인했으며, 동의합니다."
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+              />
+            </div>
           </section>
 
           {/*회원 탈퇴 사유 */}
-          <section className="flex flex-col w-full gap-12">
-            <div className="w-full flex flex-col gap-2 items-center">
-              <Typography type="Title2Bold">탈퇴사유</Typography>
-              <Typography type="Body2Medium">PICKLAB을 탈퇴하시는 이유를 알려주세요.</Typography>
+          <section className="flex flex-col w-full gap-12 mobile:gap-10">
+            <div className="w-full flex flex-col gap-2 items-center mobile:items-start">
+              <Typography type="Title2Bold" className="mobile:hidden">
+                탈퇴사유
+              </Typography>
+              <Typography type="Body2Medium" className="mobile:text-left mobile:text-xl mobile:font-semibold mobile:leading-[136.4%] mobile:text-gray-90">
+                PICKLAB을 탈퇴하시는 이유를<br className="pc:hidden" /> 알려주세요.
+              </Typography>
             </div>
-            <div className="flex flex-col gap-5 w-full">
+            <div className="flex flex-col gap-5 mobile:gap-7 w-full">
               {REASONS.map((item) => (
                 <div key={item.id} className="flex flex-col gap-[14px]">
                   <RadioLabel
@@ -149,12 +160,14 @@ export default function WithdrawPage() {
               ))}
             </div>
           </section>
-          <div className="w-full flex flex-row gap-[10px]">
+          {/* 모바일 figma 3025-45047: 두 버튼 1:1(162.5px), 라벨 17px Medium */}
+          <div className="w-full flex flex-row gap-[10px] mobile:grid mobile:grid-cols-2">
             <Button
               size="lg"
               buttonStyle="outlined"
               label="취소"
-              className="flex-grow"
+              // 모바일 figma 3025-45048: gray-10 배경·테두리 없음·gray-50 텍스트
+              className="flex-grow mobile:!border-0 mobile:!bg-gray-10 mobile:[&>span]:!text-gray-50 mobile:[&>span]:text-sm mobile:[&>span]:leading-[141.2%]"
               // 기획 520-1550: 취소 시 계정 관리 페이지로 이동
               onClick={() => router.push('/profile/account')}
             />
@@ -163,7 +176,7 @@ export default function WithdrawPage() {
               size="lg"
               buttonStyle={canSubmit ? 'filled' : 'outlined'}
               label="탈퇴하기"
-              className={clsx('flex-grow', !canSubmit && 'bg-gray-0 !border-[#A5ADBB] [&>span]:!text-gray-90')}
+              className={clsx('flex-grow mobile:[&>span]:text-sm mobile:[&>span]:leading-[141.2%]', !canSubmit && 'bg-gray-0 !border-[#A5ADBB] [&>span]:!text-gray-90')}
               disabled={!canSubmit || submitting}
               onClick={handleWithdraw}
             />
