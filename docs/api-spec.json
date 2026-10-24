@@ -121,7 +121,7 @@
       "put": {
         "tags": ["리뷰 API"],
         "summary": "리뷰 수정",
-        "description": "\n본인이 작성한 리뷰를 수정합니다.\n활동 변경 후 인증 자료를 연결하려면 해당 활동으로 새로 업로드합니다.\n인증 자료 교체 시 PENDING, 제거 시 REJECTED로 변경됩니다. 기존 키와 활동을 유지하면 승인 상태도 유지됩니다.\n",
+        "description": "\n본인이 작성한 리뷰의 내용과 인증 자료를 수정합니다.\n인증 자료 교체 시 PENDING, 제거 시 REJECTED로 변경됩니다. 기존 키를 유지하면 승인 상태도 유지됩니다.\n",
         "operationId": "updateReview",
         "parameters": [
           {
@@ -3511,11 +3511,6 @@
       },
       "ReviewUpdateRequest": {
         "properties": {
-          "activity_id": {
-            "type": "integer",
-            "format": "int64",
-            "description": "활동 ID"
-          },
           "overall_score": {
             "type": "integer",
             "format": "int32",
@@ -3585,7 +3580,6 @@
           }
         },
         "required": [
-          "activity_id",
           "benefit_score",
           "difficulty_score",
           "info_score",
