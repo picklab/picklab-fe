@@ -90,6 +90,7 @@ export default function CalendarPage() {
             {viewMode === 'LIST' && (
               <div className="flex gap-2">
                 <CalendarFilterDropdown
+                  variant="pc"
                   placeholder={PROGRESS_TRIGGER_LABEL}
                   allLabel={PROGRESS_ALL_LABEL}
                   options={PROGRESS_OPTIONS}
@@ -97,6 +98,7 @@ export default function CalendarPage() {
                   onChange={setProgressFilter}
                 />
                 <CalendarFilterDropdown
+                  variant="pc"
                   placeholder={APPLY_TRIGGER_LABEL}
                   allLabel={APPLY_ALL_LABEL}
                   options={APPLY_OPTIONS}
