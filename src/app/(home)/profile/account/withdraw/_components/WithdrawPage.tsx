@@ -150,6 +150,7 @@ export default function WithdrawPage() {
                     <TextBox
                       textBoxType="input"
                       placeholder="기타 이유를 작성해주세요"
+                      aria-label="기타 탈퇴 사유"
                       maxLength={500}
                       value={detail}
                       onChange={(e: ChangeEvent<HTMLInputElement>) => setDetail(e.target.value)}
