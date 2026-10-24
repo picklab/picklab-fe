@@ -33,7 +33,7 @@ interface CalendarFilterDropdownProps<T extends string> {
   onChange: (next: T[]) => void;
   /** 옵션그룹 스타일. pc: figma 2696-34577 / mobile: figma 1136-82764(14px, 옵션 py 8px) */
   variant?: 'pc' | 'mobile';
-  /** 트리거 크기 등 화면별 덮어쓰기용 클래스 */
+  /** 트리거 추가 클래스. mobile은 화면별 너비 지정용(figma 일정관리 128px / 활동결과 102px) */
   triggerClassName?: string;
 }
 
@@ -119,15 +119,24 @@ export default function CalendarFilterDropdown<T extends string>({
         type="button"
         onClick={() => setOpen((cur) => !cur)}
         className={clsx(
-          'inline-flex h-10 w-[140px] items-center justify-between gap-1 rounded-full border bg-gray-0 px-[18px] transition-colors hover:bg-gray-5',
+          'inline-flex items-center justify-between gap-1 rounded-full border bg-gray-0 transition-colors hover:bg-gray-5',
+          // mobile: figma 1136-76587/1136-76676 (h 34, pl 12 / pr 8, 14px, chevron 24px gray-90)
+          isPc ? 'h-10 w-[140px] px-[18px]' : 'h-[34px] pl-3 pr-2',
           active ? 'border-primary-50' : 'border-gray-30',
           triggerClassName,
         )}
       >
-        <Typography type="Body2Medium" className={clsx('truncate', active ? 'text-primary-60' : 'text-gray-90')}>
+        <Typography
+          type={isPc ? 'Body2Medium' : 'Body3Medium'}
+          className={clsx('truncate', active ? 'text-primary-60' : 'text-gray-90')}
+        >
           {triggerLabel}
         </Typography>
-        <Icon icon="chevronDown" size={20} className={active ? 'text-primary-60' : 'text-gray-50'} />
+        <Icon
+          icon="chevronDown"
+          size={isPc ? 20 : 24}
+          className={clsx('shrink-0', active ? 'text-primary-60' : isPc ? 'text-gray-50' : 'text-gray-90')}
+        />
       </button>
 
       {open && renderPanel(

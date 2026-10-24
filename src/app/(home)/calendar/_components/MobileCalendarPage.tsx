@@ -335,6 +335,7 @@ export default function MobileCalendarPage() {
                   options={PROGRESS_OPTIONS}
                   selected={progressFilter}
                   onChange={setProgressFilter}
+                  triggerClassName="w-[128px]"
                 />
               </div>
               <div className="shrink-0">
@@ -344,6 +345,7 @@ export default function MobileCalendarPage() {
                   options={APPLY_OPTIONS}
                   selected={applyFilter}
                   onChange={setApplyFilter}
+                  triggerClassName="w-[128px]"
                 />
               </div>
               <Select
@@ -353,8 +355,10 @@ export default function MobileCalendarPage() {
                 width="small"
                 size="small"
                 portalDropdown
-                className="!rounded-[100px]"
-                wrapperClassName="shrink-0"
+                // figma 1136-76589: 128×34, pl 12 / pr 8, 14px (옵션 목록 너비도 버튼과 동일)
+                className="!h-[34px] !w-[128px] !rounded-[100px] !pl-3 !pr-2 [&>span]:!text-[14px] [&>span]:!font-medium"
+                wrapperClassName="shrink-0 !w-[128px]"
+                dropdownClassName="[&_ul]:!w-[128px]"
               />
             </div>
           )}

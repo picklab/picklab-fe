@@ -178,7 +178,7 @@ export default function MobileActivityResultView() {
         <Typography type="Headline1SemiBold" className="text-[#1E2939]">
           지원한 활동
         </Typography>
-        {/* PC와 동일하게 전체/합격/불합격, 초기화 없음 — 버튼은 기존 모바일 크기 유지 (PIC-142: PIC-166/167 모바일) */}
+        {/* PC와 동일하게 전체/합격/불합격, 초기화 없음 (PIC-142: PIC-166/167 모바일) */}
         <div className="self-start">
           <CalendarFilterDropdown
             placeholder="합격여부"
@@ -186,7 +186,7 @@ export default function MobileActivityResultView() {
             options={FILTER_OPTIONS}
             selected={filter}
             onChange={setFilter}
-            triggerClassName="!h-[34px] !w-[98px] !justify-start !pl-3 !pr-2 [&>span]:!text-[14px] [&_svg]:!h-4 [&_svg]:!w-4"
+            triggerClassName="w-[102px]"
           />
         </div>
 
