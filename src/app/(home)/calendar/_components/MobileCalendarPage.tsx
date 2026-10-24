@@ -324,7 +324,8 @@ export default function MobileCalendarPage() {
                 type="button"
                 aria-label="필터 초기화"
                 onClick={resetFilters}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-50"
+                // figma 1136-76586: 30×30, 아이콘 20px
+                className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-primary-50"
               >
                 <Icon icon="largeRefresh" size={20} className="text-white" />
               </button>
@@ -355,8 +356,8 @@ export default function MobileCalendarPage() {
                 width="small"
                 size="small"
                 portalDropdown
-                // figma 1136-76589: 128×34, pl 12 / pr 8, 14px (옵션 목록 너비도 버튼과 동일)
-                className="!h-[34px] !w-[128px] !rounded-[100px] !pl-3 !pr-2 [&>span]:!text-[14px] [&>span]:!font-medium"
+                // figma 1136-76589: 128×34, pl 12 / pr 8, 14px, 닫힘 테두리 gray-30 (옵션 목록 너비도 버튼과 동일)
+                className="!h-[34px] !w-[128px] !rounded-[100px] !pl-3 !pr-2 [&>span]:!text-[14px] [&>span]:!font-medium [&[aria-expanded=false]]:!border-gray-30"
                 wrapperClassName="shrink-0 !w-[128px]"
                 dropdownClassName="[&_ul]:!w-[128px]"
               />
