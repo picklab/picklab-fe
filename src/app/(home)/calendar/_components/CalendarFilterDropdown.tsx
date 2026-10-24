@@ -7,23 +7,8 @@ import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import type { FilterOption } from './filters';
 
-/**
- * 드롭다운 옵션용 체크박스 사각형.
- * pc: figma OptionGroup 2696-34577(16px, radius 4) / mobile: 기존 디자인(리뷰 필터와 동일)
- */
-function CheckSquare({ selected, isPc }: { selected: boolean; isPc: boolean }) {
-  if (!isPc) {
-    return (
-      <span
-        className={clsx(
-          'flex size-5 shrink-0 items-center justify-center rounded border',
-          selected ? 'border-primary-50 bg-primary-50' : 'border-gray-30 bg-gray-0',
-        )}
-      >
-        {selected && <Icon icon="check" size={12} className="text-gray-0" />}
-      </span>
-    );
-  }
+/** 드롭다운 옵션용 체크박스 사각형 (figma OptionGroup pc 2696-34577 / mobile 1136-82764 공통: 16px, radius 4) */
+function CheckSquare({ selected }: { selected: boolean }) {
   return (
     <span className="flex shrink-0 items-center py-1">
       <span
@@ -46,8 +31,10 @@ interface CalendarFilterDropdownProps<T extends string> {
   options: FilterOption<T>[];
   selected: T[];
   onChange: (next: T[]) => void;
-  /** 옵션그룹 스타일. QA(PIC-162)는 WEB만 반영 → pc만 figma 스타일, mobile은 기존 유지 */
+  /** 옵션그룹 스타일. pc: figma 2696-34577 / mobile: figma 1136-82764(14px, 옵션 py 8px) */
   variant?: 'pc' | 'mobile';
+  /** 트리거 크기 등 화면별 덮어쓰기용 클래스 */
+  triggerClassName?: string;
 }
 
 /** 일정관리 목록형 필터(진행여부/지원여부) — 체크박스 다중선택 드롭다운 (figma 2696-34096) */
@@ -58,6 +45,7 @@ export default function CalendarFilterDropdown<T extends string>({
   selected,
   onChange,
   variant = 'mobile',
+  triggerClassName,
 }: CalendarFilterDropdownProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -85,7 +73,8 @@ export default function CalendarFilterDropdown<T extends string>({
       setPortalStyle({
         position: 'fixed',
         top: rect.bottom,
-        right: document.documentElement.clientWidth - rect.right,
+        left: rect.left,
+        width: rect.width, // 옵션그룹 너비 = 트리거 너비 (PIC-162)
         zIndex: 80,
       });
     };
@@ -112,20 +101,15 @@ export default function CalendarFilterDropdown<T extends string>({
   // pc: 옵션그룹 너비 = 트리거 너비(140px) (PIC-162)
   const panelClass = isPc
     ? 'absolute left-0 z-30 mt-1 flex w-[140px] flex-col rounded-[6px] bg-gray-0 p-1 shadow-optionGroup'
-    : 'mt-2 w-[160px] rounded-lg border border-gray-20 bg-gray-0 p-3 shadow-md';
+    : 'mt-1 flex flex-col rounded-[6px] bg-gray-0 p-1 shadow-optionGroup';
   const optionClass = isPc
     ? 'flex w-full items-center gap-2 rounded-[4px] py-3 pl-3 pr-4'
-    : 'flex w-full items-center gap-2 rounded px-2 py-2';
-  const renderLabel = (label: string, isSelected: boolean) =>
-    isPc ? (
-      <Typography type="Body1Medium" className="text-gray-90">
-        {label}
-      </Typography>
-    ) : (
-      <Typography type="Body3Medium" className={isSelected ? 'text-gray-90' : 'text-gray-70'}>
-        {label}
-      </Typography>
-    );
+    : 'flex w-full items-center gap-2 rounded-[4px] px-3 py-2';
+  const renderLabel = (label: string) => (
+    <Typography type={isPc ? 'Body1Medium' : 'Body3Medium'} className="text-gray-90">
+      {label}
+    </Typography>
+  );
 
   const renderPanel = (panel: ReactNode) => (isPc ? panel : createPortal(panel, document.body));
 
@@ -137,6 +121,7 @@ export default function CalendarFilterDropdown<T extends string>({
         className={clsx(
           'inline-flex h-10 w-[140px] items-center justify-between gap-1 rounded-full border bg-gray-0 px-[18px] transition-colors hover:bg-gray-5',
           active ? 'border-primary-50' : 'border-gray-30',
+          triggerClassName,
         )}
       >
         <Typography type="Body2Medium" className={clsx('truncate', active ? 'text-primary-60' : 'text-gray-90')}>
@@ -148,8 +133,8 @@ export default function CalendarFilterDropdown<T extends string>({
       {open && renderPanel(
         <div ref={panelRef} className={panelClass} style={isPc ? undefined : portalStyle}>
           <button type="button" onClick={() => onChange([])} className={optionClass}>
-            <CheckSquare selected={!active} isPc={isPc} />
-            {renderLabel(allLabel, !active)}
+            <CheckSquare selected={!active} />
+            {renderLabel(allLabel)}
           </button>
           {options.map((option) => {
             const isSelected = selected.includes(option.value);
@@ -160,8 +145,8 @@ export default function CalendarFilterDropdown<T extends string>({
                 onClick={() => toggleOption(option.value)}
                 className={optionClass}
               >
-                <CheckSquare selected={isSelected} isPc={isPc} />
-                {renderLabel(option.label, isSelected)}
+                <CheckSquare selected={isSelected} />
+                {renderLabel(option.label)}
               </button>
             );
           })}
