@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
@@ -35,7 +34,6 @@ function formatSavedAt(value: string): string {
 // 목록형 카드의 표시 모델 (실데이터/목업 공통)
 interface ScheduleItem {
   id: string;
-  detailLink: string;
   dday: string; // 'D-00' / '마감' 등
   activityType: string;
   organizer: string;
@@ -61,7 +59,6 @@ const MOCK_GROUPS: ScheduleGroup[] = [
     items: [
       {
         id: 'mock-1',
-        detailLink: '/calendar',
         dday: 'D-03',
         activityType: '공모전/해커톤',
         organizer: '주최기관 A',
@@ -73,7 +70,6 @@ const MOCK_GROUPS: ScheduleGroup[] = [
       },
       {
         id: 'mock-2',
-        detailLink: '/calendar',
         dday: 'D-07',
         activityType: '대외활동',
         organizer: '주최기관 B',
@@ -90,7 +86,6 @@ const MOCK_GROUPS: ScheduleGroup[] = [
     items: [
       {
         id: 'mock-3',
-        detailLink: '/calendar',
         dday: '마감',
         activityType: '교육',
         organizer: '주최기관 C',
@@ -102,7 +97,6 @@ const MOCK_GROUPS: ScheduleGroup[] = [
       },
       {
         id: 'mock-4',
-        detailLink: '/calendar',
         dday: 'D-Day',
         activityType: '강연/세미나',
         organizer: '주최기관 D',
@@ -122,7 +116,6 @@ const MOCK_GROUPS: ScheduleGroup[] = [
 // ① 공고저장일 그룹핑(bookmarked_at) ② 지원 시작/마감일(recruitment_start/end_date) → 실데이터 반영 완료.
 // TODO: ③ results 500 블로커 해소 시 지원여부(applied) 정상 반영.
 export default function ScheduleListView({ progressFilter, applyFilter }: ScheduleListViewProps) {
-  const router = useRouter();
   const { data: bookmarks, loading } = useBookmarks({ includeClosed: true });
   const { data: results } = useActivityParticipationResults();
   const [optimisticUnmarked, setOptimisticUnmarked] = useState<Set<string>>(new Set());
@@ -147,7 +140,6 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
     active.forEach((item) => {
       const scheduleItem: ScheduleItem = {
         id: item.id,
-        detailLink: item.detailLink,
         dday: item.registrationPeriod,
         activityType: item.activityType,
         organizer: item.organizer,
@@ -255,18 +247,10 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
             </Typography>
           )}
           {group.items.map((item) => (
+            // 카드 자체는 클릭 불가 — 지원완료 버튼·북마크만 동작 (PIC-165)
             <div
               key={item.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => router.push(item.detailLink)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  router.push(item.detailLink);
-                }
-              }}
-              className="flex cursor-pointer flex-col gap-3 rounded-lg bg-white p-4 pc:flex-row pc:items-center pc:gap-6 pc:px-6 pc:py-5"
+              className="flex flex-col gap-3 rounded-lg bg-white p-4 pc:flex-row pc:items-center pc:gap-6 pc:px-6 pc:py-5"
             >
               {/* 배지 + 칩 (기존 디자인 시스템 컴포넌트 재사용). CSV 11 ②: 배지↔제목 36px(gap-6 24 + mr-3 12) */}
               <div className="flex shrink-0 flex-col items-start gap-2 pc:mr-3 pc:w-[120px]">
