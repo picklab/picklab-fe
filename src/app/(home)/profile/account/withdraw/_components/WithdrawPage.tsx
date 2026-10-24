@@ -2,6 +2,7 @@
 
 import { useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
 import Button from '@/components/common/Button/Button';
 import CheckBoxLabel from '@/components/common/CheckBox/CheckBoxLabel';
 import TextBox from '@/components/common/Field/TextBox';
@@ -35,16 +36,11 @@ export default function WithdrawPage() {
   const [detail, setDetail] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // 기획 520-1550: 탈퇴 안내 동의 + 탈퇴 사유 선택 시 탈퇴하기 버튼 활성화
+  const canSubmit = agreed && reason !== '';
+
   const handleWithdraw = async () => {
-    if (submitting) return;
-    if (!agreed) {
-      window.alert('안내사항을 확인하고 동의해 주세요.');
-      return;
-    }
-    if (!reason) {
-      window.alert('탈퇴 사유를 선택해 주세요.');
-      return;
-    }
+    if (submitting || !canSubmit) return;
     if (!window.confirm('정말 탈퇴하시겠어요? 탈퇴 후에는 계정을 복구할 수 없습니다.')) return;
 
     setSubmitting(true);
@@ -161,12 +157,13 @@ export default function WithdrawPage() {
               className="flex-grow"
               onClick={() => router.push('/profile/account/info')}
             />
+            {/* figma 3025-44828(비활성: 흰 배경·gray-40 테두리·gray-90 텍스트) / 3025-44786(활성: primary) */}
             <Button
               size="lg"
-              buttonStyle="filled"
+              buttonStyle={canSubmit ? 'filled' : 'outlined'}
               label="탈퇴하기"
-              className="flex-grow"
-              disabled={submitting}
+              className={clsx('flex-grow', !canSubmit && 'bg-gray-0 !border-[#A5ADBB] [&>span]:!text-gray-90')}
+              disabled={!canSubmit || submitting}
               onClick={handleWithdraw}
             />
           </div>
