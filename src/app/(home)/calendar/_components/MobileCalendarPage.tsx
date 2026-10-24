@@ -352,6 +352,7 @@ export default function MobileCalendarPage() {
                 onChange={(v) => setSort((v as string) ?? 'RECENT')}
                 width="small"
                 size="small"
+                portalDropdown
                 className="!rounded-[100px]"
                 wrapperClassName="shrink-0"
               />

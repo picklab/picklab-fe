@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
@@ -59,17 +60,43 @@ export default function CalendarFilterDropdown<T extends string>({
   variant = 'mobile',
 }: CalendarFilterDropdownProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const [portalStyle, setPortalStyle] = useState<CSSProperties>();
   const isPc = variant === 'pc';
 
   useEffect(() => {
     if (!open) return;
     const handle = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+      const target = event.target as Node;
+      if (!ref.current?.contains(target) && !panelRef.current?.contains(target)) setOpen(false);
     };
     document.addEventListener('mousedown', handle);
     return () => document.removeEventListener('mousedown', handle);
   }, [open]);
+
+  // mobile: 필터 줄(overflow-x-auto)에 옵션그룹이 잘려 body로 portal + 트리거 기준 fixed 배치.
+  // 트리거 포커스 시 필터 줄이 가로 스크롤되므로 스크롤/리사이즈마다 위치를 다시 계산해 트리거를 따라감.
+  useLayoutEffect(() => {
+    if (!open || isPc) return;
+    const updatePosition = () => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      setPortalStyle({
+        position: 'fixed',
+        top: rect.bottom,
+        right: document.documentElement.clientWidth - rect.right,
+        zIndex: 80,
+      });
+    };
+    updatePosition();
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [open, isPc]);
 
   const active = selected.length > 0;
   const triggerLabel = active
@@ -85,7 +112,7 @@ export default function CalendarFilterDropdown<T extends string>({
   // pc: 옵션그룹 너비 = 트리거 너비(140px) (PIC-162)
   const panelClass = isPc
     ? 'absolute left-0 z-30 mt-1 flex w-[140px] flex-col rounded-[6px] bg-gray-0 p-1 shadow-optionGroup'
-    : 'absolute right-0 z-30 mt-2 w-[160px] rounded-lg border border-gray-20 bg-gray-0 p-3 shadow-md';
+    : 'mt-2 w-[160px] rounded-lg border border-gray-20 bg-gray-0 p-3 shadow-md';
   const optionClass = isPc
     ? 'flex w-full items-center gap-2 rounded-[4px] py-3 pl-3 pr-4'
     : 'flex w-full items-center gap-2 rounded px-2 py-2';
@@ -99,6 +126,8 @@ export default function CalendarFilterDropdown<T extends string>({
         {label}
       </Typography>
     );
+
+  const renderPanel = (panel: ReactNode) => (isPc ? panel : createPortal(panel, document.body));
 
   return (
     <div ref={ref} className="relative">
@@ -116,8 +145,8 @@ export default function CalendarFilterDropdown<T extends string>({
         <Icon icon="chevronDown" size={20} className={active ? 'text-primary-60' : 'text-gray-50'} />
       </button>
 
-      {open && (
-        <div className={panelClass}>
+      {open && renderPanel(
+        <div ref={panelRef} className={panelClass} style={isPc ? undefined : portalStyle}>
           <button type="button" onClick={() => onChange([])} className={optionClass}>
             <CheckSquare selected={!active} isPc={isPc} />
             {renderLabel(allLabel, !active)}
@@ -136,7 +165,7 @@ export default function CalendarFilterDropdown<T extends string>({
               </button>
             );
           })}
-        </div>
+        </div>,
       )}
     </div>
   );
