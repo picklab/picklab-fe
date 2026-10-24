@@ -33,7 +33,8 @@ export const elevation = {
   md: '0px 2px 8px 0px #0000001F',
   lg: '0px 6px 12px 0px #0000001F',
   xl: '0px 16px 20px 0px #0000001F',
-  optionGroup: '1px 4px 4.8px 0px rgba(0, 6, 12, 0.08)',
+  // figma OptionGroup(2104-18699) 드롭/자동완성 공통 그림자
+  optionGroup: '0px 0px 4px 0px #00000014, 0px 4px 8px 0px #00000014, 0px 6px 12px 0px #0000001F',
 };
 
 export const colors = {

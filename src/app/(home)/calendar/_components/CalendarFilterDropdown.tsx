@@ -82,9 +82,9 @@ export default function CalendarFilterDropdown<T extends string>({
   const toggleOption = (value: T) =>
     onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
 
-  // pc: 옵션그룹 너비 = 트리거 너비(140px), 그림자는 figma 실측(일치 토큰 없음) (PIC-162)
+  // pc: 옵션그룹 너비 = 트리거 너비(140px) (PIC-162)
   const panelClass = isPc
-    ? 'absolute left-0 z-30 mt-1 flex w-[140px] flex-col rounded-[6px] bg-gray-0 p-1 shadow-[0_0_4px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.08),0_6px_12px_rgba(0,0,0,0.12)]'
+    ? 'absolute left-0 z-30 mt-1 flex w-[140px] flex-col rounded-[6px] bg-gray-0 p-1 shadow-optionGroup'
     : 'absolute right-0 z-30 mt-2 w-[160px] rounded-lg border border-gray-20 bg-gray-0 p-3 shadow-md';
   const optionClass = isPc
     ? 'flex w-full items-center gap-2 rounded-[4px] py-3 pl-3 pr-4'
