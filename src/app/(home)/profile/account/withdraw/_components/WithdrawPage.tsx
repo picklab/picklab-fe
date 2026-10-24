@@ -155,7 +155,8 @@ export default function WithdrawPage() {
               buttonStyle="outlined"
               label="취소"
               className="flex-grow"
-              onClick={() => router.push('/profile/account/info')}
+              // 기획 520-1550: 취소 시 계정 관리 페이지로 이동
+              onClick={() => router.push('/profile/account')}
             />
             {/* figma 3025-44828(비활성: 흰 배경·gray-40 테두리·gray-90 텍스트) / 3025-44786(활성: primary) */}
             <Button
