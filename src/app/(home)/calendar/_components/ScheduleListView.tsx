@@ -50,66 +50,6 @@ interface ScheduleGroup {
   items: ScheduleItem[];
 }
 
-// ─────────────────────────────────────────────────────────────
-// TODO(MOCK): 디자인 확인용 가데이터 — 실 저장공고가 없을 때만 폴백.
-// 백엔드 필드(저장일/모집기간/지원여부) 확정되면 이 블록 통째로 삭제.
-const MOCK_GROUPS: ScheduleGroup[] = [
-  {
-    savedAt: '2025년 2월 14일',
-    items: [
-      {
-        id: 'mock-1',
-        dday: 'D-03',
-        activityType: '공모전/해커톤',
-        organizer: '주최기관 A',
-        title: '2025 대학생 아이디어 공모전',
-        applyStart: '25.02.10',
-        applyEnd: '25.02.28',
-        applied: false,
-        isClosed: false,
-      },
-      {
-        id: 'mock-2',
-        dday: 'D-07',
-        activityType: '대외활동',
-        organizer: '주최기관 B',
-        title: '글로벌 서포터즈 2기 모집',
-        applyStart: '25.02.12',
-        applyEnd: '25.03.05',
-        applied: true,
-        isClosed: false,
-      },
-    ],
-  },
-  {
-    savedAt: '2025년 2월 13일',
-    items: [
-      {
-        id: 'mock-3',
-        dday: '마감',
-        activityType: '교육',
-        organizer: '주최기관 C',
-        title: '프론트엔드 부트캠프 5기',
-        applyStart: '25.01.20',
-        applyEnd: '25.02.10',
-        applied: true,
-        isClosed: true,
-      },
-      {
-        id: 'mock-4',
-        dday: 'D-Day',
-        activityType: '강연/세미나',
-        organizer: '주최기관 D',
-        title: 'UX 디자인 트렌드 세미나',
-        applyStart: '25.02.01',
-        applyEnd: '25.02.13',
-        applied: false,
-        isClosed: false,
-      },
-    ],
-  },
-];
-// ─────────────────────────────────────────────────────────────
 
 // 목록형 일정관리 카드 리스트 — figma 2527-24643.
 // 데이터: 저장공고(useBookmarks) + 지원여부(activity-participations/results).
@@ -131,10 +71,11 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
     return map;
   }, [results]);
 
-  // 실 저장공고 → 저장일(bookmarked_at)별 그룹핑. 비어 있으면 목업 폴백.
+  // 실 저장공고 → 저장일(bookmarked_at)별 그룹핑.
   const groups = useMemo<ScheduleGroup[]>(() => {
     const active = bookmarks.filter((item) => !optimisticUnmarked.has(item.id));
-    if (active.length === 0) return MOCK_GROUPS; // TODO(MOCK): 저장공고 없을 때만 폴백
+    // 저장공고 0건이면 빈 그룹 → 빈 상태 박스 노출 (PIC-140/141/143)
+    if (active.length === 0) return [];
 
     const byDate = new Map<string, ScheduleItem[]>();
     active.forEach((item) => {
@@ -183,7 +124,6 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
 
   // 지원완료 토글: activityId만으로 POST(지원완료 표시)/DELETE(취소). 낙관적 + 실패 롤백.
   const handleToggleApplied = async (item: ScheduleItem) => {
-    if (item.id.startsWith('mock-')) return; // 목업은 토글 무시
     const current = appliedOverride[item.id] ?? item.applied;
     const next = !current;
     setAppliedOverride((prev) => ({ ...prev, [item.id]: next }));
@@ -200,7 +140,6 @@ export default function ScheduleListView({ progressFilter, applyFilter }: Schedu
   };
 
   const handleBookmark = async (item: ScheduleItem) => {
-    if (item.id.startsWith('mock-')) return; // 목업은 토글 무시
     // 북마크 해제(낙관적): 일정관리는 저장공고 목록이라 해제 시 목록에서 제거
     setOptimisticUnmarked((prev) => new Set(prev).add(item.id));
     try {
