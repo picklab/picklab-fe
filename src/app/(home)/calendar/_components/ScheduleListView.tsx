@@ -31,7 +31,7 @@ function formatSavedAt(value: string): string {
   return m ? `${m[1]}년 ${Number(m[2])}월 ${Number(m[3])}일` : value;
 }
 
-// 목록형 카드의 표시 모델 (실데이터/목업 공통)
+// 목록형 카드의 표시 모델
 interface ScheduleItem {
   id: string;
   dday: string; // 'D-00' / '마감' 등
@@ -49,7 +49,6 @@ interface ScheduleGroup {
   savedAt: string | null; // '2025년 2월 14일' or null(헤더 없음)
   items: ScheduleItem[];
 }
-
 
 // 목록형 일정관리 카드 리스트 — figma 2527-24643.
 // 데이터: 저장공고(useBookmarks) + 지원여부(activity-participations/results).
