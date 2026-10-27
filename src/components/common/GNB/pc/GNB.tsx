@@ -28,7 +28,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
   const [keyword, setKeyword] = useState("");
   const suggestions = useSearchSuggestions(keyword);
 
-  // 검색어 자동완성 드롭다운 (figma WordList 2582:34074: 검색 아이콘 + 일치 글자 강조, 행 44)
+  // 검색어 자동완성 드롭다운 (figma WordList 2582:34074)
   const optionGroupProps = useMemo<OptionGroupProps>(
     () => ({
       options: suggestions.map((suggestion) => ({ label: suggestion, value: suggestion })),
@@ -37,12 +37,13 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         createSearchHistory(value.trim());
         router.push(`/search/${encodeURIComponent(value.trim())}?tab=all`);
       },
-      type: "iconWithText",
-      icon: "search",
+      type: "word",
       query: keyword.trim(),
       width: "full",
-      className: "!w-full",
-      itemClassName: "min-h-[44px]",
+      // figma WordList: 검색창과 같은 폭, 검색창 아래 6px, p8, radius 8, border #E6E6E6
+      className: "!mt-[6px] !w-full !rounded-[8px] !p-2 border border-[#E6E6E6] !max-h-none",
+      // figma Word: p10, radius 없음
+      itemClassName: "!min-h-0 !p-[10px] !rounded-none",
     }),
     [router, suggestions, keyword],
   );

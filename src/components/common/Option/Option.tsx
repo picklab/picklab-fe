@@ -26,7 +26,7 @@ export interface OptionProps extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIEl
   className?: string;
   focus?: boolean;
   icon?: IconType;
-  type?: 'text' | 'checkbox' | 'iconWithText';
+  type?: 'text' | 'checkbox' | 'iconWithText' | 'word';
   /** 입력어와 일치하는 접두 부분을 볼드로 강조(자동완성용). 미전달 시 일반 렌더 */
   query?: string;
 }
@@ -35,6 +35,7 @@ const styleClass = {
   text: '!bg-info-10 text-info-70',
   checkbox: '!bg-gray-5',
   iconWithText: '!bg-gray-5',
+  word: '!bg-gray-5',
 };
 
 const OptionType = ({
@@ -142,6 +143,22 @@ const OptionType = ({
               <div className="flex items-center gap-2">
                 <Icon icon={icon} size={18} className="text-gray-40" />
                 <Typography type="Body3Medium">{renderLabel(option.label)}</Typography>
+              </div>
+            )}
+            {/* 검색어 자동완성 행 (figma Word 1136:15164): 검색 아이콘 24 #A5ADBB + 15px, 일치 접두만 SemiBold */}
+            {type === 'word' && (
+              <div className="flex min-w-0 items-center gap-[10px]">
+                <Icon icon="search" size={24} className="shrink-0 text-[#A5ADBB]" />
+                <Typography type="Body2Regular" className="text-gray-90">
+                  {query && option.label.toLowerCase().startsWith(query.toLowerCase()) ? (
+                    <>
+                      <span className="font-semibold">{option.label.slice(0, query.length)}</span>
+                      {option.label.slice(query.length)}
+                    </>
+                  ) : (
+                    option.label
+                  )}
+                </Typography>
               </div>
             )}
             {type === 'checkbox' && (

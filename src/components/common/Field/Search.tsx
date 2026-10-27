@@ -139,7 +139,8 @@ const Search = ({ optionGroupProps, wrapperClassName, ...props }: SelectTextBoxP
       {isOpen && optionGroupProps && (
         <OptionGroup
           {...optionGroupProps}
-          type="text" // 내부에서 강제 지정
+          // 내부에서 text로 강제 지정. 단 GNB 자동완성(word)은 figma WordList 행 스타일 사용
+          type={(optionGroupProps as { type?: string }).type === "word" ? "word" : "text"}
           textFieldValue={input}
           options={filtered}
           onClickHandler={onSelect}
