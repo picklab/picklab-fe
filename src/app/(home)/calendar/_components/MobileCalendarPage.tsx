@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
@@ -150,7 +151,11 @@ function ScheduleCard({
 
 // 모바일 일정관리 화면 — figma PROFILE-004-001-002.
 export default function MobileCalendarPage() {
-  const [tab, setTab] = useState<ScheduleTab>('SCHEDULE');
+  const searchParams = useSearchParams();
+  // 마이페이지 '활동 결과'(?tab=result) 진입 시 활동 결과 탭으로 시작 (PC와 동일)
+  const [tab, setTab] = useState<ScheduleTab>(
+    searchParams.get('tab') === 'result' ? 'RESULT' : 'SCHEDULE',
+  );
   const [viewMode, setViewMode] = useState<ScheduleViewMode>('LIST');
   const [progressFilter, setProgressFilter] = useState<ProgressFilter[]>([]);
   const [applyFilter, setApplyFilter] = useState<ApplyFilter[]>([]);
