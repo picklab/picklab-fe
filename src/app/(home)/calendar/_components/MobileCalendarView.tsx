@@ -129,6 +129,8 @@ export default function MobileCalendarView() {
         </div>
         <div className="grid grid-cols-7 justify-items-center gap-x-[19px] gap-y-2">
           {cells.map((cell, index) => {
+            // figma 1136:76598: 이전/다음 달 칸은 빈칸으로 둠
+            if (!cell.current) return <span key={`empty-${index}`} className="h-8 w-8" aria-hidden />;
             const isSelected = cell.current && cell.day === selectedDay;
             const hasEvent = cell.current && eventDays.has(cell.day);
             return (
