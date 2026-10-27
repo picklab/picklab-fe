@@ -3,21 +3,19 @@
 import { useEffect, useState } from 'react';
 import Button from '@/components/common/Button/Button';
 import Switch from '@/components/common/Control/Switch';
-import Avatar from '@/components/common/GNB/pc/Avatar';
-import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 import TextLink from '@/components/common/TextLink/TextLink';
 import Typography from '@/components/common/Typography';
 import { useMe } from '@/hooks/useMe';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import MobileProfile from '../../_components/MobileProfile';
 
 /**
  * 이메일 마케팅 수신 동의 / 알림 설정.
  * 초기값은 GET /v1/members/me 의 email_agreement, notification_preferences 로 채운다(useMe).
  */
 export default function MobileAccountPage() {
-  const [snbMenu, setSnbMenu] = useState<'my-activity' | 'my-post' | 'account'>('my-activity');
   const router = useRouter();
   const { data: me, loading } = useMe();
 
@@ -81,72 +79,27 @@ export default function MobileAccountPage() {
 
   return (
     <div className="block pc:hidden w-full flex flex-col items-center gap-8">
-      {/* 프로필 */}
-      <section className="flex flex-row gap-4 items-center">
-        <Avatar className="w-20 h-20" scale="lg" />
-        <div className="flex flex-col w-[238.5px]">
-          <button className="flex flex-row items-center gap-2 w-full py-4 text-gray-90">
-            <Typography type="Heading2Semibold">
-              {loading ? '' : (me?.name ?? '')}
-            </Typography>
-            <ChevronRight width={7.5} height={13.5} />
-          </button>
-          {/*TODO: 메뉴 1,2,3.. 코딩 해둔거 수정하면서 마지막 menu만 map 함수에서 -> border 없이 or Divder 활용 && hidden */}
-          <div className="flex flex-row flex-wrap gap-1 w-full text-primary-60">
-            <span className="flex items-center h-[20px] pr-3 border-r border-gray-20">
-              <Typography type="Caption1Regular">메뉴 1</Typography>
-            </span>
-            <span className="flex items-center h-[20px] pr-3 border-r border-gray-20">
-              <Typography type="Caption1Regular">메뉴 2</Typography>
-            </span>
-            <span className="flex items-center h-[20px] pr-3 border-r border-gray-20">
-              <Typography type="Caption1Regular">메뉴 3</Typography>
-            </span>
-            <span className="flex items-center h-[20px] pr-3 border-r border-gray-20">
-              <Typography type="Caption1Regular">메뉴 4</Typography>
-            </span>
-            <span className="flex items-center h-[20px] pr-3">
-              <Typography type="Caption1Regular">메뉴 5</Typography>
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* 프로필 — 마이페이지 모바일과 같은 컴포넌트(닉네임·관심직무·회원정보 이동) */}
+      <MobileProfile />
 
-      {/*snb menu */}
+      {/*snb menu — 계정 페이지이므로 '계정' 탭 활성 */}
       <div className="flex flex-row w-full">
-        <Link
-          href="#1"
-          id="my-activity"
-          className={clsx(
-            'box-border w-full flex px-space-10 h-space-48 justify-center border-b-[1.5px] border-gray-30',
-            snbMenu === 'my-activity' && '!border-primary-50 !border-b-[3px]',
-          )}
-          onClick={() => setSnbMenu('my-activity')}
-        >
-          <Typography type="Headline2SemiBold">MY 활동</Typography>
-        </Link>
-        <Link
-          href="#2"
-          id="my-post"
-          className={clsx(
-            'box-border w-full flex px-space-10 h-space-48 justify-center border-b-[1.5px] border-gray-30',
-            snbMenu === 'my-post' && '!border-primary-50 !border-b-[3px]',
-          )}
-          onClick={() => setSnbMenu('my-post')}
-        >
-          <Typography type="Headline2SemiBold">게시물</Typography>
-        </Link>
-        <Link
-          href="#3"
-          id="account"
-          className={clsx(
-            'box-border w-full flex px-space-10 h-space-48 justify-center border-b-[1.5px] border-gray-30',
-            snbMenu === 'account' && '!border-primary-50 !border-b-[3px]',
-          )}
-          onClick={() => setSnbMenu('account')}
-        >
-          <Typography type="Headline2SemiBold">계정</Typography>
-        </Link>
+        {[
+          { href: '/profile', label: 'MY 활동' },
+          { href: '/profile/posts', label: '작성글' },
+          { href: '/profile/account', label: '계정' },
+        ].map(({ href, label }) => (
+          <Link
+            key={href}
+            href={href}
+            className={clsx(
+              'box-border w-full flex px-space-10 h-space-48 justify-center border-b-[1.5px] border-gray-30',
+              href === '/profile/account' && '!border-primary-50 !border-b-[3px]',
+            )}
+          >
+            <Typography type="Headline2SemiBold">{label}</Typography>
+          </Link>
+        ))}
       </div>
 
       {/*알림 관리 */}
