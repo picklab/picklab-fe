@@ -27,8 +27,9 @@ const SNB = ({ Jobs }: SNBProps) => {
   const router = useRouter();
   const { clientLogout } = useAuthClient();
   const { data: meData } = useMe();
-  // 관심직무가 비어있으면 임시 데이터로 대체 노출
-  const displayJobs = Jobs.length > 0 ? Jobs : SAMPLE_INTEREST_JOBS;
+  // 관심직무: props → 내 정보(useMe) → 임시 데이터 순으로 노출 (계정·알림·작성글 페이지는 props를 비워 둠)
+  const meJobs = meData?.jobs ?? [];
+  const displayJobs = Jobs.length > 0 ? Jobs : meJobs.length > 0 ? meJobs : SAMPLE_INTEREST_JOBS;
 
   // 섹션 활성화 여부 계산 함수
   const isSectionActive = (
