@@ -39,6 +39,13 @@ function setAuthCookies(response: NextResponse, accessToken: string, refreshToke
   }
 }
 
+// 토큰이 무효(재발급 실패)면 쿠키를 지워 헤더가 로그인 상태로 남지 않게 함
+function clearAuthCookies(response: NextResponse) {
+  response.cookies.set('accessToken', '', { path: '/', maxAge: 0 });
+  response.cookies.set('refreshToken', '', { path: '/', maxAge: 0 });
+  return response;
+}
+
 async function handleRequest(req: NextRequest) {
   try {
     const accessToken = req.cookies.get('accessToken')?.value;
@@ -96,7 +103,7 @@ async function handleRequest(req: NextRequest) {
     if (!accessToken && refreshToken) {
       const retryResponse = await refreshAndRetry();
       if (retryResponse) return retryResponse;
-      return NextResponse.json({ error: 'Unauthorized: Token refresh failed' }, { status: 401 });
+      return clearAuthCookies(NextResponse.json({ error: 'Unauthorized: Token refresh failed' }, { status: 401 }));
     }
 
     let externalResponse = await ky(externalApiUrl, buildKyOptions(accessToken));
@@ -104,6 +111,10 @@ async function handleRequest(req: NextRequest) {
     if (externalResponse.status === 401 && refreshToken) {
       const retryResponse = await refreshAndRetry();
       if (retryResponse) return retryResponse;
+    }
+
+    if (externalResponse.status === 401) {
+      return clearAuthCookies(buildProxyResponse(externalResponse));
     }
 
     return buildProxyResponse(externalResponse);

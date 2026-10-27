@@ -40,6 +40,13 @@ function setAuthCookies(response: NextResponse, accessToken: string, refreshToke
   }
 }
 
+// 토큰이 무효(재발급 실패)면 쿠키를 지워 헤더가 로그인 상태로 남지 않게 함
+function clearAuthCookies(response: NextResponse) {
+  response.cookies.set('accessToken', '', { path: '/', maxAge: 0 });
+  response.cookies.set('refreshToken', '', { path: '/', maxAge: 0 });
+  return response;
+}
+
 async function buildResponse(response: Response) {
   const status = response.status;
   const contentType = response.headers.get('content-type');
@@ -119,7 +126,7 @@ export async function proxyWithAuth({
     if (!accessToken && refreshToken) {
       const retryResponse = await refreshAndRetry();
       if (retryResponse) return retryResponse;
-      if (!optionalAuth) return unauthorizedResponse();
+      if (!optionalAuth) return clearAuthCookies(unauthorizedResponse());
     }
 
     let response = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions(accessToken));
@@ -127,6 +134,10 @@ export async function proxyWithAuth({
     if (response.status === 401 && refreshToken) {
       const retryResponse = await refreshAndRetry();
       if (retryResponse) return retryResponse;
+    }
+
+    if (response.status === 401 && accessToken) {
+      return clearAuthCookies(await buildResponse(response));
     }
 
     return buildResponse(response);
