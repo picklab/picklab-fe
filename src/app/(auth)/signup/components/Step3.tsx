@@ -93,7 +93,7 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
           </Typography>
 
           {/* PC: figma 2369:20262 — 420폭 한 줄 justify-between (gap-3이면 438px라 AI 카드가 줄바꿈됨) */}
-          <div className="flex flex-wrap gap-3 pc:flex-nowrap pc:justify-between pc:gap-0">
+          <div className="flex flex-wrap gap-3 pc:w-[420px] pc:flex-nowrap pc:justify-between pc:gap-0">
             {JOB_AREAS.map((job, index) => {
               const isSelected = selectedCategory === job.alt;
               return (
