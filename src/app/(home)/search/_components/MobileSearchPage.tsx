@@ -77,8 +77,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
     [activeMenu, searchedItems],
   );
 
-  const handleBookmarkToggle = async (activityId: string) => {
-    const current = bookmarkedMap[activityId] ?? false;
+  const handleBookmarkToggle = async (activityId: string, current: boolean) => {
 
     try {
       const result = await toggleBookmark({
@@ -101,7 +100,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
   const renderCard = (item: (typeof searchedItems)[number]) => {
     const activityId = extractActivityId(item.detailLink);
     const isBookmarked = activityId
-      ? (bookmarkedMap[activityId] ?? false)
+      ? (bookmarkedMap[activityId] ?? item.isBookmarked ?? false)
       : false;
     const jobs = item.jobs.filter((job): job is (typeof JOB_TYPES)[number] =>
       JOB_TYPES.includes(job as (typeof JOB_TYPES)[number]),
@@ -124,7 +123,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
         title={item.title}
         jobs={jobs.length > 0 ? jobs : ["기획"]}
         onCardClick={() => router.push(item.detailLink)}
-        onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
+        onBookmarkClick={() => activityId && handleBookmarkToggle(activityId, isBookmarked)}
       />
     );
   };
