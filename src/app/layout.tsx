@@ -54,7 +54,7 @@ export default async function RootLayout({
             <GNBPC isLogin={isLogin} />
           </div>
           <div className="pc:hidden mobile:flex  justify-center">
-            <GNBMobile isLogin={isLogin} />
+            <GNBMobile />
           </div>
           {children}
           {modal}

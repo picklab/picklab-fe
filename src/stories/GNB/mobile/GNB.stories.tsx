@@ -1,4 +1,5 @@
 import GNB from '@/components/common/GNB/mobile/GNB';
+import { AuthClientProvider } from '@/contexts/AuthContext';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof GNB> = {
@@ -14,14 +15,11 @@ export default meta;
 
 type Story = StoryObj<typeof GNB>;
 
+// 로그인 여부는 AuthContext에서 읽음
 export const LoggedOut: Story = {
-  args: {
-    isLogin: false,
-  },
+  decorators: [(Story) => <AuthClientProvider initialAuthStatus={false}><Story /></AuthClientProvider>],
 };
 
 export const LoggedIn: Story = {
-  args: {
-    isLogin: true,
-  },
+  decorators: [(Story) => <AuthClientProvider initialAuthStatus><Story /></AuthClientProvider>],
 };

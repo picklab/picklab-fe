@@ -4,12 +4,11 @@ import Link from 'next/link';
 import Icon from '../../Icon/Icon';
 import Avatar from '../pc/Avatar';
 import Button from '../../Button/Button';
+import { useAuthClient } from '@/contexts/AuthContext';
 
-interface GNBProps {
-  isLogin: boolean;
-}
-
-const GNB = ({ isLogin = false }: GNBProps) => {
+// 로그인 여부는 PC GNB와 같이 AuthContext 기준 (로그아웃·탈퇴 직후 바로 반영)
+const GNB = () => {
+  const { isAuthenticated } = useAuthClient();
   return (
     <>
     <header className="w-full max-w-[23.4375rem] h-[3.625rem] bg-gray-0 px-5 flex items-center justify-between ">
@@ -19,7 +18,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
         </Link>
       </div>
 
-      {isLogin ? (
+      {isAuthenticated ? (
         <nav aria-label="유저 메뉴">
           <ul className="flex items-center gap-[0.625rem]">
             <li className="flex items-center">
