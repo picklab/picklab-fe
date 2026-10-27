@@ -92,7 +92,8 @@ export default function Step3({ signupData, setSignupData }: StepProps) {
             직무 분야
           </Typography>
 
-          <div className="flex flex-wrap gap-3">
+          {/* PC: figma 2369:20262 — 420폭 한 줄 justify-between (gap-3이면 438px라 AI 카드가 줄바꿈됨) */}
+          <div className="flex flex-wrap gap-3 pc:flex-nowrap pc:justify-between pc:gap-0">
             {JOB_AREAS.map((job, index) => {
               const isSelected = selectedCategory === job.alt;
               return (
