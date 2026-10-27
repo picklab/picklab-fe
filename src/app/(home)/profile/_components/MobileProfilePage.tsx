@@ -107,6 +107,8 @@ export default function MobileProfilePage() {
                   isFinished
                   chipTitle={item.chipTitle}
                   organization={item.organization}
+                  startDate={item.startDate}
+                  endDate={item.endDate}
                   onListClick={() => router.push(`/profile/archive/${item.id}`)}
                 />
               ))}
