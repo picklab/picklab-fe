@@ -113,6 +113,12 @@ export const JOB_CHILDREN: Record<JobParent, JobChild[]> = {
   ],
 } as const;
 
+/** 직무 value('service-planning') → 화면 표시용 label('서비스 기획') */
+export const getJobLabel = (value: string) =>
+  Object.values(JOB_CHILDREN)
+    .flat()
+    .find((child) => child.value === value)?.label ?? value;
+
 export const JOB_AREAS = [
   {
     src: '/imgs/signup/planning.png',

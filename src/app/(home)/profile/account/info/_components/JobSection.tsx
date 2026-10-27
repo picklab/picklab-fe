@@ -5,6 +5,7 @@ import Typography from '@/components/common/Typography';
 import { useState, useEffect } from 'react';
 import PcJobEditSection from './PcJobEditSection';
 import { SignupData } from '@/app/(auth)/signup/types';
+import { getJobLabel } from '@/app/(auth)/signup/constants';
 import MobileJobEditSection from './MobileJobEditSection';
 import { useMe } from '@/hooks/useMe';
 
@@ -151,7 +152,7 @@ const JobSection = () => {
               {signupData.interests.map((interest, index) => (
                 <span key={index} className="py-2 px-4 rounded-[100px] bg-primary-5">
                   <Typography type="Body4Medium" className="text-primary-70">
-                    {interest}
+                    {getJobLabel(interest)}
                   </Typography>
                 </span>
               ))}
