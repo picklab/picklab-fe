@@ -8,6 +8,11 @@ import GNBMenu from "@/components/common/GNB/pc/GNBMenu";
 import Icon from "@/components/common/Icon/Icon";
 import { GNBNavigationMenus } from "@/constants/menus";
 import { useAuthClient } from "@/contexts/AuthContext";
+import type { OptionGroupProps } from "@/components/common/Option/OptionGroup";
+import { createSearchHistory } from "@/hooks/useSearchHistory";
+import { useSearchSuggestions } from "@/hooks/useSearchSuggestions";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import clsx from "clsx";
 import Image from "next/image";
@@ -19,6 +24,28 @@ interface GNBProps {
 
 const GNB = ({ isLogin = false }: GNBProps) => {
   const { isAuthenticated } = useAuthClient();
+  const router = useRouter();
+  const [keyword, setKeyword] = useState("");
+  const suggestions = useSearchSuggestions(keyword);
+
+  // 검색어 자동완성 드롭다운 (figma WordList 2582:34074: 검색 아이콘 + 일치 글자 강조, 행 44)
+  const optionGroupProps = useMemo<OptionGroupProps>(
+    () => ({
+      options: suggestions.map((suggestion) => ({ label: suggestion, value: suggestion })),
+      onClickHandler: (value) => {
+        if (typeof value !== "string" || !value.trim()) return;
+        createSearchHistory(value.trim());
+        router.push(`/search/${encodeURIComponent(value.trim())}?tab=all`);
+      },
+      type: "iconWithText",
+      icon: "search",
+      query: keyword.trim(),
+      width: "full",
+      className: "!w-full",
+      itemClassName: "min-h-[44px]",
+    }),
+    [router, suggestions, keyword],
+  );
 
   return (
     <header className="w-full border-b border-gray-20">
@@ -57,6 +84,8 @@ const GNB = ({ isLogin = false }: GNBProps) => {
             wrapperClassName="w-[280px]"
             className="!w-[280px] !h-[36px] !rounded-full !px-[18px] !py-0 placeholder:!text-gray-40"
             placeholder="활동을 검색해보세요"
+            onChange={(e) => setKeyword(e.target.value)}
+            optionGroupProps={optionGroupProps}
           />
         </div>
         {isAuthenticated ? (
