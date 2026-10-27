@@ -55,7 +55,7 @@ export default function MobileCalendarView() {
     const result: DayCell[] = [];
     for (let i = startWeekday - 1; i >= 0; i -= 1) result.push({ day: prevMonthDays - i, current: false });
     for (let d = 1; d <= daysInMonth; d += 1) result.push({ day: d, current: true });
-    while (result.length % 7 !== 0) result.push({ day: result.length, current: false });
+    for (let d = 1; result.length % 7 !== 0; d += 1) result.push({ day: d, current: false });
     return result;
   }, [year, month]);
 
