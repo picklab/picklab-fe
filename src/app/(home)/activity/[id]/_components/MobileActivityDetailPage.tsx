@@ -263,6 +263,7 @@ const ReviewListCard = ({
 export default function MobileActivityDetailPage({ activity }: MobileActivityDetailPageProps) {
   const router = useRouter();
   const [tab, setTab] = useState<MobileTab>('detail');
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(Boolean(activity.isBookmarked));
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const applyLink = getApplyLink(activity);
@@ -373,11 +374,12 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
         <InfoItem label="주최기관" value={activity.organizer} />
         <RecruitPeriodItem value={activity.registrationPeriod} />
         <InfoItem label="모임지역" value={activity.region} />
+        <InfoItem label="참여대상" value={activity.target} />
         <InfoItem label="활동분야" value={activity.activityField} />
         <InfoItem label="활동기간" value={activity.activityPeriod} />
         <div className="flex items-start gap-4">
           <Typography type="Body3Regular" className="min-w-[54px] text-gray-50">
-            관심직무
+            관련직무
           </Typography>
           <div className="flex flex-wrap gap-1">
             {tags.length > 0 ? (
@@ -434,6 +436,7 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
             <button
               type="button"
               aria-label="이미지 확대"
+              onClick={() => setIsImageZoomed(true)}
               className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-gray-90/70 inline-flex items-center justify-center"
             >
               <Icon icon="search" size={16} className="text-gray-0" />
@@ -645,6 +648,31 @@ export default function MobileActivityDetailPage({ activity }: MobileActivityDet
           </Link>
         </div>
       </div>
+
+      {/* 이미지 확대 팝업: PC와 동일 동작(딤드 클릭 시 닫기), 크기는 모바일 폭(335)에 맞춤 */}
+      {isImageZoomed && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="공고 이미지 확대"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-90/70"
+          onClick={() => setIsImageZoomed(false)}
+        >
+          <div
+            className="relative h-[445px] w-[335px] overflow-hidden rounded-lg bg-gray-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={activity.thumbnailImage || '/imgs/cat.jpg'}
+              alt={`${activity.title} 확대 이미지`}
+              fill
+              sizes="335px"
+              unoptimized
+              className="object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
