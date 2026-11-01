@@ -27,6 +27,12 @@ const REASONS: { id: string; value: WithdrawalReason; label: string }[] = [
   { id: 'reason-6', value: 'ETC', label: '기타' },
 ];
 
+const NOTICES = [
+  '회원 탈퇴 시 계정 정보 및 이용 기록은 삭제되며, 삭제된 정보는 복구할 수 없습니다.',
+  'PICKLAB에 작성하신 리뷰와 댓글은 탈퇴 후에도 유지됩니다. 삭제를 원하시는 경우 탈퇴 전에 직접 삭제해 주세요.',
+  '회원님의 개인정보는 탈퇴일로부터 30일간 보관 후 개인정보처리방침에 따라 안전하게 삭제됩니다.',
+];
+
 export default function WithdrawPage() {
   const router = useRouter();
   const { clientLogout } = useAuthClient();
@@ -87,37 +93,21 @@ export default function WithdrawPage() {
                 PICKLAB 회원탈퇴를 신청하기 전<br className="pc:hidden" /> 안내사항을 꼭 확인해주세요!
               </Typography>
             </div>
+            {/* 기획 Figma 2169:2(521:1779) 탈퇴 안내 3항목 — 문장만 노출 */}
             <div className="w-full flex flex-col gap-2">
-              <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">탈퇴한 계정은 복구 및 재사용이 불가능</Typography>
-                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
-                  본인을 포함해 누구도 다시 사용할 수 없으니 신중하게 결정해 주세요.
-                </Typography>
-              </div>
-              <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">개인정보 및 이용 기록 복구 불가능</Typography>
-                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
-                  회원님의 개인정보 및 이용 기록은 모두 삭제되며 복구할 수 없습니다.
-                </Typography>
-              </div>
-              <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">리뷰와 댓글은 직접 삭제</Typography>
-                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
-                  PICKLAB에 작성하신 리뷰와 댓글은 탈퇴 후에도 남아 있으니 필요한 경우 직접 삭제해 주세요.
-                </Typography>
-              </div>
-              <div className="w-full flex flex-col gap-1 py-[22px] px-5 rounded-[8px] bg-gray-10">
-                <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">개인정보는 탈퇴 후 30일간만 보관</Typography>
-                <Typography type="Caption2Regular" className="mobile:text-5xs mobile:leading-[133.4%] mobile:text-gray-60">
-                  개인정보는 탈퇴일로부터 30일간 보관 후 개인정보처리방침에 따라 안전하게 삭제됩니다.
-                </Typography>
-              </div>
+              {NOTICES.map((text) => (
+                <div key={text} className="w-full py-[22px] px-5 rounded-[8px] bg-gray-10">
+                  <Typography type="Body2Semibold" className="mobile:text-xs mobile:leading-[150%] mobile:text-gray-90">
+                    {text}
+                  </Typography>
+                </div>
+              ))}
             </div>
             <div className="mobile:flex mobile:justify-center mobile:[&_span]:text-2xs mobile:[&_span]:leading-[146.7%]">
               <CheckBoxLabel
                 id="withdrawal-agreement"
                 value="agree"
-                label="위 안내사항을 확인했으며, 동의합니다."
+                label="위 안내사항을 확인했으며, 동의합니다"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
               />
