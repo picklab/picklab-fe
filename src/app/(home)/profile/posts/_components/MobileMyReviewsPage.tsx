@@ -177,16 +177,21 @@ export default function MobileMyReviewsPage() {
 
                   {openMenuId === item.id && (
                     <div className="absolute right-0 top-7 z-10 flex w-[120px] flex-col rounded-lg border border-gray-20 bg-gray-0 py-1 shadow-md">
+                      {/* figma 3051:37312: 승인 진행 중만 수정 불가 */}
                       <button
                         type="button"
+                        disabled={item.approval_status === 'PENDING'}
                         onClick={(e) => {
                           e.stopPropagation();
                           setOpenMenuId(null);
                           handleEdit(item.id);
                         }}
-                        className="px-4 py-2 text-left hover:bg-gray-5"
+                        className="px-4 py-2 text-left hover:bg-gray-5 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                       >
-                        <Typography type="Body3Medium" className="text-gray-90">
+                        <Typography
+                          type="Body3Medium"
+                          className={item.approval_status === 'PENDING' ? 'text-gray-30' : 'text-gray-90'}
+                        >
                           수정
                         </Typography>
                       </button>

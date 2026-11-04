@@ -159,10 +159,10 @@ export default function PcMyReviewsPage() {
                   {reviewApprovalStatusLabel(item.approval_status)}
                 </Typography>
 
-                {/* 수정/삭제 (수정은 미승인(REJECTED)일 때만 활성) */}
+                {/* 수정/삭제 (figma 3051:36993: 승인 진행 중만 수정 불가 — 미승인·승인 완료는 수정 가능) */}
                 <div className="flex justify-center gap-2">
                   {(() => {
-                    const editable = item.approval_status === 'REJECTED';
+                    const editable = item.approval_status !== 'PENDING';
                     return (
                       <button
                         type="button"
