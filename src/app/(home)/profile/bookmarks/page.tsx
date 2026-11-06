@@ -12,6 +12,9 @@ import { JOB_TYPE_OPTIONS } from '@/constants/filters';
 import MobileBookmarksPage from './_components/MobileBookmarksPage';
 
 const CARDS_PER_PAGE = 16;
+// 드롭다운 열림 상태 (figma 3025:36883): 폭 132, 버튼과 간격 14.6, 안쪽 여백 4, 행 여백 12/8, 체크박스 16(테두리 gray/30), 14px #101828
+const DROPDOWN_CLASS =
+  '[&_ul]:!w-[132px] [&_ul]:!mt-[14.6px] [&_ul]:!p-1 [&_li]:!py-2 [&_li_label]:!size-4 [&_li_label]:border-gray-30 [&_li_span]:!leading-[1.429] [&_li_span]:text-gray-90 [&_li_span]:whitespace-nowrap';
 const JOB_TYPES = ['기획', '디자인', '개발', '마케팅', 'AI'] as const;
 
 const CATEGORY_TO_API = {
@@ -85,8 +88,8 @@ export default function BookmarksPage() {
               size="small"
               width="medium"
               type="checkbox"
-              functionOptionType="reset"
               portalDropdown
+              dropdownClassName={DROPDOWN_CLASS}
               wrapperClassName="pc:!w-[132px]"
               className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828] pc:!w-[132px] pc:!pr-[13px] pc:[&_span]:text-[15px]"
               placeholder="활동 유형"
@@ -106,8 +109,8 @@ export default function BookmarksPage() {
               size="small"
               width="medium"
               type="checkbox"
-              functionOptionType="reset"
               portalDropdown
+              dropdownClassName={DROPDOWN_CLASS}
               wrapperClassName="pc:!w-[132px]"
               className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828] pc:!w-[132px] pc:!pr-[13px] pc:[&_span]:text-[15px]"
               placeholder="직무 유형"
@@ -122,14 +125,14 @@ export default function BookmarksPage() {
               size="small"
               width="medium"
               type="checkbox"
-              functionOptionType="reset"
               portalDropdown
+              dropdownClassName={DROPDOWN_CLASS}
               wrapperClassName="pc:!w-[132px]"
               className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828] pc:!w-[132px] pc:!pr-[13px] pc:[&_span]:text-[15px]"
               placeholder="진행 여부"
               options={[
-                { label: '진행중', value: 'ongoing' },
-                { label: '마감', value: 'closed' },
+                { label: '진행 중', value: 'ongoing' },
+                { label: '마감 완료', value: 'closed' },
               ]}
               value={selectedStatus}
               onChange={(value) => {

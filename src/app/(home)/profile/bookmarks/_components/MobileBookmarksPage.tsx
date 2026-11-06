@@ -244,9 +244,18 @@ function BookmarkFilterSheet({
   const options = FILTER_TABS.find((tab) => tab.key === currentTab)?.options ?? [];
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
-      {/* 시트 높이 502 = 핸들 영역 14 + 본문 488 */}
-      <div className="flex h-[488px] flex-col px-5 pb-[50px] pt-[14px]">
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      classNames={{
+        overlay: '!bg-[rgba(0,0,0,0.85)]',
+        sheet:
+          '!rounded-t-[20px] !shadow-[0px_16px_20px_0px_rgba(0,0,0,0.12),0px_8px_16px_0px_rgba(0,0,0,0.08),0px_0px_8px_0px_rgba(0,0,0,0.08)]',
+        handle: '!mt-[14.28px] !h-[3px] !w-[28.92px] !rounded-[10px] !bg-[#A5ADBB]',
+      }}
+    >
+      {/* 시트 높이 502 = 손잡이 영역 17.28 + 본문 484.72 (본문 시작 28, 아래 여백 50.17) */}
+      <div className="flex h-[484.72px] flex-col px-5 pb-[50.17px] pt-[10.72px]">
         <div className="relative flex h-7 items-end justify-center">
           <span className="text-[18px] font-semibold leading-[21px] text-[#373737]">필터 전체</span>
           <button
@@ -255,7 +264,16 @@ function BookmarkFilterSheet({
             aria-label="닫기"
             className="absolute right-0 top-0 flex size-7 items-center justify-center"
           >
-            <Icon icon="xMark" size={28} className="text-gray-90" />
+            {/* figma icon/base 28 (선 1.127, #101828) */}
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <path
+                d="M21 7L14 14M14 14L7 21M14 14L7 7M14 14L21 21"
+                stroke="#101828"
+                strokeWidth="1.12684"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         </div>
 
