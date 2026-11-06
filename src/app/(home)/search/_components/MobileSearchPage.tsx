@@ -137,7 +137,8 @@ export default function MobileSearchPage({ search }: { search: string }) {
   );
 
   return (
-    <div className="mobile:flex pc:hidden flex-col gap-5">
+    // figma 1136:77720: GNB↔제목 20, 카테고리 섹션 간격 32
+    <div className="mobile:flex pc:hidden flex-col gap-5 pt-5">
       <Typography type="Heading1Semibold" className="text-gray-80">
         ‘{decodedSearch}’ 검색
       </Typography>
@@ -156,7 +157,7 @@ export default function MobileSearchPage({ search }: { search: string }) {
           stateBox("검색 결과가 없습니다.")
         ) : (
           // 전체 탭: 카테고리별 미리보기(최대 3개) + 모두 보기
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-8">
             {CATEGORY_SECTIONS.map((cat) => {
               const catItems = searchedItems.filter(
                 (item) => toTabCategory(item.activityType) === cat.id,
