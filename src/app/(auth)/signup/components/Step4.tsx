@@ -6,10 +6,14 @@ import Typography from '@/components/common/Typography';
 // Heading2Bold(20px)/Body3Medium(14px)이라 스펙이 달라 Step4 전용 마크업 사용.
 export default function Step4() {
   return (
-    <div className="flex flex-col gap-8 items-center">
-      <Image src="/imgs/loading.png" alt="check" width={60} height={60} />
+    // 모바일(1136:81309)은 단계 표시↔내용 간격 96 (공통 48 + 48)
+    <div className="flex flex-col gap-8 items-center mobile:mt-12">
+      {/* 이미지 칸 80x80, 이미지 60은 아래 정렬 */}
+      <div className="flex size-20 items-end justify-center">
+        <Image src="/imgs/loading.png" alt="check" width={60} height={60} />
+      </div>
       <div className="flex flex-col gap-3 items-center text-center">
-        <Typography tag="h1" type="Title2Bold" id="signup-title" className="break-keep">
+        <Typography tag="h1" type="Title2Bold" id="signup-title" className="break-keep text-gray-90">
           회원가입 완료!
         </Typography>
         <Typography tag="p" type="Body4Regular" id="signup-description" className="text-gray-50">

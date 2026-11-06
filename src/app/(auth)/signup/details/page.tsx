@@ -248,9 +248,10 @@ export default function SignupPage() {
   return (
     <div className="flex flex-col gap-12 items-center max-w-[429px] mx-auto pt-12 mobile:px-5">
       {/* Step Indicator */}
+      {/* figma SignupFunnel 1136:15237: 234x54, 선 160px, 아이콘 칸 36(안쪽 28), 글자 간격 4, 현재 단계 글자 Medium */}
       <div className="relative flex justify-center gap-[14px]">
         <div
-          className="absolute left-6 right-6 top-[14px] h-px bg-gray-20"
+          className="absolute left-1/2 top-[19px] h-px w-[160px] -translate-x-1/2 bg-gray-20"
           aria-hidden="true"
         />
         {SIGNUP_ICONS.map((icon, index) => {
@@ -259,18 +260,20 @@ export default function SignupPage() {
           return (
             <div
               key={index}
-              className="relative z-10 flex w-12 flex-col items-center justify-center gap-[5.5px] bg-white">
-              <Image
-                src={isCurrent ? icon.activeSrc : icon.src}
-                alt={icon.alt}
-                width={28}
-                height={28}
-              />
+              className="relative z-10 flex w-12 flex-col items-center justify-center gap-1">
+              <div className="flex size-9 items-center justify-center">
+                <Image
+                  src={isCurrent ? icon.activeSrc : icon.src}
+                  alt={icon.alt}
+                  width={28}
+                  height={28}
+                />
+              </div>
               <Typography
                 tag="p"
-                type="Caption2Regular"
+                type={isCurrent ? "Caption2Medium" : "Caption2Regular"}
                 id="signup-icon-text"
-                className={isCurrent ? "text-gray-60" : "text-gray-40"}>
+                className={isCurrent ? "text-gray-60" : "text-[#A5ADBB]"}>
                 {icon.alt}
               </Typography>
             </div>
