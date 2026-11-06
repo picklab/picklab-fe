@@ -88,16 +88,20 @@ export default function BookmarksPage() {
   const pagedCards = cards.slice((activePage - 1) * CARDS_PER_PAGE, activePage * CARDS_PER_PAGE);
 
   return (
-    <div className="w-full flex flex-col gap-8 pt-10 pb-20">
-      <Typography type="Heading1Bold">저장한 공고</Typography>
+    // PC는 figma 1136:74929 실측값을 pc: 로 덮어씀 (모바일 유지)
+    <div className="w-full flex flex-col gap-8 pt-10 pb-20 pc:gap-10 pc:px-5">
+      <Typography type="Heading1Bold" className="pc:font-semibold pc:text-[#1E2939]">
+        저장한 공고
+      </Typography>
 
       <div className="flex items-end justify-between w-full">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pc:gap-[10px]">
+          {/* figma PC: 초기화 버튼·정렬 탭 숨김 */}
           <button
             type="button"
             onClick={resetAll}
             aria-label="필터 초기화"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-50"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-50 pc:hidden"
           >
             <Icon icon="largeRefresh" color="white" size={20} />
           </button>
@@ -107,7 +111,8 @@ export default function BookmarksPage() {
             type="checkbox"
             functionOptionType="reset"
             portalDropdown
-            className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
+            wrapperClassName="pc:!w-[132px]"
+            className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828] pc:!w-[132px] pc:!pr-[13px] pc:[&_span]:text-[15px]"
             placeholder="활동 유형"
             options={[
               { label: '대외활동', value: 'external_activity' },
@@ -127,7 +132,8 @@ export default function BookmarksPage() {
             type="checkbox"
             functionOptionType="reset"
             portalDropdown
-            className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
+            wrapperClassName="pc:!w-[132px]"
+            className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828] pc:!w-[132px] pc:!pr-[13px] pc:[&_span]:text-[15px]"
             placeholder="직무 유형"
             options={JOB_TYPE_OPTIONS}
             value={selectedJobs}
@@ -142,7 +148,8 @@ export default function BookmarksPage() {
             type="checkbox"
             functionOptionType="reset"
             portalDropdown
-            className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828]"
+            wrapperClassName="pc:!w-[132px]"
+            className="!rounded-full [&_span]:text-[14px] [&_span]:font-medium [&_span]:!text-[#101828] pc:!w-[132px] pc:!pr-[13px] pc:[&_span]:text-[15px]"
             placeholder="진행 여부"
             options={[
               { label: '진행중', value: 'ongoing' },
@@ -155,22 +162,24 @@ export default function BookmarksPage() {
             }}
           />
         </div>
-        <SortTab
-          options={[
-            { label: '최근 저장순', value: 'recent' },
-            { label: '최신순', value: 'latest' },
-            { label: '마감 임박순', value: 'soon' },
-            { label: '여유 있는순', value: 'remain' },
-          ]}
-          currentValue={sort}
-          onTabClick={(value) => {
-            setSort(value as keyof typeof SORT_TO_API);
-            setPage(1);
-          }}
-        />
+        <div className="pc:hidden">
+          <SortTab
+            options={[
+              { label: '최근 저장순', value: 'recent' },
+              { label: '최신순', value: 'latest' },
+              { label: '마감 임박순', value: 'soon' },
+              { label: '여유 있는순', value: 'remain' },
+            ]}
+            currentValue={sort}
+            onTabClick={(value) => {
+              setSort(value as keyof typeof SORT_TO_API);
+              setPage(1);
+            }}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-5 pc:grid-cols-4">
+      <div className="grid grid-cols-2 gap-5 pc:grid-cols-4 pc:gap-y-3">
         {loading ? (
           Array.from({ length: CARDS_PER_PAGE }).map((_, i) => (
             <div key={i} className="h-[280px] rounded-lg bg-gray-10 animate-pulse" />
@@ -216,7 +225,7 @@ export default function BookmarksPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-center pc:mt-0">
           <Pagination totalPage={totalPages} activePage={activePage} onPageChange={setPage} />
         </div>
       )}
