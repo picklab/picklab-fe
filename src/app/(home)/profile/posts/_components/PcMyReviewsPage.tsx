@@ -159,31 +159,18 @@ export default function PcMyReviewsPage() {
                   {reviewApprovalStatusLabel(item.approval_status)}
                 </Typography>
 
-                {/* 수정/삭제 (figma 3051:36993: 승인 진행 중만 수정 불가 — 미승인·승인 완료는 수정 가능) */}
+                {/* 수정/삭제 — figma 3051:36678: 수정 버튼은 상태와 무관하게 활성. 승인 진행 중 차단은 수정 화면(상태 띠)이 담당 */}
                 <div className="flex justify-center gap-2">
-                  {(() => {
-                    const editable = item.approval_status !== 'PENDING';
-                    return (
-                      <button
-                        type="button"
-                        onClick={() => handleEdit(item.id)}
-                        disabled={!editable || editingId === item.id}
-                        className={clsx(
-                          'h-[34px] rounded-full border px-4',
-                          editable
-                            ? 'border-gray-30 hover:bg-gray-5'
-                            : 'cursor-not-allowed border-gray-20',
-                        )}
-                      >
-                        <Typography
-                          type="Body3Medium"
-                          className={editable ? 'text-gray-90' : 'text-gray-30'}
-                        >
-                          수정
-                        </Typography>
-                      </button>
-                    );
-                  })()}
+                  <button
+                    type="button"
+                    onClick={() => handleEdit(item.id)}
+                    disabled={editingId === item.id}
+                    className="h-[34px] rounded-full border border-gray-30 px-4 hover:bg-gray-5"
+                  >
+                    <Typography type="Body3Medium" className="text-gray-90">
+                      수정
+                    </Typography>
+                  </button>
                   <button
                     type="button"
                     onClick={() => setDeleteTarget(item)}
