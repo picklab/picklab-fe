@@ -396,6 +396,9 @@ export function useReviewWriteForm({
     goNext,
     goPrev,
     leave,
+    // 수정 화면(한 페이지)은 세 단계 검증을 한 번에 수행한다
+    validateStep1,
+    validateStep2,
     validateStep3,
     validateFile,
     uploadFile,
