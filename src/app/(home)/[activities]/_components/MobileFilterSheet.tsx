@@ -3,7 +3,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import clsx from 'clsx';
 import BottomSheet from '@/components/common/Modal/BottomSheet';
-import Button from '@/components/common/Button/Button';
 import { ACTIVITY_FILTERS } from '../constants';
 
 interface MobileFilterSheetProps {
@@ -46,8 +45,18 @@ const MobileFilterSheet = ({ isOpen, onClose, selectedFilters, setSelectedFilter
   ).filter((option) => option !== '전체');
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
-      <div className="flex h-[460px] flex-col px-5 pb-[42px] pt-4">
+    // figma 1136:82832 실측: 시트 460(손잡이 영역 17.28 + 본문 442.72), 본문 시작 49.28, 아래 여백 42.89
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      classNames={{
+        overlay: '!bg-[rgba(0,0,0,0.85)]',
+        sheet:
+          '!rounded-t-[20px] !shadow-[0px_16px_20px_0px_rgba(0,0,0,0.12),0px_8px_16px_0px_rgba(0,0,0,0.08),0px_0px_8px_0px_rgba(0,0,0,0.08)]',
+        handle: '!mt-[14.28px] !h-[3px] !w-[28.92px] !rounded-[10px] !bg-[#A5ADBB]',
+      }}
+    >
+      <div className="flex h-[442.72px] flex-col px-5 pb-[42.89px] pt-8">
         {/* 카테고리 탭 (초록 밑줄) */}
         {/* 탭: 주최기관/참여대상/활동분야 flex-1(균등) + 지역/직무 w-56 고정. 밑줄은 탭 폭 전체 */}
         <div className="flex">
@@ -84,41 +93,40 @@ const MobileFilterSheet = ({ isOpen, onClose, selectedFilters, setSelectedFilter
           })}
         </div>
 
-        {/* 옵션 칩 */}
-        <div className="mt-6 flex flex-1 flex-wrap content-start gap-2.5 overflow-y-auto">
+        {/* 옵션 칩: 높이 40, 좌우 16, 15px Medium, 간격 10 / 줄 16 */}
+        <div className="mt-5 flex flex-1 flex-wrap content-start gap-x-[10px] gap-y-4 overflow-y-auto">
           {currentOptions.map((option) => {
             const isSelected = selectedFilters[currentTab]?.includes(option) ?? false;
             return (
-              <Button
+              <button
                 key={option}
-                label={option}
-                size="base"
-                buttonStyle={isSelected ? 'filled' : 'outlined'}
-                isFullRounded
-                className={clsx(
-                  'rounded-full !min-w-[72px]',
-                  !isSelected &&
-                    '!border-0 !bg-gray-10 hover:!bg-gray-20 [&_span]:!text-[15px] [&_span]:!font-medium [&_span]:!text-gray-50',
-                )}
+                type="button"
+                aria-pressed={isSelected}
                 onClick={() => toggleOption(currentTab, option)}
-              />
+                className={clsx(
+                  'flex h-10 items-center justify-center rounded-full px-4 text-[15px] font-medium',
+                  isSelected ? 'bg-primary-50 text-gray-0' : 'bg-gray-10 text-gray-50',
+                )}
+              >
+                {option}
+              </button>
             );
           })}
         </div>
 
-        {/* 하단 버튼 (초기화 1 : 적용하기 2) */}
-        <div className="mt-4 flex gap-x-[11px]">
+        {/* 하단 버튼: 초기화 110, 적용하기 나머지(214), 높이 52, 모서리 6 */}
+        <div className="mt-[37px] flex gap-x-[11px]">
           <button
             type="button"
             onClick={handleReset}
-            className="h-[52px] flex-1 rounded-xl bg-gray-20 text-[17px] font-medium text-gray-90"
+            className="h-[52px] w-[110px] shrink-0 rounded-[6px] bg-gray-20 text-[17px] font-medium text-gray-90"
           >
             초기화
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="h-[52px] flex-[2] rounded-xl bg-primary-50 text-[17px] font-medium text-white"
+            className="h-[52px] flex-1 rounded-[6px] bg-primary-50 text-[17px] font-medium text-white"
           >
             적용하기
           </button>
