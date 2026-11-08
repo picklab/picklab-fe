@@ -8,6 +8,7 @@ import Button from '@/components/common/Button/Button';
 import Select from '@/components/common/Select/Select';
 import CardDayBadge from '@/components/common/Card/CardDayBadge';
 import CardChip, { type CardChipProps } from '@/components/common/Card/CardChip';
+import { activityTypeLabel } from '@/constants/activityType';
 import useParticipationSummary from '@/hooks/useParticipationSummary';
 import CalendarFilterDropdown from './CalendarFilterDropdown';
 import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
@@ -83,7 +84,8 @@ export function mapResult(item: ActivityParticipationResult): ResultActivity {
     activityId: item.activity_id,
     badgeText: badge.text,
     badgeVariant: badge.variant,
-    activityType: item.activity_type as CardChipProps['text'],
+    // activity_type은 코드(EXTRACURRICULAR 등)로 내려와 라벨로 변환
+    activityType: activityTypeLabel(item.activity_type),
     title: item.title,
     organizer: item.organizer,
     applyPeriod: formatPeriod(item.recruitment_start_date, item.recruitment_end_date),
