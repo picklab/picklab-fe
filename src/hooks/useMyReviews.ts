@@ -1,6 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useReadyAfterMount } from './useReadyAfterMount';
 import type {
   MyReviewDetail,
   MyReviewListData,
@@ -32,37 +34,24 @@ async function fetchJson<T>(url: string): Promise<ReviewApiWrapper<T>> {
 export function useMyReviews(
   { enabled = true, page = 1, size = 10 }: QueryOptions & { page?: number; size?: number } = {},
 ): QueryResult<MyReviewListData | null> {
-  const [data, setData] = useState<MyReviewListData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
+  const query = useQuery({
+    queryKey: ['myReviews', page, size],
+    queryFn: async () => {
+      const params = new URLSearchParams({ page: String(page), size: String(size) });
+      const res = await fetchJson<MyReviewListData>(`/api/reviews?${params.toString()}`);
+      return res.data ?? null;
+    },
+    enabled,
+    // 페이지를 바꾸는 동안 이전 목록을 유지(기존 동작과 같음)
+    placeholderData: keepPreviousData,
+  });
+  const { refetch: queryRefetch } = query;
+  const refetch = useCallback(() => {
+    void queryRefetch();
+  }, [queryRefetch]);
+  const ready = useReadyAfterMount(query);
 
-  const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
-
-  useEffect(() => {
-    if (!enabled) return;
-    let cancelled = false;
-    setLoading(true);
-    const params = new URLSearchParams({ page: String(page), size: String(size) });
-    fetchJson<MyReviewListData>(`/api/reviews?${params.toString()}`)
-      .then((res) => {
-        if (!cancelled) {
-          setData(res.data ?? null);
-          setError(null);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, page, size, reloadKey]);
-
-  return { data, loading, error, refetch };
+  return toQueryResult(query, ready, enabled, refetch);
 }
 
 /** GET /api/reviews/[id] — 내 리뷰 단건(수정 폼 프리필). 타인 리뷰 접근 시 서버가 403 반환 */
@@ -70,36 +59,38 @@ export function useMyReview(
   id: string | number | null,
   { enabled = true }: QueryOptions = {},
 ): QueryResult<MyReviewDetail | null> {
-  const [data, setData] = useState<MyReviewDetail | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
+  const active = enabled && id != null && id !== '';
+  const query = useQuery({
+    queryKey: ['myReview', id],
+    queryFn: async () => (await fetchJson<MyReviewDetail>(`/api/reviews/${id}`)).data ?? null,
+    enabled: active,
+    placeholderData: keepPreviousData,
+  });
+  const { refetch: queryRefetch } = query;
+  const refetch = useCallback(() => {
+    void queryRefetch();
+  }, [queryRefetch]);
+  const ready = useReadyAfterMount(query);
 
-  const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
+  return toQueryResult(query, ready, active, refetch);
+}
 
-  useEffect(() => {
-    if (!enabled || id == null || id === '') return;
-    let cancelled = false;
-    setLoading(true);
-    fetchJson<MyReviewDetail>(`/api/reviews/${id}`)
-      .then((res) => {
-        if (!cancelled) {
-          setData(res.data ?? null);
-          setError(null);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, id, reloadKey]);
-
-  return { data, loading, error, refetch };
+// 기존 수제 훅과 같은 반환값으로 맞춘다.
+// - 다시 불러오는 중(페이지 변경·refetch)에도 이전 데이터를 보여 주고 loading만 true
+// - 실패해도 이전 데이터는 유지하고 error만 채운다
+// - 화면 이동 직후 이전 화면의 캐시는 쓰지 않고, 이 화면에서 받은 응답부터 쓴다(ready, useReadyAfterMount 참고)
+function toQueryResult<T>(
+  query: { data: T | null | undefined; error: Error | null; isFetching: boolean },
+  ready: boolean,
+  active: boolean,
+  refetch: () => void,
+): QueryResult<T | null> {
+  return {
+    data: ready ? (query.data ?? null) : null,
+    loading: active && (!ready || query.isFetching),
+    error: query.error ?? null,
+    refetch,
+  };
 }
 
 /** PUT /api/reviews/[id] — 리뷰 수정 */

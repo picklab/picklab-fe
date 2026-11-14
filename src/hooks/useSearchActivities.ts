@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useReadyAfterMount } from './useReadyAfterMount';
 import {
   isClosedBackendActivity,
   mapBackendActivityToApiItem,
@@ -28,82 +29,67 @@ function readSearchPage(payload: SearchResponse) {
   };
 }
 
+const EMPTY_SEARCH: ApiActivityItem[] = [];
+
+async function fetchSearchResults(trimmedKeyword: string): Promise<ApiActivityItem[]> {
+  const fetchSearchPage = async (type: (typeof SEARCH_ACTIVITY_TYPES)[number], page: number) => {
+    const searchParams = new URLSearchParams({
+      keyword: trimmedKeyword,
+      type,
+      page: String(page),
+      size: String(SEARCH_PAGE_SIZE),
+    });
+    const response = await fetch(`/api/search/activities?${searchParams.toString()}`, {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('검색 결과를 불러오지 못했습니다.');
+    }
+
+    return readSearchPage((await response.json()) as SearchResponse);
+  };
+
+  const categoryResults = await Promise.all(
+    SEARCH_ACTIVITY_TYPES.map(async (type) => {
+      const firstPage = await fetchSearchPage(type, 1);
+      const restPages =
+        firstPage.totalPages > 1
+          ? await Promise.all(
+              Array.from({ length: firstPage.totalPages - 1 }, (_, index) => fetchSearchPage(type, index + 2)),
+            )
+          : [];
+
+      return [firstPage, ...restPages].flatMap((page) => page.items);
+    }),
+  );
+
+  return categoryResults
+    .flat()
+    .filter((item) => !isClosedBackendActivity(item))
+    .map(mapBackendActivityToApiItem);
+}
+
 export function useSearchActivities(keyword: string) {
-  const [data, setData] = useState<ApiActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const trimmedKeyword = keyword.trim();
+  const query = useQuery({
+    queryKey: ['searchActivities', trimmedKeyword],
+    queryFn: () => fetchSearchResults(trimmedKeyword),
+    enabled: trimmedKeyword.length > 0,
+    // 검색어를 바꾸는 동안 이전 결과를 유지(기존 동작과 같음)
+    placeholderData: keepPreviousData,
+  });
+  const ready = useReadyAfterMount(query);
 
-  useEffect(() => {
-    let cancelled = false;
-    const trimmedKeyword = keyword.trim();
+  if (!trimmedKeyword) {
+    return { data: EMPTY_SEARCH, loading: false, error: null };
+  }
 
-    const fetchSearchResults = async () => {
-      setLoading(true);
-      setError(null);
-
-      if (!trimmedKeyword) {
-        setData([]);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const fetchSearchPage = async (type: (typeof SEARCH_ACTIVITY_TYPES)[number], page: number) => {
-          const searchParams = new URLSearchParams({
-            keyword: trimmedKeyword,
-            type,
-            page: String(page),
-            size: String(SEARCH_PAGE_SIZE),
-          });
-          const response = await fetch(`/api/search/activities?${searchParams.toString()}`, {
-            credentials: 'include',
-          });
-
-          if (!response.ok) {
-            throw new Error('검색 결과를 불러오지 못했습니다.');
-          }
-
-          return readSearchPage((await response.json()) as SearchResponse);
-        };
-
-        const categoryResults = await Promise.all(
-          SEARCH_ACTIVITY_TYPES.map(async (type) => {
-            const firstPage = await fetchSearchPage(type, 1);
-            const restPages =
-              firstPage.totalPages > 1
-                ? await Promise.all(
-                    Array.from({ length: firstPage.totalPages - 1 }, (_, index) => fetchSearchPage(type, index + 2)),
-                  )
-                : [];
-
-            return [firstPage, ...restPages].flatMap((page) => page.items);
-          }),
-        );
-        const items = categoryResults.flat();
-
-        if (!cancelled) {
-          setData(items.filter((item) => !isClosedBackendActivity(item)).map(mapBackendActivityToApiItem));
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-          setData([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchSearchResults();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [keyword]);
-
-  return { data, loading, error };
+  return {
+    data: ready && !query.isError && query.data ? query.data : EMPTY_SEARCH,
+    loading: query.isPending || !ready || query.isPlaceholderData,
+    error: query.isPlaceholderData ? null : (query.error ?? null),
+  };
 }
 
 export default useSearchActivities;

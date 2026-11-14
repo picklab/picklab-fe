@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useReadyAfterMount } from './useReadyAfterMount';
 import type { LocalApiActivityItem } from '@/lib/activity-data';
 
 export type ActivityEndpoint =
@@ -199,59 +200,51 @@ async function loadLocalFallback(endpoint: ActivityEndpoint, size: number): Prom
   }
 }
 
+type ActivitiesResult = { items: ApiActivityItem[]; error: Error | null };
+
+const EMPTY_ACTIVITIES: ApiActivityItem[] = [];
+
+// 실패해도 목업으로 채운 목록과 오류를 함께 돌려줘야 해서(기존 동작) 예외를 던지지 않고 결과 객체로 반환한다
+async function fetchActivitiesWithFallback(endpoint: ActivityEndpoint, paramsKey: string): Promise<ActivitiesResult> {
+  const parsedParams = paramsKey ? JSON.parse(paramsKey) : undefined;
+  const size = Number(parsedParams?.size ?? 20);
+  try {
+    const fallbackOnEmpty = parsedParams?.fallbackOnEmpty !== 'false';
+    const backendItems = await fetchBackendActivities(endpoint, parsedParams);
+    const items = backendItems.length > 0
+      ? backendItems
+      : fallbackOnEmpty
+        ? await loadLocalFallback(endpoint, size)
+        : [];
+    return { items, error: null };
+  } catch (err) {
+    return {
+      items: await loadLocalFallback(endpoint, size),
+      error: err instanceof Error ? err : new Error(String(err)),
+    };
+  }
+}
+
 export function useActivities(
   endpoint: ActivityEndpoint,
   params?: Record<string, string>,
 ) {
-  const [data, setData] = useState<ApiActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
   const paramsKey = params ? JSON.stringify(params) : '';
+  const query = useQuery({
+    queryKey: ['activities', endpoint, paramsKey],
+    queryFn: () => fetchActivitiesWithFallback(endpoint, paramsKey),
+    // 필터·정렬을 바꾸는 동안 이전 목록을 유지(기존 동작과 같음)
+    placeholderData: keepPreviousData,
+  });
+  const ready = useReadyAfterMount(query);
+  const result = ready ? query.data : undefined;
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const parsedParams = paramsKey ? JSON.parse(paramsKey) : undefined;
-        const size = Number(parsedParams?.size ?? 20);
-        const fallbackOnEmpty = parsedParams?.fallbackOnEmpty !== 'false';
-        const backendItems = await fetchBackendActivities(endpoint, parsedParams);
-        const mapped = backendItems.length > 0
-          ? backendItems
-          : fallbackOnEmpty
-            ? await loadLocalFallback(endpoint, size)
-            : [];
-
-        if (!cancelled) {
-          setData(mapped);
-        }
-      } catch (err) {
-        const parsedParams = paramsKey ? JSON.parse(paramsKey) : undefined;
-        const size = Number(parsedParams?.size ?? 20);
-        const fallback = await loadLocalFallback(endpoint, size);
-        if (!cancelled) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-          setData(fallback);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [endpoint, paramsKey]);
-
-  return { data, loading, error };
+  return {
+    data: result?.items ?? EMPTY_ACTIVITIES,
+    loading: query.isPending || !ready || query.isPlaceholderData,
+    // 다시 불러오는 동안에는 오류를 비운다(기존 동작과 같음)
+    error: query.isPlaceholderData ? null : (result?.error ?? null),
+  };
 }
 
 export default useActivities;

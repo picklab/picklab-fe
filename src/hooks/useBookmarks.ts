@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useReadyAfterMount } from './useReadyAfterMount';
 import {
   isClosedBackendActivity,
   mapBackendActivityToApiItem,
@@ -93,8 +94,7 @@ export function useBookmarks({
     placeholderData: keepPreviousData,
   });
 
-  // 화면 이동 직후 이전 화면의 캐시를 그대로 보여주지 않고, 이 화면에서 받은 첫 응답부터 쓴다(기존 동작과 같음)
-  const ready = query.isFetchedAfterMount;
+  const ready = useReadyAfterMount(query);
   const source = ready && !query.isError ? query.data : undefined;
   const data = useMemo(() => {
     if (!source) return EMPTY_BOOKMARKS;

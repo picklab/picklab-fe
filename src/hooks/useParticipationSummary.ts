@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 /** GET /v1/activity-participations/summary 의 data */
 export interface ParticipationSummary {
@@ -23,28 +23,22 @@ const EMPTY: ParticipationSummary = {
 
 /** 활동 결과 카운트(지원완료/최종합격/불합격/수료완료) 조회 */
 export default function useParticipationSummary({ enabled = true }: { enabled?: boolean } = {}) {
-  const [data, setData] = useState<ParticipationSummary>(EMPTY);
-  const [loading, setLoading] = useState(false);
+  const query = useQuery({
+    queryKey: ['participationSummary'],
+    queryFn: async (): Promise<ParticipationSummary> => {
+      const r = await fetch('/api/activity-participations/summary', { credentials: 'include' });
+      if (!r.ok) throw new Error(String(r.status));
+      const json = (await r.json()) as SummaryWrapper;
+      return { ...EMPTY, ...(json.data ?? {}) };
+    },
+    enabled,
+  });
+  // 화면 이동 직후 이전 화면의 캐시를 쓰지 않고 이 화면에서 받은 응답부터 쓴다(기존 동작과 같음)
+  const ready = query.isFetchedAfterMount;
 
-  useEffect(() => {
-    if (!enabled) return;
-    let cancelled = false;
-    setLoading(true);
-    fetch('/api/activity-participations/summary', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((json: SummaryWrapper) => {
-        if (!cancelled) setData({ ...EMPTY, ...(json.data ?? {}) });
-      })
-      .catch(() => {
-        if (!cancelled) setData(EMPTY);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled]);
-
-  return { data, loading };
+  // 기존 반환값 유지: 비활성·실패 시 빈 카운트, loading은 요청 중일 때만 true
+  return {
+    data: enabled && ready && !query.isError && query.data ? query.data : EMPTY,
+    loading: enabled && (query.isPending || !ready),
+  };
 }
