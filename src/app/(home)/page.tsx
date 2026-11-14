@@ -56,23 +56,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const requestedPage = Number(resolvedSearchParams?.page ?? "1");
   const totalPage = Math.max(1, Math.ceil(getAllActivities().length / PC_NEW_ACTIVITY_PAGE_SIZE));
   const activePage = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPage) : 1;
-  // const response = await fetchWithAuth(
-  //   "http://localhost:3000/api/activities?category=EXTRACURRICULAR&sort=LATEST&size=20&page=1"
-  // ).then((res) => res.json());
-
-  // const popularResponse = await fetchWithAuth("http://localhost:3000/api/activities/popular?size=20&page=1").then(
-  //   (res) => res.json()
-  // );
-
-  // const recentlyViewedResponse = await fetchWithAuth(
-  //   "http://localhost:3000/api/activities/recently-viewed?size=20&page=1"
-  // ).then((res) => res.json());
-
-  // const recommendationsResponse = await fetchWithAuth(
-  //   "http://localhost:3000/api/activities/recommendations?size=20&page=1"
-  // ).then((res) => res.json());
-
-
 
   return (
     <>
