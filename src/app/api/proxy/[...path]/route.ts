@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ky from 'ky';
 import { authCookieMaxAge, refreshAccessToken } from '../../_lib/token';
-
-const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+import { BACKEND_URL as EXTERNAL_API_BASE_URL } from '@/config/backend';
 
 function buildProxyResponse(externalResponse: Response) {
   const responseHeaders = new Headers();

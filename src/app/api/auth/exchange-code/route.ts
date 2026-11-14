@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authCookieMaxAge } from '../../_lib/token';
+import { BACKEND_URL } from '@/config/backend';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +10,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Code or provider not provided' }, { status: 400 });
     }
 
-    const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
     const backendApiUrl = `${BACKEND_URL}/v1/auth/callback/${provider}?code=${code}`;
 
     const backendResponse = await fetch(backendApiUrl, {

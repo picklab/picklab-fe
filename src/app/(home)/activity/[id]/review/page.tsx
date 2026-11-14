@@ -6,13 +6,13 @@ import ReviewEditBody from './_components/ReviewEditBody';
 import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
 import type { MyReviewDetail, MyReviewItem } from '@/types/review.types';
+import { BACKEND_URL } from '@/config/backend';
 
 interface ReviewWritePageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ edit?: string }>;
 }
 
-const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
 
 const CATEGORY_LABELS: Record<string, ActivityCardItem['activityType']> = {
   EXTRACURRICULAR: '대외활동',

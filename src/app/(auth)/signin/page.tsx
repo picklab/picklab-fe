@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { PUBLIC_BACKEND_URL } from "@/config/backend";
 
 const SOCIAL_LOGIN_IMAGES = [
   {
@@ -137,7 +138,7 @@ function AuthContent() {
               image.className,
             )}
             onClick={() => {
-              window.location.href = `http://161.153.21.86:8080/v1/auth/login/${image.provider}`;
+              window.location.href = `${PUBLIC_BACKEND_URL}/v1/auth/login/${image.provider}`;
             }}>
             <Image src={image.src} alt={image.alt} width={24} height={24} />
             <Typography

@@ -5,12 +5,12 @@ import MobileActivityDetailPage from './_components/MobileActivityDetailPage';
 import ActivityViewRecorder from './_components/ActivityViewRecorder';
 import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
+import { BACKEND_URL } from '@/config/backend';
 
 interface ActivityDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
 
 type BackendRecruitmentEndType = 'FIXED' | 'ALWAYS_OPEN' | 'CLOSE_ON_HIRE';
 

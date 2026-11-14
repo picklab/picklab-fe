@@ -4,6 +4,7 @@ import Typography from "@/components/common/Typography";
 import { clsx } from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { PUBLIC_BACKEND_URL } from "@/config/backend";
 
 // 간편회원가입 소셜 버튼 (간편로그인과 동일 OAuth, 텍스트만 "시작하기")
 const SOCIAL_SIGNUP_BUTTONS = [
@@ -79,7 +80,7 @@ function SignupContent() {
               button.className,
             )}
             onClick={() => {
-              window.location.href = `http://161.153.21.86:8080/v1/auth/login/${button.provider}`;
+              window.location.href = `${PUBLIC_BACKEND_URL}/v1/auth/login/${button.provider}`;
             }}
           >
             <Image src={button.src} alt={button.alt} width={24} height={24} />

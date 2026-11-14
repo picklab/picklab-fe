@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ky from 'ky';
 import { authCookieMaxAge, refreshAccessToken } from './token';
-
-const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+import { BACKEND_URL } from '@/config/backend';
 
 type ProxyMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

@@ -1,6 +1,5 @@
 import ky from 'ky';
-
-const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
+import { BACKEND_URL } from '@/config/backend';
 
 export function extractAccessToken(payload: unknown): string | null {
   if (!payload || typeof payload !== 'object') return null;
