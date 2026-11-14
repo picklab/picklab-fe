@@ -112,7 +112,7 @@ async function handleRequest(req: NextRequest) {
       return clearAuthCookies(NextResponse.json({ error: 'Unauthorized: Token refresh failed' }, { status: 401 }));
     }
 
-    let externalResponse = await ky(externalApiUrl, buildKyOptions(accessToken));
+    const externalResponse = await ky(externalApiUrl, buildKyOptions(accessToken));
 
     if (externalResponse.status === 401 && refreshToken) {
       const retryResponse = await refreshAndRetry();

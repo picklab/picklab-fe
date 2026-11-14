@@ -16,8 +16,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Yarn 4(Berry) 레포라 npm ci는 lock 파일(package-lock.json)이 없어 실패한다
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --immutable
 
       - name: Run Chromatic
         uses: chromaui/action@latest

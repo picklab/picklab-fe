@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "crawl": "node scripts/crawl-page.mjs",
     "crawl:source": "node scripts/crawl-source.mjs",
     "enrich:crawl": "node scripts/enrich-crawl.mjs",
@@ -18,7 +18,7 @@
     "build:activities": "node scripts/build-activities-dataset.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_fe4b5c4ff730a40",
+    "chromatic": "npx chromatic",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

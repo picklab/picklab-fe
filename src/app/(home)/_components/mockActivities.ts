@@ -133,19 +133,12 @@ export const mockActivities: Activity[] = csvData
 
     const detailLink = columns[0];
     const activityType = columns[1];
-    const source = columns[2];
     const title = columns[3].replace(/^\"|\"$/g, ''); // Remove surrounding quotes
     const organization = columns[4];
-    const companyType = columns[5];
-    const target = columns[6];
     const applicationPeriod = columns[7];
     const activityPeriod = columns[8];
-    const recruitNumber = columns[9];
-    const meetingArea = columns[10];
-    const homepage = columns[11];
     const contestField = columns[12];
     const activityField = columns[13];
-    const costAwardScale = columns[14];
 
     const { badgeText, badgeVariant, isFinished } = getBadgeInfo(applicationPeriod);
 

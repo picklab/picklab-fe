@@ -9,6 +9,8 @@ interface DayProps extends React.HTMLAttributes<HTMLDivElement> {
   isCurrentMonth?: boolean; // 현재 달의 날짜인지 여부
 }
 
+// isCurrentMonth는 쓰지 않지만 ...props로 div에 넘어가 DOM 속성이 되지 않도록 여기서 걸러 낸다
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Day = ({ day, isToday, isSelected, isCurrentMonth, className, ...props }: DayProps) => {
   return (
     <div
