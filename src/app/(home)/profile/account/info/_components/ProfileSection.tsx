@@ -23,6 +23,15 @@ type MemberInfoPayload = {
 
 function readErrorMessage(payload: unknown, fallback: string) {
   if (!payload || typeof payload !== 'object') return fallback;
+  // 검증 실패(400)는 공통 문구("요청 검증에 실패했습니다.") 대신 필드별 사유를 errors[]로 준다
+  if ('errors' in payload && Array.isArray(payload.errors)) {
+    const messages = payload.errors
+      .map((item: unknown) =>
+        item && typeof item === 'object' && 'message' in item && typeof item.message === 'string' ? item.message : null,
+      )
+      .filter((message): message is string => Boolean(message));
+    if (messages.length > 0) return messages.join('\n');
+  }
   if ('message' in payload && typeof payload.message === 'string') return payload.message;
   if ('error' in payload && typeof payload.error === 'string') return payload.error;
   return fallback;
