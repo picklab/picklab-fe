@@ -148,7 +148,7 @@ const JobSection = () => {
           </>
         ) : (
           <>
-            <div className="flex flex-row flex-wrap gap-[10px]">
+            <div className="flex flex-row flex-wrap gap-[10px] pc:w-full">
               {signupData.interests.map((interest, index) => (
                 <span key={index} className="py-2 px-4 rounded-[100px] bg-primary-5">
                   <Typography type="Body4Medium" className="text-primary-70">

@@ -46,7 +46,7 @@ export default function PcAccountPage() {
   };
 
   return (
-    <div className="hidden pc:flex gap-12.5 flex-row w-[1100px] px-5">
+    <div className="hidden pc:flex gap-12.5 flex-row w-[1100px] px-5 pt-10">
       <SNB Jobs={[]} />
 
       {/* 계정 관리 섹션 */}
@@ -72,6 +72,7 @@ export default function PcAccountPage() {
                 buttonStyle="outlined"
                 label="변경하기"
                 isFullRounded={true}
+                className="shrink-0"
                 onClick={() => router.push('/change-email')}
               />
             </div>

@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Card from '@/components/common/Card/Card';
 import Typography from '@/components/common/Typography';
+import Icon from '@/components/common/Icon/Icon';
 import Select from '@/components/common/Select/Select';
 import Pagination from '@/components/common/Pagination/Pagination';
 import useBookmarks from '@/hooks/useBookmarks';
@@ -77,9 +78,14 @@ export default function BookmarksPage() {
     <>
       {/* PC: figma 1136:74929 / 모바일: MobileBookmarksPage (figma 1136:75047) */}
       <div className="w-full flex flex-col gap-8 pt-10 pb-20 mobile:hidden pc:gap-10 pc:px-5">
-        <Typography type="Heading1Bold" className="pc:font-semibold pc:text-[#1E2939]">
-          저장한 공고
-        </Typography>
+        <div className="flex flex-row items-center gap-2">
+          <button type="button" onClick={() => router.push('/profile')} aria-label="마이페이지로 이동">
+            <Icon icon="chevronLeft" size={16} />
+          </button>
+          <Typography type="Heading1Bold" className="pc:font-semibold pc:text-[#1E2939]">
+            저장한 공고
+          </Typography>
+        </div>
 
         <div className="flex items-end justify-between w-full">
           <div className="flex items-center gap-2 pc:gap-[10px]">

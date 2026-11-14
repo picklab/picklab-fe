@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useArchiveActivities from '@/hooks/useArchiveActivities';
+import { Divider } from '@/components/common/Divider/Divider';
+import LargeChevronLeft from '@/components/common/Icon/assets/Large/LargeChevronLeft';
 
 const MENU_ITEMS = [
   { id: 'archive', label: '전체', href: '#archive' },
@@ -44,7 +46,24 @@ export default function MobileProfileArchivePage() {
   }, [archiveItems, isLatest, snbMenu]);
 
   return (
-    <div className="mobile:flex pc:hidden flex-col gap-[33.57px] justify-center">
+    <div className="mobile:flex pc:hidden flex-col pt-10">
+      {/* 헤더(figma 1136:74141): 뒤로가기(32) + 가운데 제목 + 구분선 */}
+      <div className="relative flex h-8 items-center justify-center">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          aria-label="뒤로가기"
+          className="absolute left-0 flex size-8 items-center justify-center text-gray-90"
+        >
+          <LargeChevronLeft width={11} height={19} />
+        </button>
+        <Typography tag="h1" type="Headline1SemiBold" className="text-black">
+          아카이브
+        </Typography>
+      </div>
+      <Divider className="mt-[18px] !w-full" />
+
+      <div className="mt-5 flex flex-col gap-[33.57px] justify-center">
       <ArchiveMenu snbMenu={snbMenu} setSnbMenu={setSnbMenu} />
       <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
@@ -107,6 +126,7 @@ export default function MobileProfileArchivePage() {
               />
             ))}
         </div>
+      </div>
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ export default function MobileAccountPage() {
   };
 
   return (
-    <div className="block pc:hidden w-full flex flex-col items-center gap-8">
+    <div className="block pc:hidden w-full flex flex-col items-center gap-8 pt-4">
       {/* 프로필 — 마이페이지 모바일과 같은 컴포넌트(닉네임·관심직무·회원정보 이동) */}
       <MobileProfile />
 

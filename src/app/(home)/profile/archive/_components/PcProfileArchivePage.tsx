@@ -48,7 +48,7 @@ export default function PcProfileArchivePage({ isStorybook = false }: { isStoryb
   }, [archiveItems, isLatest, snbMenu]);
 
   return (
-    <div className={clsx('w-full', isStorybook ? '' : 'mobile:hidden')}>
+    <div className={clsx('w-full pt-10', isStorybook ? '' : 'mobile:hidden')}>
       <section className="flex flex-row items-center gap-1 mobile:w-[335px] mobile:relative mobile:py-4 mobile:border-b mobile:border-gray-20 pc:gap-2 pc:pb-0 pc:border-0 pc:w-full">
         <button type="button" onClick={() => router.push('/profile')} aria-label="마이페이지로 이동">
           <Icon icon="chevronLeft" size={16} />
