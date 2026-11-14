@@ -152,11 +152,13 @@ function parsePresignedUploadInfo(payload: unknown): PresignedUploadInfo | null 
 
 const ProfileSection = () => {
   const defaultForm: ProfileForm = {
-    name: '홍길동',
-    nickname: '가나다라마바사',
-    education: '한국대학교 한국학과',
-    birthDate: '0000.00.00',
+    name: '',
+    nickname: '',
+    education: '',
+    birthDate: '',
   };
+  // 화면에는 보이지 않고 저장(PUT /members/info) 필수값을 채우는 데만 쓴다.
+  // 내 정보 조회 응답에 school·graduation_status가 없어 백엔드가 내려주기 전까지 임시로 둔다.
   const defaultMemberInfo: MemberInfoPayload = {
     school: '한국대학교',
     graduationStatus: '졸업',

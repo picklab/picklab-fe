@@ -19,17 +19,14 @@ interface SNBProps {
   Jobs: string[]; // 관심 직무 리스트
 }
 
-// 관심직무 실데이터가 없을 때 노출할 임시(예시) 값
-const SAMPLE_INTEREST_JOBS = ["서비스기획", "PM/PO", "프론트엔드", "사업개발", "데이터분석"];
-
 const SNB = ({ Jobs }: SNBProps) => {
   const pathname = usePathname(); // 현재 경로 가져오기
   const router = useRouter();
   const { clientLogout } = useAuthClient();
   const { data: meData } = useMe();
-  // 관심직무: props → 내 정보(useMe) → 임시 데이터 순으로 노출 (계정·알림·작성글 페이지는 props를 비워 둠)
+  // 관심직무: props → 내 정보(useMe) 순으로 노출 (계정·알림·작성글 페이지는 props를 비워 둠). 둘 다 없으면 비워 둔다.
   const meJobs = meData?.jobs ?? [];
-  const displayJobs = Jobs.length > 0 ? Jobs : meJobs.length > 0 ? meJobs : SAMPLE_INTEREST_JOBS;
+  const displayJobs = Jobs.length > 0 ? Jobs : meJobs;
 
   // 섹션 활성화 여부 계산 함수
   const isSectionActive = (
@@ -74,7 +71,7 @@ const SNB = ({ Jobs }: SNBProps) => {
             사용자 프로필
           </h2>
           <div className="flex h-[26px] justify-center items-center ">
-            <Typography type="Headline1SemiBold">{meData?.nickname || '닉네임'}</Typography>
+            <Typography type="Headline1SemiBold">{meData?.nickname || '\u00A0'}</Typography>
           </div>
         </div>
         <div className="flex justify-center py-space-20">

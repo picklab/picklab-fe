@@ -22,17 +22,14 @@ export default function MobileProfile() {
           onClick={() => router.push('/profile/account/info')}
           className="flex flex-row items-center w-full h-14 pr-5 py-4 text-gray-90"
         >
-          <Typography type="Heading2Semibold">{meData?.nickname || '사용자'}</Typography>
+          <Typography type="Heading2Semibold">{meData?.nickname || '\u00A0'}</Typography>
           {/* figma icon/base 24 박스 안 chevron 7.5×13.5 (좌측 9.25) */}
           <span className="flex size-6 shrink-0 items-center pl-[9.25px]">
             <ChevronRight width={7.5} height={13.5} />
           </span>
         </button>
         <div className="flex flex-row flex-wrap items-center gap-x-1 w-full text-primary-60">
-          {(meData?.jobs && meData.jobs.length > 0
-            ? meData.jobs
-            : ['서비스기획', 'PM/PO', '프론트엔드', '사업개발', '데이터분석']
-          ).map((job, index, arr) => (
+          {(meData?.jobs ?? []).map((job, index, arr) => (
             <Fragment key={job}>
               <span className="flex items-center p-0.5">
                 <Typography type="Caption1Regular">{job}</Typography>
