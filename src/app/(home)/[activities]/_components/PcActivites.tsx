@@ -15,10 +15,13 @@ import {
 export default function PcActivites({
   activities,
   activitySlug,
+  requestSize,
   isStorybook = false,
 }: {
   activities: string;
   activitySlug: ActivityRouteSlug;
+  /** 새 활동 목록 요청 개수. 서버 페이지에서 계산해 넘긴다(NewActivityList 참고). */
+  requestSize: number;
   isStorybook?: boolean;
 }) {
   const [selectedFilters, setSelectedFilters] = useState<ActivityPageFilters>(
@@ -57,6 +60,7 @@ export default function PcActivites({
             selectedFilters={selectedFilters}
             showInlineFilters={false}
             showTitle={false}
+            requestSize={requestSize}
           />
         </div>
       </div>

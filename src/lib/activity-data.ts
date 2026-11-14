@@ -1,5 +1,6 @@
 import activitiesJson from '../../data/activities.latest.json';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
+import { readRecentlyViewedIds } from './recently-viewed';
 
 export type LocalActivity = (typeof activitiesJson)[number];
 
@@ -33,7 +34,6 @@ export type ActivityRouteSlug = 'activities' | 'seminar' | 'education' | 'contes
 export type ActivityMenuId = 'all' | 'external-activity' | 'seminar' | 'education' | 'contest';
 export type ActivityPageSort = 'latest' | 'soon' | 'remain';
 export type ActivityPageFilters = Record<string, string[]>;
-const RECENTLY_VIEWED_STORAGE_KEY = 'picklab-recently-viewed';
 const REGION_OPTIONS = [
   '온라인',
   '서울',
@@ -297,19 +297,6 @@ function sortForActivityPage(items: LocalActivity[], sort: ActivityPageSort): Lo
   return sortByLatest(items);
 }
 
-function readRecentlyViewedIds(): string[] {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const stored = window.localStorage.getItem(RECENTLY_VIEWED_STORAGE_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === 'string') : [];
-  } catch {
-    return [];
-  }
-}
-
 function sortByLatest(items: LocalActivity[]) {
   return [...items].sort((a, b) => {
     const aDate = parseDate(a.startDate ?? a.raw?.applicationStartAt);
@@ -387,13 +374,6 @@ export function getActivityCountForCategoryPage(params: {
 
 export function findActivityById(id: string): LocalActivity | undefined {
   return getAllActivities().find((item) => item.id === id);
-}
-
-export function recordRecentlyViewedActivity(id: string) {
-  if (typeof window === 'undefined' || !id) return;
-
-  const nextIds = [id, ...readRecentlyViewedIds().filter((currentId) => currentId !== id)].slice(0, 20);
-  window.localStorage.setItem(RECENTLY_VIEWED_STORAGE_KEY, JSON.stringify(nextIds));
 }
 
 export function mapActivityToApiItem(raw: LocalActivity): LocalApiActivityItem {

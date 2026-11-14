@@ -7,11 +7,7 @@ import SortTab from "@/components/common/Tab/SortTab";
 import Select from "@/components/common/Select/Select";
 import Pagination from "@/components/common/Pagination/Pagination";
 import { useActivities } from "@/hooks/useActivities";
-import {
-  getAllActivities,
-  type ActivityPageFilters,
-  type ActivityRouteSlug,
-} from "@/lib/activity-data";
+import type { ActivityPageFilters, ActivityRouteSlug } from "@/lib/activity-data";
 import { toggleBookmark } from "@/lib/bookmarks";
 import { JOB_TYPE_OPTIONS } from "@/constants/filters";
 
@@ -23,6 +19,8 @@ interface NewActivityListProps {
   useExternalPagination?: boolean;
   showTitle?: boolean;
   resultCount?: number;
+  /** 백엔드에 한 번에 요청할 개수. 목업 JSON을 브라우저 번들에 싣지 않도록 서버 페이지에서 계산해 넘긴다. */
+  requestSize: number;
 }
 
 const CARDS_PER_PAGE = 12;
@@ -113,6 +111,7 @@ export default function NewActivityList({
   useExternalPagination = false,
   showTitle = true,
   resultCount,
+  requestSize,
 }: NewActivityListProps) {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("latest");
@@ -174,7 +173,7 @@ export default function NewActivityList({
 
   const activityParams = useMemo(
     () => ({
-      size: String(getAllActivities().length),
+      size: String(requestSize),
       sort: SORT_TO_API[sort as keyof typeof SORT_TO_API] ?? "LATEST",
       ...(categorySlug
         ? { category: CATEGORY_TO_API[categorySlug], fallbackOnEmpty: "false" }
@@ -196,6 +195,7 @@ export default function NewActivityList({
         : {}),
     }),
     [
+      requestSize,
       categorySlug,
       sort,
       selectedJobTags,

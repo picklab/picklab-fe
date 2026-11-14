@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getActivitiesByEndpoint, mapActivityToApiItem } from '@/lib/activity-data';
+import type { LocalApiActivityItem } from '@/lib/activity-data';
 
 export type ActivityEndpoint =
   | 'recommendations'
@@ -9,7 +9,8 @@ export type ActivityEndpoint =
   | 'recently-viewed'
   | 'latest';
 
-export type ApiActivityItem = ReturnType<typeof mapActivityToApiItem>;
+// 타입 전용 import라 목업 JSON은 번들에 포함되지 않는다
+export type ApiActivityItem = LocalApiActivityItem;
 
 type BackendActivityCategory = 'EXTRACURRICULAR' | 'EDUCATION' | 'COMPETITION' | 'SEMINAR';
 type BackendRecruitmentEndType = 'FIXED' | 'ALWAYS_OPEN' | 'CLOSE_ON_HIRE';
@@ -188,6 +189,16 @@ async function fetchBackendActivities(
   return readBackendItems(json).filter((item) => !isClosedBackendActivity(item)).map(mapBackendActivityToApiItem);
 }
 
+// 백엔드가 비었거나 실패했을 때 보여 줄 로컬 목업. 1.5MB JSON이라 첫 로딩 번들에 넣지 않고 필요할 때만 불러온다.
+async function loadLocalFallback(endpoint: ActivityEndpoint, size: number): Promise<ApiActivityItem[]> {
+  try {
+    const { getActivitiesByEndpoint, mapActivityToApiItem } = await import('@/lib/activity-data');
+    return getActivitiesByEndpoint(endpoint, size).map(mapActivityToApiItem);
+  } catch {
+    return [];
+  }
+}
+
 export function useActivities(
   endpoint: ActivityEndpoint,
   params?: Record<string, string>,
@@ -212,18 +223,19 @@ export function useActivities(
         const mapped = backendItems.length > 0
           ? backendItems
           : fallbackOnEmpty
-            ? getActivitiesByEndpoint(endpoint, size).map(mapActivityToApiItem)
+            ? await loadLocalFallback(endpoint, size)
             : [];
 
         if (!cancelled) {
           setData(mapped);
         }
       } catch (err) {
+        const parsedParams = paramsKey ? JSON.parse(paramsKey) : undefined;
+        const size = Number(parsedParams?.size ?? 20);
+        const fallback = await loadLocalFallback(endpoint, size);
         if (!cancelled) {
           setError(err instanceof Error ? err : new Error(String(err)));
-          const parsedParams = paramsKey ? JSON.parse(paramsKey) : undefined;
-          const size = Number(parsedParams?.size ?? 20);
-          setData(getActivitiesByEndpoint(endpoint, size).map(mapActivityToApiItem));
+          setData(fallback);
         }
       } finally {
         if (!cancelled) {

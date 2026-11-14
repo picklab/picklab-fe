@@ -77,7 +77,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <>
       <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} isLogin={isLogin} />
-      <PcLayout className={PC_STYLES.HIDDEN_ON_MOBILE} totalPage={totalPage} activePage={activePage} isLogin={isLogin} />
+      <PcLayout
+        className={PC_STYLES.HIDDEN_ON_MOBILE}
+        totalPage={totalPage}
+        activePage={activePage}
+        isLogin={isLogin}
+        newActivityRequestSize={getAllActivities().length}
+      />
     </>
   );
 }
@@ -156,7 +162,8 @@ export function PcLayout({
   totalPage,
   activePage,
   isLogin = true,
-}: ResponsiveLayoutProps & { totalPage: number; activePage: number; isLogin?: boolean }) {
+  newActivityRequestSize,
+}: ResponsiveLayoutProps & { totalPage: number; activePage: number; isLogin?: boolean; newActivityRequestSize: number }) {
   return (
     <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? "flex" : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
@@ -170,7 +177,7 @@ export function PcLayout({
         {/* 최근에 본 활동 */}
         {isLogin && <PcActivityList title={ACTIVITY_TITLES.RECENT} endpoint="recently-viewed" />}
         {/* 방금 올라온 따끈따끈한 활동! */}
-        <NewActivityList title={ACTIVITY_TITLES.NEW} useExternalPagination />
+        <NewActivityList title={ACTIVITY_TITLES.NEW} useExternalPagination requestSize={newActivityRequestSize} />
       </div>
       {totalPage > 1 && <Pagination totalPage={totalPage} activePage={activePage} />}
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { recordRecentlyViewedActivity } from '@/lib/activity-data';
+import { recordRecentlyViewedActivity } from '@/lib/recently-viewed';
 
 interface ActivityViewRecorderProps {
   activityId: string;

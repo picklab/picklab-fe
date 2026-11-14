@@ -33,7 +33,7 @@ export const Default: StoryObj<typeof ActivitiesPage> = {
 
 export const PcVersion: StoryObj<typeof PcActivites> = {
   name: "PC",
-  render: () => <PcActivites activities="대외활동" activitySlug="activities" isStorybook />,
+  render: () => <PcActivites activities="대외활동" activitySlug="activities" requestSize={325} isStorybook />,
   parameters: {
     docs: {
       description: {
