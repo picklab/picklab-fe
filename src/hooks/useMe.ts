@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 type EmploymentInfo = {
   employmentStatus: string;
@@ -134,24 +134,23 @@ function normalizeMeData(payload: unknown): MeData {
   };
 }
 
+/** 내 정보 캐시 키. 프로필·관심직무·이메일 등을 저장한 뒤 이 키를 invalidate하면 화면 전체에 반영된다. */
+export const ME_QUERY_KEY = ['me'] as const;
+
+async function fetchMe(): Promise<MeData> {
+  const res = await fetch('/api/members/me');
+  if (!res.ok) throw new Error('Not authenticated');
+  return normalizeMeData(await res.json());
+}
+
 export function useMe() {
-  const [data, setData] = useState<MeData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const query = useQuery({ queryKey: ME_QUERY_KEY, queryFn: fetchMe });
+  // 화면 이동 직후 이전 화면의 캐시를 그대로 보여주지 않고, 이 화면에서 받은 첫 응답부터 쓴다(기존 동작과 같음)
+  const ready = query.isFetchedAfterMount;
 
-  useEffect(() => {
-    fetch('/api/members/me')
-      .then(res => {
-        if (!res.ok) throw new Error('Not authenticated');
-        return res.json();
-      })
-      .then(json => {
-        setData(normalizeMeData(json));
-      })
-      .catch(() => {
-        setData(null);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { data, loading };
+  // 기존 반환값 유지: 실패 시 data는 null, loading은 첫 응답 전까지만 true
+  return {
+    data: ready && !query.isError ? (query.data ?? null) : null,
+    loading: query.isPending || !ready,
+  };
 }

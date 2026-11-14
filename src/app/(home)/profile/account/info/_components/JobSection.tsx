@@ -7,7 +7,8 @@ import PcJobEditSection from './PcJobEditSection';
 import { SignupData } from '@/app/(auth)/signup/types';
 import { getJobLabel } from '@/app/(auth)/signup/constants';
 import MobileJobEditSection from './MobileJobEditSection';
-import { useMe } from '@/hooks/useMe';
+import { ME_QUERY_KEY, useMe } from '@/hooks/useMe';
+import { useQueryClient } from '@tanstack/react-query';
 
 const JOB_CATEGORY_MAP: Record<string, { group: string; detail: string }> = {
   'service-planning': { group: 'PLANNING', detail: 'SERVICE_PLANNING' },
@@ -47,6 +48,7 @@ const DETAIL_TO_VALUE: Record<string, string> = Object.fromEntries(
 
 const JobSection = () => {
   const { data: meData, loading: meLoading } = useMe();
+  const queryClient = useQueryClient();
   const [editMode, setEditMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [signupData, setSignupData] = useState<SignupData>({
@@ -70,16 +72,17 @@ const JobSection = () => {
   });
   const [savedInterests, setSavedInterests] = useState<string[]>([]);
 
-  // useMe 로드 완료 후 기존 관심직무를 초기값으로 세팅
+  // useMe 로드 완료 후 기존 관심직무를 초기값으로 세팅.
+  // 편집 중에는 건너뛴다: 같은 화면의 프로필 저장 등으로 내 정보가 다시 불려도 고르던 선택이 덮어써지지 않게.
   useEffect(() => {
-    if (meLoading || !meData) return;
+    if (meLoading || !meData || editMode) return;
     // selectedInterestedJobs: API에서 오는 detail enum 코드 (e.g. 'FRONTEND')
     const initialInterests = meData.selectedInterestedJobs
       .map((code) => DETAIL_TO_VALUE[code])
       .filter(Boolean);
     setSignupData((prev) => ({ ...prev, interests: initialInterests }));
     setSavedInterests(initialInterests);
-  }, [meLoading, meData]);
+  }, [meLoading, meData, editMode]);
 
   const handleCancel = () => {
     setSignupData((prev) => ({
@@ -122,6 +125,8 @@ const JobSection = () => {
 
       setSavedInterests(signupData.interests);
       setEditMode(false);
+      // 사이드 메뉴·모바일 프로필의 관심직무에 바로 반영
+      queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
       window.alert('관심 직무가 저장되었습니다.');
     } catch (error) {
       console.error('관심 직무 저장 중 오류 발생:', error);

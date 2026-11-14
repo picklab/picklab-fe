@@ -5,6 +5,8 @@ import TextBox from '@/components/common/Field/TextBox';
 import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { ME_QUERY_KEY } from '@/hooks/useMe';
 
 type ProfileForm = {
   name: string;
@@ -151,6 +153,7 @@ function parsePresignedUploadInfo(payload: unknown): PresignedUploadInfo | null 
 }
 
 const ProfileSection = () => {
+  const queryClient = useQueryClient();
   const defaultForm: ProfileForm = {
     name: '',
     nickname: '',
@@ -271,6 +274,8 @@ const ProfileSection = () => {
 
       setSavedForm(form);
       setEditMode(false);
+      // 사이드 메뉴 닉네임 등 내 정보를 쓰는 화면에 바로 반영
+      queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
       window.alert('프로필 정보가 저장되었습니다.');
     } catch (error) {
       console.error('프로필 정보 저장 중 오류 발생:', error);
@@ -393,6 +398,7 @@ const ProfileSection = () => {
         return false;
       }
 
+      queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
       window.alert('프로필 이미지가 저장되었습니다.');
       return true;
     } catch (error) {

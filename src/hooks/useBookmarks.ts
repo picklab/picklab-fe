@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   isClosedBackendActivity,
   mapBackendActivityToApiItem,
@@ -38,81 +39,73 @@ export type BookmarkItem = ApiActivityItem & {
   recruitmentEndDate?: string; // 지원 마감일
 };
 
+const EMPTY_BOOKMARKS: BookmarkItem[] = [];
+
+async function fetchBookmarks(
+  activityType: BookmarkCategory | undefined,
+  sortType: BookmarkSortType,
+  size: number,
+): Promise<BookmarkItem[]> {
+  const searchParams = new URLSearchParams({
+    page: '0',
+    size: String(size),
+    sortType,
+  });
+
+  if (activityType) {
+    searchParams.append('activityTypes', activityType);
+  }
+
+  const response = await fetch(`/api/bookmarks?${searchParams.toString()}`, {
+    credentials: 'include',
+  });
+
+  if (response.status === 401) {
+    throw new Error('로그인이 필요합니다. 로그인 후 다시 시도해주세요.');
+  }
+
+  if (!response.ok) {
+    throw new Error('북마크 목록을 불러오지 못했습니다.');
+  }
+
+  const payload = (await response.json()) as BackendBookmarkListResponse;
+  return (payload.data?.items ?? []).map((item) => ({
+    ...mapBackendActivityToApiItem(item),
+    isBookmarked: item.is_bookmarked ?? true,
+    isClosed: isClosedBackendActivity(item),
+    bookmarkedAt: item.bookmarked_at ?? undefined,
+    recruitmentStartDate: item.recruitment_start_date ?? undefined,
+    recruitmentEndDate: item.recruitment_end_date ?? undefined,
+  }));
+}
+
 export function useBookmarks({
   activityType,
   sortType = 'RECENTLY_BOOKMARKED',
   size = 100,
   includeClosed = false,
 }: UseBookmarksParams = {}) {
-  const [data, setData] = useState<BookmarkItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const query = useQuery({
+    // includeClosed는 받아 온 목록을 화면에서 거르는 옵션이라 키에 넣지 않는다(같은 요청을 공유)
+    queryKey: ['bookmarks', activityType ?? null, sortType, size],
+    queryFn: () => fetchBookmarks(activityType, sortType, size),
+    // 필터를 바꾸는 동안 이전 목록을 유지(기존 동작과 같음)
+    placeholderData: keepPreviousData,
+  });
 
-  useEffect(() => {
-    let cancelled = false;
+  // 화면 이동 직후 이전 화면의 캐시를 그대로 보여주지 않고, 이 화면에서 받은 첫 응답부터 쓴다(기존 동작과 같음)
+  const ready = query.isFetchedAfterMount;
+  const source = ready && !query.isError ? query.data : undefined;
+  const data = useMemo(() => {
+    if (!source) return EMPTY_BOOKMARKS;
+    return includeClosed ? source : source.filter((m) => !m.isClosed);
+  }, [source, includeClosed]);
 
-    const fetchBookmarks = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const searchParams = new URLSearchParams({
-          page: '0',
-          size: String(size),
-          sortType,
-        });
-
-        if (activityType) {
-          searchParams.append('activityTypes', activityType);
-        }
-
-        const response = await fetch(`/api/bookmarks?${searchParams.toString()}`, {
-          credentials: 'include',
-        });
-
-        if (response.status === 401) {
-          throw new Error('로그인이 필요합니다. 로그인 후 다시 시도해주세요.');
-        }
-
-        if (!response.ok) {
-          throw new Error('북마크 목록을 불러오지 못했습니다.');
-        }
-
-        const payload = (await response.json()) as BackendBookmarkListResponse;
-        const items = payload.data?.items ?? [];
-
-        if (!cancelled) {
-          const mapped: BookmarkItem[] = items.map((item) => ({
-            ...mapBackendActivityToApiItem(item),
-            isBookmarked: item.is_bookmarked ?? true,
-            isClosed: isClosedBackendActivity(item),
-            bookmarkedAt: item.bookmarked_at ?? undefined,
-            recruitmentStartDate: item.recruitment_start_date ?? undefined,
-            recruitmentEndDate: item.recruitment_end_date ?? undefined,
-          }));
-          // 기본은 마감 제외(기존 동작), includeClosed면 전체 반환
-          setData(includeClosed ? mapped : mapped.filter((m) => !m.isClosed));
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-          setData([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchBookmarks();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [activityType, size, sortType, includeClosed]);
-
-  return { data, loading, error };
+  return {
+    data,
+    loading: query.isPending || !ready || query.isPlaceholderData,
+    error: query.error ?? null,
+  };
 }
 
 export default useBookmarks;

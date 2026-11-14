@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { CardChipProps } from '@/components/common/Card/CardChip';
 
 type ArchiveCategory = 'EXTRACURRICULAR' | 'SEMINAR' | 'EDUCATION' | 'COMPETITION';
@@ -121,56 +121,35 @@ function mapArchiveItem(item: BackendArchiveItem): ArchiveActivityItem {
   };
 }
 
+const EMPTY_ARCHIVE: ArchiveActivityItem[] = [];
+
+async function fetchArchiveActivities(): Promise<ArchiveActivityItem[]> {
+  const searchParams = new URLSearchParams({
+    sort: 'LATEST',
+  });
+  const response = await fetch(`/api/archive?${searchParams.toString()}`, {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('아카이브 활동을 불러오지 못했습니다.');
+  }
+
+  const payload = (await response.json()) as ArchiveResponse;
+  return readItems(payload).map(mapArchiveItem);
+}
+
 export function useArchiveActivities() {
-  const [data, setData] = useState<ArchiveActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const query = useQuery({ queryKey: ['archive', 'LATEST'], queryFn: fetchArchiveActivities });
+  // 화면 이동 직후 이전 화면의 캐시를 그대로 보여주지 않고, 이 화면에서 받은 첫 응답부터 쓴다(기존 동작과 같음)
+  const ready = query.isFetchedAfterMount;
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchArchiveActivities = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const searchParams = new URLSearchParams({
-          sort: 'LATEST',
-        });
-        const response = await fetch(`/api/archive?${searchParams.toString()}`, {
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-          throw new Error('아카이브 활동을 불러오지 못했습니다.');
-        }
-
-        const payload = (await response.json()) as ArchiveResponse;
-        const items = readItems(payload).map(mapArchiveItem);
-
-        if (!cancelled) {
-          setData(items);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-          setData([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchArchiveActivities();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return { data, loading, error };
+  // 기존 반환값 유지: 실패 시 빈 목록 + error
+  return {
+    data: ready && !query.isError && query.data ? query.data : EMPTY_ARCHIVE,
+    loading: query.isPending || !ready,
+    error: query.error ?? null,
+  };
 }
 
 export default useArchiveActivities;

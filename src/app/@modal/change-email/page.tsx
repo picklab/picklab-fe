@@ -5,6 +5,8 @@ import Button from '@/components/common/Button/Button';
 import TextField from '@/components/common/Field/TextField';
 import Typography from '@/components/common/Typography';
 import useModal from '@/hooks/useModal';
+import { useQueryClient } from '@tanstack/react-query';
+import { ME_QUERY_KEY } from '@/hooks/useMe';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -20,6 +22,7 @@ type FieldState = { status: 'default' | 'error' | 'success'; message?: string };
  */
 export default function Page() {
   const { closeModal } = useModal();
+  const queryClient = useQueryClient();
 
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -105,6 +108,8 @@ export default function Page() {
         body: JSON.stringify({ email: email.trim() }),
       });
       if (!res.ok) throw new Error('이메일 변경에 실패했습니다.');
+      // 계정 관리 화면의 이메일에 바로 반영
+      queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
       window.alert('이메일이 변경되었어요.');
       closeModal();
     } catch (error) {
