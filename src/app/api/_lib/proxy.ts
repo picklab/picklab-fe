@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ky from 'ky';
-import { refreshAccessToken } from './token';
+import { authCookieMaxAge, refreshAccessToken } from './token';
 
 const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
 
@@ -16,17 +16,28 @@ type ProxyOptions = {
   errorContext: string;
 };
 
+// 재발급이 일시 오류로 실패한 경우. 토큰이 무효라고 단정할 수 없어 쿠키를 지우지 않고 다시 시도하게 한다.
+function refreshUnavailableResponse() {
+  return NextResponse.json({ error: '잠시 후 다시 시도해주세요.' }, { status: 503 });
+}
+
 function unauthorizedResponse() {
   return NextResponse.json({ error: '인증 토큰이 없습니다.' }, { status: 401 });
 }
 
-function setAuthCookies(response: NextResponse, accessToken: string, refreshToken?: string | null) {
+function setAuthCookies(
+  response: NextResponse,
+  accessToken: string,
+  refreshToken: string | null | undefined,
+  currentRefreshToken: string,
+) {
+  const maxAge = authCookieMaxAge(refreshToken ?? currentRefreshToken);
   response.cookies.set('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge,
   });
 
   if (refreshToken) {
@@ -35,7 +46,7 @@ function setAuthCookies(response: NextResponse, accessToken: string, refreshToke
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge,
     });
   }
 }
@@ -111,36 +122,55 @@ export async function proxyWithAuth({
       };
     };
 
+    let refreshTried = false;
+    // 백엔드가 refreshToken을 거절(401/403)했을 때만 무효로 확정한다. 5xx·429 같은 일시 오류로는 로그아웃시키지 않는다.
+    let refreshRejected = false;
+
     const refreshAndRetry = async () => {
       if (!refreshToken) return null;
 
+      refreshTried = true;
       const refreshed = await refreshAccessToken(refreshToken);
-      if (!refreshed.ok || !refreshed.accessToken) return null;
+      if (!refreshed.ok || !refreshed.accessToken) {
+        refreshRejected = refreshed.status === 401 || refreshed.status === 403;
+        return null;
+      }
 
       const retried = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions(refreshed.accessToken));
       const retryResponse = await buildResponse(retried);
-      setAuthCookies(retryResponse, refreshed.accessToken, refreshed.refreshToken);
+      setAuthCookies(retryResponse, refreshed.accessToken, refreshed.refreshToken, refreshToken);
       return retryResponse;
     };
+
+    // 무효로 확정된 토큰이면 비로그인 허용 API도 응답과 함께 쿠키를 지워 헤더가 로그인 상태로 남지 않게 한다.
+    let tokensInvalid = false;
 
     if (!accessToken && refreshToken) {
       const retryResponse = await refreshAndRetry();
       if (retryResponse) return retryResponse;
-      if (!optionalAuth) return clearAuthCookies(unauthorizedResponse());
+      if (!optionalAuth) return refreshRejected ? clearAuthCookies(unauthorizedResponse()) : refreshUnavailableResponse();
+      tokensInvalid = refreshRejected;
     }
 
     let response = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions(accessToken));
 
-    if (response.status === 401 && refreshToken) {
+    if (response.status === 401 && refreshToken && !refreshTried) {
       const retryResponse = await refreshAndRetry();
       if (retryResponse) return retryResponse;
     }
 
     if (response.status === 401 && accessToken) {
-      return clearAuthCookies(await buildResponse(response));
+      if (!optionalAuth) {
+        if (refreshToken && !refreshRejected) return refreshUnavailableResponse();
+        return clearAuthCookies(await buildResponse(response));
+      }
+      // 비로그인 허용 API는 무효 토큰 때문에 공개 데이터까지 401이 되지 않도록 토큰 없이 다시 받는다
+      response = await ky(`${BACKEND_URL}${endpoint}`, buildRequestOptions());
+      tokensInvalid = !refreshToken || refreshRejected;
     }
 
-    return buildResponse(response);
+    const proxied = await buildResponse(response);
+    return tokensInvalid ? clearAuthCookies(proxied) : proxied;
   } catch (error) {
     console.error(`${errorContext}:`, error);
     return NextResponse.json({ error: '서버 내부 오류가 발생했습니다.' }, { status: 500 });

@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { authCookieMaxAge } from '../../../_lib/token';
 
 const BACKEND_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
 
@@ -46,20 +47,21 @@ export async function POST(
     };
 
     const response = NextResponse.json(tokens, { status: 200 });
+    const maxAge = authCookieMaxAge(refresh_token);
 
     response.cookies.set('accessToken', access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge,
     });
     response.cookies.set('refreshToken', refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge,
     });
 
     return response;

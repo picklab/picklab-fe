@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authCookieMaxAge } from '../../_lib/token';
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,19 +30,20 @@ export async function POST(req: NextRequest) {
     const { access_token, refresh_token } = tokens.data as { access_token: string; refresh_token: string };
 
     const response = NextResponse.json(tokens, { status: 200 });
+    const maxAge = authCookieMaxAge(refresh_token);
 
     // 토큰을 HttpOnly 및 Secure 쿠키에 저장합니다.
     response.cookies.set('accessToken', access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/', // 모든 경로에서 접근 가능하도록 설정
-      maxAge: 60 * 60 * 24 * 7 // 7일 유효 기간 (예시)
+      maxAge,
     });
     response.cookies.set('refreshToken', refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30 // 30일 유효 기간 (예시)
+      maxAge,
     });
 
     return response;

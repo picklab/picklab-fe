@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { refreshAccessToken } from '../../_lib/token';
+import { authCookieMaxAge, refreshAccessToken } from '../../_lib/token';
 
 function getRefreshToken(request: NextRequest) {
   const cookieToken = request.cookies.get('refreshToken')?.value;
@@ -35,12 +35,13 @@ export async function POST(request: NextRequest) {
     }
 
     const response = NextResponse.json(refreshed.payload, { status: 200 });
+    const maxAge = authCookieMaxAge(refreshed.refreshToken ?? refreshToken);
     response.cookies.set('accessToken', refreshed.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge,
     });
     if (refreshed.refreshToken) {
       response.cookies.set('refreshToken', refreshed.refreshToken, {
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge,
       });
     }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ky from 'ky';
-import { refreshAccessToken } from '../../_lib/token';
+import { authCookieMaxAge, refreshAccessToken } from '../../_lib/token';
 
 const EXTERNAL_API_BASE_URL = process.env.EXTERNAL_API_BASE_URL || 'http://161.153.21.86:8080';
 
@@ -19,13 +19,19 @@ function buildProxyResponse(externalResponse: Response) {
   });
 }
 
-function setAuthCookies(response: NextResponse, accessToken: string, refreshToken?: string | null) {
+function setAuthCookies(
+  response: NextResponse,
+  accessToken: string,
+  refreshToken: string | null | undefined,
+  currentRefreshToken: string,
+) {
+  const maxAge = authCookieMaxAge(refreshToken ?? currentRefreshToken);
   response.cookies.set('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge,
   });
 
   if (refreshToken) {
@@ -34,7 +40,7 @@ function setAuthCookies(response: NextResponse, accessToken: string, refreshToke
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge,
     });
   }
 }
@@ -96,7 +102,7 @@ async function handleRequest(req: NextRequest) {
 
       const retried = await ky(externalApiUrl, buildKyOptions(refreshed.accessToken));
       const retryResponse = buildProxyResponse(retried);
-      setAuthCookies(retryResponse, refreshed.accessToken, refreshed.refreshToken);
+      setAuthCookies(retryResponse, refreshed.accessToken, refreshed.refreshToken, refreshToken);
       return retryResponse;
     };
 
