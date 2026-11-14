@@ -1,5 +1,5 @@
 
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import ArchiveDetailPage from '@/app/(home)/profile/archive/[id]/page';
 import PcArchiveDetailPage from '@/app/(home)/profile/archive/[id]/_components/PcArchiveDetailPage';
 import MobileArchiveDetailPage from '@/app/(home)/profile/archive/[id]/_components/MobileArchiveDetailPage';
@@ -17,19 +17,6 @@ const meta: Meta = {
 };
 
 export default meta;
-
-export const Default: StoryObj<typeof ArchiveDetailPage> = {
-  name: 'Responsive',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Archive Detail 페이지입니다. 뷰포트 애드온을 통해 PC와 모바일 화면을 확인할 수 있습니다.',
-      },
-    },
-  },
-  render: () => <ArchiveDetailPage />,
-};
 
 export const PcVersion: StoryObj<typeof PcArchiveDetailPage> = {
   name: 'PC',

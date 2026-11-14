@@ -1,5 +1,5 @@
 import ChartBadge from '@/components/common/Chart/ChartBadge/ChartBadge';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta<typeof ChartBadge> = {
   title: 'Components/Chart/ChartBadge',

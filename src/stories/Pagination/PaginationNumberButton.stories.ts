@@ -1,5 +1,5 @@
 import PaginationNumberButton from '@/components/common/Pagination/PaginationNumberButton';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta = {
   title: 'Components/Pagination/NumberButton',

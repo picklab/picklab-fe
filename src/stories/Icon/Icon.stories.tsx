@@ -1,6 +1,6 @@
 import { iconList } from '@/components/common/Icon/assets';
 import Icon from '@/components/common/Icon/Icon';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta = {
   title: 'components/Icon',

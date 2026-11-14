@@ -3,7 +3,7 @@
 import MobileActivites from "@/app/(home)/[activities]/_components/MobileActivites";
 import PcActivites from "@/app/(home)/[activities]/_components/PcActivites";
 import ActivitiesPage from "@/app/(home)/[activities]/page";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/nextjs";
 
 const meta: Meta = {
   title: "Pages/Activities",

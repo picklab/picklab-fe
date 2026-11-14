@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import WithdrawPage from '@/app/(home)/profile/account/withdraw/page';
 
 const meta: Meta = {

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import MoList, { MoListProps } from '@/components/common/List/mobile/MoList';
 
 const meta: Meta<MoListProps> = {

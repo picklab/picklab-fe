@@ -1,6 +1,6 @@
 import { setInitialSearchParams } from '@/__mocks__/next/navigation';
 import SortTab from '@/components/common/Tab/SortTab';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const ControlItems = [
   { label: '최신순', value: 'latest' },

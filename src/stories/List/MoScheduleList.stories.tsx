@@ -1,5 +1,5 @@
 import MoScheduleList, { MoScheduleListProps } from '@/components/common/List/mobile/MoScheduleList';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta<MoScheduleListProps> = {
   title: 'Components/List/MoScheduleList',

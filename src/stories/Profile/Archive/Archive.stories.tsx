@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import ArchivePage from '@/app/(home)/profile/archive/page';
 import PcProfileArchivePage from '@/app/(home)/profile/archive/_components/PcProfileArchivePage';
 import MobileProfileArchivePage from '@/app/(home)/profile/archive/_components/MobileProfileArchivePage';

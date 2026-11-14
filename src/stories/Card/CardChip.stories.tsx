@@ -1,5 +1,5 @@
 import CardChip from '@/components/common/Card/CardChip';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta<typeof CardChip> = {
   title: 'components/Card/CardChip',

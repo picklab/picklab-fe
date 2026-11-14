@@ -1,6 +1,6 @@
 // Button.stories.tsx
 import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import Button, { ButtonProps } from '@/components/common/Button/Button';
 import { iconList } from '@/components/common/Icon/assets';
 

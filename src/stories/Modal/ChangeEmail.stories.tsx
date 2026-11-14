@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import ChangeEmailPage from '@/app/@modal/change-email/page';
 
 const meta: Meta = {

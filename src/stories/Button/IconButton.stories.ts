@@ -1,6 +1,6 @@
 import IconButton from '@/components/common/Button/IconButton';
 import { iconList } from '@/components/common/Icon/assets';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta<typeof IconButton> = {
   title: 'Components/Button/IconButton',

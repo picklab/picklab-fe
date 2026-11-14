@@ -1,7 +1,7 @@
 import { iconList } from '@/components/common/Icon/assets';
 import { OptionGroup } from '@/components/common/Option/OptionGroup';
 import { widthClassMap } from '@/components/common/Select/Select';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 import { useEffect, useState } from 'react';
 

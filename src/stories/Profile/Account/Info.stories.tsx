@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import InfoPage from '@/app/(home)/profile/account/info/page';
 
 const meta: Meta = {

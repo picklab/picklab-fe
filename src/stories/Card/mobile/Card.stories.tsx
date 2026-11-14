@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '@/components/common/Card/mobile/Card';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 
 export default {
   title: 'Components/Card/mobile/Card',

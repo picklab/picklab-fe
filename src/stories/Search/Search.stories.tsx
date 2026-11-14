@@ -1,6 +1,6 @@
 /** @format */
 
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/nextjs";
 import SearchPage from "@/app/(home)/search/[search]/page";
 import PcSearchPage from "@/app/(home)/search/_components/PcSearchPage";
 import MobileSearchPage from "@/app/(home)/search/_components/MobileSearchPage";

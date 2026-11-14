@@ -1,5 +1,5 @@
 import Tab from '@/components/common/Tab/Tab';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 import { useState } from 'react';
 

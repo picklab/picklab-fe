@@ -1,6 +1,6 @@
 // Switch.stories.tsx
 import Switch, { SwitchProps } from '@/components/common/Control/Switch';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 import { useState } from 'react';
 

@@ -1,6 +1,6 @@
 import Typography, { TypographyTypes } from '@/components/common/Typography';
-import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/nextjs';
+import { fn } from 'storybook/test';
 
 const meta = {
   title: 'Components/Typography',

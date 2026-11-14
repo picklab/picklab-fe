@@ -1,7 +1,7 @@
 import { StepType } from '@/components/common/Funnel/FunnelStep';
 import SignupFunnel from '@/components/common/Funnel/SignupFunnel';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const steps: StepType[] = [
   { label: '회원정보', icon: 'human' },

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import AlarmPage from '@/app/(home)/profile/alarm/page';
 
 const meta: Meta = {

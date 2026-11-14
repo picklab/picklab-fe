@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import HelpMessage from '@/components/common/Field/HelpMessage';
 
 const meta = {

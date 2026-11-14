@@ -1,6 +1,6 @@
 import GNB from '@/components/common/GNB/mobile/GNB';
 import { AuthClientProvider } from '@/contexts/AuthContext';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta<typeof GNB> = {
   title: 'Components/GNB/mobile/GNB',

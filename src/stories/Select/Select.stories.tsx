@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import Select, { SelectProps } from '@/components/common/Select/Select';
 
 const meta: Meta<typeof Select> = {

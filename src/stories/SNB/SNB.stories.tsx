@@ -1,6 +1,6 @@
 import { setInitialPathname } from '@/__mocks__/next/navigation';
 import SNB from '@/components/common/SNB/SNB';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 type SNBStoryProps = React.ComponentProps<typeof SNB> & { pathname?: string };
 

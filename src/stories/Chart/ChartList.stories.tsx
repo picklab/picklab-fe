@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import type { BadgeTypes } from '@/components/common/Chart/ChartBadge/ChartBadge';
 import ChartList from '@/components/common/Chart/ChartList';
 

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 
 import ThreeDImagePlaceHolder from '@/../public/imgs/ThreeDImagePlaceHolder.jpg';
 import ThreeDImageButton from '@/components/common/Button/ThreeDImageButton';

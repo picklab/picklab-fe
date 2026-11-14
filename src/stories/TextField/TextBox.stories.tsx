@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import TextBox, { InputTextBoxProps, TextareaTextBoxProps } from '@/components/common/Field/TextBox';
 import { iconList } from '@/components/common/Icon/assets';
 

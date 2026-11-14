@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import FunctionOption from '@/components/common/Option/FunctionOption';
 
 const meta: Meta<typeof FunctionOption> = {

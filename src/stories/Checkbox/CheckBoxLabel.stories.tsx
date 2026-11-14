@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import CheckBoxLabel, { CheckBoxLabelProps } from '@/components/common/CheckBox/CheckBoxLabel';
 
 const meta: Meta<typeof CheckBoxLabel> = {
