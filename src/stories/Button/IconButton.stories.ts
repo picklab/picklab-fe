@@ -57,7 +57,7 @@ export const Outline: Story = {
   },
 };
 
-export const standard: Story = {
+export const Standard: Story = {
   args: {
     buttonStyles: 'standard',
     icon: 'alertCircle', // 실제 사용하는 아이콘 이름

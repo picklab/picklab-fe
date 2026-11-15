@@ -9,7 +9,7 @@ export default function Page() {
     <Modal
       isOpen={true}
       onClose={closeModal}
-      onSuccess={() => console.log('success')}
+      onSuccess={closeModal}
       title="title"
       description="description"
     />
