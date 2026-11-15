@@ -3,6 +3,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useReadyAfterMount } from './useReadyAfterMount';
 import type { LocalApiActivityItem } from '@/lib/activity-data';
+import { ACTIVITY_TYPE_LABELS } from '@/constants/activityType';
 
 export type ActivityEndpoint =
   | 'recommendations'
@@ -44,13 +45,6 @@ interface BackendActivityListResponse {
 }
 
 const ACTIVITY_CATEGORIES: BackendActivityCategory[] = ['EXTRACURRICULAR', 'EDUCATION', 'COMPETITION', 'SEMINAR'];
-
-const CATEGORY_LABELS: Record<BackendActivityCategory, ApiActivityItem['activityType']> = {
-  EXTRACURRICULAR: '대외활동',
-  EDUCATION: '교육',
-  COMPETITION: '공모전/해커톤',
-  SEMINAR: '강연/세미나',
-};
 
 const ORGANIZATION_LABELS: Record<string, string> = {
   LARGE_CORPORATION: '대기업',
@@ -97,8 +91,8 @@ export function isClosedBackendActivity(item: BackendActivityItem) {
 }
 
 export function mapBackendActivityToApiItem(item: BackendActivityItem): ApiActivityItem {
-  const category = item.category && item.category in CATEGORY_LABELS
-    ? CATEGORY_LABELS[item.category as BackendActivityCategory]
+  const category = item.category && item.category in ACTIVITY_TYPE_LABELS
+    ? ACTIVITY_TYPE_LABELS[item.category as BackendActivityCategory]
     : '대외활동';
   const organizerType = item.organizer_type ?? item.organizerType;
   const companyType = organizerType ? ORGANIZATION_LABELS[organizerType] ?? organizerType : '';

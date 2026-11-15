@@ -5,6 +5,7 @@ import MobileActivityDetailPage from './_components/MobileActivityDetailPage';
 import ActivityViewRecorder from './_components/ActivityViewRecorder';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
 import { BACKEND_URL } from '@/config/backend';
+import { ACTIVITY_TYPE_LABELS } from '@/constants/activityType';
 
 interface ActivityDetailPageProps {
   params: Promise<{ id: string }>;
@@ -49,13 +50,6 @@ interface BackendActivityDetailResponse {
   code?: number;
   data?: BackendActivityDetail;
 }
-
-const CATEGORY_LABELS: Record<string, ActivityCardItem['activityType']> = {
-  EXTRACURRICULAR: '대외활동',
-  EDUCATION: '교육',
-  COMPETITION: '공모전/해커톤',
-  SEMINAR: '강연/세미나',
-};
 
 const ORGANIZATION_LABELS: Record<string, string> = {
   LARGE_CORPORATION: '대기업',
@@ -132,7 +126,7 @@ function mapBackendDetailToActivity(raw: BackendActivityDetail): ActivityCardIte
   return {
     detailLink: `/activity/${raw.id}`,
     applyLink: raw.application_url ?? raw.homepage_url ?? '',
-    activityType: raw.category ? CATEGORY_LABELS[raw.category] ?? raw.category : '대외활동',
+    activityType: raw.category ? ACTIVITY_TYPE_LABELS[raw.category] ?? raw.category : '대외활동',
     source: '',
     title: raw.title ?? '',
     organizer: raw.organization ?? '',

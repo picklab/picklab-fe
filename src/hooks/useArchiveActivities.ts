@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import type { CardChipProps } from '@/components/common/Card/CardChip';
+import { ACTIVITY_TYPE_LABELS } from '@/constants/activityType';
 
 type ArchiveCategory = 'EXTRACURRICULAR' | 'SEMINAR' | 'EDUCATION' | 'COMPETITION';
 
@@ -64,13 +65,6 @@ export type ArchiveActivityItem = {
   statusText: string;
 };
 
-const CATEGORY_LABELS: Record<string, CardChipProps['text']> = {
-  EXTRACURRICULAR: '대외활동',
-  SEMINAR: '강연/세미나',
-  EDUCATION: '교육',
-  COMPETITION: '공모전/해커톤',
-};
-
 function toDate(value?: string | null) {
   if (!value) return null;
   const date = new Date(value);
@@ -110,7 +104,7 @@ function mapArchiveItem(item: BackendArchiveItem): ArchiveActivityItem {
       item.thumbnailUrl ??
       item.thumbnail ??
       '/imgs/cat.jpg',
-    chipTitle: CATEGORY_LABELS[category] ?? '대외활동',
+    chipTitle: ACTIVITY_TYPE_LABELS[category] ?? '대외활동',
     startDate: toDate(
       item.user_start_date ?? item.userStartDate ?? item.activity_start_date ?? item.activityStartDate ?? item.start_date ?? item.startDate,
     ),

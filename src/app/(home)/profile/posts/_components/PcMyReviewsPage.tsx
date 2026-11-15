@@ -12,14 +12,7 @@ import {
   type MyReviewItem,
 } from '@/types/review.types';
 import DeleteReviewModal from './DeleteReviewModal';
-
-// activity_type(코드) → 한글 라벨 (활동 상세 리뷰 page.tsx의 CATEGORY_LABELS와 동일 규칙)
-const ACTIVITY_TYPE_LABELS: Record<string, string> = {
-  EXTRACURRICULAR: '대외활동',
-  EDUCATION: '교육',
-  COMPETITION: '공모전/해커톤',
-  SEMINAR: '강연/세미나',
-};
+import { ACTIVITY_TYPE_LABELS } from '@/constants/activityType';
 
 function activityTypeLabel(code: string): string {
   return ACTIVITY_TYPE_LABELS[code] ?? code;

@@ -7,18 +7,11 @@ import Icon from '@/components/common/Icon/Icon';
 import Typography from '@/components/common/Typography';
 import useActivityParticipationResults from '@/hooks/useActivityParticipationResults';
 import type { ParticipationProgressStatus } from '@/types/review.types';
+import { ACTIVITY_TYPE_LABELS } from '@/constants/activityType';
 
 interface ReviewWriteModalProps {
   onClose: () => void;
 }
-
-// activity_type(코드) → 한글 라벨
-const ACTIVITY_TYPE_LABELS: Record<string, string> = {
-  EXTRACURRICULAR: '대외활동',
-  EDUCATION: '교육',
-  COMPETITION: '공모전/해커톤',
-  SEMINAR: '강연/세미나',
-};
 
 // 수료여부(progress_status) → 한글 라벨
 const PROGRESS_LABELS: Record<ParticipationProgressStatus, string> = {
