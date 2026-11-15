@@ -176,7 +176,7 @@ export default function NewActivityList({
       size: String(requestSize),
       sort: SORT_TO_API[sort as keyof typeof SORT_TO_API] ?? "LATEST",
       ...(categorySlug
-        ? { category: CATEGORY_TO_API[categorySlug], fallbackOnEmpty: "false" }
+        ? { category: CATEGORY_TO_API[categorySlug] }
         : {}),
       ...(selectedJobTags.length > 0
         ? { jobTag: selectedJobTags.join(",") }
@@ -218,24 +218,7 @@ export default function NewActivityList({
   const cards = useMemo(() => {
     const sourceItems = apiData;
 
-    if (sourceItems.length === 0) {
-      if (categorySlug) {
-        return [];
-      }
-
-      return Array.from({ length: 10 }).map((_, index) => ({
-        key: String(index),
-        imageUrl: "/imgs/cat.jpg",
-        chipText: "공모전/해커톤" as const,
-        badgeText: "D-01",
-        badgeVariant: "default" as const,
-        isBookmarked: false,
-        companyName: "삼양 그룹",
-        title: "2025 삼양그룹 대학생 서포터즈 Samyang Seeds 9기",
-        jobs: ["개발"] as "개발"[],
-        detailLink: "",
-      }));
-    }
+    if (sourceItems.length === 0) return [];
 
     const mergedSelectedFilters = {
       ...selectedFilters,
@@ -352,7 +335,6 @@ export default function NewActivityList({
   }, [
     apiData,
     bookmarkMap,
-    categorySlug,
     selectedCategories,
     selectedFilters,
     selectedJobs,
@@ -360,6 +342,12 @@ export default function NewActivityList({
   ]);
 
   const totalPages = Math.ceil(cards.length / CARDS_PER_PAGE);
+  const hasActiveFilter =
+    selectedCategories.length > 0 ||
+    selectedJobs.length > 0 ||
+    Object.values(selectedFilters).some((values) =>
+      values.some((value) => value !== "전체" && value !== "모두"),
+    );
   const externalPage = Number(searchParams.get("page") ?? 1);
   const activePage =
     useExternalPagination && Number.isFinite(externalPage)
@@ -458,7 +446,9 @@ export default function NewActivityList({
         ) : pagedCards.length === 0 ? (
           <div className="col-span-4 flex h-[240px] items-center justify-center rounded-lg bg-gray-5">
             <Typography type="Body2Medium" className="text-gray-50">
-              선택한 조건에 맞는 활동이 없습니다.
+              {hasActiveFilter
+                ? "선택한 조건에 맞는 활동이 없습니다."
+                : "표시할 활동이 없습니다."}
             </Typography>
           </div>
         ) : (
@@ -499,12 +489,13 @@ export default function NewActivityList({
           ))
         )}
       </div>
-      {!useExternalPagination && totalPages > 1 && (
-        <div className="mt-8 flex justify-center">
+      {/* 외부 페이지네이션(홈)은 ?page로 이동한다. 홈 레이아웃의 섹션 간격(80px)에 맞춰 위 여백을 더 준다 */}
+      {totalPages > 1 && (
+        <div className={`${useExternalPagination ? "mt-12" : "mt-8"} flex justify-center`}>
           <Pagination
             totalPage={totalPages}
             activePage={activePage}
-            onPageChange={setPage}
+            onPageChange={useExternalPagination ? undefined : setPage}
           />
         </div>
       )}

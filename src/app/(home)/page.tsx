@@ -3,10 +3,9 @@
 import Banner from "./_components/Banner";
 import PcActivityList from "./_components/pc/ActivityList";
 import NewActivityList from "./_components/pc/NewActivityList";
-import Pagination from "@/components/common/Pagination/Pagination";
 import clsx from "clsx";
 import MobileActivityList from "./_components/mobile/ActivityList";
-import { getAllActivities } from "@/lib/activity-data";
+import { ACTIVITY_LIST_REQUEST_SIZE } from "@/constants/activityList";
 import Link from "next/link";
 import Typography from "@/components/common/Typography";
 import { cookies } from "next/headers";
@@ -20,8 +19,6 @@ const ACTIVITY_TITLES = {
   RECENT: "최근에 본 활동",
   NEW: "방금 올라온 따끈따끈한 활동!",
 } as const;
-
-const PC_NEW_ACTIVITY_PAGE_SIZE = 12;
 
 // 스타일 상수
 const MOBILE_STYLES = {
@@ -45,27 +42,16 @@ interface ResponsiveLayoutProps {
   isLogin?: boolean;
 }
 
-interface HomePageProps {
-  searchParams?: Promise<{ page?: string }>;
-}
-
-export default async function HomePage({ searchParams }: HomePageProps) {
+export default async function HomePage() {
   const cookieStore = await cookies();
   const isLogin = !!(cookieStore.get("accessToken") || cookieStore.get("refreshToken"));
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const requestedPage = Number(resolvedSearchParams?.page ?? "1");
-  const totalPage = Math.max(1, Math.ceil(getAllActivities().length / PC_NEW_ACTIVITY_PAGE_SIZE));
-  const activePage = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPage) : 1;
 
   return (
     <>
       <MobileLayout className={PC_STYLES.HIDDEN_ON_PC} isLogin={isLogin} />
       <PcLayout
         className={PC_STYLES.HIDDEN_ON_MOBILE}
-        totalPage={totalPage}
-        activePage={activePage}
         isLogin={isLogin}
-        newActivityRequestSize={getAllActivities().length}
       />
     </>
   );
@@ -142,11 +128,8 @@ function MobileHomeTabs() {
 export function PcLayout({
   className,
   isStorybook,
-  totalPage,
-  activePage,
   isLogin = true,
-  newActivityRequestSize,
-}: ResponsiveLayoutProps & { totalPage: number; activePage: number; isLogin?: boolean; newActivityRequestSize: number }) {
+}: ResponsiveLayoutProps & { isLogin?: boolean }) {
   return (
     <div className={clsx(PC_STYLES.CONTAINER, isStorybook ? "flex" : className)}>
       <div className={PC_STYLES.CONTENT_WRAPPER}>
@@ -160,9 +143,8 @@ export function PcLayout({
         {/* 최근에 본 활동 */}
         {isLogin && <PcActivityList title={ACTIVITY_TITLES.RECENT} endpoint="recently-viewed" />}
         {/* 방금 올라온 따끈따끈한 활동! */}
-        <NewActivityList title={ACTIVITY_TITLES.NEW} useExternalPagination requestSize={newActivityRequestSize} />
+        <NewActivityList title={ACTIVITY_TITLES.NEW} useExternalPagination requestSize={ACTIVITY_LIST_REQUEST_SIZE} />
       </div>
-      {totalPage > 1 && <Pagination totalPage={totalPage} activePage={activePage} />}
     </div>
   );
 }

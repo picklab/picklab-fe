@@ -10,8 +10,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import Select from "@/components/common/Select/Select";
-import { CardData } from "../constant";
-import { extractActivityId, toggleBookmark } from "@/lib/bookmarks";
+import { toggleBookmark } from "@/lib/bookmarks";
 import { useActivities, type ActivityEndpoint } from "@/hooks/useActivities";
 import { JOB_TYPE_OPTIONS } from "@/constants/filters";
 
@@ -52,16 +51,12 @@ export default function ActivityList({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
 
-  // 필터 선택 시: 직무유형은 백엔드 jobTag로 전송 + mock fallback 차단(필터 결과가 더미로 새지 않게)
+  // 직무유형 선택은 백엔드 jobTag로 전송한다
   const activityParams = useMemo(() => {
     const jobTags = selectedJobs.map((c) => JOB_CODE_TO_TAG[c]).filter(Boolean);
-    const hasFilterSel = jobTags.length > 0 || selectedCategories.length > 0;
-    if (!hasFilterSel) return undefined;
-    return {
-      ...(jobTags.length > 0 ? { jobTag: jobTags.join(",") } : {}),
-      fallbackOnEmpty: "false",
-    };
-  }, [selectedJobs, selectedCategories]);
+    if (jobTags.length === 0) return undefined;
+    return { jobTag: jobTags.join(",") };
+  }, [selectedJobs]);
   const { data: apiData, loading } = useActivities(endpoint ?? "recommendations", activityParams);
 
   const handleBookmarkToggle = async (activityId: string, currentBookmarked: boolean) => {
@@ -188,47 +183,13 @@ export default function ActivityList({
             />
           );
         }) : null}
-        {(hasApiData && filteredItems.length === 0) || (!hasApiData && hasFilter && !loading) ? (
+        {!loading && filteredItems.length === 0 ? (
           <div className="flex h-[160px] w-full items-center justify-center rounded-lg bg-gray-5">
             <Typography type="Body3Medium" className="text-gray-50">
-              선택한 조건에 맞는 활동이 없습니다.
+              {hasFilter ? "선택한 조건에 맞는 활동이 없습니다." : "표시할 활동이 없습니다."}
             </Typography>
           </div>
         ) : null}
-        {!hasApiData && !hasFilter
-          ? CardData.slice(0, displayLimit).map((item, index) => {
-              const activityId = extractActivityId(item.detailLink);
-              const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
-
-              return type === "card" ? (
-                <Card
-                  key={`${item.detailLink}-${index}`}
-                  imageUrl={item.thumbnailImage || "/imgs/cat.jpg"}
-                  chipText={normalizeActivityType(item.activityType)}
-                  badgeText={item.registrationPeriod}
-                  badgeVariant="default"
-                  isBookmarked={isBookmarked}
-                  companyName={item.organizer}
-                  title={item.title}
-                  jobs={["개발"]}
-                  onBookmarkClick={() => activityId && handleBookmarkToggle(activityId, isBookmarked)}
-                  onCardClick={() => router.push(item.detailLink)}
-                />
-              ) : (
-                <MoList
-                  key={`${item.detailLink}-${index}`}
-                  imageSrc={item.thumbnailImage || "/imgs/cat.jpg"}
-                  company={item.organizer}
-                  title={item.title}
-                  viewCount={10}
-                  saveCount={10}
-                  isBookmarked={isBookmarked}
-                  onListClick={() => router.push(item.detailLink)}
-                  onBookmarkClick={() => activityId && handleBookmarkToggle(activityId, isBookmarked)}
-                />
-              );
-            })
-          : null}
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ export default meta;
 
 export const PcVersion: StoryObj = {
   name: 'PC',
-  render: () => <PcLayout className="flex" isStorybook totalPage={5} activePage={1} newActivityRequestSize={325} />,
+  render: () => <PcLayout className="flex" isStorybook />,
   parameters: {
     docs: {
       description: {

@@ -7,8 +7,7 @@ import ChevronLeft from '@/components/common/Icon/assets/ChevronLeft';
 import ChevronRight from '@/components/common/Icon/assets/ChevronRight';
 import Typography from '@/components/common/Typography';
 import ListItem from '@/components/common/List/ListItem';
-import { ListItemData, CardData } from '../constant';
-import { extractActivityId, toggleBookmark } from '@/lib/bookmarks';
+import { toggleBookmark } from '@/lib/bookmarks';
 import { useActivities, type ActivityEndpoint } from '@/hooks/useActivities';
 
 interface ActivityListProps {
@@ -49,10 +48,8 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
     }
   };
 
-  // API 데이터가 있으면 사용, 없으면 mock 데이터 fallback
   const hasApiData = !loading && apiData.length > 0;
-  const showEmptyRecentlyViewed = endpoint === 'recently-viewed' && !loading && apiData.length === 0;
-  const shouldUseFallback = !loading && apiData.length === 0 && endpoint !== 'recently-viewed';
+  const isEmpty = !loading && apiData.length === 0;
 
   return (
     <div className="w-full flex flex-col gap-3">
@@ -104,65 +101,15 @@ export default function ActivityList({ title, type = 'card', endpoint }: Activit
               );
             })
           : null}
-        {showEmptyRecentlyViewed ? (
+        {isEmpty ? (
           <div className="flex h-[240px] w-full items-center justify-center rounded-lg bg-gray-5">
             <Typography type="Body2Medium" className="text-gray-50">
-              아직 본 활동이 없습니다. 관심 있는 공고를 눌러보면 이곳에 다시 표시됩니다.
+              {endpoint === 'recently-viewed'
+                ? '아직 본 활동이 없습니다. 관심 있는 공고를 눌러보면 이곳에 다시 표시됩니다.'
+                : '표시할 활동이 없습니다.'}
             </Typography>
           </div>
         ) : null}
-        {shouldUseFallback
-          ? CardData.map((item, index) =>
-              (() => {
-                const activityId = extractActivityId(item.detailLink);
-                const isBookmarked = activityId ? bookmarkedMap[activityId] ?? false : false;
-
-                return type === 'card' ? (
-                  <Card
-                    key={index}
-                    imageUrl={item.thumbnailImage || '/imgs/cat.jpg'}
-                    chipText="공모전/해커톤"
-                    badgeText={item.registrationPeriod}
-                    badgeVariant="default"
-                    isBookmarked={isBookmarked}
-                    companyName={item.companyType}
-                    title={item.title}
-                    jobs={item.activityField
-                      .split(';')
-                      .map((job) => job.trim())
-                      .filter((job) => ['기획', '개발', '마케팅', '디자인', 'AI', '마케터', '기타'].includes(job)) as (
-                      | '기획'
-                      | '개발'
-                      | '마케팅'
-                      | '디자인'
-                      | 'AI'
-                      | '마케터'
-                      | '기타'
-                    )[]}
-                    onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
-                    onCardClick={() => router.push(item.detailLink)}
-                  />
-                ) : (
-                  <ListItem
-                    key={index}
-                    thumbnail={ListItemData[index].thumbnailImage || '/imgs/cat.jpg'}
-                    title={ListItemData[index].title}
-                    label={ListItemData[index].organizer}
-                    chipTitle="공모전/해커톤"
-                    organization={ListItemData[index].organizer}
-                    startDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[0])}
-                    endDate={new Date(ListItemData[index].activityPeriod.split(' ~ ')[1])}
-                    isFinished={false}
-                    isBookmarked={isBookmarked}
-                    onListClick={() => router.push(item.detailLink)}
-                    onBookmarkClick={() => activityId && handleBookmarkToggle(activityId)}
-                    saveCount={10}
-                    viewCount={100}
-                  />
-                );
-              })(),
-            )
-          : null}
       </div>
     </div>
   );

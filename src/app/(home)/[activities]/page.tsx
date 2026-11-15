@@ -3,7 +3,8 @@
 import MobileActivites from "./_components/MobileActivites";
 import PcActivites from "./_components/PcActivites";
 import { ACTIVITIES } from "./constants";
-import { getAllActivities, type ActivityRouteSlug } from "@/lib/activity-data";
+import type { ActivityRouteSlug } from "@/lib/activity-data";
+import { ACTIVITY_LIST_REQUEST_SIZE } from "@/constants/activityList";
 
 async function ActivitiesPage({ params }: { params: Promise<{ activities: string }> }) {
   const { activities } = await params;
@@ -15,7 +16,7 @@ async function ActivitiesPage({ params }: { params: Promise<{ activities: string
       <PcActivites
         activities={activityTitle}
         activitySlug={activitySlug}
-        requestSize={getAllActivities().length}
+        requestSize={ACTIVITY_LIST_REQUEST_SIZE}
       />
       <MobileActivites activitySlug={activitySlug} />
     </>

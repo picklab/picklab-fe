@@ -190,38 +190,17 @@ async function fetchBackendActivities(
   return readBackendItems(json).filter((item) => !isClosedBackendActivity(item)).map(mapBackendActivityToApiItem);
 }
 
-// 백엔드가 비었거나 실패했을 때 보여 줄 로컬 목업. 1.5MB JSON이라 첫 로딩 번들에 넣지 않고 필요할 때만 불러온다.
-async function loadLocalFallback(endpoint: ActivityEndpoint, size: number): Promise<ApiActivityItem[]> {
-  try {
-    const { getActivitiesByEndpoint, mapActivityToApiItem } = await import('@/lib/activity-data');
-    return getActivitiesByEndpoint(endpoint, size).map(mapActivityToApiItem);
-  } catch {
-    return [];
-  }
-}
-
 type ActivitiesResult = { items: ApiActivityItem[]; error: Error | null };
 
 const EMPTY_ACTIVITIES: ApiActivityItem[] = [];
 
-// 실패해도 목업으로 채운 목록과 오류를 함께 돌려줘야 해서(기존 동작) 예외를 던지지 않고 결과 객체로 반환한다
-async function fetchActivitiesWithFallback(endpoint: ActivityEndpoint, paramsKey: string): Promise<ActivitiesResult> {
+// 실패해도 화면이 오류로 끊기지 않게 빈 목록과 오류를 함께 돌려준다(예외를 던지지 않음)
+async function fetchActivitiesResult(endpoint: ActivityEndpoint, paramsKey: string): Promise<ActivitiesResult> {
   const parsedParams = paramsKey ? JSON.parse(paramsKey) : undefined;
-  const size = Number(parsedParams?.size ?? 20);
   try {
-    const fallbackOnEmpty = parsedParams?.fallbackOnEmpty !== 'false';
-    const backendItems = await fetchBackendActivities(endpoint, parsedParams);
-    const items = backendItems.length > 0
-      ? backendItems
-      : fallbackOnEmpty
-        ? await loadLocalFallback(endpoint, size)
-        : [];
-    return { items, error: null };
+    return { items: await fetchBackendActivities(endpoint, parsedParams), error: null };
   } catch (err) {
-    return {
-      items: await loadLocalFallback(endpoint, size),
-      error: err instanceof Error ? err : new Error(String(err)),
-    };
+    return { items: [], error: err instanceof Error ? err : new Error(String(err)) };
   }
 }
 
@@ -232,7 +211,7 @@ export function useActivities(
   const paramsKey = params ? JSON.stringify(params) : '';
   const query = useQuery({
     queryKey: ['activities', endpoint, paramsKey],
-    queryFn: () => fetchActivitiesWithFallback(endpoint, paramsKey),
+    queryFn: () => fetchActivitiesResult(endpoint, paramsKey),
     // 필터·정렬을 바꾸는 동안 이전 목록을 유지(기존 동작과 같음)
     placeholderData: keepPreviousData,
   });

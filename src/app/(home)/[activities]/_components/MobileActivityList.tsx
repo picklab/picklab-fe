@@ -168,8 +168,6 @@ export default function MobileActivityList({
     return {
       size: "200",
       sort: "LATEST",
-      // 활동 목록은 실데이터 기준이라 mock fallback을 항상 끈다.
-      fallbackOnEmpty: "false",
       ...(activitySlug !== "all"
         ? { category: CATEGORY_TO_API[activitySlug] }
         : {}),
