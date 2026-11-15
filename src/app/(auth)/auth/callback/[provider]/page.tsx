@@ -29,7 +29,6 @@ export default function AuthCallbackPage() {
       })
         .then(async (response) => {
           if (response.ok) {
-            console.log("Code exchanged and tokens set successfully.");
             clientLogin();
             // PIC-74: 신규 유저(온보딩 미완료 = 닉네임 없음)면 회원가입 폼으로, 기존 유저면 홈으로
             try {
@@ -55,7 +54,7 @@ export default function AuthCallbackPage() {
       // 코드가 없는 경우 에러 페이지로 리다이렉트
       router.push("/signin?error=no_code_received");
     }
-  }, [router, searchParams, params]); // 의존성 배열에 params 추가
+  }, [router, searchParams, params, clientLogin]);
 
   // Figma 정합(2835:34670 "로그인 확인 중"): 로딩 이미지 + 제목 Title2Bold(28px) +
   // 설명 Body4Regular(13px). 스텝 인디케이터 없음.

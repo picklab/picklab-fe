@@ -4,7 +4,7 @@
 "use client"; // This context and its provider MUST be a client component
 
 import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
 
 interface AuthClientContextType {
   isAuthenticated: boolean;
@@ -46,17 +46,18 @@ export function AuthClientProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clientLogin = () => {
+  // 소셜 로그인 콜백 effect의 의존성으로 쓰이므로 참조를 고정한다(바뀌면 일회용 code 교환이 다시 실행됨).
+  const clientLogin = useCallback(() => {
     // This would be for updating client-side state, NOT for setting HTTP-only cookies.
     // For actual login that sets HTTP-only cookies, you'd still use your /api/auth/login endpoint.
     setIsAuthenticated(true);
-  };
+  }, []);
 
-  const clientLogout = () => {
+  const clientLogout = useCallback(() => {
     // This would be for updating client-side state after a server-side logout.
     // The actual clearing of HTTP-only cookies happens via your /api/auth/logout.
     setIsAuthenticated(false);
-  };
+  }, []);
 
   return (
     <AuthClientContext.Provider value={{ isAuthenticated, clientLogin, clientLogout }}>
