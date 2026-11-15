@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import PcReviewWritePage from './_components/PcReviewWritePage';
 import MobileReviewWritePage from './_components/MobileReviewWritePage';
 import ReviewEditBody from './_components/ReviewEditBody';
-import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
 import type { MyReviewDetail, MyReviewItem } from '@/types/review.types';
 import { BACKEND_URL } from '@/config/backend';
@@ -173,13 +172,11 @@ export default async function ReviewWritePage({ params, searchParams }: ReviewWr
     editReviewId ? fetchReviewDetail(editReviewId) : Promise.resolve(null),
     editReviewId ? fetchReviewMeta(editReviewId) : Promise.resolve(null),
   ]);
-  const rawActivity = apiActivity ? null : findActivityById(id);
-
-  if (!apiActivity && !rawActivity) {
+  if (!apiActivity) {
     return notFound();
   }
 
-  const activity = apiActivity ?? mapActivityToDetailItem(rawActivity!);
+  const activity = apiActivity;
   // edit 모드는 리뷰 단건 조회 성공 시에만 활성화(실패하면 일반 작성 모드로 폴백).
   // 수정은 한 페이지 구성(figma 3051:36748)이라 PC/모바일 공용 ReviewEditBody로 렌더.
   if (editReviewId && reviewDetail) {

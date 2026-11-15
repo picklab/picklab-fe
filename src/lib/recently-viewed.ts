@@ -1,5 +1,4 @@
-// 최근 본 활동 id 목록(localStorage). 목업 데이터(activity-data)와 분리해 둔 이유는
-// 상세 화면에서 이 기록만 필요할 때 1.5MB 목업 JSON이 브라우저 번들에 함께 실리지 않게 하기 위해서다.
+// 최근 본 활동 id 목록(localStorage).
 const RECENTLY_VIEWED_STORAGE_KEY = 'picklab-recently-viewed';
 
 export function readRecentlyViewedIds(): string[] {

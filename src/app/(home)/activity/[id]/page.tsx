@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import PcActivityDetailPage from './_components/PcActivityDetailPage';
 import MobileActivityDetailPage from './_components/MobileActivityDetailPage';
 import ActivityViewRecorder from './_components/ActivityViewRecorder';
-import { findActivityById, mapActivityToDetailItem } from '@/lib/activity-data';
 import type { ActivityCardItem } from '@/app/(home)/_components/constant';
 import { BACKEND_URL } from '@/config/backend';
 
@@ -184,13 +183,11 @@ async function fetchActivityDetail(id: string): Promise<ActivityCardItem | null>
 export default async function ActivityDetailPage({ params }: ActivityDetailPageProps) {
   const { id } = await params;
   const apiActivity = await fetchActivityDetail(id);
-  const rawActivity = apiActivity ? null : findActivityById(id);
-
-  if (!apiActivity && !rawActivity) {
+  if (!apiActivity) {
     return notFound();
   }
 
-  const activity = apiActivity ?? mapActivityToDetailItem(rawActivity!);
+  const activity = apiActivity;
 
   return (
     <>
