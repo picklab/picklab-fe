@@ -19,6 +19,14 @@ const MENU_ITEMS = [
   { id: "education", label: "교육" },
   { id: "contest", label: "공모전/해커톤" },
 ] as const;
+// figma 1136:77741 탭별 고정 폭. 건수가 길어 글자가 폭을 넘으면 겹치지 않게 글자 폭만큼 늘어난다
+const MENU_TAB_MIN_WIDTH: Record<(typeof MENU_ITEMS)[number]["id"], string> = {
+  all: "min-w-[86px]",
+  activities: "min-w-[100px]",
+  seminar: "min-w-[104px]",
+  education: "min-w-[86px]",
+  contest: "min-w-[104px]",
+};
 // 전체 탭에서 카테고리별 미리보기로 노출할 섹션(전체 제외)
 const CATEGORY_SECTIONS = MENU_ITEMS.filter((item) => item.id !== "all");
 const JOB_TYPES = ["기획", "디자인", "개발", "마케팅", "AI"] as const;
@@ -172,7 +180,8 @@ export default function MobileSearchPage({ search }: { search: string }) {
                   <div className="flex flex-col items-center gap-4">
                     <div className="flex w-full gap-[14px] overflow-x-auto hide-scrollbar">
                       {catItems.slice(0, PREVIEW_COUNT).map((item) => (
-                        <div key={item.id} className="shrink-0">
+                        // figma 1136:77726 카드 폭 158 고정(카드 자체는 최소 폭만 있어 긴 제목이면 넓어진다)
+                        <div key={item.id} className="w-[158px] shrink-0">
                           {renderCard(item)}
                         </div>
                       ))}
@@ -231,8 +240,8 @@ function ArchiveMenu({
               key={item.id}
               href={`/search/${search}?tab=${item.id}`}
               id={item.id}
-              className="flex shrink-0 flex-col gap-2">
-              <div className="flex items-center justify-center px-9">
+              className={clsx("flex shrink-0 flex-col gap-2", MENU_TAB_MIN_WIDTH[item.id])}>
+              <div className="flex items-center justify-center">
                 <Typography
                   type="Body2Semibold"
                   className="whitespace-nowrap text-gray-90">
