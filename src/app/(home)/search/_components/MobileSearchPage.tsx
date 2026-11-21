@@ -210,11 +210,16 @@ export default function MobileSearchPage({ search }: { search: string }) {
       ) : visibleItems.length === 0 ? (
         stateBox("검색 결과가 없습니다.")
       ) : (
-        // 개별 탭: 해당 카테고리 전체 2열 grid
-        <div className="grid grid-cols-2 gap-4">
-          {visibleItems.map((item) => (
-            <div key={item.id}>{renderCard(item)}</div>
-          ))}
+        // 개별 탭(figma 1136:77750): 건수 + 2열 카드 목록(가로 20, 세로 22)
+        <div className="flex flex-col gap-5">
+          <Typography type="Body2Medium" className="px-1 text-gray-50">
+            {MENU_ITEMS.find((item) => item.id === activeMenu)?.label} {visibleItems.length}건
+          </Typography>
+          <div className="grid grid-cols-2 gap-x-5 gap-y-[22px]">
+            {visibleItems.map((item) => (
+              <div key={item.id}>{renderCard(item)}</div>
+            ))}
+          </div>
         </div>
       )}
     </div>
