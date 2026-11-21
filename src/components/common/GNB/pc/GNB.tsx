@@ -3,7 +3,7 @@
 "use client";
 import Button from "@/components/common/Button/Button";
 import Search from "@/components/common/Field/Search";
-import Avatar from "@/components/common/GNB/pc/Avatar";
+import { MyAvatar } from "@/components/common/GNB/pc/Avatar";
 import GNBMenu from "@/components/common/GNB/pc/GNBMenu";
 import Icon from "@/components/common/Icon/Icon";
 import { GNBNavigationMenus } from "@/constants/menus";
@@ -109,7 +109,7 @@ const GNB = ({ isLogin = false }: GNBProps) => {
               </li>
               <li className="flex items-center gap-4">
                 <Link href="/profile" aria-label="프로필">
-                  <Avatar className="size-6" />
+                  <MyAvatar className="size-6" />
                 </Link>
               </li>
             </ul>

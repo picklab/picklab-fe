@@ -115,9 +115,15 @@ function parseMemberInfo(payload: unknown, fallbackForm: ProfileForm, fallbackEx
   };
 }
 
+function readProfileImage(payload: unknown) {
+  const data = unwrapData(payload);
+  if (!data || typeof data !== 'object') return '';
+  return readString(data as Record<string, unknown>, 'profile_image');
+}
+
 type PresignedUploadInfo = {
   uploadUrl: string;
-  imageUrl?: string;
+  objectKey: string;
 };
 
 function parsePresignedUploadInfo(payload: unknown): PresignedUploadInfo | null {
@@ -134,18 +140,13 @@ function parsePresignedUploadInfo(payload: unknown): PresignedUploadInfo | null 
       (typeof record.putUrl === 'string' && record.putUrl) ||
       (typeof record.url === 'string' && record.url);
 
-    if (!uploadUrlCandidate) continue;
-
-    const imageUrlCandidate =
-      (typeof record.imageUrl === 'string' && record.imageUrl) ||
-      (typeof record.fileUrl === 'string' && record.fileUrl) ||
-      (typeof record.publicUrl === 'string' && record.publicUrl) ||
-      (typeof record.downloadUrl === 'string' && record.downloadUrl) ||
-      undefined;
+    // 프로필 이미지 저장 요청에는 URL 대신 발급 응답의 object_key를 보낸다
+    const objectKey = typeof record.object_key === 'string' && record.object_key;
+    if (!uploadUrlCandidate || !objectKey) continue;
 
     return {
       uploadUrl: uploadUrlCandidate,
-      imageUrl: imageUrlCandidate,
+      objectKey,
     };
   }
 
@@ -160,11 +161,10 @@ const ProfileSection = () => {
     education: '',
     birthDate: '',
   };
-  // 화면에는 보이지 않고 저장(PUT /members/info) 필수값을 채우는 데만 쓴다.
-  // 내 정보 조회 응답에 school·graduation_status가 없어 백엔드가 내려주기 전까지 임시로 둔다.
+  // 화면에는 보이지 않고 저장(PUT /members/info) 필수값을 내 정보 조회 응답 그대로 다시 보내는 데만 쓴다.
   const defaultMemberInfo: MemberInfoPayload = {
-    school: '한국대학교',
-    graduationStatus: '졸업',
+    school: '',
+    graduationStatus: '',
     employmentStatus: '해당 없음',
     company: '',
     employmentType: 'NONE',
@@ -214,6 +214,8 @@ const ProfileSection = () => {
         setSavedForm(nextForm);
         setForm(nextForm);
         setMemberInfo(nextMemberInfo);
+        const profileImage = readProfileImage(payload);
+        if (profileImage) setAvatarSrc(profileImage);
       } catch (error) {
         console.error('회원 정보 로딩 중 오류 발생:', error);
       }
@@ -382,13 +384,12 @@ const ProfileSection = () => {
         return false;
       }
 
-      const imageUrl = presignedInfo.imageUrl || presignedInfo.uploadUrl.split('?')[0];
       const updateResponse = await fetch('/api/members/profile-image', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ profile_image: imageUrl }),
+        body: JSON.stringify({ profile_image: presignedInfo.objectKey }),
       });
 
       const updatePayload = await updateResponse.json().catch(() => ({}));

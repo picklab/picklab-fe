@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '../../Icon/Icon';
-import Avatar from '../pc/Avatar';
+import { MyAvatar } from '../pc/Avatar';
 import Button from '../../Button/Button';
 import { useAuthClient } from '@/contexts/AuthContext';
 
@@ -38,7 +38,7 @@ const GNB = () => {
             </li>
             <li className="flex items-center">
               <Link href="/profile" aria-label="프로필" className="flex items-center">
-                <Avatar />
+                <MyAvatar />
               </Link>
             </li>
           </ul>

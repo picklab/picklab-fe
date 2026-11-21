@@ -15,7 +15,7 @@ export default function MobileProfile() {
   return (
     // figma Profile 3025:45063: 아바타 80 ↔ 텍스트 17, 닉네임 20 SemiBold + chevron 24, 직무 12 Regular primary-60 (p2, gap 4, 구분선 1×12 gray-20)
     <section className="flex flex-row gap-[17px] items-center">
-      <Avatar className="w-20 h-20" scale="lg" />
+      <Avatar className="w-20 h-20" scale="lg" src={meData?.profileImage} />
       <div className="flex flex-col w-[238.5px]">
         <button
           type="button"

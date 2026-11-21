@@ -66,7 +66,7 @@ const SNB = ({ Jobs }: SNBProps) => {
       {/* 프로필 영역 */}
       <section className="flex flex-col h-[202px] pt-space-10 border-b" aria-labelledby="profile-heading">
         <div className="flex flex-col h-30 gap-[18px] items-center">
-          <Avatar className="!size-20" />
+          <Avatar className="!size-20" src={meData?.profileImage} />
           <h2 id="profile-heading" className="sr-only">
             사용자 프로필
           </h2>
